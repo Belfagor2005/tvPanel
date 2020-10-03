@@ -1,0 +1,13 @@
+#!/bin/sh
+echo "****************************************"
+echo "* CorvoBoys Panel installed            *"
+echo "*                                      *"
+echo "*  Enjoy our plugin                    *"
+echo "****************************************"
+echo "*   Please .. Restarting Enigma2       *"
+echo "*    by Lululla                        *"
+echo "*     all right reserved               *"
+echo "*  support on                          *"
+echo "*  forum corvoboys or linuxsat-support *"
+echo "****************************************"
+exit 0
