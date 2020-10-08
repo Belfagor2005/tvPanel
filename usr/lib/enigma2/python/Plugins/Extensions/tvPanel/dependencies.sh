@@ -1,9 +1,9 @@
 #!/bin/sh
-pyv="$(python -V 2>&1)"
+pyv="$(python -V >&1)"
 echo "$pyv"
 echo "Checking Dependencies"
 echo
-if [[ $pyv =~ "Python 3" ]]; then
+if [[$pyv =~ "Python 3"]]; then
 	echo "checking python3-image"
 	opkg install python3-image
 	echo
@@ -31,3 +31,4 @@ else
 	echo
 fi
 exit 0
+# [[ "$(python3 -V)" =~ "Python 3" ]] && echo "Python 3 is installed"
