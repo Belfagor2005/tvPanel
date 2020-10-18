@@ -1,7 +1,7 @@
 #"****************************************"
 #"*        coded by Lululla              *"
 #"*             skin by MMark            *"
-#"*             10/08/2020               *"
+#"*             10/10/2020               *"
 #"****************************************"
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Button import Button
@@ -44,13 +44,13 @@ import base64
 import os, re, sys
 import shutil
 import ssl
-# import urllib
 import socket
 import glob
 from Lcn import *
 
+currversion      = '1.9.1'
 
-global skin_path, mmkpicon, isDreamOS, set, freespace
+global skin_path, mmkpicon, isDreamOS, set
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 
@@ -64,8 +64,6 @@ else:
     from urllib2 import urlopen, Request, URLError
     from urllib import urlretrieve
 
-currversion      = '1.9.0'
-freespace = "Free space(xxxx MB) Total space( xxxx       MB)"
 set = 0
 isDreamOS = False
 try:
@@ -83,7 +81,7 @@ try:
         import zipfile
 except:
         pass
-        
+
 def checkStr(txt):
     # convert variable to type str both in Python 2 and 3
     if PY3:
@@ -94,14 +92,14 @@ def checkStr(txt):
         #Python 2
         if type(txt) == type(unicode()):
             txt = txt.encode('utf-8')
-        
+
     return txt
-    
+
 def checkInternet():
         try:
             response = checkStr(urlopen("http://google.com", None, 5))
             # response = urlopen("http://google.com", None, 5)
-            response.close()   
+            response.close()
         except HTTPError:
                 return False
         except URLError:
@@ -111,8 +109,6 @@ def checkInternet():
         else:
                 return True
 
-
-    
 def freespace():
         try:
                 diskSpace = os.statvfs('/')
@@ -149,7 +145,7 @@ def deletetmp():
         os.system('rm -rf /tmp/unzipped;rm -f /tmp/*.ipk;rm -f /tmp/*.tar;rm -f /tmp/*.zip;rm -f /tmp/*.tar.gz;rm -f /tmp/*.tar.bz2;rm -f /tmp/*.tar.tbz2;rm -f /tmp/*.tar.tbz')
         return
 
-os.system('rm -fr /usr/lib/enigma2/python/Plugins/Extensions/tvPanel/temp/*')
+
 
 def mountipkpth():
         ipkpth = []
@@ -166,14 +162,16 @@ def mountipkpth():
 config.plugins.tvPanel = ConfigSubsection()
 config.plugins.tvPanel.strtext = ConfigYesNo(default=True)
 config.plugins.tvPanel.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
-config.plugins.tvPanel.mmkpiconform = ConfigSelection(default = "220x132",choices = [("all", _("All Picons")),("oth", _("Other")),("500x300", _("500x300")), ("417x250", _("417x250")), ("330x198", _("330x198")), ("300x130", _("300x130")), ("220x132", _("220x132")), ("130x80", _("130x80")), ("100x60", _("100x60")), ("50x30", _("50x30"))])
+# config.plugins.tvPanel.mmkpiconform = ConfigSelection(default = "220x132",choices = [("all", _("All Picons")),("oth", _("Other")),("500x300", _("500x300")), ("417x250", _("417x250")), ("330x198", _("330x198")), ("300x130", _("300x130")), ("220x132", _("220x132")), ("130x80", _("130x80")), ("100x60", _("100x60")), ("50x30", _("50x30"))])
 config.plugins.tvPanel.strtmain = ConfigYesNo(default=True)
 config.plugins.tvPanel.strtst = ConfigYesNo(default=False)
 config.plugins.tvPanel.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvPanel.autoupd = ConfigYesNo(default=False)
 
-
-DESKHEIGHT       = getDesktop(0).size().height()
+pblk             = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT11Yzd1eHBiMGQzaTg4JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+ptrs             = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT15Mms1Nmd4ZmRyb2FtJmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+host_trs         = base64.b64decode(ptrs)
+host_blk         = base64.b64decode(pblk)
 HD               = getDesktop(0).size()
 plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
 skin_path        = plugin_path
@@ -184,11 +182,9 @@ ico3_path        = plugin_path + '/res/pics/setting.png'
 pngx             = ico1_path
 pngl             = ico2_path
 pngs             = ico3_path
-
-os.system('rm -fr '+ plugin_path + '/temp/*')
-mmkpicon = config.plugins.tvPanel.mmkpicon.value.strip()
-
-
+no_cover         = plugin_path + '/no_coverArt.png'
+mmkpicon         = config.plugins.tvPanel.mmkpicon.value.strip()
+os.system('rm -fr ' + plugin_path + '/temp/*')
 
 if mmkpicon.endswith('/'):
         mmkpicon = mmkpicon[:-1]
@@ -204,7 +200,6 @@ upd_path        = base64.b64decode(data_upd)
 data_xml        = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
 xml_path        = base64.b64decode(data_xml)
 
-HD = getDesktop(0).size()
 if HD.width() > 1280:
         if isDreamOS:
                 skin_path = plugin_path + '/res/skins/fhd/dreamOs/'
@@ -407,38 +402,26 @@ class Hometv(Screen):
                  'red': self.closerm,
                  'back': self.closerm,
                  'cancel': self.closerm}, -1)
-                # self.onFirstExecBegin.append(self.check_dependencies)
-                # self.onLayoutFinish.append(self.updateMenuList)
-                # self.onFirstExecBegin.append(self.updateMenuList)
+
                 self.onLayoutFinish.append(self.updateMenuList)
 ###############kiddac test
         def check_dependencies(self):
                 dependencies = True
-                if PY3:
-                        if not os.path.isfile("/usr/lib/python3.8/imghdr.py") \
-                                or not os.path.exists("/usr/lib/python3.8/site-packages/PIL") \
-                                        or not os.path.exists("/usr/lib/python3.8/site-packages/requests") \
-                                        or not os.path.exists("/usr/lib/python3.8/multiprocessing"):
-                                dependencies = False
-
-                else:
-                        if not os.path.isfile("/usr/lib/python2.7/imghdr.pyo") \
-                                or not os.path.exists("/usr/lib/python2.7/site-packages/PIL") \
-                                        or not os.path.exists("/usr/lib/python2.7/site-packages/requests") \
-                                        or not os.path.exists("/usr/lib/python2.7/multiprocessing"):
-                                dependencies = False
-
+                # if PY3:
+                try:
+                    import requests
+                    from PIL import Image
+                except:
+                    dependencies = False
                 if dependencies is False:
-                        if not access("/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/dependencies.sh", X_OK):
-                                chmod("/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/dependencies.sh", 0o0755)
-                        cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/tvPanel/dependencies.sh"
-                        self.session.openWithCallback(self.starts, tvConsole, title="Checking Python 2 Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
+                    chmod("/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/dependencies.sh", 0o0755)
+                    cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/tvPanel/dependencies.sh"
+                    self.session.openWithCallback(self.starts, Console, title="Checking Python Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
                 else:
-                        self.starts()
+                    self.starts()
 
         def starts(self):
                 OnclearMem()
-###############kiddac test
 
         def closerm(self):
                 # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
@@ -3194,11 +3177,10 @@ class tvUpdate(Screen):
                 dmlink=''
                 link=''
                 try:
-
                         fp = checkStr(urlopen(upd_path + 'updatePanel.txt', None, 5))
                         # fp = urlopen(upd_path + 'updatePanel.txt', None, 5)
-                        fp.close() 
-                        fp = str(fp)                        
+                        fp.close()
+                        fp = str(fp)
                         count = 0
                         self.labeltext = ''
                         s1 = fp.readline()
@@ -3231,8 +3213,6 @@ class tvUpdate(Screen):
                         # self.Update = False
                         # self['info'].setText('TiVuStream Panel version: ' + currversion )
                         # self['pth'].setText('No updates available!')
-                        
-
                         if float(s1) <= float(currversion):
                                 self.Update = False
                                 self['info'].setText('TiVuStream Panel version: ' + currversion )
@@ -3249,7 +3229,6 @@ class tvUpdate(Screen):
                         self.Update = False
                         self['info'].setText('TiVuStream Panel version: ' + currversion )
                         self['pth'].setText('No updates available!')
-
 
                 self.timer = eTimer()
                 self.timer.start(500, 1)
@@ -3605,7 +3584,7 @@ class tvConfig(Screen, ConfigListScreen):
                         self.list = []
                         self.list.append(getConfigListEntry(_('Auto Update Plugin'), config.plugins.tvPanel.autoupd, _("If Active: Automatic Update Plugin")))
                         self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), config.plugins.tvPanel.mmkpicon, _("Configure folder containing picons files")))
-                        self.list.append(getConfigListEntry(_("Format Size Picons"), config.plugins.tvPanel.mmkpiconform, _("Configure format size Picons filter")))
+                        # self.list.append(getConfigListEntry(_("Format Size Picons"), config.plugins.tvPanel.mmkpiconform, _("Configure format size Picons filter")))
                         self.list.append(getConfigListEntry(_('Path Manual IPK'), config.plugins.tvPanel.ipkpth, _("Path to the addon installation folder")))
                         self.list.append(getConfigListEntry(_('Link in Extensions Menu'), config.plugins.tvPanel.strtext, _("Link in Extensions button")))
                         self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvPanel.strtmain, _("Link in Main Menu")))
@@ -3706,8 +3685,8 @@ class tvConfig(Screen, ConfigListScreen):
                         self.close()
 
 Panel_list3 = [
- _('MMARK PICONS BLACK'),
  _('MMARK PICONS TRANSPARENT'),
+ _('MMARK PICONS BLACK'),
  _('COLOMBO PICONS')]
 
 
@@ -3726,10 +3705,10 @@ class SelectPicons(Screen):
                 self.selection = 'all'
                 self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
                 self['pth'] = Label('')
-                mmkform          = config.plugins.tvPanel.mmkpiconform.value
+                # mmkform          = config.plugins.tvPanel.mmkpiconform.value
                 self['pth'].setText(_('Folder picons ') + mmkpicon)
                 self['pform'] = Label('')
-                self['pform'].setText(_('Format size picons ') + mmkform)
+                # self['pform'].setText(_('Format size picons ') + mmkform)
                 self['info'] = Label('')
                 self['info'].setText(_('Please select ...'))
                 self['key_green'] = Button(_('Select'))
@@ -3747,6 +3726,10 @@ class SelectPicons(Screen):
                  'cancel': self.closerm}, -1)
                 self.onLayoutFinish.append(self.updateMenuList)
 
+        def getfreespace(self):
+                fspace = freespace()
+                self['pform'].setText(fspace)
+
         def closerm(self):
                 self.close()
 
@@ -3761,6 +3744,7 @@ class SelectPicons(Screen):
                         self.menu_list.append(x)
                         idx += 1
                 self['text'].setList(list)
+                self.getfreespace()
 
         def okRun(self):
                 self.keyNumberGlobalCB(self['text'].getSelectedIndex())
@@ -3768,14 +3752,14 @@ class SelectPicons(Screen):
         def keyNumberGlobalCB(self, idx):
                 sel = self.menu_list[idx]
                 if sel == _('MMARK PICONS BLACK'):
-                        self.session.open(MMarkBlack)
+                        self.session.open(MMarkFolderBlk)
                 elif sel == _('MMARK PICONS TRANSPARENT'):
-                        self.session.open(MMarkTrasp)
+                        self.session.open(MMarkFolderTrs)
                 elif sel == _('COLOMBO PICONS'):
                         self.session.open(ColomboTrasp)
 
 
-class MMarkBlack(Screen):
+class MMarkFolderBlk(Screen):
 
         def __init__(self, session):
                 self.session = session
@@ -3791,10 +3775,10 @@ class MMarkBlack(Screen):
                 self.icount = 0
                 self['info'] = Label(_('Load selected filter list, please wait ...'))
                 self['pth'] = Label('')
-                mmkform          = config.plugins.tvPanel.mmkpiconform.value
+                # mmkform          = config.plugins.tvPanel.mmkpiconform.value
                 self['pth'].setText(_('Folder picons ') + mmkpicon)
                 self['pform'] = Label('')
-                self['pform'].setText(_('Format size picons ') + mmkform)
+                # self['pform'].setText(_('Format size picons ') + mmkform)
                 self['progress'] = ProgressBar()
                 self['progresstext'] = StaticText()
                 self['key_green'] = Button(_('Install'))
@@ -3803,9 +3787,11 @@ class MMarkBlack(Screen):
                 self["key_blue"] = Button(_(''))
                 self['key_yellow'].hide()
                 self['key_blue'].hide()
+                # self['space'] = Label('')
                 self.downloading = False
                 self.timer = eTimer()
                 self.timer.start(500, 1)
+                self.getfreespace()
                 if isDreamOS:
                         self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
                 else:
@@ -3816,8 +3802,12 @@ class MMarkBlack(Screen):
                  'red': self.close,
                  'cancel': self.close}, -2)
 
+        def getfreespace(self):
+                fspace = freespace()
+                self['pform'].setText(fspace)
+
         def downxmlpage(self):
-                url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9tbWFyay9waWNvbnMv")
+                url = host_blk
                 getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
         def errorLoad(self, error):
@@ -3826,46 +3816,130 @@ class MMarkBlack(Screen):
                 self.downloading = False
 
         def _gotPageLoad(self, data):
-                self.xml = data
+                r = data
                 self.names = []
                 self.urls = []
                 try:
-                        regex = '<a href="(.*?)".*?.zip</a>(.*?)20'
+                        n1 = r.find('"folderkey"', 0)
+                        n2 = r.find('more_chunks', n1)
+                        self.xml = r[n1:n2]
+                        regex = '{"folderkey":"(.*?)".*?"name":"(.*?)".*?"created":"(.*?)"'
                         match = re.compile(regex,re.DOTALL).findall(self.xml)
-                        for url, date in match:
-                                if 'zip' and 'blk' in url:
-                                        url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
-                                        url = url64b + url
-                                        url264b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vbW1hcmsvcGljb25zLw==")
-                                        name = url.replace(url264b, '')
-                                        if config.plugins.tvPanel.mmkpiconform.value == 'all':
-                                                name = name.replace(".zip", "")
-                                                name = name.replace("%20", " ")
-                                                name = name.replace("-", " ")
-                                                name = name.replace("_", " ")
-                                                name = name.replace("mmk", "mmark")
-                                                print('name: ', name)
-                                                name = name +'-'+ date.replace(' ','')
-                                                self.urls.append(url)
-                                                self.names.append(name)
-                                                self['info'].setText(_('Please select ...'))
-                                        if config.plugins.tvPanel.mmkpiconform.value in name:
-                                                name = name.replace(".zip", "")
-                                                name = name.replace("%20", " ")
-                                                name = name.replace("-", " ")
-                                                name = name.replace("_", " ")
-                                                name = name.replace("mmk", "mmark")
-                                                print('name: ', name)
-                                                name = name +'-'+ date.replace(' ','')
-                                                self.urls.append(url)
-                                                self.names.append(name)
-                                                self['info'].setText(_('Please select ...'))
-                                else:
-                                        self['info'].setText(_('Please select ...'))
+                        for url, name, data in match:
+                            url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
+                            url = url.replace('\\','')
+                            pic = no_cover
+                            name = name + ' ' + data[0:10]
+                            self.urls.append(url)
+                            self.names.append(name)
+
+                        self['info'].setText(_('Please select ...'))
                         showlist(self.names, self['text'])
                         self.downloading = True
                 except:
-                        self.downloading = False
+                    self.downloading = False
+
+        def okRun(self):
+            idx = self['text'].getSelectionIndex()
+            if idx == -1 or None:
+                return
+            name = self.names[idx]
+            url = self.urls[idx]
+            self.session.open(MMarkBlack,name, url)
+
+
+        def cancel(self, result = None):
+            self.close(None)
+            return
+
+
+class MMarkBlack(Screen):
+
+        def __init__(self, session, name, url):
+                self.session = session
+                skin = skin_path + 'tvall.xml'
+                with open(skin, 'r') as f:
+                        self.skin = f.read()
+                self.setup_title = ('MMark')
+                Screen.__init__(self, session)
+                self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+                self.list = []
+                self['text'] = tvList([])
+                self.addon = 'emu'
+                self.icount = 0
+                self['info'] = Label(_('Load selected filter list, please wait ...'))
+                self['pth'] = Label('')
+                # mmkform          = config.plugins.tvPanel.mmkpiconform.value
+                self['pth'].setText(_('Folder picons ') + mmkpicon)
+                self['pform'] = Label('')
+                # self['pform'].setText(_('Format size picons ') + mmkform)
+                self['progress'] = ProgressBar()
+                self['progresstext'] = StaticText()
+                self['key_green'] = Button(_('Install'))
+                self['key_red'] = Button(_('Back'))
+                self['key_yellow'] = Button(_(''))
+                self["key_blue"] = Button(_(''))
+                self['key_yellow'].hide()
+                self['key_blue'].hide()
+                self.url = url
+                name = name
+                self.downloading = False
+                self.timer = eTimer()
+                self.timer.start(500, 1)
+                self.getfreespace()
+                if isDreamOS:
+                        self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+                else:
+                        self.timer.callback.append(self.downxmlpage)
+                self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+                self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+                 'green': self.okRun,
+                 'red': self.close,
+                 'cancel': self.close}, -2)
+
+        def getfreespace(self):
+                fspace = freespace()
+                self['pform'].setText(fspace)
+
+        def downxmlpage(self):
+                url = self.url
+                print('urlllll: ',url)
+                getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+        def errorLoad(self, error):
+                print(str(error))
+                self['info'].setText(_('Try again later ...'))
+                self.downloading = False
+
+        def _gotPageLoad(self, data):
+                r = data
+                print('data: ', r)
+                self.names = []
+                self.urls = []
+                try:
+                        n1 = r.find('"quickkey":', 0)
+                        n2 = r.find('more_chunks', n1)
+                        self.xml = r[n1:n2]
+                        print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", self.xml)
+                        regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"normal_download":"(.*?)"'
+                        match = re.compile(regex,re.DOTALL).findall(self.xml)
+                        print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", match)
+                        for name, data, url  in match:
+                            if 'zip' in url:
+                                url = url.replace('\\','')
+                                print('url: ',url)
+                                pic = no_cover
+                                name = name.replace('_',' ').replace('mmk','MMark').replace('.zip','')
+                                name = name + ' ' + data[0:10]
+                                self.urls.append(url)
+                                self.names.append(name)
+                                self['info'].setText(_('Please select ...'))
+                            else:
+                                self['info'].setText(_('no data ...'))
+                        showlist(self.names, self['text'])
+                        self.downloading = True
+                except:
+                    self.downloading = False
 
         def okRun(self):
                 self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -3880,11 +3954,30 @@ class MMarkBlack(Screen):
                                 url = self.urls[idx]
                                 dest = "/tmp/download.zip"
                                 print("url =", url)
+                                url=url
+                                print('read url: ',  url)
+                                req = Request(url)
+                                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+                                req.add_header('Referer', 'https://www.mediafire.com/')
+                                req.add_header('X-Requested-With', 'XMLHttpRequest')
+                                page = urlopen(req)
+                                r = page.read()
+                                n1 = r.find('"Download file"', 0)
+                                n2 = r.find('Repair your download', n1)
+                                r2 = r[n1:n2]
+                                print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr2 =", r2)
+                                channels = re.findall('href="http://download(.*?)">', r2)
+                                print("getChannel match =", channels)
+                                for url in channels:
+                                    img = no_cover
+                                    url = 'http://download' + url
+
                                 self.download = downloadWithProgress(url, dest)
                                 self.download.addProgress(self.downloadProgress)
                                 self.download.start().addCallback(self.install).addErrback(self.showError)
                         else:
                                 self.close
+
 
         def downloadProgress(self, recvbytes, totalbytes):
                 self['progress'].value = int(100 * recvbytes / float(totalbytes))
@@ -3904,14 +3997,15 @@ class MMarkBlack(Screen):
                 self['progress'].setValue(self.progclear)
 
         def showError(self, error):
-                                print("download error =", error)
-                                self.close()
+            print("download error =", error)
+            self.close()
 
         def cancel(self, result = None):
-                self.close(None)
-                return
+            self.close(None)
+            return
 
-class MMarkTrasp(Screen):
+
+class MMarkFolderTrs(Screen):
 
         def __init__(self, session):
                 self.session = session
@@ -3927,10 +4021,10 @@ class MMarkTrasp(Screen):
                 self.icount = 0
                 self['info'] = Label(_('Load selected filter list, please wait ...'))
                 self['pth'] = Label('')
-                mmkform          = config.plugins.tvPanel.mmkpiconform.value
+                # mmkform          = config.plugins.tvPanel.mmkpiconform.value
                 self['pth'].setText(_('Folder picons ') + mmkpicon)
                 self['pform'] = Label('')
-                self['pform'].setText(_('Format size picons ') + mmkform)
+                # self['pform'].setText(_('Format size picons ') + mmkform)
                 self['progress'] = ProgressBar()
                 self['progresstext'] = StaticText()
                 self['key_green'] = Button(_('Install'))
@@ -3939,6 +4033,7 @@ class MMarkTrasp(Screen):
                 self["key_blue"] = Button(_(''))
                 self['key_yellow'].hide()
                 self['key_blue'].hide()
+                self.getfreespace()
                 self.downloading = False
                 self.timer = eTimer()
                 self.timer.start(500, 1)
@@ -3952,9 +4047,12 @@ class MMarkTrasp(Screen):
                  'red': self.close,
                  'cancel': self.close}, -2)
 
+        def getfreespace(self):
+                fspace = freespace()
+                self['pform'].setText(fspace)
 
         def downxmlpage(self):
-                url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9tbWFyay9waWNvbnMv")
+                url = host_trs
                 getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
         def errorLoad(self, error):
@@ -3963,47 +4061,131 @@ class MMarkTrasp(Screen):
                 self.downloading = False
 
         def _gotPageLoad(self, data):
-                self.xml = data
+                r = data
                 self.names = []
                 self.urls = []
                 try:
-                        regex = '<a href="(.*?)".*?.zip</a>(.*?)20'
+                        n1 = r.find('"folderkey"', 0)
+                        n2 = r.find('more_chunks', n1)
+                        self.xml = r[n1:n2]
+                        regex = '{"folderkey":"(.*?)".*?"name":"(.*?)".*?"created":"(.*?)"'
                         match = re.compile(regex,re.DOTALL).findall(self.xml)
-                        for url, date in match:
-                                if 'zip' and 'trs' in url:
-                                        url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
-                                        url = url64b + url
-                                        url264b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vbW1hcmsvcGljb25zLw==")
-                                        name = url.replace(url264b, '')
-                                        if config.plugins.tvPanel.mmkpiconform.value == 'all':
-                                                name = name.replace(".zip", "")
-                                                name = name.replace("%20", " ")
-                                                name = name.replace("-", " ")
-                                                name = name.replace("_", " ")
-                                                name = name.replace("mmk", "mmark")
-                                                print('name: ', name)
-                                                name = name +'-'+ date.replace(' ','')
-                                                self.urls.append(url)
-                                                self.names.append(name)
-                                                self['info'].setText(_('Please select ...'))
-                                        if config.plugins.tvPanel.mmkpiconform.value in name:
-                                                name = name.replace(".zip", "")
-                                                name = name.replace("%20", " ")
-                                                name = name.replace("-", " ")
-                                                name = name.replace("_", " ")
-                                                name = name.replace("mmk", "mmark")
-                                                print('name: ', name)
-                                                name = name +'-'+ date.replace(' ','')
-                                                self.urls.append(url)
-                                                self.names.append(name)
-                                                self['info'].setText(_('Please select ...'))
-                                else:
-                                        self['info'].setText(_('Please select ...'))
-
+                        for url, name, data in match:
+                            url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
+                            pic = no_cover
+                            name = name + ' ' + data[0:10]
+                            self.urls.append(url)
+                            self.names.append(name)
+                        self['info'].setText(_('Please select ...'))
                         showlist(self.names, self['text'])
                         self.downloading = True
                 except:
-                        self.downloading = False
+                    self.downloading = False
+
+        def okRun(self):
+            idx = self['text'].getSelectionIndex()
+            if idx == -1 or None:
+                return
+            name = self.names[idx]
+            url = self.urls[idx]
+
+            self.session.open(MMarkTrasp,name, url)
+
+
+        def cancel(self, result = None):
+            self.close(None)
+            return
+
+
+
+class MMarkTrasp(Screen):
+
+        def __init__(self, session, name,url):
+                self.session = session
+                skin = skin_path + 'tvall.xml'
+                with open(skin, 'r') as f:
+                        self.skin = f.read()
+                self.setup_title = ('MMark')
+                Screen.__init__(self, session)
+                self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+                self.list = []
+                self['text'] = tvList([])
+                self.addon = 'emu'
+                self.icount = 0
+                self['info'] = Label(_('Load selected filter list, please wait ...'))
+                self['pth'] = Label('')
+                # mmkform          = config.plugins.tvPanel.mmkpiconform.value
+                self['pth'].setText(_('Folder picons ') + mmkpicon)
+                self['pform'] = Label('')
+                # self['pform'].setText(_('Format size picons ') + mmkform)
+                self['progress'] = ProgressBar()
+                self['progresstext'] = StaticText()
+                self['key_green'] = Button(_('Install'))
+                self['key_red'] = Button(_('Back'))
+                self['key_yellow'] = Button(_(''))
+                self["key_blue"] = Button(_(''))
+                self['key_yellow'].hide()
+                self['key_blue'].hide()
+                self.getfreespace()
+                self.downloading = False
+                self.url = url
+                name = name
+                self.timer = eTimer()
+                self.timer.start(500, 1)
+                if isDreamOS:
+                        self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+                else:
+                        self.timer.callback.append(self.downxmlpage)
+                self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+                self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+                 'green': self.okRun,
+                 'red': self.close,
+                 'cancel': self.close}, -2)
+
+        def getfreespace(self):
+                fspace = freespace()
+                self['pform'].setText(fspace)
+
+        def downxmlpage(self):
+                url = self.url
+                print('urlllll: ',url)
+
+                getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+        def errorLoad(self, error):
+                print(str(error))
+                self['info'].setText(_('Try again later ...'))
+                self.downloading = False
+
+        def _gotPageLoad(self, data):
+                r = data
+                print('data: ', r)
+                self.names = []
+                self.urls = []
+                try:
+                        n1 = r.find('"quickkey":', 0)
+                        n2 = r.find('more_chunks', n1)
+                        self.xml = r[n1:n2]
+                        print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", self.xml)
+                        regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"normal_download":"(.*?)"'
+                        match = re.compile(regex,re.DOTALL).findall(self.xml)
+                        print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", match)
+                        for name, data, url  in match:
+                            if 'zip' in url:
+                                url = url.replace('\\','')
+                                print('url: ',url)
+                                pic = no_cover
+                                name = name.replace('_',' ').replace('mmk','MMark').replace('.zip','')
+                                name = name + ' ' + data[0:10]
+                                self.urls.append(url)
+                                self.names.append(name)
+                                self['info'].setText(_('Please select ...'))
+                            else:
+                                self['info'].setText(_('no data ...'))
+                        showlist(self.names, self['text'])
+                        self.downloading = True
+                except:
+                    self.downloading = False
 
         def okRun(self):
                 self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -4018,6 +4200,23 @@ class MMarkTrasp(Screen):
                                 url = self.urls[idx]
                                 dest = "/tmp/download.zip"
                                 print("url =", url)
+                                url=url
+                                print('read url: ',  url)
+                                req = Request(url)
+                                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+                                req.add_header('Referer', 'https://www.mediafire.com/')
+                                req.add_header('X-Requested-With', 'XMLHttpRequest')
+                                page = urlopen(req)
+                                r = page.read()
+                                n1 = r.find('"Download file"', 0)
+                                n2 = r.find('Repair your download', n1)
+                                r2 = r[n1:n2]
+                                print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr2 =", r2)
+                                channels = re.findall('href="http://download(.*?)">', r2)
+                                print("getChannel match =", channels)
+                                for url in channels:
+                                    img = no_cover
+                                    url = 'http://download' + url
                                 self.download = downloadWithProgress(url, dest)
                                 self.download.addProgress(self.downloadProgress)
                                 self.download.start().addCallback(self.install).addErrback(self.showError)
@@ -4065,10 +4264,10 @@ class ColomboTrasp(Screen):
                 self.icount = 0
                 self['info'] = Label(_('Load selected filter list, please wait ...'))
                 self['pth'] = Label('')
-                mmkform          = config.plugins.tvPanel.mmkpiconform.value
+                # mmkform          = config.plugins.tvPanel.mmkpiconform.value
                 self['pth'].setText(_('Folder picons ') + mmkpicon)
                 self['pform'] = Label('')
-                self['pform'].setText(_('Format size picons ') + mmkform)
+                # self['pform'].setText(_('Format size picons ') + mmkform)
                 self['progress'] = ProgressBar()
                 self['progresstext'] = StaticText()
                 self['key_green'] = Button(_('Install'))
@@ -4077,6 +4276,7 @@ class ColomboTrasp(Screen):
                 self["key_blue"] = Button(_(''))
                 self['key_yellow'].hide()
                 self['key_blue'].hide()
+                self.getfreespace()
                 self.downloading = False
                 self.timer = eTimer()
                 self.timer.start(500, 1)
@@ -4089,6 +4289,10 @@ class ColomboTrasp(Screen):
                  'green': self.okRun,
                  'red': self.close,
                  'cancel': self.close}, -2)
+
+        def getfreespace(self):
+                fspace = freespace()
+                self['pform'].setText(fspace)
 
         def downxmlpage(self):
                 url = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmcvY29sb21iby9jb2xvbWJvLw==")
@@ -4108,12 +4312,22 @@ class ColomboTrasp(Screen):
                         match = re.compile(regex,re.DOTALL).findall(self.xml)
                         for url in match:
                                 if 'picon' in url.lower():
-                                        url64b = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmc=")
-                                        name = url
-                                        url = url64b + url
-                                        print('url: ', url)
-                                        print('name: ', name)
-                                        if config.plugins.tvPanel.mmkpiconform.value == 'all':
+                                                url64b = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmc=")
+                                                name = url
+                                                url = url64b + url
+                                                print('url: ', url)
+                                                print('name: ', name)
+                                        # if config.plugins.tvPanel.mmkpiconform.value == 'all':
+                                                # name = name.replace("/colombo/colombo/", "")
+                                                # name = name.replace(".zip", "")
+                                                # name = name.replace("%20", " ")
+                                                # name = name.replace("-", " ")
+                                                # name = name.replace("_", " ")
+                                                # print('name: ', name)
+                                                # self.urls.append(url)
+                                                # self.names.append(name)
+                                                # self['info'].setText(_('Please select ...'))
+                                        # if config.plugins.tvPanel.mmkpiconform.value in name:
                                                 name = name.replace("/colombo/colombo/", "")
                                                 name = name.replace(".zip", "")
                                                 name = name.replace("%20", " ")
@@ -4123,18 +4337,8 @@ class ColomboTrasp(Screen):
                                                 self.urls.append(url)
                                                 self.names.append(name)
                                                 self['info'].setText(_('Please select ...'))
-                                        if config.plugins.tvPanel.mmkpiconform.value in name:
-                                                name = name.replace("/colombo/colombo/", "")
-                                                name = name.replace(".zip", "")
-                                                name = name.replace("%20", " ")
-                                                name = name.replace("-", " ")
-                                                name = name.replace("_", " ")
-                                                print('name: ', name)
-                                                self.urls.append(url)
-                                                self.names.append(name)
-                                                self['info'].setText(_('Please select ...'))
-                                        else:
-                                                self['info'].setText(_('Please select ...'))
+                                        # else:
+                                                # self['info'].setText(_('Please select ...'))
                                                 self.downloading = True
                                 else:
                                         self['info'].setText(_('Please select ...'))
