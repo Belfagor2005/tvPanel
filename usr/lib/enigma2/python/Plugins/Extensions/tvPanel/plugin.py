@@ -87,7 +87,7 @@ except AttributeError:
     pass
 else:
     ssl._create_default_https_context = _create_unverified_https_context
-    
+
 def checkStr(txt):
     # convert variable to type str both in Python 2 and 3
     if PY3:
@@ -176,7 +176,8 @@ ptrs             = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRf
 host_trs         = base64.b64decode(ptrs)
 host_blk         = base64.b64decode(pblk)
 HD               = getDesktop(0).size()
-plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
+# plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
+plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/tvPanel'
 skin_path        = plugin_path
 ico_path         = plugin_path + '/logo.png'
 ico1_path        = plugin_path + '/res/pics/plugins.png'
@@ -366,7 +367,7 @@ class Hometv(Screen):
                 link =''
                 try:
                         fp = ''
-                        destr = plugin_path + 'update.txt'
+                        destr = plugin_path + '/update.txt'
                         req = Request(upd_path + 'updatePanel.txt')
                         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
                         # fp = urlopen(req)
@@ -3190,7 +3191,7 @@ class tvUpdate(Screen):
                 link=''
                 try:
                         fp = ''
-                        destr = plugin_path + 'update.txt'
+                        destr = plugin_path + '/update.txt'
                         req = Request(upd_path + 'updatePanel.txt')
                         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
                         fp = checkStr(urlopen(req))
