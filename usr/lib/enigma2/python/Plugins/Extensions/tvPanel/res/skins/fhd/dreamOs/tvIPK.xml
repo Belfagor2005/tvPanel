@@ -4,11 +4,11 @@
 	<ePixmap position="220,40" size="279,50" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/res/pics/tvs.png" blend="blend" zPosition="5" />
 	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<ePixmap position="220,130" size="1030,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/res/pics/sep.png" blend="blend" zPosition="5" />
-  	<!-- Menu List -->
+	<!-- Menu List -->
 	<widget source="ipkglisttmp" render="Listbox" position="220,155" size="1030,600" itemHeight="50" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/res/pics/sliderb.png" >
 		<convert type="StringList" />
-  	</widget>
-	<widget name="info"  position="220,750" size="1030,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	</widget>
+	<widget name="info"	 position="220,750" size="1030,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<widget name="info1" position="220,805" size="1030,50" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<!-- Colors 1220 -->
 	<ePixmap position="220,910" size="1030,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/res/pics/sep.png" blend="blend" zPosition="5" />
