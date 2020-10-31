@@ -76,10 +76,10 @@ else
         echo
         echo "checking python3-requests"
         apt-get install python3-requests
-        echo
-        echo "checking python3-multiprocessing"
-        apt-get install python3-multiprocessing
-        echo
+        # echo
+        # echo "checking python3-multiprocessing"
+        # apt-get install python3-multiprocessing
+        # echo
     else
         echo "checking python-image"
         apt-get install python-image

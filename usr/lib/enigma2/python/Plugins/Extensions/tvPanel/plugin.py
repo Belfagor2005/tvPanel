@@ -262,9 +262,9 @@ Panel_list = [
 Panel_list2 = [
  ('UPDATE SATELLITES.XML'),
  ('UPDATE TERRESTRIAL.XML'),
+ ('SETTINGS BI58'),
  ('SETTINGS CIEFP'),
  ('SETTINGS COLOMBO'),
- ('SETTINGS BI58'),
  ('SETTINGS MANUTEK'),
  ('SETTINGS MILENKA61'),
  ('SETTINGS MORPHEUS'),
@@ -288,7 +288,7 @@ class tvList(MenuList):
         if HD.width() > 1280:
             self.l.setItemHeight(50)
         else:
-            self.l.setItemHeight(40)
+            self.l.setItemHeight(50)
 
 def OnclearMem():
     try:
@@ -1832,6 +1832,8 @@ class SettingColombo(Screen):
             match = re.compile(regex,re.DOTALL).findall(self.xml)
             for url in match:
                 if 'setting' in url.lower():
+                    if '.php' in url.lower():
+                        continue
                     name = url
                     url64b = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmc=")
                     url = url64b + url
@@ -1911,7 +1913,7 @@ class SettingVhan(Screen):
         self.session = session
         skin = skin_path + 'tvall.xml'
         with open(skin, 'r') as f:
-                self.skin = f.read()
+            self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
         Screen.__init__(self, session)
         self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
@@ -2143,249 +2145,249 @@ class Milenka61(Screen):
 
 class SettingManutek(Screen):
 
-        def __init__(self, session):
-            self.session = session
-            skin = skin_path + 'tvall.xml'
-            with open(skin, 'r') as f:
-                self.skin = f.read()
-            self.setup_title = ('Setting Manutek')
-            Screen.__init__(self, session)
-            self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
-            self.list = []
-            self['text'] = tvList([])
-            self.addon = 'emu'
-            self.icount = 0
-            self['pth'] = Label('')
-            self['pform'] = Label('')
-            self['info'] = Label(_('Getting the list, please wait ...'))
-            self['key_green'] = Button(_('Install'))
-            self['key_red'] = Button(_('Back'))
-            self['key_yellow'] = Button(_(''))
-            self["key_blue"] = Button(_(''))
-            self['key_yellow'].hide()
-            self['key_blue'].hide()
+    def __init__(self, session):
+        self.session = session
+        skin = skin_path + 'tvall.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('Setting Manutek')
+        Screen.__init__(self, session)
+        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.list = []
+        self['text'] = tvList([])
+        self.addon = 'emu'
+        self.icount = 0
+        self['pth'] = Label('')
+        self['pform'] = Label('')
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['key_green'] = Button(_('Install'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.downloading = False
+        self['progress'] = ProgressBar()
+        self['progresstext'] = StaticText()
+        self.timer = eTimer()
+        self.timer.start(500, 1)
+        if isDreamOS:
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+
+    def downxmlpage(self):
+        url = base64.b64decode("aHR0cDovL3d3dy5tYW51dGVrLml0L2lzZXR0aW5nLw==")
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    def errorLoad(self, error):
+        print(str(error))
+        self['info'].setText(_('Try again later ...'))
+        self.downloading = False
+
+    def _gotPageLoad(self, data):
+        self.xml = data
+        self.names = []
+        self.urls = []
+        try:
+            match = re.compile('href=".*?file=(.+?)">', re.DOTALL).findall(self.xml)
+            for url in match:
+                name = url
+                name = name.replace(".zip", "")
+                name = name.replace("%20", " ")
+                name = name.replace("NemoxyzRLS_", "")
+                name = name.replace("_", " ")
+                url64b = base64.b64decode("aHR0cDovL3d3dy5tYW51dGVrLml0L2lzZXR0aW5nL2VuaWdtYTIv")
+                url = url64b + url
+                self.urls.append(url)
+                self.names.append(name)
+                self['info'].setText(_('Please select ...'))
+            showlist(self.names, self['text'])
+            self.downloading = True
+        except:
             self.downloading = False
-            self['progress'] = ProgressBar()
-            self['progresstext'] = StaticText()
-            self.timer = eTimer()
-            self.timer.start(500, 1)
-            if isDreamOS:
-                self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+
+    def okRun(self):
+        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+
+    def okInstall(self, result):
+        global set
+        set = 0
+        if result:
+            if self.downloading == True:
+                selection = str(self['text'].getCurrent())
+                idx = self["text"].getSelectionIndex()
+                self.name = self.names[idx]
+                url = self.urls[idx]
+                dest = "/tmp/settings.zip"
+                print("url =", url)
+                if 'dtt' not in url.lower():
+                    set = 1
+                    terrestrial()
+                downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
-                self.timer.callback.append(self.downxmlpage)
-            self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
-            self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-             'green': self.okRun,
-             'red': self.close,
-             'cancel': self.close}, -2)
+                self.close()
 
+    def showError(self, error):
+        print("download error =", error)
+        self.close()
 
-        def downxmlpage(self):
-            url = base64.b64decode("aHR0cDovL3d3dy5tYW51dGVrLml0L2lzZXR0aW5nLw==")
-            getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-        def errorLoad(self, error):
-            print(str(error))
-            self['info'].setText(_('Try again later ...'))
-            self.downloading = False
-
-        def _gotPageLoad(self, data):
-            self.xml = data
-            self.names = []
-            self.urls = []
-            try:
-                match = re.compile('href=".*?file=(.+?)">', re.DOTALL).findall(self.xml)
-                for url in match:
-                    name = url
-                    name = name.replace(".zip", "")
-                    name = name.replace("%20", " ")
-                    name = name.replace("NemoxyzRLS_", "")
-                    name = name.replace("_", " ")
-                    url64b = base64.b64decode("aHR0cDovL3d3dy5tYW51dGVrLml0L2lzZXR0aW5nL2VuaWdtYTIv")
-                    url = url64b + url
-                    self.urls.append(url)
-                    self.names.append(name)
-                    self['info'].setText(_('Please select ...'))
-                showlist(self.names, self['text'])
-                self.downloading = True
-            except:
-                self.downloading = False
-
-        def okRun(self):
-            self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
-
-        def okInstall(self, result):
-            global set
-            set = 0
-            if result:
-                if self.downloading == True:
-                    selection = str(self['text'].getCurrent())
-                    idx = self["text"].getSelectionIndex()
-                    self.name = self.names[idx]
-                    url = self.urls[idx]
-                    dest = "/tmp/settings.zip"
-                    print("url =", url)
-                    if 'dtt' not in url.lower():
-                        set = 1
-                        terrestrial()
-                    downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
-                else:
-                    self.close()
-
-        def showError(self, error):
-            print("download error =", error)
-            self.close()
-
-        def install(self, fplug):
-            checkfile = '/tmp/settings.zip'
-            if os.path.exists(checkfile):
-                fdest1 = "/tmp/unzipped"
-                fdest2 = "/etc/enigma2"
-                if os.path.exists("/tmp/unzipped"):
-                    cmd = "rm -rf '/tmp/unzipped'"
-                    os.system(cmd)
-                os.makedirs('/tmp/unzipped')
-                cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
-                os.system(cmd2)
-                for root, dirs, files in os.walk(fdest1):
-                    for name in dirs:
-                        os.system('rm -rf /etc/enigma2/lamedb')
-                        os.system('rm -rf /etc/enigma2/*.radio')
-                        os.system('rm -rf /etc/enigma2/*.tv')
-                        cmd3 = "cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2
-                        cmd4 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
-                        cmd5 = "rm -rf /tmp/settings.zip"
-                        cmd6 = "rm -rf /tmp/unzipped"
-                        cmd = []
-                        cmd.append(cmd3)
-                        cmd.append(cmd4)
-                        cmd.append(cmd5)
-                        cmd.append(cmd6)
-                    title = _("Installation Settings")
-                    self.session.open(tvConsole,_(title),cmd)
-                self.onShown.append(resettings)
+    def install(self, fplug):
+        checkfile = '/tmp/settings.zip'
+        if os.path.exists(checkfile):
+            fdest1 = "/tmp/unzipped"
+            fdest2 = "/etc/enigma2"
+            if os.path.exists("/tmp/unzipped"):
+                cmd = "rm -rf '/tmp/unzipped'"
+                os.system(cmd)
+            os.makedirs('/tmp/unzipped')
+            cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
+            os.system(cmd2)
+            for root, dirs, files in os.walk(fdest1):
+                for name in dirs:
+                    os.system('rm -rf /etc/enigma2/lamedb')
+                    os.system('rm -rf /etc/enigma2/*.radio')
+                    os.system('rm -rf /etc/enigma2/*.tv')
+                    cmd3 = "cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2
+                    cmd4 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
+                    cmd5 = "rm -rf /tmp/settings.zip"
+                    cmd6 = "rm -rf /tmp/unzipped"
+                    cmd = []
+                    cmd.append(cmd3)
+                    cmd.append(cmd4)
+                    cmd.append(cmd5)
+                    cmd.append(cmd6)
+                title = _("Installation Settings")
+                self.session.open(tvConsole,_(title),cmd)
+            self.onShown.append(resettings)
 
 class SettingMorpheus(Screen):
 
-        def __init__(self, session):
-            self.session = session
-            skin = skin_path + 'tvall.xml'
-            with open(skin, 'r') as f:
-                self.skin = f.read()
-            self.setup_title = ('Setting Morpheus')
-            Screen.__init__(self, session)
-            self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
-            self.list = []
-            self['text'] = tvList([])
-            self.addon = 'emu'
-            self.icount = 0
-            self['pth'] = Label('')
-            self['pform'] = Label('')
-            self['info'] = Label(_('Getting the list, please wait ...'))
-            self['key_green'] = Button(_('Install'))
-            self['key_red'] = Button(_('Back'))
-            self['key_yellow'] = Button(_(''))
-            self["key_blue"] = Button(_(''))
-            self['key_yellow'].hide()
-            self['key_blue'].hide()
+    def __init__(self, session):
+        self.session = session
+        skin = skin_path + 'tvall.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('Setting Morpheus')
+        Screen.__init__(self, session)
+        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.list = []
+        self['text'] = tvList([])
+        self.addon = 'emu'
+        self.icount = 0
+        self['pth'] = Label('')
+        self['pform'] = Label('')
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['key_green'] = Button(_('Install'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.downloading = False
+        self['progress'] = ProgressBar()
+        self['progresstext'] = StaticText()
+        self.timer = eTimer()
+        self.timer.start(500, 1)
+        if isDreamOS:
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+    def downxmlpage(self):
+        url = base64.b64decode("aHR0cDovL21vcnBoZXVzODgzLmFsdGVydmlzdGEub3JnL2Rvd25sb2FkL2luZGV4LnBocD9kaXI9")
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    def errorLoad(self, error):
+        print(str(error))
+        self['info'].setText(_('Try again later ...'))
+        self.downloading = False
+
+    def _gotPageLoad(self, data):
+        self.xml = data
+        self.names = []
+        self.urls = []
+        try:
+            match = re.compile('href=".*?file=(.+?)">', re.DOTALL).findall(self.xml)
+            for url in match:
+                if 'zip' in url.lower():
+                    if 'settings' in url.lower():
+                        continue
+                    name = url
+                    name = name.replace(".zip", "")
+                    name = name.replace("%20", " ")
+                    name = name.replace("_", " ")
+                    name = name.replace("Morph883", "Morpheus883")
+                    url64b = base64.b64decode("aHR0cDovL21vcnBoZXVzODgzLmFsdGVydmlzdGEub3JnL3NldHRpbmdzLw==")
+                    url = url64b + url
+                    print('url 64b-url-', url)
+                    self.urls.append(url)
+                    self.names.append(name)
+                    self['info'].setText(_('Please select ...'))
+            showlist(self.names, self['text'])
+            self.downloading = True
+        except:
             self.downloading = False
-            self['progress'] = ProgressBar()
-            self['progresstext'] = StaticText()
-            self.timer = eTimer()
-            self.timer.start(500, 1)
-            if isDreamOS:
-                self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+
+    def okRun(self):
+        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+
+    def okInstall(self, result):
+        global set
+        set = 0
+        if result:
+            if self.downloading == True:
+                selection = str(self['text'].getCurrent())
+                idx = self["text"].getSelectionIndex()
+                self.name = self.names[idx]
+                url = self.urls[idx]
+                dest = "/tmp/settings.zip"
+                print("url =", url)
+                url= str(url)
+                if 'dtt' not in url.lower():
+                    set = 1
+                    terrestrial()
+                downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
-                self.timer.callback.append(self.downxmlpage)
-            self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
-            self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-             'green': self.okRun,
-             'red': self.close,
-             'cancel': self.close}, -2)
+                self.close()
 
-        def downxmlpage(self):
-            url = base64.b64decode("aHR0cDovL21vcnBoZXVzODgzLmFsdGVydmlzdGEub3JnL2Rvd25sb2FkL2luZGV4LnBocD9kaXI9")
-            getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+    def showError(self, error):
+        print("download error =", error)
+        self.close()
 
-        def errorLoad(self, error):
-            print(str(error))
-            self['info'].setText(_('Try again later ...'))
-            self.downloading = False
-
-        def _gotPageLoad(self, data):
-            self.xml = data
-            self.names = []
-            self.urls = []
-            try:
-                match = re.compile('href=".*?file=(.+?)">', re.DOTALL).findall(self.xml)
-                for url in match:
-                    if 'zip' in url.lower():
-                        if 'settings' in url.lower():
-                            continue
-                        name = url
-                        name = name.replace(".zip", "")
-                        name = name.replace("%20", " ")
-                        name = name.replace("_", " ")
-                        name = name.replace("Morph883", "Morpheus883")
-                        url64b = base64.b64decode("aHR0cDovL21vcnBoZXVzODgzLmFsdGVydmlzdGEub3JnL3NldHRpbmdzLw==")
-                        url = url64b + url
-                        print('url 64b-url-', url)
-                        self.urls.append(url)
-                        self.names.append(name)
-                        self['info'].setText(_('Please select ...'))
-                showlist(self.names, self['text'])
-                self.downloading = True
-            except:
-                self.downloading = False
-
-        def okRun(self):
-            self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
-
-        def okInstall(self, result):
-            global set
-            set = 0
-            if result:
-                if self.downloading == True:
-                    selection = str(self['text'].getCurrent())
-                    idx = self["text"].getSelectionIndex()
-                    self.name = self.names[idx]
-                    url = self.urls[idx]
-                    dest = "/tmp/settings.zip"
-                    print("url =", url)
-                    url= str(url)
-                    if 'dtt' not in url.lower():
-                        set = 1
-                        terrestrial()
-                    downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
-                else:
-                    self.close()
-
-        def showError(self, error):
-            print("download error =", error)
-            self.close()
-
-        def install(self, fplug):
-            checkfile = '/tmp/settings.zip'
-            if os.path.exists(checkfile):
-                if os.path.exists("/tmp/unzipped"):
-                    os.system('rm -rf /tmp/unzipped')
-                os.makedirs('/tmp/unzipped')
-                os.system('unzip -o -q /tmp/settings.zip -d /tmp/unzipped')
-                path = '/tmp/unzipped'
-                for root, dirs, files in os.walk(path):
-                    for pth in dirs:
-                        cmd = []
-                        os.system('rm -rf /etc/enigma2/lamedb')
-                        os.system('rm -rf /etc/enigma2/*.radio')
-                        os.system('rm -rf /etc/enigma2/*.tv')
-                        cmd1 = "cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'"
-                        cmd2 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
-                        cmd.append(cmd1)
-                        cmd.append(cmd2)
-                title = _("Installation Settings")
-                self.session.open(tvConsole,_(title),cmd)
-            deletetmp()
-            self.onShown.append(resettings)
+    def install(self, fplug):
+        checkfile = '/tmp/settings.zip'
+        if os.path.exists(checkfile):
+            if os.path.exists("/tmp/unzipped"):
+                os.system('rm -rf /tmp/unzipped')
+            os.makedirs('/tmp/unzipped')
+            os.system('unzip -o -q /tmp/settings.zip -d /tmp/unzipped')
+            path = '/tmp/unzipped'
+            for root, dirs, files in os.walk(path):
+                for pth in dirs:
+                    cmd = []
+                    os.system('rm -rf /etc/enigma2/lamedb')
+                    os.system('rm -rf /etc/enigma2/*.radio')
+                    os.system('rm -rf /etc/enigma2/*.tv')
+                    cmd1 = "cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'"
+                    cmd2 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
+                    cmd.append(cmd1)
+                    cmd.append(cmd2)
+            title = _("Installation Settings")
+            self.session.open(tvConsole,_(title),cmd)
+        deletetmp()
+        self.onShown.append(resettings)
 
 class SettingCiefp(Screen):
 
@@ -2443,7 +2445,7 @@ class SettingCiefp(Screen):
             match = re.compile(regex,re.DOTALL).findall(self.xml)
             for url,date in match:
                 if url.find('.tar.gz') != -1 :
-                    name = "ciefp" + url + ' '      + date
+                    name = "ciefp" + url + ' ' + date
                     name = name.replace(".tar.gz", "")
                     name = name.replace("%20", " ")
                     url64b = base64.b64decode("aHR0cDovLzE3OC42My4xNTYuNzUvcGFuZWxhZGRvbnMvQ2llZnAvY2llZnA=")
@@ -2505,7 +2507,7 @@ class SettingBi58(Screen):
         self.session = session
         skin = skin_path + 'tvall.xml'
         with open(skin, 'r') as f:
-                self.skin = f.read()
+            self.skin = f.read()
         self.setup_title = ('Setting Bi58')
         Screen.__init__(self, session)
         self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
