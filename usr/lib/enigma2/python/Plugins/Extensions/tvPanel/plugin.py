@@ -2743,15 +2743,6 @@ class tvInstall(Screen):
         list = []
         list.sort()
         self['info'].setText(_('... please wait'))
-        ##################
-        # self.data = data
-        # self.name = name
-        # self.timer = eTimer()
-        # self.timer.start(200, 1)
-        # if isDreamOS:
-            # self.timer_conn = self.timer.timeout.connect(self.DownStart)
-        # else:
-            # self.timer.callback.append(self.DownStart)
         n1 = data.find(name, 0)
         n2 = data.find("</plugins>", n1)
         data1 = data[n1:n2]
@@ -2793,21 +2784,9 @@ class tvInstall(Screen):
             print('DOOOOOMMMMMMM: ', dom)
             self.prombt(com, dom)
 
-
     def downloadProgress(self, recvbytes, totalbytes):
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-
-    def install(self, fplug):
-        checkfile = '/tmp/ipkdownloaded.ipk'
-        if os.path.exists(checkfile):
-            self.session.open(tvConsole, _('Installing: %s') % self.dom, ['opkg install %s' % checkfile])#self.com])
-            self['info'].setText(_('Installation done !!!'))
-        self['info'].setText(_('Please select ...'))
-        self['progresstext'].text = ''
-        self.progclear = 0
-        self['progress'].setValue(self.progclear)
-        return
 
     def showError(self, error):
         print("download error =", error)
@@ -2819,112 +2798,240 @@ class tvInstall(Screen):
     def prombt(self, com, dom):
         useragent = "--header='User-Agent: QuickTime/7.6.2 (qtver=7.6.2;os=Windows NT 5.1Service Pack 3)'"
         self.com = com
-        self.dom = dom
+        self.dom = dom.lower()
         print('self.com', self.com)
         self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-        if self.com.endswith('.ipk'):
-                self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-                url = self.com
-                self.session.open(tvConsole, _('Installing: %s') % self.dom, ['opkg install %s' % self.com])
-                self.startTimer()
-                self['info'].setText(_('Installation done !!!'))
-        #### with progresss bar
+
+        if self.com != None:
+                extensionlist = self.com.split('.')
+                extension = extensionlist[-1].lower()
+                if len(extensionlist) > 1:
+                    tar = extensionlist[-2].lower()
+
+                if extension in ["gz","bz2"] and tar == "tar":
+                    self.command = ['']
+                    if extension == "gz":
+                        dest = '/tmp/downloaded.gz'
+                        self.command = [ "tar -xzvf " + dest + " -C /" ]
+                    elif extension == "bz2":
+                        self.command = [ "tar -xjvf " + dest + " -C /" ]
+                        dest = '/tmp/downloaded.bz2'
+                    self.timer = eTimer()
+                    self.timer.start(500, True)
+                    try:
+                        self.timer.callback.append(deletetmp)
+                    except:
+                        self.timer_conn = self.timer.timeout.connect(deletetmp)
+                    cmd = 'wget -q -O /tmp/%s %s;'+  self.command[0] % (dest, str(self.com))
+                    self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
+                    self['info'].setText(_('Installation done !!!'))
+
+                elif extension == "deb":
+                    if not isDreamOS:
+                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self['info'].setText(_('Installation canceled!'))
+                    else:
+                        self.timer = eTimer()
+                        self.timer.start(500, True)
+                        try:
+                            self.timer.callback.append(deletetmp)
+                        except:
+                            self.timer_conn = self.timer.timeout.connect(deletetmp)
+                        cmd = 'wget -q -O /tmp/tmp.deb %s;dpkg --force-all -i /tmp/tmp.deb' % str(self.com)
+                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
+                        self['info'].setText(_('Installation done !!!'))
+                elif self.com.endswith(".ipk"):
+                        dest = '/tmp/ipkdownloaded.ipk'
+                        self.timer = eTimer()
+                        self.timer.start(500, True)
+                        try:
+                            self.timer.callback.append(deletetmp)
+                        except:
+                            self.timer_conn = self.timer.timeout.connect(deletetmp)
+                        cmd = 'wget -q -O /tmp/tmp.ipk %s;opkg install -force-overwrite -force-depends /tmp/tmp.ipk' % str(self.com)
+                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
+                        self['info'].setText(_('Installation done !!!'))
+
+                elif self.com.endswith('.zip'):
+                    if 'setting' in self.dom.lower():
+                        terrestrial()
+                        if os.path.exists("/tmp/unzipped"):
+                            os.system('rm -rf /tmp/unzipped')
+                        os.makedirs('/tmp/unzipped')
+                        cmd = []
+                        cmd1 = 'unzip -o -q /tmp/settings.zip -d /tmp/unzipped'
+                        cmd.append(cmd1)
+                        cmd2 = 'rm -rf /etc/enigma2/lamedb'
+                        cmd.append(cmd2)
+                        cmd3 = 'rm -rf /etc/enigma2/*.radio'
+                        cmd.append(cmd3)
+                        cmd4 = 'rm -rf /etc/enigma2/*.tv'
+                        cmd.append(cmd4)
+                        cmd5 = 'cp -rf /tmp/unzipped/*.tv /etc/enigma2'
+                        cmd.append(cmd5)
+                        cmd6 = 'cp -rf /tmp/unzipped/*.radio /etc/enigma2'
+                        cmd.append(cmd6)
+                        cmd7 = 'cp -rf /tmp/unzipped/lamedb /etc/enigma2'
+                        cmd.append(cmd7)
+                        if not os.path.exists("/etc/enigma2/blacklist"):
+                            cmd8 = 'cp -rf /tmp/unzipped/blacklist /etc/tuxbox/'
+                            cmd.append(cmd8)
+                        if not os.path.exists("/etc/enigma2/whitelist"):
+                            cmd9 ='cp -rf /tmp/unzipped/whitelist /etc/tuxbox/'
+                            cmd.append(cmd9)
+                        cmd10 = 'cp -rf /tmp/unzipped/satellites.xml /etc/tuxbox/'
+                        cmd.append(cmd10)
+                        cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
+                        cmd.append(cmd11)
+                        
+                        terrestrial_rest()
+                        self.reloadSettings2()
+                        self.timer = eTimer()
+                        self.timer.start(500, True)
+                        try:
+                            self.timer.callback.append(deletetmp)
+                        except:
+                            self.timer_conn = self.timer.timeout.connect(deletetmp)                        
+                        self.session.open(tvConsole, _('SETTING - install: %s') % dom, [cmd])
+                        # self.session.open(tvConsole, _('SETTING - install: %s') % dom, cmd)
+                        self['info'].setText(_('Installation done !!!'))
+
+                    elif 'picon' in self.dom.lower():
+                        dest = '/tmp/picon.zip'
+                        self.timer = eTimer()
+                        self.timer.start(500, True)
+                        try:
+                            self.timer.callback.append(deletetmp)
+                        except:
+                            self.timer_conn = self.timer.timeout.connect(deletetmp)
+                        cmd = ['wget -q -O /tmp/picon.zip %s; unzip -o -q /tmp/picon.zip -d %s' %(str(self.com),mmkpicon)]
+                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
+                        self['info'].setText(_('Installation done !!!'))
+
+                    else:
+                        self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
+                        downplug = self.dom.replace(' ', '') + '.zip'
+                        downplug = downplug.lower()
+                        # os.system("wget %s -c '%s' -O '/tmp/%s' > /dev/null" % (useragent,self.com,downplug) )
+                        self.timer = eTimer()
+                        self.timer.start(500, True)
+                        try:
+                            self.timer.callback.append(deletetmp)
+                        except:
+                            self.timer_conn = self.timer.timeout.connect(deletetmp)
+                        cmd = ["wget %s -c '%s' -O '/tmp/%s' > /dev/null" % (useragent,self.com,downplug)]
+                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
+                        self['info'].setText(_('Installation done !!!'))
+                        self.mbox = self.session.open(tvMessageBox, _('Download file in /tmp successful!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self['info'].setText(_('Download file in /tmp successful!!'))
+                else:
+                    self['info'].setText(_('Download failed!') + self.dom + _('... Not supported'))
+                return
+                
+        
         # if self.com.endswith('.ipk'):
                 # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
                 # url = self.com
-                # print 'urllll: ', url
-                # dest = '/tmp/ipkdownloaded.ipk'
-                # self.download = downloadWithProgress(url, dest)
-                # self.download.addProgress(self.downloadProgress)
-                # self.download.start().addCallback(self.install).addErrback(self.showError)
-        elif self.com.endswith('.tar.gz'):
-                self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-                self.startTimer()
-                os.system("wget %s -c '%s' -O '/tmp/download.tar.gz' > /dev/null" % (useragent,self.com) )
-                self.session.open(tvConsole, _('Installing: %s') % self.dom, ['tar -xzvf ' + '/tmp/download.tar.gz' + ' -C /'])
-                self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
-                self['info'].setText(_('Installation done !!!'))
-        elif self.com.endswith('.tar.bz2'):
-                self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-                self.startTimer()
-                os.system("wget %s -c '%s' -O '/tmp/download.bz2' > /dev/null" % (useragent,self.com) )
-                self.session.open(tvConsole, _('Installing: %s') % self.dom, ['tar -xyvf ' + '/tmp/download.tar.bz2' + ' -C /'])
-                self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
-                self['info'].setText(_('Installation done !!!'))
-        elif self.com.endswith('.tbz2'):
-                self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-                self.startTimer()
-                os.system("wget %s -c '%s' -O '/tmp/download.tbz2' > /dev/null" % (useragent,self.com) )
-                self.session.open(tvConsole, _('Installing: %s') % self.dom, ['tar -xyvf ' + '/tmp/download.tbz2' + ' -C /'])
-                self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
-                self['info'].setText(_('Installation done !!!'))
-        elif self.com.endswith('.tbz'):
-                self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-                self.startTimer()
-                os.system("wget %s -c '%s' -O '/tmp/download.tbz' > /dev/null" % (useragent,self.com) )
-                self.session.open(tvConsole, _('Installing: %s') % self.dom, ['tar -xyvf ' + '/tmp/download.tbz' + ' -C /'])
-                self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
-                self['info'].setText(_('Installation done !!!'))
-        elif self.com.endswith('.deb'):
-            if not isDreamOS:
-                self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
-                self['info'].setText(_('Installation canceled!'))
-            else:
-                self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-                self.startTimer()
-                os.system("wget %s -c '%s' -O '/tmp/download.deb' > /dev/null" % (useragent,self.com) )
-                self.session.open(tvConsole, _('Installing: %s') % self.dom, ['echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dom + '";dpkg --force-all -i /tmp/download.deb > /dev/null 2>&1'])   # dpkg -i --force-overwrite /tmp/download.deb > /dev/null']) #; apt-get -f --force-yes --assume-yes install; sleep 3'])
-                self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
-                self['info'].setText(_('Installation done !!!'))
-        elif self.com.endswith('.zip'):
-            if 'setting' in self.dom.lower():
-                self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-                self.startTimer()
-                os.system("wget %s -c '%s' -O '/tmp/settings.zip' > /dev/null" % (useragent,self.com) )
-                checkfile = '/tmp/settings.zip'
-                if os.path.exists(checkfile):
-                    terrestrial()
-                    if os.path.exists("/tmp/unzipped"):
-                        os.system('rm -rf /tmp/unzipped')
-                    os.makedirs('/tmp/unzipped')
-                    os.system('unzip -o -q /tmp/settings.zip -d /tmp/unzipped')
-                    os.system('rm -rf /etc/enigma2/lamedb')
-                    os.system('rm -rf /etc/enigma2/*.radio')
-                    os.system('rm -rf /etc/enigma2/*.tv')
-                    os.system("cp -rf /tmp/unzipped/*.tv /etc/enigma2")
-                    os.system("cp -rf /tmp/unzipped/*.radio /etc/enigma2")
-                    os.system("cp -rf /tmp/unzipped/lamedb /etc/enigma2")
-                    if not os.path.exists("/etc/enigma2/blacklist"):
-                        os.system("cp -rf /tmp/unzipped/blacklist /etc/tuxbox/")
-                    if not os.path.exists("/etc/enigma2/whitelist"):
-                        os.system("cp -rf /tmp/unzipped/whitelist /etc/tuxbox/")
-                    os.system("cp -rf /tmp/unzipped/satellites.xml /etc/tuxbox/")
-                    os.system("cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/")
-                    terrestrial_rest()
-                    self.reloadSettings2()
-                else:
-                    self.mbox = self.session.open(tvMessageBox, _('Download Failed!'), tvMessageBox.TYPE_INFO, timeout=5)
-            elif 'picon' in self.dom.lower():
-                os.system("wget %s -c '%s' -O '/tmp/download.zip' > /dev/null" % (useragent,self.com) )
-                checkfile = '/tmp/download.zip'
-                if os.path.exists(checkfile):
-                    self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
-                    cmd1 = "unzip -o -q '/tmp/download.zip' -d " + mmkpicon
-                    cmd = []
-                    cmd.append(cmd1)
-                    title = _("Installation Picons")
-                    self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
-                    self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
-                    self['info'].setText(_('Installation done !!!'))
-            else:
-                self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
-                downplug = self.dom.replace(' ', '') + '.zip'
-                os.system("wget %s -c '%s' -O '/tmp/%s' > /dev/null" % (useragent,self.com,downplug) )
-                self.mbox = self.session.open(tvMessageBox, _('Download file in /tmp successful!'), tvMessageBox.TYPE_INFO, timeout=5)
-                self['info'].setText(_('Download file in /tmp successful!!'))
-        else:
-            self['info'].setText(_('Download failed!') + self.dom + _('... Not supported'))
-        return
+                # self.session.open(tvConsole, _('Installing: %s') % self.dom, ['opkg install %s' % self.com])
+                # self.startTimer()
+                # self['info'].setText(_('Installation done !!!'))
+        # #### with progresss bar
+        # # if self.com.endswith('.ipk'):
+                # # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
+                # # url = self.com
+                # # print 'urllll: ', url
+                # # dest = '/tmp/ipkdownloaded.ipk'
+                # # self.download = downloadWithProgress(url, dest)
+                # # self.download.addProgress(self.downloadProgress)
+                # # self.download.start().addCallback(self.install).addErrback(self.showError)
+        # elif self.com.endswith('.tar.gz'):
+                # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
+                # self.startTimer()
+                # os.system("wget %s -c '%s' -O '/tmp/download.tar.gz' > /dev/null" % (useragent,self.com) )
+                # self.session.open(tvConsole, _('Installing: %s') % self.dom, ['tar -xzvf ' + '/tmp/download.tar.gz' + ' -C /'])
+                # self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
+                # self['info'].setText(_('Installation done !!!'))
+        # elif self.com.endswith('.tar.bz2'):
+                # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
+                # self.startTimer()
+                # os.system("wget %s -c '%s' -O '/tmp/download.bz2' > /dev/null" % (useragent,self.com) )
+                # self.session.open(tvConsole, _('Installing: %s') % self.dom, ['tar -xyvf ' + '/tmp/download.tar.bz2' + ' -C /'])
+                # self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
+                # self['info'].setText(_('Installation done !!!'))
+        # elif self.com.endswith('.tbz2'):
+                # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
+                # self.startTimer()
+                # os.system("wget %s -c '%s' -O '/tmp/download.tbz2' > /dev/null" % (useragent,self.com) )
+                # self.session.open(tvConsole, _('Installing: %s') % self.dom, ['tar -xyvf ' + '/tmp/download.tbz2' + ' -C /'])
+                # self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
+                # self['info'].setText(_('Installation done !!!'))
+        # elif self.com.endswith('.tbz'):
+                # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
+                # self.startTimer()
+                # os.system("wget %s -c '%s' -O '/tmp/download.tbz' > /dev/null" % (useragent,self.com) )
+                # self.session.open(tvConsole, _('Installing: %s') % self.dom, ['tar -xyvf ' + '/tmp/download.tbz' + ' -C /'])
+                # self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
+                # self['info'].setText(_('Installation done !!!'))
+        # elif self.com.endswith('.deb'):
+            # if not isDreamOS:
+                # self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                # self['info'].setText(_('Installation canceled!'))
+            # else:
+                # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
+                # self.startTimer()
+                # os.system("wget %s -c '%s' -O '/tmp/download.deb' > /dev/null" % (useragent,self.com) )
+                # self.session.open(tvConsole, _('Installing: %s') % self.dom, ['echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dom + '";dpkg --force-all -i /tmp/debdownloaded.deb > /dev/null 2>&1'])   # dpkg -i --force-overwrite /tmp/download.deb > /dev/null']) #; apt-get -f --force-yes --assume-yes install; sleep 3'])
+                # self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
+                # self['info'].setText(_('Installation done !!!'))
+        # elif self.com.endswith('.zip'):
+            # if 'setting' in self.dom.lower():
+                # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
+                # self.startTimer()
+                # os.system("wget %s -c '%s' -O '/tmp/settings.zip' > /dev/null" % (useragent,self.com) )
+                # checkfile = '/tmp/settings.zip'
+                # if os.path.exists(checkfile):
+                    # terrestrial()
+                    # if os.path.exists("/tmp/unzipped"):
+                        # os.system('rm -rf /tmp/unzipped')
+                    # os.makedirs('/tmp/unzipped')
+                    # os.system('unzip -o -q /tmp/settings.zip -d /tmp/unzipped')
+                    # os.system('rm -rf /etc/enigma2/lamedb')
+                    # os.system('rm -rf /etc/enigma2/*.radio')
+                    # os.system('rm -rf /etc/enigma2/*.tv')
+                    # os.system("cp -rf /tmp/unzipped/*.tv /etc/enigma2")
+                    # os.system("cp -rf /tmp/unzipped/*.radio /etc/enigma2")
+                    # os.system("cp -rf /tmp/unzipped/lamedb /etc/enigma2")
+                    # if not os.path.exists("/etc/enigma2/blacklist"):
+                        # os.system("cp -rf /tmp/unzipped/blacklist /etc/tuxbox/")
+                    # if not os.path.exists("/etc/enigma2/whitelist"):
+                        # os.system("cp -rf /tmp/unzipped/whitelist /etc/tuxbox/")
+                    # os.system("cp -rf /tmp/unzipped/satellites.xml /etc/tuxbox/")
+                    # os.system("cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/")
+                    # terrestrial_rest()
+                    # self.reloadSettings2()
+                # else:
+                    # self.mbox = self.session.open(tvMessageBox, _('Download Failed!'), tvMessageBox.TYPE_INFO, timeout=5)
+            # elif 'picon' in self.dom.lower():
+                # os.system("wget %s -c '%s' -O '/tmp/download.zip' > /dev/null" % (useragent,self.com) )
+                # checkfile = '/tmp/download.zip'
+                # if os.path.exists(checkfile):
+                    # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
+                    # cmd1 = "unzip -o -q '/tmp/download.zip' -d " + mmkpicon
+                    # cmd = []
+                    # cmd.append(cmd1)
+                    # title = _("Installation Picons")
+                    # self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+                    # self.mbox = self.session.open(tvMessageBox, _('Installation done !!!'), tvMessageBox.TYPE_INFO, timeout=5)
+                    # self['info'].setText(_('Installation done !!!'))
+            # else:
+                # self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
+                # downplug = self.dom.replace(' ', '') + '.zip'
+                # os.system("wget %s -c '%s' -O '/tmp/%s' > /dev/null" % (useragent,self.com,downplug) )
+                # self.mbox = self.session.open(tvMessageBox, _('Download file in /tmp successful!'), tvMessageBox.TYPE_INFO, timeout=5)
+                # self['info'].setText(_('Download file in /tmp successful!!'))
+        # else:
+            # self['info'].setText(_('Download failed!') + self.dom + _('... Not supported'))
+        # return
 
     def reloadSettings2(self):
         ReloadBouquet()
@@ -2932,13 +3039,9 @@ class tvInstall(Screen):
         self['info'].setText(_('Installation done !!!'))
 
     def startTimer(self):
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(deletetmp)
-        else:
-            self.timer.callback.append(deletetmp)
-        return
+        os.system('sleep 5')
+        pass
+
 
 class tvConsole(Screen):
 
@@ -2953,6 +3056,7 @@ class tvConsole(Screen):
         self.finishedCallback = finishedCallback
         self.closeOnSuccess = closeOnSuccess
         self.errorOcurred = False
+        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
         self['text'] = ScrollLabel('')
         self['actions'] = ActionMap(['WizardActions', 'DirectionActions' 'ColorActions',], {'ok': self.cancel,
          'back': self.cancel,
@@ -2960,7 +3064,7 @@ class tvConsole(Screen):
          'up': self['text'].pageUp,
          'down': self['text'].pageDown}, -1)
         self.cmdlist = cmdlist
-        self.newtitle = _('..:: TiVuStream Addons V. %s ::..' % currversion) #title
+        self.newtitle = _('..:: TiVuStream Addons V. %s ::..' % currversion)
         self.onShown.append(self.updateTitle)
         self.container = eConsoleAppContainer()
         self.run = 0
@@ -2973,6 +3077,7 @@ class tvConsole(Screen):
         except:
             self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
         self.onLayoutFinish.append(self.startRun)
+
 
     def updateTitle(self):
         self.setTitle(self.newtitle)
