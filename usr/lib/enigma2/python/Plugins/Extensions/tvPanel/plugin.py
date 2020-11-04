@@ -54,8 +54,8 @@ headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple
 
 currversion      = '1.9.1'
 
-PY3 = sys.version_info.major >= 3
-
+# PY3 = sys.version_info.major >= 3
+PY3 = sys.version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request
     from urllib.error import URLError
@@ -63,6 +63,46 @@ if PY3:
 else:
     from urllib2 import urlopen, Request, URLError
     from urllib import urlretrieve
+
+
+# PY3 = version_info[0] == 3
+# if PY3:
+	# # Python 3
+	# compat_str = str
+	# from urllib.parse import urlencode as compat_urlencode
+	# from urllib.parse import quote as compat_quote
+	# from urllib.parse import unquote_to_bytes as compat_unquote_to_bytes
+	# from urllib.request import urlopen as compat_urlopen
+	# from urllib.request import Request as compat_Request
+	# from urllib.error import URLError as compat_URLError
+	# from urllib.parse import urljoin as compat_urljoin
+	# from urllib.parse import urlparse as compat_urlparse
+# else:
+	# # Python 2
+	# compat_str = unicode
+	# from urllib import urlencode as compat_urlencode
+	# from urllib import quote as compat_quote
+	# from urllib import unquote as compat_unquote_to_bytes
+	# from urllib2 import urlopen as compat_urlopen
+	# from urllib2 import Request as compat_Request
+	# from urllib2 import URLError as compat_URLError
+	# from urlparse import urljoin as compat_urljoin
+	# from urlparse import urlparse as compat_urlparse
+
+if sys.version_info >= (2, 7, 9):
+	try:
+		import ssl
+		sslContext = ssl._create_unverified_context()
+	except:
+		sslContext = None
+
+def ssl_urlopen(url):
+	if sslContext:
+		return urlopen(url, context=sslContext)
+	else:
+		return urlopen(url)
+        
+
 
 set = 0
 isDreamOS = False
@@ -81,6 +121,8 @@ try:
     import zipfile
 except:
     pass
+    
+    
 try:
     _create_unverified_https_context = ssl._create_unverified_context
 except AttributeError:
@@ -169,10 +211,12 @@ config.plugins.tvPanel.strtst = ConfigYesNo(default=False)
 config.plugins.tvPanel.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvPanel.autoupd = ConfigYesNo(default=False)
 
-pblk             = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT11Yzd1eHBiMGQzaTg4JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
-ptrs             = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT15Mms1Nmd4ZmRyb2FtJmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
-host_trs         = base64.b64decode(ptrs)
-host_blk         = base64.b64decode(pblk)
+
+pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT11Yzd1eHBiMGQzaTg4JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+host_trs        = base64.b64decode(ptrs)
+host_blk        = base64.b64decode(pblk)
+
 HD               = getDesktop(0).size()
 # plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
 plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/tvPanel'
@@ -3883,7 +3927,7 @@ class MMarkFolderBlk(Screen):
                 url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
                 url = url.replace('\\','')
                 pic = no_cover
-                name = name + ' ' + data[0:10]
+                name = 'MMark Picons ' + name #+ ' ' + data[0:10]
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -4045,6 +4089,7 @@ class MMarkBlack(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self.downloading = False
         self['progress'].setValue(self.progclear)
 
     def showError(self, error):
@@ -4123,7 +4168,7 @@ class MMarkFolderTrs(Screen):
             for url, name, data in match:
                 url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
                 pic = no_cover
-                name = name + ' ' + data[0:10]
+                name = 'MMark Picons ' + name #+ ' ' + data[0:10]
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -4283,6 +4328,7 @@ class MMarkTrasp(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self.downloading = False
         self['progress'].setValue(self.progclear)
 
     def showError(self, error):
@@ -4411,6 +4457,7 @@ class ColomboTrasp(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self.downloading = False
         self['progress'].setValue(self.progclear)
         self.close()
 
@@ -4606,6 +4653,7 @@ class kodilite(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self.downloading = False
         self['progress'].setValue(self.progclear)
 
     def showError(self, error):
@@ -4730,6 +4778,7 @@ class plugins(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self.downloading = False
         self['progress'].setValue(self.progclear)
 
     def showError(self, error):
@@ -4875,6 +4924,7 @@ class plugins_adult(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self.downloading = False
         self['progress'].setValue(self.progclear)
 
     def showError(self, error):
@@ -4997,6 +5047,7 @@ class script(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self.downloading = False
         self['progress'].setValue(self.progclear)
 
     def showError(self, error):
@@ -5120,6 +5171,7 @@ class repository(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self.downloading = False
         self['progress'].setValue(self.progclear)
 
     def showError(self, error):
