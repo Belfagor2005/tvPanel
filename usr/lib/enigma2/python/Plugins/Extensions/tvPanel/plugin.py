@@ -3,6 +3,8 @@
 #   skin by MMark    #
 #     30/10/2020     #
 #--------------------#
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
@@ -64,31 +66,6 @@ else:
     from urllib2 import urlopen, Request, URLError
     from urllib import urlretrieve
 
-
-# PY3 = version_info[0] == 3
-# if PY3:
-	# # Python 3
-	# compat_str = str
-	# from urllib.parse import urlencode as compat_urlencode
-	# from urllib.parse import quote as compat_quote
-	# from urllib.parse import unquote_to_bytes as compat_unquote_to_bytes
-	# from urllib.request import urlopen as compat_urlopen
-	# from urllib.request import Request as compat_Request
-	# from urllib.error import URLError as compat_URLError
-	# from urllib.parse import urljoin as compat_urljoin
-	# from urllib.parse import urlparse as compat_urlparse
-# else:
-	# # Python 2
-	# compat_str = unicode
-	# from urllib import urlencode as compat_urlencode
-	# from urllib import quote as compat_quote
-	# from urllib import unquote as compat_unquote_to_bytes
-	# from urllib2 import urlopen as compat_urlopen
-	# from urllib2 import Request as compat_Request
-	# from urllib2 import URLError as compat_URLError
-	# from urlparse import urljoin as compat_urljoin
-	# from urlparse import urlparse as compat_urlparse
-
 if sys.version_info >= (2, 7, 9):
 	try:
 		import ssl
@@ -101,7 +78,7 @@ def ssl_urlopen(url):
 		return urlopen(url, context=sslContext)
 	else:
 		return urlopen(url)
-        
+
 
 
 set = 0
@@ -121,8 +98,8 @@ try:
     import zipfile
 except:
     pass
-    
-    
+
+
 try:
     _create_unverified_https_context = ssl._create_unverified_context
 except AttributeError:
@@ -211,11 +188,18 @@ config.plugins.tvPanel.strtst = ConfigYesNo(default=False)
 config.plugins.tvPanel.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvPanel.autoupd = ConfigYesNo(default=False)
 
-
-pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT11Yzd1eHBiMGQzaTg4JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
+
 host_trs        = base64.b64decode(ptrs)
 host_blk        = base64.b64decode(pblk)
+host_mov        = base64.b64decode(ptmov)
+
+# pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+# ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+# host_trs        = base64.b64decode(ptrs)
+# host_blk        = base64.b64decode(pblk)
 
 HD               = getDesktop(0).size()
 # plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
@@ -1689,8 +1673,8 @@ class debian(Screen):
         try:
             match = re.compile(regexC,re.DOTALL).findall(self.xml)
             for name in match:
-               self.list.append(name)
-               self['info'].setText(_('Please select ...'))
+                self.list.append(name)
+                self['info'].setText(_('Please select ...'))
             showlist(self.list, self['text'])
             self.downloading = True
         except:
@@ -1909,7 +1893,7 @@ class SettingColombo(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
-                print("url =", url)
+                # print("url =", url)
                 if 'dtt' not in url.lower():
                     set = 1
                     terrestrial()
@@ -2032,7 +2016,7 @@ class SettingVhan(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
-                print("url =", url)
+                # print("url =", url)
                 if 'dtt' not in url.lower():
                     set = 1
                     terrestrial()
@@ -2054,7 +2038,7 @@ class SettingVhan(Screen):
             fdest2 = "/etc/enigma2"
             cmd1 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
             cmd2 = "cp -rf  '/tmp/" + self.name + "'/* " + fdest2
-            print("cmd2 =", cmd2)
+            # print("cmd2 =", cmd2)
             cmd3 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
             cmd4 = "rm -rf /tmp/settings.zip"
             cmd5 = "rm -rf /tmp/Vhannibal*"
@@ -2157,7 +2141,7 @@ class Milenka61(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
-                print("url =", url)
+                # print("url =", url)
                 if 'dtt' not in url.lower():
                     set = 1
                     terrestrial()
@@ -2176,7 +2160,7 @@ class Milenka61(Screen):
             os.system('rm -rf /etc/enigma2/*.radio')
             os.system('rm -rf /etc/enigma2/*.tv')
             cmd1 = "tar -xvf /tmp/*.tar.gz -C /"
-            print("cmd1 =", cmd1)
+            # print("cmd1 =", cmd1)
             cmd3 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
             cmd4 = "rm -rf /tmp/*.tar.gz"
             cmd = []
@@ -2270,7 +2254,7 @@ class SettingManutek(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
-                print("url =", url)
+                # print("url =", url)
                 if 'dtt' not in url.lower():
                     set = 1
                     terrestrial()
@@ -2375,7 +2359,7 @@ class SettingMorpheus(Screen):
                     name = name.replace("Morph883", "Morpheus883")
                     url64b = base64.b64decode("aHR0cDovL21vcnBoZXVzODgzLmFsdGVydmlzdGEub3JnL3NldHRpbmdzLw==")
                     url = url64b + url
-                    print('url 64b-url-', url)
+                    # print('url 64b-url-', url)
                     self.urls.append(url)
                     self.names.append(name)
                     self['info'].setText(_('Please select ...'))
@@ -2397,7 +2381,7 @@ class SettingMorpheus(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
-                print("url =", url)
+                # print("url =", url)
                 url= str(url)
                 if 'dtt' not in url.lower():
                     set = 1
@@ -2515,7 +2499,7 @@ class SettingCiefp(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
-                print("url =", url)
+                # print("url =", url)
                 if 'dtt' not in url.lower():
                     set = 1
                     terrestrial()
@@ -2534,7 +2518,7 @@ class SettingCiefp(Screen):
             os.system('rm -rf /etc/enigma2/*.radio')
             os.system('rm -rf /etc/enigma2/*.tv')
             cmd1 = "tar -xvf /tmp/*.tar.gz -C /"
-            print("cmd1 =", cmd1)
+            # print("cmd1 =", cmd1)
             cmd3 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
             cmd4 = "rm -rf /tmp/*.tar.gz"
             cmd = []
@@ -2627,7 +2611,7 @@ class SettingBi58(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
-                print("url =", url)
+                # print("url =", url)
                 if 'dtt' not in url.lower():
                     set = 1
                     terrestrial()
@@ -2646,7 +2630,7 @@ class SettingBi58(Screen):
             os.system('rm -rf /etc/enigma2/*.radio')
             os.system('rm -rf /etc/enigma2/*.tv')
             cmd1 = "tar -xvf /tmp/*.tar.gz -C /"
-            print("cmd1 =", cmd1)
+            # print("cmd1 =", cmd1)
             cmd3 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
             cmd4 = "rm -rf /tmp/*.tar.gz"
             cmd = []
@@ -2739,7 +2723,7 @@ class SettingPredrag(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
-                print("url =", url)
+                # print("url =", url)
                 if 'dtt' not in url.lower():
                     set = 1
                     terrestrial()
@@ -2758,7 +2742,7 @@ class SettingPredrag(Screen):
             os.system('rm -rf /etc/enigma2/*.radio')
             os.system('rm -rf /etc/enigma2/*.tv')
             cmd1 = "tar -xvf /tmp/*.tar.gz -C /"
-            print("cmd1 =", cmd1)
+            # print("cmd1 =", cmd1)
             cmd3 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
             cmd4 = "rm -rf /tmp/*.tar.gz"
             cmd = []
@@ -2821,11 +2805,11 @@ class tvInstall(Screen):
     def selclicked(self, result):
         if result:
             idx = self["text"].getSelectionIndex()
-            print('IDXXXXXXXXXXXXX: ', idx)
+            # print('IDXXXXXXXXXXXXX: ', idx)
             dom = self.names[idx]
             com = self.urls[idx]
-            print('COOMMMMMMMM: ', com)
-            print('DOOOOOMMMMMMM: ', dom)
+            # print('COOMMMMMMMM: ', com)
+            # print('DOOOOOMMMMMMM: ', dom)
             self.prombt(com, dom)
 
     def downloadProgress(self, recvbytes, totalbytes):
@@ -2843,7 +2827,7 @@ class tvInstall(Screen):
         useragent = "--header='User-Agent: QuickTime/7.6.2 (qtver=7.6.2;os=Windows NT 5.1Service Pack 3)'"
         self.com = com
         self.dom = dom.lower()
-        print('self.com', self.com)
+        # print('self.com', self.com)
         self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
 
         if self.com != None:
@@ -2927,7 +2911,7 @@ class tvInstall(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        
+
                         terrestrial_rest()
                         self.reloadSettings2()
                         self.timer = eTimer()
@@ -2935,7 +2919,7 @@ class tvInstall(Screen):
                         try:
                             self.timer.callback.append(deletetmp)
                         except:
-                            self.timer_conn = self.timer.timeout.connect(deletetmp)                        
+                            self.timer_conn = self.timer.timeout.connect(deletetmp)
                         self.session.open(tvConsole, _('SETTING - install: %s') % dom, [cmd])
                         # self.session.open(tvConsole, _('SETTING - install: %s') % dom, cmd)
                         self['info'].setText(_('Installation done !!!'))
@@ -2971,8 +2955,7 @@ class tvInstall(Screen):
                 else:
                     self['info'].setText(_('Download failed!') + self.dom + _('... Not supported'))
                 return
-                
-        
+
         # if self.com.endswith('.ipk'):
                 # self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
                 # url = self.com
@@ -3086,7 +3069,6 @@ class tvInstall(Screen):
         os.system('sleep 5')
         pass
 
-
 class tvConsole(Screen):
 
     def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
@@ -3105,23 +3087,21 @@ class tvConsole(Screen):
         self['actions'] = ActionMap(['WizardActions', 'DirectionActions' 'ColorActions',], {'ok': self.cancel,
          'back': self.cancel,
          'red': self.cancel,
+         "blue": self.restartenigma,
          'up': self['text'].pageUp,
          'down': self['text'].pageDown}, -1)
         self.cmdlist = cmdlist
         self.newtitle = _('..:: TiVuStream Addons V. %s ::..' % currversion)
         self.onShown.append(self.updateTitle)
         self.container = eConsoleAppContainer()
-        self.run = 0
+        self.run=0
         try:
             self.container.appClosed.append(self.runFinished)
-        except:
-            self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
-        try:
             self.container.dataAvail.append(self.dataAvail)
-        except:
-            self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
-        self.onLayoutFinish.append(self.startRun)
-
+        except:        
+            self.appClosed_conn=self.container.appClosed.connect(self.runFinished)
+            self.dataAvail_conn=self.container.dataAvail.connect(self.dataAvail)
+        self.onLayoutFinish.append(self.startRun) # dont start before gui is finished
 
     def updateTitle(self):
         self.setTitle(self.newtitle)
@@ -3135,27 +3115,72 @@ class tvConsole(Screen):
     def runFinished(self, retval):
         self.run += 1
         if self.run != len(self.cmdlist):
-            if self.container.execute(self.cmdlist[self.run]):
-                self.runFinished(-1)
+            if self.container.execute(self.cmdlist[self.run]): #start of container application failed...
+                self.runFinished(-1) # so we must call runFinished manual
         else:
-            str = self['text'].getText()
-            str += _('Execution finished!!')
-            self['text'].setText(str)
-            self['text'].lastPage()
+            str=self["text"].getText()
+            if not retval and self.endstr.startswith("Swapping"):
+               str += _("\n\n"+self.endstr)     
+            else:
+               str += _("Execution finished!!\n")
+            self["text"].setText(str)
+            self["text"].lastPage()
             if self.finishedCallback is not None:
-                self.finishedCallback()
+                    self.finishedCallback(retval)
             if not retval and self.closeOnSuccess:
-                self.cancel()
+                    self.cancel()
+
+    # def runFinished(self, retval):
+        # self.run += 1
+        # if self.run != len(self.cmdlist):
+            # if self.container.execute(self.cmdlist[self.run]):
+                # self.runFinished(-1)
+        # else:
+            # str = self['text'].getText()
+            # str += _('Execution finished!!')
+            # self['text'].setText(str)
+            # self['text'].lastPage()
+            # if self.finishedCallback is not None:
+                # self.finishedCallback()
+            # if not retval and self.closeOnSuccess:
+                # self.cancel()
+                
+    # def dataAvail(self, str):
+        # self['text'].setText(self['text'].getText() + str)
 
     def cancel(self):
         if self.run == len(self.cmdlist):
             self.close()
-            self.appClosed_conn = None
-            self.dataAvail_conn = None
+            try:
+                self.appClosed_conn=None
+                self.dataAvail_conn=None
+            except:
+                self.container.appClosed.remove(self.runFinished)
+                self.container.dataAvail.remove(self.dataAvail)
+                
+    def dataAvail(self, data):
+        if PY3:
+            data = data.decode("utf-8")
+        try:
+            self["text"].setText(self["text"].getText() + data)
+        except:
+            trace_error()
+        return
+        if self["text"].getText().endswith("Do you want to continue? [Y/n] "):
+            msg=self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
 
-    def dataAvail(self, str):
-        self['text'].setText(self['text'].getText() + str)
+    def processAnswer(self, retval):
+        if retval:
+            self.container.write("Y",1)
+        else:
+            self.container.write("n",1)
+        self.dataSent_conn=self.container.dataSent.connect(self.processInput)
 
+    def processInput(self, retval):
+        self.container.sendEOF()
+
+    def restartenigma(self):
+        self.session.open(TryQuitMainloop, 3)
 
 class tvIPK(Screen):
 
@@ -3788,8 +3813,9 @@ class tvConfig(Screen, ConfigListScreen):
             self.close()
 
 Panel_list3 = [
- _('MMARK PICONS TRANSPARENT'),
  _('MMARK PICONS BLACK'),
+ _('MMARK PICONS TRANSPARENT'),
+ _('MMARK PICONS MOVIE'),
  _('COLOMBO PICONS')]
 
 
@@ -3856,6 +3882,8 @@ class SelectPicons(Screen):
             self.session.open(MMarkFolderBlk)
         elif sel == _('MMARK PICONS TRANSPARENT'):
             self.session.open(MMarkFolderTrs)
+        elif sel == _('MMARK PICONS MOVIE'):
+            self.session.open(MMarkMov)
         elif sel == _('COLOMBO PICONS'):
             self.session.open(ColomboTrasp)
 
@@ -4014,14 +4042,14 @@ class MMarkBlack(Screen):
             n1 = r.find('"quickkey":', 0)
             n2 = r.find('more_chunks', n1)
             self.xml = r[n1:n2]
-            print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", self.xml)
+            # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", self.xml)
             regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"normal_download":"(.*?)"'
             match = re.compile(regex,re.DOTALL).findall(self.xml)
-            print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", match)
+            # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", match)
             for name, data, url  in match:
                 if 'zip' in url:
                     url = url.replace('\\','')
-                    print('url: ',url)
+                    # print('url: ',url)
                     pic = no_cover
                     name = name.replace('_',' ').replace('mmk','MMark').replace('.zip','')
                     name = name + ' ' + data[0:10]
@@ -4047,9 +4075,9 @@ class MMarkBlack(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                print("url =", url)
+                # print("url =", url)
                 url=url
-                print('read url: ',  url)
+                # print('read url: ',  url)
                 req = Request(url)
                 req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
                 req.add_header('Referer', 'https://www.mediafire.com/')
@@ -4059,10 +4087,10 @@ class MMarkBlack(Screen):
                 n1 = r.find('"Download file"', 0)
                 n2 = r.find('Repair your download', n1)
                 r2 = r[n1:n2]
-                print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr2 =", r2)
-                channels = re.findall('href="http://download(.*?)">', r2)
-                print("getChannel match =", channels)
-                for url in channels:
+                # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr2 =", r2)
+                myfile = re.findall('href="http://download(.*?)">', r2)
+                # print("getChannel match =", myfile)
+                for url in myfile:
                     img = no_cover
                     url = 'http://download' + url
                 self.download = downloadWithProgress(url, dest)
@@ -4254,14 +4282,14 @@ class MMarkTrasp(Screen):
             n1 = r.find('"quickkey":', 0)
             n2 = r.find('more_chunks', n1)
             self.xml = r[n1:n2]
-            print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", self.xml)
+            # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", self.xml)
             regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"normal_download":"(.*?)"'
             match = re.compile(regex,re.DOTALL).findall(self.xml)
-            print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", match)
+            # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", match)
             for name, data, url  in match:
                 if 'zip' in url:
                     url = url.replace('\\','')
-                    print('url: ',url)
+                    # print('url: ',url)
                     pic = no_cover
                     name = name.replace('_',' ').replace('mmk','MMark').replace('.zip','')
                     name = name + ' ' + data[0:10]
@@ -4287,9 +4315,9 @@ class MMarkTrasp(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                print("url =", url)
+                # print("url =", url)
                 url=url
-                print('read url: ',  url)
+                # print('read url: ',  url)
                 req = Request(url)
                 req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
                 req.add_header('Referer', 'https://www.mediafire.com/')
@@ -4299,10 +4327,10 @@ class MMarkTrasp(Screen):
                 n1 = r.find('"Download file"', 0)
                 n2 = r.find('Repair your download', n1)
                 r2 = r[n1:n2]
-                print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr2 =", r2)
-                channels = re.findall('href="http://download(.*?)">', r2)
-                print("getChannel match =", channels)
-                for url in channels:
+                # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr2 =", r2)
+                myfile = re.findall('href="http://download(.*?)">', r2)
+                # print("getChannel match =", myfile)
+                for url in myfile:
                     img = no_cover
                     url = 'http://download' + url
                 self.download = downloadWithProgress(url, dest)
@@ -4335,6 +4363,154 @@ class MMarkTrasp(Screen):
         self['info'].setText(_('Download Error ...'))
         print("download error =", error)
         self.close()
+
+class MMarkMov(Screen):
+
+    def __init__(self, session):
+        self.session = session
+        skin = skin_path + 'tvall.xml'
+        with open(skin, 'r') as f:
+                self.skin = f.read()
+        self.setup_title = ('MMark')
+        Screen.__init__(self, session)
+        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.list = []
+        self['text'] = tvList([])
+        self.addon = 'emu'
+        self.icount = 0
+        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['pth'] = Label('')
+        self['pth'].setText(_('Folder picons ') + mmkpicon)
+        self['pform'] = Label('')
+        self['progress'] = ProgressBar()
+        self['progresstext'] = StaticText()
+        self['key_green'] = Button(_('Install'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.getfreespace()
+        self.downloading = False
+        self.url = host_mov
+        name = 'MMark-Picons'
+        self.timer = eTimer()
+        self.timer.start(500, 1)
+        if isDreamOS:
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+    def getfreespace(self):
+        fspace = freespace()
+        self['pform'].setText(fspace)
+
+    def downxmlpage(self):
+        url = self.url
+        print('urlllll: ',url)
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    def errorLoad(self, error):
+        print(str(error))
+        self['info'].setText(_('Try again later ...'))
+        self.downloading = False
+
+    def _gotPageLoad(self, data):
+        r = data
+        # print('data: ', r)
+        self.names = []
+        self.urls = []
+        try:
+            n1 = r.find('"quickkey":', 0)
+            n2 = r.find('more_chunks', n1)
+            self.xml = r[n1:n2]
+            # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", self.xml)
+            regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"normal_download":"(.*?)"'
+            match = re.compile(regex,re.DOTALL).findall(self.xml)
+            # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr =", match)
+            for name, data, url  in match:
+                if 'zip' in url:
+                    url = url.replace('\\','')
+                    # print('url: ',url)
+                    pic = no_cover
+                    name = name.replace('_',' ').replace('-',' ').replace('mmk','MMark').replace('.zip','')
+                    name = name + ' ' + data[0:10]
+                    self.urls.append(url)
+                    self.names.append(name)
+                    self['info'].setText(_('Please select ...'))
+                else:
+                    self['info'].setText(_('no data ...'))
+            showlist(self.names, self['text'])
+            self.downloading = True
+        except:
+            self.downloading = False
+
+    def okRun(self):
+        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+
+    def okInstall(self, result):
+        self['info'].setText(_('... please wait'))
+        if result:
+            if self.downloading == True:
+                selection = str(self['text'].getCurrent())
+                idx = self["text"].getSelectionIndex()
+                self.name = self.names[idx]
+                url = self.urls[idx]
+                dest = "/tmp/download.zip"
+                # print("url =", url)
+                url=url
+                # print('read url: ',  url)
+                req = Request(url)
+                req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+                req.add_header('Referer', 'https://www.mediafire.com/')
+                req.add_header('X-Requested-With', 'XMLHttpRequest')
+                page = urlopen(req)
+                r = page.read()
+                n1 = r.find('"Download file"', 0)
+                n2 = r.find('Repair your download', n1)
+                r2 = r[n1:n2]
+                # print("In rrrrrrrrrrrrrrrrrrrrrrrrrrrr2 =", r2)
+                myfile = re.findall('href="http://download(.*?)">', r2)
+                # print("getChannel match =", myfile)
+                for url in myfile:
+                    img = no_cover
+                    url = 'http://download' + url
+                self.download = downloadWithProgress(url, dest)
+                self.download.addProgress(self.downloadProgress)
+                self.download.start().addCallback(self.install).addErrback(self.showError)
+            else:
+                self['info'].setText(_('Please select ...'))
+                self.close()
+
+    def downloadProgress(self, recvbytes, totalbytes):
+        self['info'].setText(_('Download ...'))
+        self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+
+    def install(self, fplug):
+        checkfile = '/tmp/download.zip'
+        if os.path.exists(checkfile):
+            cmd1 = "unzip -o -q '/tmp/download.zip' -d " + mmkpicon
+            cmd = []
+            cmd.append(cmd1)
+            title = _("Installation Picons")
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+        self['info'].setText(_('Please select ...'))
+        self['progresstext'].text = ''
+        self.progclear = 0
+        self.downloading = False
+        self['progress'].setValue(self.progclear)
+
+    def showError(self, error):
+        self['info'].setText(_('Download Error ...'))
+        print("download error =", error)
+        self.close()
+
 
 class ColomboTrasp(Screen):
 
@@ -4401,14 +4577,14 @@ class ColomboTrasp(Screen):
                     url64b = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmc=")
                     name = url
                     url = url64b + url
-                    print('url: ', url)
-                    print('name: ', name)
+                    # print('url: ', url)
+                    # print('name: ', name)
                     name = name.replace("/colombo/colombo/", "")
                     name = name.replace(".zip", "")
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     self.urls.append(url)
                     self.names.append(name)
                     self['info'].setText(_('Please select ...'))
@@ -4433,7 +4609,7 @@ class ColomboTrasp(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                print("url =", url)
+                # print("url =", url)
                 self.download = downloadWithProgress(url, dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.showError)
@@ -4607,7 +4783,7 @@ class kodilite(Screen):
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     name = name +'-'+ date.replace(' ','') + date2
                     self.urls.append(url)
                     self.names.append(name)
@@ -4631,7 +4807,7 @@ class kodilite(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.ipk"
-                print("url =", url)
+                # print("url =", url)
                 self.download = downloadWithProgress(url, dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.showError)
@@ -4731,7 +4907,7 @@ class plugins(Screen):
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     name = name +'-'+ date.replace(' ','') + date2
                     self.urls.append(url)
                     self.names.append(name)
@@ -4755,7 +4931,7 @@ class plugins(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                print("url =", url)
+                # print("url =", url)
                 self.download = downloadWithProgress(url, dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.showError)
@@ -4854,7 +5030,7 @@ class plugins_adult(Screen):
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     name = name +'-'+ date.replace(' ','') + date2
                     self.urls.append(url)
                     self.names.append(name)
@@ -4901,7 +5077,7 @@ class plugins_adult(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                print("url =", url)
+                # print("url =", url)
                 self.download = downloadWithProgress(url, dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.showError)
@@ -5000,7 +5176,7 @@ class script(Screen):
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     name = name +'-'+ date.replace(' ','') + date2
                     self.urls.append(url)
                     self.names.append(name)
@@ -5024,7 +5200,7 @@ class script(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                print("url =", url)
+                # print("url =", url)
                 self.download = downloadWithProgress(url, dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.showError)
@@ -5124,7 +5300,7 @@ class repository(Screen):
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     name = name +'-'+ date.replace(' ','') + date2
                     self.urls.append(url)
                     self.names.append(name)
@@ -5148,7 +5324,7 @@ class repository(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                print("url =", url)
+                # print("url =", url)
                 self.download = downloadWithProgress(url, dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.showError)
