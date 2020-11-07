@@ -3071,7 +3071,8 @@ class tvInstall(Screen):
 
 class tvConsole(Screen):
 
-    def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
+    # def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
+    def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False,endstr=''):
         self.session = session
         skin = skin_path + 'tvConsole.xml'
         with open(skin, 'r') as f:
@@ -3081,6 +3082,7 @@ class tvConsole(Screen):
         self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
         self.finishedCallback = finishedCallback
         self.closeOnSuccess = closeOnSuccess
+        self.endstr = endstr
         self.errorOcurred = False
         self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
         self['text'] = ScrollLabel('')
@@ -3101,7 +3103,7 @@ class tvConsole(Screen):
         except:        
             self.appClosed_conn=self.container.appClosed.connect(self.runFinished)
             self.dataAvail_conn=self.container.dataAvail.connect(self.dataAvail)
-        self.onLayoutFinish.append(self.startRun) # dont start before gui is finished
+        self.onLayoutFinish.append(self.startRun)
 
     def updateTitle(self):
         self.setTitle(self.newtitle)
