@@ -215,7 +215,7 @@ pngs             = ico3_path
 no_cover         = plugin_path + '/no_coverArt.png'
 mmkpicon         = config.plugins.tvPanel.mmkpicon.value.strip()
 regexC            = '<plugins cont="(.*?)"'
-regexL            = '<a href="(.*?)">.*?</a>(.*?)20(.*?) '
+regexL            = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
 #======================================================config
 
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -276,7 +276,7 @@ Panel_list = [
  _('PLUGIN BACKUP'),
  _('PLUGIN EPG'),
  _('PLUGIN EMULATORS CAMS'),
- _('PLUGIN KODI'),
+ # _('PLUGIN KODI'),
  _('PLUGIN MULTIBOOT'),
  _('PLUGIN MULTIMEDIA'),
  _('PLUGIN PICONS'),
@@ -510,8 +510,8 @@ class Hometv(Screen):
             self.session.open(PluginEmulators)
         elif sel == _('PLUGIN EPG'):
             self.session.open(PluginEpg)
-        elif sel == _('PLUGIN KODI'):
-            self.session.open(Kodi)
+        # elif sel == _('PLUGIN KODI'):
+            # self.session.open(Kodi)
         elif sel == _('PLUGIN MULTIBOOT'):
             self.session.open(PluginMultiboot)
         elif sel == _('PLUGIN MULTIMEDIA'):
@@ -1058,76 +1058,76 @@ class PluginMultimedia(Screen):
         else:
             self.close()
 
-class Kodi(Screen):
+# class Kodi(Screen):
 
-    def __init__(self, session):
+    # def __init__(self, session):
 
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Kodi')
-        Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
-        self.list = []
-        self['text'] = tvList([])
-        self.addon = 'emu'
-        self.icount = 0
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['key_green'] = Button(_('Install'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self['progress'] = ProgressBar()
-        self['progresstext'] = StaticText()
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
+        # self.session = session
+        # skin = skin_path + 'tvall.xml'
+        # with open(skin, 'r') as f:
+            # self.skin = f.read()
+        # self.setup_title = ('Kodi')
+        # Screen.__init__(self, session)
+        # self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        # self.list = []
+        # self['text'] = tvList([])
+        # self.addon = 'emu'
+        # self.icount = 0
+        # self['pth'] = Label('')
+        # self['pform'] = Label('')
+        # self['info'] = Label(_('Getting the list, please wait ...'))
+        # self['key_green'] = Button(_('Install'))
+        # self['key_red'] = Button(_('Back'))
+        # self['key_yellow'] = Button(_(''))
+        # self["key_blue"] = Button(_(''))
+        # self['key_yellow'].hide()
+        # self['key_blue'].hide()
+        # self.downloading = False
+        # self['progress'] = ProgressBar()
+        # self['progresstext'] = StaticText()
+        # self.timer = eTimer()
+        # self.timer.start(500, 1)
+        # if isDreamOS:
+            # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        # else:
+            # self.timer.callback.append(self.downxmlpage)
+        # self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         # 'green': self.okRun,
+         # 'red': self.close,
+         # 'cancel': self.close}, -2)
 
-    def downxmlpage(self):
-        url = xml_path + 'Kodi.xml'
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+    # def downxmlpage(self):
+        # url = xml_path + 'Kodi.xml'
+        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
+    # def errorLoad(self, error):
+        # print(str(error))
+        # self['info'].setText(_('Try again later ...'))
+        # self.downloading = False
 
-    def _gotPageLoad(self, data):
-        self.xml = data
-        try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            self.downloading = False
+    # def _gotPageLoad(self, data):
+        # self.xml = data
+        # try:
+            # match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            # for name in match:
+                # self.list.append(name)
+                # self['info'].setText(_('Please select ...'))
+            # showlist(self.list, self['text'])
+            # self.downloading = True
+        # except:
+            # self.downloading = False
 
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                selection = str(self['text'].getCurrent())
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
+    # def okRun(self):
+        # if self.downloading == True:
+            # try:
+                # selection = str(self['text'].getCurrent())
+                # idx = self["text"].getSelectionIndex()
+                # name = self.list[idx]
+                # self.session.open(tvInstall, self.xml, name)
+            # except:
+                # return
+        # else:
+            # self.close()
 
 class PluginMultiboot(Screen):
 
@@ -3278,7 +3278,7 @@ class tvIPK(Screen):
             ipkpth = config.plugins.tvPanel.ipkpth.value
             dest = ipkpth + '/' + self.sel
             cmd0 = 'rm -rf ' + dest
-            self.session.open(tvConsole, title='IPK Local Remove', cmdlist=[cmd0, 'sleep 3'], finishedCallback=self.close)
+            self.session.open(tvConsole, title='IPK Local Remove', cmdlist=[cmd0, 'sleep 3'], finishedCallback=self.finished)
 
     def msgipkinst(self):
         self.session.openWithCallback(self.ipkrestart, MessageBox, (_('Restart Enigma to load the installed plugin?')), MessageBox.TYPE_YESNO)
@@ -3288,6 +3288,9 @@ class tvIPK(Screen):
             self.session.open(TryQuitMainloop, 3)
         else:
             self.close()
+
+    def finished(self,result):
+         return
 
 class tvUpdate(Screen):
 
@@ -4115,7 +4118,7 @@ class MMarkBlack(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation Picons")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback = self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4130,6 +4133,9 @@ class MMarkBlack(Screen):
     def cancel(self, result = None):
         self.close(None)
         return
+        
+    def finished(self,result):
+         return
 
 
 class MMarkFolderTrs(Screen):
@@ -4354,7 +4360,7 @@ class MMarkTrasp(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation Picons")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4365,6 +4371,9 @@ class MMarkTrasp(Screen):
         self['info'].setText(_('Download Error ...'))
         print("download error =", error)
         self.close()
+        
+    def finished(self,result):
+         return
 
 class MMarkMov(Screen):
 
@@ -4501,7 +4510,7 @@ class MMarkMov(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation Picons")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4513,6 +4522,8 @@ class MMarkMov(Screen):
         print("download error =", error)
         self.close()
 
+    def finished(self,result):
+         return
 
 class ColomboTrasp(Screen):
 
@@ -4631,7 +4642,7 @@ class ColomboTrasp(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation Picons")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4643,11 +4654,14 @@ class ColomboTrasp(Screen):
         self['info'].setText(_('Download Error ...'))
         print("download error =", error)
         self.close()
+        
+    def finished(self,result):
+         return
 
 Panel_list4 = [
  _('KODILITE'),
- _('PLUGINS'),
- _('PLUGINS ADULT'),
+ _('VIDEO ADDONS'),
+ _('ADULT ADDON'),
  _('SCRIPT'),
  _('REPOSITORY')]
 
@@ -4708,15 +4722,15 @@ class mainkodilite(Screen):
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
-        if sel == _('KODILITE'):
+        if sel == _('KODILITE') or sel == 0:
             self.session.open(kodilite)
-        elif sel == _('PLUGINS'):
+        elif sel == _('VIDEO ADDONS') or sel == 1:
             self.session.open(plugins)
-        elif sel == _('PLUGINS ADULT'):
+        elif sel == _('ADULT ADDON') or sel == 2:
             self.session.open(plugins_adult)
-        elif sel == _('SCRIPT'):
+        elif sel == _('SCRIPT') or sel == 3:
             self.session.open(script)
-        elif sel == _('REPOSITORY'):
+        elif sel == _('REPOSITORY') or sel == 4:
             self.session.open(repository)
 
 class kodilite(Screen):
@@ -4760,7 +4774,7 @@ class kodilite(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlLw==")
+        url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGU=")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -4773,25 +4787,26 @@ class kodilite(Screen):
         self.names = []
         self.urls = []
         try:
+            # regex            = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
-            for url, date, date2 in match:
+            for url, name, date1, date2, date3 in match:
                 if 'ipk' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
-                    url = url64b + url + '.ipk'
-                    url264b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlLw==")
-                    name = url.replace(url264b, '')
-                    name = name.replace(".ipk", "")
-                    name = name.replace("enigma2-plugin-extensions-", "")
+                    url = url64b + url
+                    print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    # print('name: ', name)
-                    name = name +'-'+ date.replace(' ','') + date2
+                    print('name: ', name)
+                    date = date1 + '-' + date2 + '-' + date3 
+                    date = date.replace(' ','')
+                    name = name +' - '+ date 
                     self.urls.append(url)
                     self.names.append(name)
-                    self['info'].setText(_('Please select ...'))
                 else:
-                    self['info'].setText(_('Please select ...'))
+                    self['info'].setText(_('No File!!'))
+                    self.downloading = False
+                    
             showlist(self.names, self['text'])
             self.downloading = True
         except:
@@ -4827,7 +4842,7 @@ class kodilite(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4842,7 +4857,8 @@ class kodilite(Screen):
         self.close(None)
         return
 
-
+    def finished(self,result):
+         return
 
 class plugins(Screen):
 
@@ -4885,7 +4901,7 @@ class plugins(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlL3BsdWdpbnMv")
+        url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGUvcGx1Z2lucw==")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -4898,24 +4914,25 @@ class plugins(Screen):
         self.names = []
         self.urls = []
         try:
+            # regex            = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
-            for url, date, date2 in match:
+            for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    url264b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlL3BsdWdpbnMv")
-                    name = url.replace(url264b, '')
-                    name = name.replace(".zip", "")
+                    print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    # print('name: ', name)
-                    name = name +'-'+ date.replace(' ','') + date2
+                    print('name: ', name)
+                    date = date1 + '-' + date2 + '-' + date3 
+                    date = date.replace(' ','')
+                    name = name +' - '+ date 
                     self.urls.append(url)
                     self.names.append(name)
-                    self['info'].setText(_('Please select ...'))
                 else:
-                    self['info'].setText(_('Please select ...'))
+                    self['info'].setText(_('No File!!'))
+                    self.downloading = False
             showlist(self.names, self['text'])
             self.downloading = True
         except:
@@ -4952,7 +4969,7 @@ class plugins(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4966,6 +4983,9 @@ class plugins(Screen):
     def cancel(self, result = None):
         self.close(None)
         return
+
+    def finished(self,result):
+         return
 
 class plugins_adult(Screen):
 
@@ -5008,7 +5028,7 @@ class plugins_adult(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlL3BsdWdpbmFkdWx0Lw==")
+        url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGUvcGx1Z2luYWR1bHQ=")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -5021,24 +5041,25 @@ class plugins_adult(Screen):
         self.names = []
         self.urls = []
         try:
+            # regex            = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
-            for url, date, date2 in match:
+            for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    url264b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlL3BsdWdpbmFkdWx0Lw==")
-                    name = url.replace(url264b, '')
-                    name = name.replace(".zip", "")
+                    print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    # print('name: ', name)
-                    name = name +'-'+ date.replace(' ','') + date2
+                    print('name: ', name)
+                    date = date1 + '-' + date2 + '-' + date3 
+                    date = date.replace(' ','')
+                    name = name +' - '+ date 
                     self.urls.append(url)
                     self.names.append(name)
-                    self['info'].setText(_('Please select ...'))
                 else:
-                    self['info'].setText(_('Please select ...'))
+                    self['info'].setText(_('No File!!'))
+                    self.downloading = False
             showlist(self.names, self['text'])
             self.downloading = True
         except:
@@ -5098,7 +5119,7 @@ class plugins_adult(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -5113,6 +5134,9 @@ class plugins_adult(Screen):
         self.close(None)
         return
 
+    def finished(self,result):
+         return
+         
 class script(Screen):
 
     def __init__(self, session):
@@ -5154,7 +5178,7 @@ class script(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlL3NjcmlwdC8=")
+        url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGUvc2NyaXB0")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -5167,26 +5191,28 @@ class script(Screen):
         self.names = []
         self.urls = []
         try:
+            # regex            = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
-            for url, date, date2 in match:
+            for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    url264b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlL3NjcmlwdC8=")
-                    name = url.replace(url264b, '')
-                    name = name.replace(".zip", "")
+                    print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    # print('name: ', name)
-                    name = name +'-'+ date.replace(' ','') + date2
+                    print('name: ', name)
+                    date = date1 + '-' + date2 + '-' + date3 
+                    date = date.replace(' ','')
+                    name = name +' - '+ date 
                     self.urls.append(url)
                     self.names.append(name)
-                    self['info'].setText(_('Please select ...'))
                 else:
-                    self['info'].setText(_('Please select ...'))
+                    self['info'].setText(_('No File!!'))
+                    self.downloading = False
             showlist(self.names, self['text'])
             self.downloading = True
+            self['info'].setText(_('Please select ...'))
         except:
             self.downloading = False
 
@@ -5221,7 +5247,7 @@ class script(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -5236,7 +5262,9 @@ class script(Screen):
         self.close(None)
         return
 
-
+    def finished(self,result):
+         return
+         
 class repository(Screen):
 
     def __init__(self, session):
@@ -5278,7 +5306,7 @@ class repository(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlL3JlcG9zaXRvcnkv")
+        url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGUvcmVwb3NpdG9yeQ==")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -5291,24 +5319,25 @@ class repository(Screen):
         self.names = []
         self.urls = []
         try:
+            # regex            = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
-            for url, date, date2 in match:
+            for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    url264b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20vcGFuZWwtYWRkb25zL0VuaWdtYU9FMi4wL2tvZGlsaXRlL3JlcG9zaXRvcnkv")
-                    name = url.replace(url264b, '')
-                    name = name.replace(".zip", "")
+                    print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    # print('name: ', name)
-                    name = name +'-'+ date.replace(' ','') + date2
+                    print('name: ', name)
+                    date = date1 + '-' + date2 + '-' + date3 
+                    date = date.replace(' ','')
+                    name = name +' - '+ date 
                     self.urls.append(url)
                     self.names.append(name)
-                    self['info'].setText(_('Please select ...'))
                 else:
-                    self['info'].setText(_('Please select ...'))
+                    self['info'].setText(_('No File!!'))
+                    self.downloading = False
             showlist(self.names, self['text'])
             self.downloading = True
         except:
@@ -5345,7 +5374,7 @@ class repository(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=deletetmp)
+            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -5359,6 +5388,9 @@ class repository(Screen):
     def cancel(self, result = None):
         self.close(None)
         return
+
+    def finished(self,result):
+         return
 
 def main(session, **kwargs):
     if checkInternet():
