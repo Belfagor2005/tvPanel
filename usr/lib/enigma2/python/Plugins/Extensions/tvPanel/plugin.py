@@ -99,12 +99,12 @@ except:
 	pass
 
 
-try:
-	_create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-	pass
-else:
-	ssl._create_default_https_context = _create_unverified_https_context
+# try:
+	# _create_unverified_https_context = ssl._create_unverified_context
+# except AttributeError:
+	# pass
+# else:
+	# ssl._create_default_https_context = _create_unverified_https_context
 
 
 #--------------------#
@@ -1697,9 +1697,11 @@ class tvDailySetting(Screen):
 		if result:
 			if checkInternet():
 				try:
-					url_sat_oealliance		= 'http://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/satellites.xml'
+					url_sat_oealliance				= 'http://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/satellites.xml'
+					link_sat = ssl_urlopen(url_sat_oealliance)
 					dirCopy = '/etc/tuxbox/satellites.xml'
-					urlretrieve(url_sat_oealliance, dirCopy, context=ssl._create_unverified_context())
+					# urlretrieve(url_sat_oealliance, dirCopy, context=ssl._create_unverified_context())
+					urlretrieve(link_sat, dirCopy)
 					self.mbox = self.session.open(tvMessageBox, _('Satellites.xml Updated!'), tvMessageBox.TYPE_INFO, timeout=5)
 					self['info'].setText(_('Installation done !!!'))
 				except:
@@ -1714,9 +1716,11 @@ class tvDailySetting(Screen):
 		if result:
 			if checkInternet():
 				try:
-					url_sat_oealliance		= 'https://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/terrestrial.xml'
-					dirCopy			  = '/etc/tuxbox/terrestrial.xml'
-					urlretrieve(url_sat_oealliance, dirCopy, context=ssl._create_unverified_context())
+					url_sat_oealliance				= 'https://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/terrestrial.xml'
+					link_ter = ssl_urlopen(url_sat_oealliance)
+					dirCopy					  = '/etc/tuxbox/terrestrial.xml'
+					# urlretrieve(url_sat_oealliance, dirCopy, context=ssl._create_unverified_context())
+					urlretrieve(link_ter, dirCopy) # , context=ssl._create_unverified_context())					
 					self.mbox = self.session.open(tvMessageBox, _('Terrestrial.xml Updated!'), tvMessageBox.TYPE_INFO, timeout=5)
 					self['info'].setText(_('Installation done !!!'))
 				except:
@@ -3677,14 +3681,15 @@ class SelectPicons(Screen):
 		self['info'].setText(_('Please select ...'))
 		self['key_green'] = Button(_('Select'))
 		self['key_red'] = Button(_('Back'))
-		self['key_yellow'] = Button(_(''))
+		self['key_yellow'] = Button(_('Remove'))
 		self["key_blue"] = Button(_(''))
-		self['key_yellow'].hide()
+		# self['key_yellow'].hide()
 		self['key_blue'].hide()
 		self['progress'] = ProgressBar()
 		self['progresstext'] = StaticText()
 		self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
 		 'green': self.okRun,
+		 'yellow': self.remove,
 		 'back': self.closerm,
 		 'red': self.closerm,
 		 'cancel': self.closerm}, -1)
@@ -3724,6 +3729,21 @@ class SelectPicons(Screen):
 		elif sel == _('COLOMBO PICONS'):
 			self.session.open(ColomboTrasp)
 
+	def remove(self):
+		self.session.openWithCallback(self.okRemove,MessageBox,(_("Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait .." %mmkpicon)), MessageBox.TYPE_YESNO)
+
+	def okRemove(self, result):
+		if result:
+			self['info'].setText(_('Erase %s... please wait' %mmkpicon))
+			print("Folder picons : ", mmkpicon)
+			piconsx = glob.glob(str(mmkpicon) + '/*.png')
+			for f in piconsx:
+				try:
+					print("processing file: " + f)
+					os.remove(f)
+				except OSError as e:
+					print("Error: %s : %s" % (f, e.strerror))
+		self['info'].setText(_('Please select ...'))
 
 class MMarkFolderBlk(Screen):
 
