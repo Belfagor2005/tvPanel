@@ -50,8 +50,12 @@ import ssl
 import socket
 import glob
 import subprocess
+from sys import version_info
 from Lcn import *
-
+# try:
+    # import commands
+# except ImportError:
+    # import subprocess
 
 global skin_path, mmkpicon, isDreamOS, set, regexC, regexL 
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
@@ -59,7 +63,8 @@ headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple
 
 currversion      = '1.9.3'
 # PY3 = sys.version_info.major >= 3
-PY3 = sys.version_info[0] == 3
+# PY3 = sys.version_info[0] == 3
+PY3 = version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request
     from urllib.error import URLError
@@ -68,7 +73,7 @@ else:
     from urllib2 import urlopen, Request, URLError
     from urllib import urlretrieve
 
-if sys.version_info >= (2, 7, 9):
+if version_info >= (2, 7, 9):
     try:
         import ssl
         sslContext = ssl._create_unverified_context()
