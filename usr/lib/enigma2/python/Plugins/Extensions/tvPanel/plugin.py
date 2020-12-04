@@ -186,7 +186,7 @@ def resettings():
 
 def deletetmp():
     os.system('rm -rf /tmp/unzipped;rm -f /tmp/*.ipk;rm -f /tmp/*.tar;rm -f /tmp/*.zip;rm -f /tmp/*.tar.gz;rm -f /tmp/*.tar.bz2;rm -f /tmp/*.tar.tbz2;rm -f /tmp/*.tar.tbz')
-    # return
+    return
 
 def mountipkpth():
     ipkpth = []
@@ -3761,7 +3761,7 @@ class MMarkFolderBlk(Screen):
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
         self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
+        self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_(''))
         self["key_blue"] = Button(_(''))
@@ -3979,7 +3979,7 @@ class MMarkFolderTrs(Screen):
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
         self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
+        self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_(''))
         self["key_blue"] = Button(_(''))
