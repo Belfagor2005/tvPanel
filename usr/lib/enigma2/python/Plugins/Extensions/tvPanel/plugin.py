@@ -1,7 +1,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     21/11/2020     #
+#     07/12/2020     #
 #--------------------#
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
@@ -61,7 +61,7 @@ global skin_path, mmkpicon, isDreamOS, set, regexC, regexL
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 
-currversion      = '1.9.3'
+currversion      = '1.9.4'
 # PY3 = sys.version_info.major >= 3
 # PY3 = sys.version_info[0] == 3
 PY3 = version_info[0] == 3
@@ -410,7 +410,7 @@ class Hometv(Screen):
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
             fp = checkStr(urlopen(req))
             fp = fp.read()
-            print("fp3 =", fp)
+            # print("fp3 =", fp)
 
             with open(destr, 'w') as f:
                 f.write(fp)
@@ -1554,8 +1554,8 @@ class PluginWeather(Screen):
         try:
             match = re.compile(regexC,re.DOTALL).findall(self.xml)
             for name in match:
-               self.list.append(name)
-               self['info'].setText(_('Please select ...'))
+                self.list.append(name)
+                self['info'].setText(_('Please select ...'))
             showlist(self.list, self['text'])
             self.downloading = True
         except:
@@ -1852,8 +1852,10 @@ class SettingColombo(Screen):
                 dest = "/tmp/settings.zip"
                 # print("url =", url)
                 if 'dtt' not in url.lower():
-                    set = 1
-                    terrestrial()
+                
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -1888,7 +1890,8 @@ class SettingColombo(Screen):
                 cmd.append(cmd14)
                 title = _("Installation Settings")
                 self.session.open(tvConsole,_(title),cmd)
-                self.onShown.append(resettings)
+                if not isDreamOS:
+                    self.onShown.append(resettings)
 
 class SettingVhan(Screen):
 
@@ -1979,8 +1982,10 @@ class SettingVhan(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 if 'dtt' not in url.lower():
-                    set = 1
-                    terrestrial()
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
+                        
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -2009,7 +2014,8 @@ class SettingVhan(Screen):
             cmd.append(cmd5)
             title = _("Installation Settings")
             self.session.open(tvConsole,_(title),cmd)
-            self.onShown.append(resettings)
+            if not isDreamOS:
+                self.onShown.append(resettings)
 
 class Milenka61(Screen):
 
@@ -2102,8 +2108,9 @@ class Milenka61(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-                    set = 1
-                    terrestrial()
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -2126,7 +2133,8 @@ class Milenka61(Screen):
             cmd.append(cmd4)
             title = _("Installation Settings")
             self.session.open(tvConsole,_(title),cmd)
-            self.onShown.append(resettings)
+            if not isDreamOS:
+                self.onShown.append(resettings)
 
 class SettingManutek(Screen):
 
@@ -2216,8 +2224,9 @@ class SettingManutek(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 if 'dtt' not in url.lower():
-                    set = 1
-                    terrestrial()
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -2252,7 +2261,8 @@ class SettingManutek(Screen):
                     cmd.append(cmd6)
                 title = _("Installation Settings")
                 self.session.open(tvConsole,_(title),cmd)
-            self.onShown.append(resettings)
+            if not isDreamOS:
+                self.onShown.append(resettings)
 
 class SettingMorpheus(Screen):
 
@@ -2345,8 +2355,9 @@ class SettingMorpheus(Screen):
                 dest = "/tmp/settings.zip"
                 url= str(url)
                 if 'dtt' not in url.lower():
-                    set = 1
-                    terrestrial()
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -2375,7 +2386,8 @@ class SettingMorpheus(Screen):
             title = _("Installation Settings")
             self.session.open(tvConsole,_(title),cmd)
         deletetmp()
-        self.onShown.append(resettings)
+        if not isDreamOS:
+            self.onShown.append(resettings)
 
 class SettingCiefp(Screen):
 
@@ -2465,8 +2477,9 @@ class SettingCiefp(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-                    set = 1
-                    terrestrial()
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -2489,7 +2502,8 @@ class SettingCiefp(Screen):
             cmd.append(cmd4)
             title = _("Installation Settings")
             self.session.open(tvConsole,_(title),cmd)
-            self.onShown.append(resettings)
+            if not isDreamOS:
+                self.onShown.append(resettings)
 
 class SettingBi58(Screen):
 
@@ -2578,8 +2592,9 @@ class SettingBi58(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-                    set = 1
-                    terrestrial()
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -2602,7 +2617,8 @@ class SettingBi58(Screen):
             cmd.append(cmd4)
             title = _("Installation Settings")
             self.session.open(tvConsole,_(title),cmd)
-            self.onShown.append(resettings)
+            if not isDreamOS:
+                self.onShown.append(resettings)
 
 class SettingPredrag(Screen):
 
@@ -2691,8 +2707,9 @@ class SettingPredrag(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-                    set = 1
-                    terrestrial()
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -2715,7 +2732,8 @@ class SettingPredrag(Screen):
             cmd.append(cmd4)
             title = _("Installation Settings")
             self.session.open(tvConsole,_(title),cmd)
-            self.onShown.append(resettings)
+            if not isDreamOS:
+                self.onShown.append(resettings)
 
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection = None):
@@ -2850,7 +2868,11 @@ class tvInstall(Screen):
 
                 elif self.com.endswith('.zip'):
                     if 'setting' in dom:
-                        terrestrial()
+                        if not isDreamOS:
+                            set = 1
+                            terrestrial()
+                        
+                        
                         if os.path.exists("/tmp/unzipped"):
                             os.system('rm -rf /tmp/unzipped')
                         os.makedirs('/tmp/unzipped')
@@ -2879,7 +2901,9 @@ class tvInstall(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        terrestrial_rest()
+                        
+                        if not isDreamOS:
+                            terrestrial_rest()
                         self.reloadSettings2()
                         self.timer = eTimer()
                         self.timer.start(500, True)
@@ -3165,7 +3189,7 @@ class tvUpdate(Screen):
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
             fp = checkStr(urlopen(req))
             fp = fp.read()
-            print("fp3 =", fp)
+            # print("fp3 =", fp)
 
             with open(destr, 'w') as f:
                 f.write(fp)
@@ -3244,16 +3268,16 @@ class tvUpdate(Screen):
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback=self.msgipkrst1) #, closeOnSuccess=True)
 
     def msgipkrst1(self):
-        self.session.openWithCallback(self.ipkrestrt, MessageBox, (_('Do you want restart enigma2 ?')), MessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.ipkrestrt, tvMessageBox, (_('Do you want restart enigma2 ?')), tvMessageBox.TYPE_YESNO)
 
     def ipkrestrt(self, result):
         if result:
             epgpath = '/media/hdd/epg.dat'
             epgbakpath = '/media/hdd/epg.dat.bak'
             if os.path.exists(epgbakpath):
-                    os.remove(epgbakpath)
+                os.remove(epgbakpath)
             if os.path.exists(epgpath):
-                    copyfile(epgpath, epgbakpath)
+                copyfile(epgpath, epgbakpath)
             self.session.open(TryQuitMainloop, 3)
         else:
             self.close()
@@ -3731,7 +3755,7 @@ class SelectPicons(Screen):
     def okRemove(self, result):
         if result:
             self['info'].setText(_('Erase %s... please wait' %mmkpicon))
-            print("Folder picons : ", mmkpicon)
+            # print("Folder picons : ", mmkpicon)
             piconsx = glob.glob(str(mmkpicon) + '/*.png')
             for f in piconsx:
                 try:
@@ -3878,7 +3902,7 @@ class MMarkBlack(Screen):
 
     def downxmlpage(self):
         url = self.url
-        print('urlllll: ',url)
+        # print('urlllll: ',url)
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -4094,7 +4118,7 @@ class MMarkTrasp(Screen):
 
     def downxmlpage(self):
         url = self.url
-        print('urlllll: ',url)
+        # print('urlllll: ',url)
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -4218,7 +4242,7 @@ class MMarkMov(Screen):
 
     def downxmlpage(self):
         url = self.url
-        print('urlllll: ',url)
+        # print('urlllll: ',url)
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -4552,11 +4576,11 @@ class kodilite(Screen):
                 if 'ipk' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    print("url =", url)
+                    # print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     date = date1 + '-' + date2 + '-' + date3
                     date = date.replace(' ','')
                     name = name +' - '+ date
@@ -4675,11 +4699,11 @@ class plugins(Screen):
                 if 'zip' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    print("url =", url)
+                    # print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     date = date1 + '-' + date2 + '-' + date3
                     date = date.replace(' ','')
                     name = name +' - '+ date
@@ -4798,11 +4822,11 @@ class plugins_adult(Screen):
                 if 'zip' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    print("url =", url)
+                    # print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     date = date1 + '-' + date2 + '-' + date3
                     date = date.replace(' ','')
                     name = name +' - '+ date
@@ -4944,11 +4968,11 @@ class script(Screen):
                 if 'zip' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    print("url =", url)
+                    # print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     date = date1 + '-' + date2 + '-' + date3
                     date = date.replace(' ','')
                     name = name +' - '+ date
@@ -5068,11 +5092,11 @@ class repository(Screen):
                 if 'zip' in url:
                     url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
                     url = url64b + url
-                    print("url =", url)
+                    # print("url =", url)
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
                     name = name.replace("_", " ")
-                    print('name: ', name)
+                    # print('name: ', name)
                     date = date1 + '-' + date2 + '-' + date3
                     date = date.replace(' ','')
                     name = name +' - '+ date
