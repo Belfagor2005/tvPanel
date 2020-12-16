@@ -647,7 +647,7 @@ class Drivers(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -717,7 +717,7 @@ class Dependencies(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -787,7 +787,7 @@ class Picons(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -857,7 +857,7 @@ class PluginBackup(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -927,7 +927,7 @@ class PluginEmulators(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -997,7 +997,7 @@ class PluginEpg(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1067,7 +1067,7 @@ class PluginMultimedia(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1137,7 +1137,7 @@ class PluginMultiboot(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1207,7 +1207,7 @@ class PluginPpanel(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1277,7 +1277,7 @@ class PluginSettings(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1348,7 +1348,7 @@ class PluginSkins(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1418,7 +1418,7 @@ class PluginSport(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1488,7 +1488,7 @@ class PluginUtility(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1559,7 +1559,7 @@ class PluginWeather(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1629,7 +1629,7 @@ class debian(Screen):
             showlist(self.list, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         if self.downloading == True:
@@ -1816,26 +1816,28 @@ class SettingColombo(Screen):
             match = re.compile(regex,re.DOTALL).findall(self.xml)
             for url in match:
                 if 'zip' in url.lower():
-                    if '.php' in url.lower():
-                        continue
-                    name = url
-                    url64b = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmc=")
-                    url = url64b + url
-                    name = name.replace("/colombo/colombo/", "")
-                    name = name.replace(".zip", "")
-                    name = name.replace("%20", " ")
-                    name = name.replace("_", " ")
-                    name = name.replace("-", " ")
-                    self.urls.append(url)
-                    self.names.append(name)
-                    self.downloading = True
-                    self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                    if 'setting' in url.lower():
+                        if '.php' in url.lower():
+                            continue
+                        name = url
+                        url64b = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmc=")
+                        url = url64b + url
+                        print('url: ', url)
+                        name = name.replace("/colombo/colombo/", "")
+                        name = name.replace(".zip", "")
+                        name = name.replace("%20", " ")
+                        name = name.replace("_", " ")
+                        name = name.replace("-", " ")
+                        self.urls.append(url)
+                        self.names.append(name)
+                        self.downloading = True
+                        self['info'].setText(_('Please select ...'))
+                    else:
+                        self['info'].setText(_('no data ...'))
+                        self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -1844,6 +1846,7 @@ class SettingColombo(Screen):
         global set
         set = 0
         if result:
+            print('downloading = ', self.downloading)
             if self.downloading == True:
                 selection = str(self['text'].getCurrent())
                 idx = self["text"].getSelectionIndex()
@@ -1852,10 +1855,10 @@ class SettingColombo(Screen):
                 dest = "/tmp/settings.zip"
                 # print("url =", url)
                 if 'dtt' not in url.lower():
-                
                     if not isDreamOS:
                         set = 1
                         terrestrial()
+
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -1966,7 +1969,7 @@ class SettingVhan(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -2092,7 +2095,7 @@ class Milenka61(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -2208,7 +2211,7 @@ class SettingManutek(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -2338,7 +2341,7 @@ class SettingMorpheus(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -2461,7 +2464,7 @@ class SettingCiefp(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -2576,7 +2579,7 @@ class SettingBi58(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -2691,7 +2694,7 @@ class SettingPredrag(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -3839,7 +3842,7 @@ class MMarkFolderBlk(Screen):
             showlist(self.names, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         idx = self['text'].getSelectionIndex()
@@ -3931,7 +3934,7 @@ class MMarkBlack(Screen):
             showlist(self.names, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
             self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -4056,7 +4059,7 @@ class MMarkFolderTrs(Screen):
             showlist(self.names, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         idx = self['text'].getSelectionIndex()
@@ -4147,7 +4150,7 @@ class MMarkTrasp(Screen):
             showlist(self.names, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -4271,7 +4274,7 @@ class MMarkMov(Screen):
             showlist(self.names, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -4397,7 +4400,7 @@ class ColomboTrasp(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -4593,7 +4596,7 @@ class kodilite(Screen):
             showlist(self.names, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -4715,7 +4718,7 @@ class plugins(Screen):
             showlist(self.names, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -4838,7 +4841,7 @@ class plugins_adult(Screen):
             showlist(self.names, self['text'])
             self.downloading = True
         except:
-            self.downloading = False
+            pass
 
     def okRun1(self):
         adult = 'Adult'
@@ -4985,7 +4988,7 @@ class script(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -5109,7 +5112,7 @@ class repository(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
         except:
-            self.downloading = False
+            pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
