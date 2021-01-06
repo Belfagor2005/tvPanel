@@ -1,8 +1,8 @@
-Package: enigma2-plugin-extensions-tvpanel
-Version: 1.9.5
+Package: enigma2-plugin-extensions-tvaddon
+Version: 1.9.6
 Section: extra
 Priority: optional
 Architecture: all
 Maintainer: @lululla
-Description: tivustream panel addons
+Description: tivustream addons
 Source: tivustream

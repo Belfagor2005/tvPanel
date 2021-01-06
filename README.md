@@ -3,7 +3,7 @@ TiVuPanel Addon
 Enigma2 project
 
 
-<img src="https://github.com/Belfagor2005/tvPanel/blob/main/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/logo.png">
+<img src="https://github.com/Belfagor2005/tvPanel/blob/main/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/logo.png">
 
 
 Is a little panel with download :
