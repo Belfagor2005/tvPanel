@@ -1,7 +1,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     07/12/2020     #
+#     02/01/2021     #
 #--------------------#
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
@@ -34,17 +34,21 @@ from Screens.Screen import Screen
 from Screens.Standby import *
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Tools.Directories import SCOPE_SKIN_IMAGE, resolveFilename, SCOPE_PLUGINS, fileExists, copyfile, SCOPE_LANGUAGE, pathExists
+from Tools.Directories import SCOPE_SKIN_IMAGE, SCOPE_PLUGINS, SCOPE_LANGUAGE
+from Tools.Directories import resolveFilename, pathExists, fileExists, copyfile
 from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from enigma import *
-from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, getDesktop, loadPNG, loadPic
-from enigma import eListbox, eTimer, eListboxPythonMultiContent, eConsoleAppContainer, addFont, gFont
+from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, getDesktop, loadPNG
+from enigma import eListbox, eTimer, eListboxPythonMultiContent, eConsoleAppContainer, gFont
 from os import path, listdir, remove, mkdir, access, X_OK, chmod
+from os.path import splitext
 from twisted.web.client import downloadPage, getPage
 from xml.dom import Node, minidom
 import base64
-import os, re, sys
+import os
+import re
+import sys
 import shutil
 import ssl
 import socket
@@ -56,22 +60,24 @@ from Lcn import *
     # import commands
 # except ImportError:
     # import subprocess
-
-global skin_path, mmkpicon, isDreamOS, set, regexC, regexL 
+global skin_path, mmkpicon, isDreamOS, set, regexC, regexL
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 
-currversion      = '1.9.4'
-# PY3 = sys.version_info.major >= 3
-# PY3 = sys.version_info[0] == 3
+currversion      = '1.9.5'
+title_plug       = '..:: TiVuStream Addons V. %s ::..' % currversion
+name_plug        = 'TiVuStream Panel Addon'
 PY3 = version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request
     from urllib.error import URLError
     from urllib.request import urlretrieve
+    from urllib.parse import urlparse
 else:
     from urllib2 import urlopen, Request, URLError
     from urllib import urlretrieve
+    from urlparse import urlparse
+
 
 if version_info >= (2, 7, 9):
     try:
@@ -82,7 +88,7 @@ if version_info >= (2, 7, 9):
 
 def ssl_urlopen(url):
     if sslContext:
-        return urlopen(url, context=sslContext)
+        return urlopen(url, context= sslContext)
     else:
         return urlopen(url)
 
@@ -142,21 +148,21 @@ def checkInternet():
         return True
 
 def checkMyFile(url):
-        try:
-            dest = "/tmp/download.zip"
-            req = Request(url)
-            req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
-            req.add_header('Referer', 'https://www.mediafire.com/')
-            req.add_header('X-Requested-With', 'XMLHttpRequest')
-            page = urlopen(req)
-            r = page.read()
-            n1 = r.find('"Download file"', 0)
-            n2 = r.find('Repair your download', n1)
-            r2 = r[n1:n2]
-            myfile = re.findall('href="http://download(.*?)">', r2)
-            return myfile
-        except:
-            return ''
+    try:
+        dest = "/tmp/download.zip"
+        req = Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+        req.add_header('Referer', 'https://www.mediafire.com/')
+        req.add_header('X-Requested-With', 'XMLHttpRequest')
+        page = urlopen(req)
+        r = page.read()
+        n1 = r.find('"Download file"', 0)
+        n2 = r.find('Repair your download', n1)
+        r2 = r[n1:n2]
+        myfile = re.findall('href="http://download(.*?)">', r2)
+        return myfile
+    except:
+        return ''
 
 def freespace():
     try:
@@ -204,14 +210,13 @@ config.plugins.tvPanel = ConfigSubsection()
 config.plugins.tvPanel.strtext = ConfigYesNo(default=True)
 config.plugins.tvPanel.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
 config.plugins.tvPanel.strtmain = ConfigYesNo(default=True)
-config.plugins.tvPanel.strtst = ConfigYesNo(default=False)
+# config.plugins.tvPanel.strtst = ConfigYesNo(default=False)
 config.plugins.tvPanel.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvPanel.autoupd = ConfigYesNo(default=False)
 
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
-
 host_trs        = base64.b64decode(ptrs)
 host_blk        = base64.b64decode(pblk)
 host_mov        = base64.b64decode(ptmov)
@@ -221,16 +226,13 @@ HD               = getDesktop(0).size()
 plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/tvPanel'
 skin_path        = plugin_path
 ico_path         = plugin_path + '/logo.png'
-ico1_path        = plugin_path + '/res/pics/plugins.png'
-ico2_path        = plugin_path + '/res/pics/plugin.png'
-ico3_path        = plugin_path + '/res/pics/setting.png'
-pngx             = ico1_path
-pngl             = ico2_path
-pngs             = ico3_path
+pngx             = plugin_path + '/res/pics/plugins.png'
+pngl             = plugin_path + '/res/pics/plugin.png'
+pngs             = plugin_path + '/res/pics/setting.png'
 no_cover         = plugin_path + '/no_coverArt.png'
 mmkpicon         = config.plugins.tvPanel.mmkpicon.value.strip()
-regexC            = '<plugins cont="(.*?)"'
-regexL            = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
+regexC           = '<plugins cont="(.*?)"'
+regexL           = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
 #======================================================config
 
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -242,8 +244,7 @@ if not os.path.exists(mmkpicon):
         os.makedirs(mmkpicon)
     except OSError as e:
         print(('Error creating directory %s:\n%s') % (mmkpicon, str(e)))
-print('************************************************************path Picons: ', mmkpicon)
-
+print('****************************************path Picons: ', mmkpicon)
 data_upd        = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
 upd_path        = base64.b64decode(data_upd)
 data_xml        = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
@@ -284,7 +285,7 @@ else:
 Panel_list = [
  _('DAILY PICONS'),
  _('DAILY SETTINGS'),
- _('DEBIAN DREAMOS'), 
+ _('DEBIAN DREAMOS'),
  _('KODILITE BY PCD'),
  _('DEPENDENCIES'),
  _('DRIVERS'),
@@ -350,21 +351,21 @@ def OnclearMem():
 def DailyListEntry(name, idx):
     res = [name]
     if HD.width() > 1280:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))#
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=7, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(60, 5), size=(1000, 50), font=1, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
+        res.append(MultiContentEntryText(pos=(60, 5), size=(1000, 50), font=1, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
     return res
 
 def oneListEntry(name):
     res = [name]
     if HD.width() > 1280:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=7, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))#
+        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =7, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 5), size=(1000, 50), font=1, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))# | RT_VALIGN_CENTER
+        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(60, 5), size =(1000, 50), font=1, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
     return res
 
 def showlist(data, list):
@@ -385,7 +386,7 @@ class Hometv(Screen):
             self.skin = f.read()
         self.setup_title = ('Main')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['text'] = tvList([])
         self.working = False
         self.selection = 'all'
@@ -456,7 +457,6 @@ class Hometv(Screen):
 
     def check_dependencies(self):
         dependencies = True
-        # if PY3:
         try:
             import requests
             from PIL import Image
@@ -465,7 +465,7 @@ class Hometv(Screen):
         if dependencies is False:
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/tvPanel/dependencies.sh", 0o0755)
             cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/tvPanel/dependencies.sh"
-            self.session.openWithCallback(self.starts, Console, title="Checking Python Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
+            self.session.openWithCallback(self.starts, Console, title ="Checking Python Dependencies", cmdlist =[cmd1], closeOnSuccess =False)
         else:
             self.starts()
 
@@ -571,11 +571,11 @@ class Hometv(Screen):
                 dom = 'New version ' + self.version
                 os.system('wget %s -O /tmp/tvpanel.tar > /dev/null' % com)
                 os.system('sleep 3')
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvpanel.tar -C /'], finishedCallback=self.msgipkrst1) #, closeOnSuccess=False)
+                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvpanel.tar -C /'], finishedCallback = self.msgipkrst1) #, closeOnSuccess =False)
             else:
                 com = link
                 dom = 'New Version ' + self.version
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback=self.msgipkrst1) #, closeOnSuccess=False)
+                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback = self.msgipkrst1) #, closeOnSuccess =False)
 
     def msgipkrst1(self):
         self.session.openWithCallback(self.ipkrestrt, tvMessageBox, (_('Do you want restart enigma2 ?')), tvMessageBox.TYPE_YESNO)
@@ -600,7 +600,7 @@ class Drivers(Screen):
             self.skin = f.read()
         self.setup_title = ('Drivers')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -626,6 +626,7 @@ class Drivers(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -640,7 +641,7 @@ class Drivers(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -670,7 +671,7 @@ class Dependencies(Screen):
             self.skin = f.read()
         self.setup_title = ('Dependencies')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -696,6 +697,7 @@ class Dependencies(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -710,7 +712,7 @@ class Dependencies(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -740,7 +742,7 @@ class Picons(Screen):
                 self.skin = f.read()
         self.setup_title = ('Picons')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -766,6 +768,7 @@ class Picons(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -780,7 +783,7 @@ class Picons(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -810,7 +813,7 @@ class PluginBackup(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Backup')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -836,6 +839,7 @@ class PluginBackup(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow':self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -850,7 +854,7 @@ class PluginBackup(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -880,7 +884,7 @@ class PluginEmulators(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Emulators')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -906,6 +910,7 @@ class PluginEmulators(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -920,7 +925,7 @@ class PluginEmulators(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -950,7 +955,7 @@ class PluginEpg(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Epg')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -976,6 +981,7 @@ class PluginEpg(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -990,7 +996,7 @@ class PluginEpg(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1011,6 +1017,7 @@ class PluginEpg(Screen):
         else:
             self.close()
 
+
 class PluginMultimedia(Screen):
 
     def __init__(self, session):
@@ -1020,7 +1027,7 @@ class PluginMultimedia(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Multimedia')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1032,7 +1039,7 @@ class PluginMultimedia(Screen):
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_(''))
         self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
+        # # self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self['progress'] = ProgressBar()
@@ -1046,6 +1053,7 @@ class PluginMultimedia(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1060,7 +1068,7 @@ class PluginMultimedia(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1090,7 +1098,7 @@ class PluginMultiboot(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Multiboot')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1116,6 +1124,7 @@ class PluginMultiboot(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow':self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1130,7 +1139,7 @@ class PluginMultiboot(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1160,7 +1169,7 @@ class PluginPpanel(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Ppanel')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1186,6 +1195,7 @@ class PluginPpanel(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1200,7 +1210,7 @@ class PluginPpanel(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1230,7 +1240,7 @@ class PluginSettings(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Settings')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1256,6 +1266,7 @@ class PluginSettings(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1270,7 +1281,7 @@ class PluginSettings(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1298,10 +1309,10 @@ class PluginSkins(Screen):
         self.session = session
         skin = skin_path + 'tvall.xml'
         with open(skin, 'r') as f:
-                self.skin = f.read()
+            self.skin = f.read()
         self.setup_title = ('Plugin Skins')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1327,6 +1338,7 @@ class PluginSkins(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1341,7 +1353,7 @@ class PluginSkins(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1371,7 +1383,7 @@ class PluginSport(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Sport')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1397,6 +1409,7 @@ class PluginSport(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1411,7 +1424,7 @@ class PluginSport(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1432,6 +1445,7 @@ class PluginSport(Screen):
         else:
             self.close()
 
+
 class PluginUtility(Screen):
 
     def __init__(self, session):
@@ -1441,7 +1455,7 @@ class PluginUtility(Screen):
             self.skin = f.read()
         self.setup_title = ('Plugin Utility')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1467,6 +1481,7 @@ class PluginUtility(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1481,7 +1496,7 @@ class PluginUtility(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1502,17 +1517,16 @@ class PluginUtility(Screen):
         else:
             self.close()
 
-
 class PluginWeather(Screen):
 
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
         with open(skin, 'r') as f:
-                self.skin = f.read()
+            self.skin = f.read()
         self.setup_title = ('Plugin Weather')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1538,6 +1552,7 @@ class PluginWeather(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1552,7 +1567,7 @@ class PluginWeather(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1582,7 +1597,7 @@ class debian(Screen):
             self.skin = f.read()
         self.setup_title = ('Debian')
         Screen.__init__(self, session)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1608,6 +1623,7 @@ class debian(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow':self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1622,7 +1638,7 @@ class debian(Screen):
     def _gotPageLoad(self, data):
         self.xml = data
         try:
-            match = re.compile(regexC,re.DOTALL).findall(self.xml)
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1649,14 +1665,14 @@ class tvDailySetting(Screen):
         self.session = session
         skin = skin_path + 'tvall.xml'
         with open(skin, 'r') as f:
-                self.skin = f.read()
+            self.skin = f.read()
         self.setup_title = ('Daily Setting')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self['text'] = tvList([])
         self.working = False
         self.selection = 'all'
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['progress'] = ProgressBar()
         self['progresstext'] = StaticText()
         self['pth'] = Label('')
@@ -1666,6 +1682,8 @@ class tvDailySetting(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Lcn'))
+        if isDreamOS:
+                self['key_yellow'].hide()
         self["key_blue"] = Button(_(''))
         self['key_blue'].hide()
         self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
@@ -1723,7 +1741,7 @@ class tvDailySetting(Screen):
             self.session.open(SettingVhan)
 
     def okSATELLITE(self):
-        self.session.openWithCallback(self.okSatInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okSatInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okSatInstall(self, result):
         if result:
@@ -1732,7 +1750,7 @@ class tvDailySetting(Screen):
                     url_sat_oealliance              = 'http://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/satellites.xml'
                     link_sat = ssl_urlopen(url_sat_oealliance)
                     dirCopy = '/etc/tuxbox/satellites.xml'
-                    # urlretrieve(url_sat_oealliance, dirCopy, context=ssl._create_unverified_context())
+                    # urlretrieve(url_sat_oealliance, dirCopy, context= ssl._create_unverified_context())
                     urlretrieve(link_sat, dirCopy)
                     self.mbox = self.session.open(tvMessageBox, _('Satellites.xml Updated!'), tvMessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
@@ -1742,7 +1760,7 @@ class tvDailySetting(Screen):
                 session.open(tvMessageBox, "No Internet", tvMessageBox.TYPE_INFO)
 
     def okTERRESTRIAL(self):
-        self.session.openWithCallback(self.okTerrInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okTerrInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okTerrInstall(self, result):
         if result:
@@ -1751,8 +1769,8 @@ class tvDailySetting(Screen):
                     url_sat_oealliance              = 'https://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/terrestrial.xml'
                     link_ter = ssl_urlopen(url_sat_oealliance)
                     dirCopy                         = '/etc/tuxbox/terrestrial.xml'
-                    # urlretrieve(url_sat_oealliance, dirCopy, context=ssl._create_unverified_context())
-                    urlretrieve(link_ter, dirCopy) # , context=ssl._create_unverified_context())                    
+                    # urlretrieve(url_sat_oealliance, dirCopy, context= ssl._create_unverified_context())
+                    urlretrieve(link_ter, dirCopy) # , context= ssl._create_unverified_context())
                     self.mbox = self.session.open(tvMessageBox, _('Terrestrial.xml Updated!'), tvMessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
                 except:
@@ -1769,7 +1787,7 @@ class SettingColombo(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Colombo')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1792,10 +1810,11 @@ class SettingColombo(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow':self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1840,7 +1859,7 @@ class SettingColombo(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -1892,9 +1911,10 @@ class SettingColombo(Screen):
                 cmd.append(cmd13)
                 cmd.append(cmd14)
                 title = _("Installation Settings")
-                self.session.open(tvConsole,_(title),cmd)
+                self.session.open(tvConsole, _(title), cmd)
                 if not isDreamOS:
                     self.onShown.append(resettings)
+
 
 class SettingVhan(Screen):
 
@@ -1906,7 +1926,7 @@ class SettingVhan(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -1929,10 +1949,11 @@ class SettingVhan(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1972,7 +1993,7 @@ class SettingVhan(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -1988,7 +2009,6 @@ class SettingVhan(Screen):
                     if not isDreamOS:
                         set = 1
                         terrestrial()
-                        
                 downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
             else:
                 self.close()
@@ -2016,7 +2036,7 @@ class SettingVhan(Screen):
             cmd.append(cmd4)
             cmd.append(cmd5)
             title = _("Installation Settings")
-            self.session.open(tvConsole,_(title),cmd)
+            self.session.open(tvConsole, _(title), cmd)
             if not isDreamOS:
                 self.onShown.append(resettings)
 
@@ -2030,7 +2050,7 @@ class Milenka61(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Milenka61')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -2053,10 +2073,11 @@ class Milenka61(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2098,7 +2119,7 @@ class Milenka61(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -2135,7 +2156,7 @@ class Milenka61(Screen):
             cmd.append(cmd3)
             cmd.append(cmd4)
             title = _("Installation Settings")
-            self.session.open(tvConsole,_(title),cmd)
+            self.session.open(tvConsole, _(title), cmd)
             if not isDreamOS:
                 self.onShown.append(resettings)
 
@@ -2148,7 +2169,7 @@ class SettingManutek(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Manutek')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -2171,10 +2192,11 @@ class SettingManutek(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2214,7 +2236,7 @@ class SettingManutek(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -2263,9 +2285,10 @@ class SettingManutek(Screen):
                     cmd.append(cmd5)
                     cmd.append(cmd6)
                 title = _("Installation Settings")
-                self.session.open(tvConsole,_(title),cmd)
+                self.session.open(tvConsole, _(title), cmd)
             if not isDreamOS:
                 self.onShown.append(resettings)
+
 
 class SettingMorpheus(Screen):
 
@@ -2276,7 +2299,7 @@ class SettingMorpheus(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Morpheus')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -2299,10 +2322,11 @@ class SettingMorpheus(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2344,7 +2368,7 @@ class SettingMorpheus(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -2387,7 +2411,7 @@ class SettingMorpheus(Screen):
                     cmd.append(cmd1)
                     cmd.append(cmd2)
             title = _("Installation Settings")
-            self.session.open(tvConsole,_(title),cmd)
+            self.session.open(tvConsole, _(title), cmd)
         deletetmp()
         if not isDreamOS:
             self.onShown.append(resettings)
@@ -2401,7 +2425,7 @@ class SettingCiefp(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Ciefp')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -2424,10 +2448,11 @@ class SettingCiefp(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2467,7 +2492,7 @@ class SettingCiefp(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -2504,9 +2529,10 @@ class SettingCiefp(Screen):
             cmd.append(cmd3)
             cmd.append(cmd4)
             title = _("Installation Settings")
-            self.session.open(tvConsole,_(title),cmd)
+            self.session.open(tvConsole, _(title), cmd)
             if not isDreamOS:
                 self.onShown.append(resettings)
+
 
 class SettingBi58(Screen):
 
@@ -2517,7 +2543,7 @@ class SettingBi58(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Bi58')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -2540,10 +2566,11 @@ class SettingBi58(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2582,7 +2609,7 @@ class SettingBi58(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -2619,9 +2646,10 @@ class SettingBi58(Screen):
             cmd.append(cmd3)
             cmd.append(cmd4)
             title = _("Installation Settings")
-            self.session.open(tvConsole,_(title),cmd)
+            self.session.open(tvConsole, _(title), cmd)
             if not isDreamOS:
                 self.onShown.append(resettings)
+
 
 class SettingPredrag(Screen):
 
@@ -2632,7 +2660,7 @@ class SettingPredrag(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Predrag')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -2655,10 +2683,11 @@ class SettingPredrag(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
+         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2697,7 +2726,7 @@ class SettingPredrag(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -2734,9 +2763,10 @@ class SettingPredrag(Screen):
             cmd.append(cmd3)
             cmd.append(cmd4)
             title = _("Installation Settings")
-            self.session.open(tvConsole,_(title),cmd)
+            self.session.open(tvConsole, _(title), cmd)
             if not isDreamOS:
                 self.onShown.append(resettings)
+
 
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection = None):
@@ -2746,7 +2776,7 @@ class tvInstall(Screen):
                 self.skin = f.read()
         self.setup_title = ('Install')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.selection = selection
         self['info'] = Label()
         self['pth'] = Label('')
@@ -2768,16 +2798,17 @@ class tvInstall(Screen):
             self.urls.append(url)
         self['text'] = tvList([])
         self['info'].setText(_('Please install ...'))
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
+        self['key_yellow'] = Button(_('Download'))
         self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
+        # self['key_yellow'].hide()
         self['key_blue'].hide()
-        self['actions'] = ActionMap(['SetupActions'], {'ok': self.message,
+        self['actions'] = ActionMap(['SetupActions',  'ColorActions'], {'ok': self.message,
          'green': self.message,
          'red': self.close,
+         'yellow': self.okDown,
          'cancel': self.close}, -2)
         self.onLayoutFinish.append(self.start)
 
@@ -2785,7 +2816,7 @@ class tvInstall(Screen):
         showlist(self.names, self['text'])
 
     def message(self):
-        self.session.openWithCallback(self.selclicked,tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.selclicked, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
     def selclicked(self, result):
         if result:
@@ -2806,10 +2837,13 @@ class tvInstall(Screen):
         self.close(None)
 
     def prombt(self, com, dom):
-        useragent = "--header='User-Agent: QuickTime/7.6.2 (qtver=7.6.2;os=Windows NT 5.1Service Pack 3)'"
+        useragent = {'User-Agent': 'Enigma2 - tvPanel Plugin'}
+        # useragent = "--header='User-Agent: QuickTime/7.6.2 (qtver=7.6.2;os=Windows NT 5.1Service Pack 3)'"
         self.com = com
         dom = dom.strip().lower()
-        downplug = dom.replace(' ','') 
+        downplug = dom.replace(' ','').replace('-','_').replace('deb','').replace('ipk','')
+        
+        
         self['info'].setText(_('Installing ') + dom + _('... please wait'))
 
         if self.com != None:
@@ -2817,7 +2851,6 @@ class tvInstall(Screen):
                 extension = extensionlist[-1].lower()
                 if len(extensionlist) > 1:
                     tar = extensionlist[-2].lower()
-
                 if extension in ["gz","bz2"] and tar == "tar":
                     self.command = ['']
                     if extension == "gz":
@@ -2849,8 +2882,8 @@ class tvInstall(Screen):
                             # self.timer_conn = self.timer.timeout.connect(deletetmp)
                         # cmd = 'wget -q -O /tmp/tmp.deb %s;dpkg --force-all -i /tmp/tmp.deb' % str(self.com)
                         dest = '/tmp/' + downplug + '.deb'
-                        
-                        cmd = 'wget -q -O %s %s;dpkg --install --force-depends --force-overwrite %s' % (dest, str(self.com), dest)
+                        # cmd = 'wget -q -O %s %s;dpkg --install --force-depends --force-overwrite %s' % (dest, str(self.com), dest)
+                        cmd = 'wget -q -O %s %s;dpkg --install --force-overwrite %s' % (dest, str(self.com), dest)
                         self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
                         self['info'].setText(_('Installation done !!!'))
                 elif self.com.endswith(".ipk"):
@@ -2865,7 +2898,9 @@ class tvInstall(Screen):
                             # self.timer.callback.append(deletetmp)
                         # except:
                             # self.timer_conn = self.timer.timeout.connect(deletetmp)
-                        cmd = 'wget -q -O %s %s;opkg install -force-overwrite -force-depends %s' % (dest, str(self.com),dest)
+                        # cmd = 'wget -q -O %s %s;apt-opkg install -force-overwrite -force-depends %s' % (dest, str(self.com),dest)
+                        # cmd = 'wget -q -O %s %s;opkg install -force-overwrite -force-depends %s' % (dest, str(self.com),dest)
+                        cmd = 'wget -q -O %s %s;opkg -force-overwrite install %s' % (dest, str(self.com), dest)
                         self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
                         self['info'].setText(_('Installation done !!!'))
 
@@ -2874,8 +2909,6 @@ class tvInstall(Screen):
                         if not isDreamOS:
                             set = 1
                             terrestrial()
-                        
-                        
                         if os.path.exists("/tmp/unzipped"):
                             os.system('rm -rf /tmp/unzipped')
                         os.makedirs('/tmp/unzipped')
@@ -2904,7 +2937,6 @@ class tvInstall(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        
                         if not isDreamOS:
                             terrestrial_rest()
                         self.reloadSettings2()
@@ -2916,7 +2948,6 @@ class tvInstall(Screen):
                             # self.timer_conn = self.timer.timeout.connect(deletetmp)
                         self.session.open(tvConsole, _('SETTING - install: %s') % dom, [cmd])
                         self['info'].setText(_('Installation done !!!'))
-
                     elif 'picon' in dom:
                         dest = '/tmp/picon.zip'
                         self.timer = eTimer()
@@ -2928,7 +2959,6 @@ class tvInstall(Screen):
                         cmd = ['wget -q -O /tmp/picon.zip %s; unzip -o -q /tmp/picon.zip -d %s' %(str(self.com), mmkpicon)]
                         self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
                         self['info'].setText(_('Installation done !!!'))
-
                     else:
                         self['info'].setText(_('Downloading the selected file in /tmp') + dom + _('... please wait'))
                         dest = '/tmp/' + downplug + '.zip'
@@ -2956,21 +2986,141 @@ class tvInstall(Screen):
         os.system('sleep 5')
         pass
 
+    def okDown(self):
+        self.session.openWithCallback(self.okDownload, tvMessageBox,(_("Do you want to Download?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+
+    def okDownload(self, result):
+        self['info'].setText(_('... please wait'))
+        if result:
+            idx = self["text"].getSelectionIndex()
+            dom = self.names[idx]
+            self.com = self.urls[idx]
+            downplug = dom.replace(' ','').replace('-','_').replace('deb','').replace('ipk','')
+            if self.com != None:
+                global dest
+                dest='/tmp/' + downplug
+                extensionlist = self.com.split('.')
+                print('extensionlist: ', extensionlist)
+                extension = extensionlist[-1].lower()
+                if len(extensionlist) > 1:
+                    tar = extensionlist[-2].lower()
+                print('extension: ', extension)
+                if extension in ["gz","bz2"] and tar == "tar":
+                    if extension == "gz":
+                        dest = '/tmp/' + downplug + '.gz'
+                    elif extension == "bz2":
+                        dest = '/tmp/' + downplug + '.bz2'
+                elif extension == "deb":
+                    if not isDreamOS:
+                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self['info'].setText(_('Download canceled!'))
+                    else:
+                        dest = '/tmp/' + downplug + '.deb'
+                elif self.com.endswith(".ipk"):
+                    if isDreamOS:
+                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self['info'].setText(_('Download canceled!'))
+                    else:
+                        dest = '/tmp/' + downplug + '.ipk'
+                elif self.com.endswith('.zip'):
+                        dest = '/tmp/' + downplug + '.zip'
+
+                dest = dest.replace('..','.')
+                print('dest = :', dest)
+                self.download = downloadWithProgress(self.com, dest)
+                self.download.addProgress(self.downloadProgress)
+                self.download.start().addCallback(self.finish).addErrback(self.showError)
+
+            else:
+                self['info'].setText(_('Download failed!') + dom + _('... Not supported'))
+            # return
+
+    def downloadProgress(self, recvbytes, totalbytes):
+        self['info'].setText(_('Download...'))
+        self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+
+
+    def finish(self, fplug):
+        if os.path.exists(dest):
+            self['info'].setText(_('File Downloaded ...'))
+        self['info'].setText(_('Please select ...'))
+        self['progresstext'].text = ''
+        self.progclear = 0
+        self['progress'].setValue(self.progclear)
+        self.ipkinst(dest)
+
+    def showError(self, error):
+        self['info'].setText(_('Download Error ...'))
+        print("download error =", error)
+        # self.close()
+
+    def finished(self,result):
+         return
+
+    def ipkinst(self, dest):
+        self.sel = dest
+        if self.sel:
+            # self.sel = self.sel[0]
+            self.session.openWithCallback(self.ipkinst2, tvMessageBox, (_('Do you really want to install the selected Addon?')+ '\n' + self.sel), tvMessageBox.TYPE_YESNO)
+
+    def ipkinst2(self, answer):
+        if answer is True:
+            # ipkpth = config.plugins.tvPanel.ipkpth.value
+            # dest = ipkpth + '/' + self.sel
+            try:
+                if self.sel.find('.ipk') != -1:
+                    self.sel = self.sel[0]
+                    # cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";opkg update > /dev/null; echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest + ' > /dev/null'
+                    cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest #+ ' > /dev/null'
+                    self.session.open(tvConsole, title ='IPK Local Installation', cmdlist =[cmd0, 'sleep 5'], finishedCallback = self.msgipkinst)
+
+                elif self.sel.find('.tar.gz') != -1:
+                    self.sel = self.sel[0]
+                    cmd0 = 'tar -xzvf ' + dest + ' -C /'
+                    self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'], finishedCallback = self.msgipkinst)
+
+                elif self.sel.find('.deb') != -1:
+                    if isDreamOS:
+                        self.sel = self.sel[0]
+                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";dpkg --force-all -i ' + dest #+ ' > /dev/null 2>&1' #+ dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
+                        self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0, 'sleep 3'], finishedCallback = self.msgipkinst)
+                    else:
+                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                else:
+                    self.session.open(tvMessageBox, _('Unknow Error!'), tvMessageBox.TYPE_ERROR, timeout=10)
+            except:
+                # self.delFile(dest)
+                self['info'].text = _('File: %s\nInstallation failed!') % dest
+
+    def delFile(self, dest):
+        if fileExists(dest):
+            os.system('rm -rf ' + dest)
+
+    def msgipkinst(self):
+        self.session.openWithCallback(self.ipkrestart, MessageBox, (_('Restart Enigma to load the installed plugin?')), MessageBox.TYPE_YESNO)
+
+    def ipkrestart(self, result):
+        if result:
+            self.session.open(TryQuitMainloop, 3)
+        else:
+            self.close()
+
 class tvConsole(Screen):
 
-    def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False,endstr=''):
+    def __init__(self, session, title ="Console", cmdlist =None, finishedCallback =None, closeOnSuccess =False, endstr =''):
         self.session = session
         skin = skin_path + 'tvConsole.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Console')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.finishedCallback = finishedCallback
         self.closeOnSuccess = closeOnSuccess
         self.endstr = endstr
         self.errorOcurred = False
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['text'] = ScrollLabel('')
         self['actions'] = ActionMap(['WizardActions', 'DirectionActions' 'ColorActions',], {'ok': self.cancel,
          'back': self.cancel,
@@ -2979,7 +3129,7 @@ class tvConsole(Screen):
          'up': self['text'].pageUp,
          'down': self['text'].pageDown}, -1)
         self.cmdlist = cmdlist
-        self.newtitle = _('..:: TiVuStream Addons V. %s ::..' % currversion)
+        self.newtitle = _(title_plug)
         self.onShown.append(self.updateTitle)
         self.container = eConsoleAppContainer()
         self.run=0
@@ -2987,8 +3137,8 @@ class tvConsole(Screen):
             self.container.appClosed.append(self.runFinished)
             self.container.dataAvail.append(self.dataAvail)
         except:
-            self.appClosed_conn=self.container.appClosed.connect(self.runFinished)
-            self.dataAvail_conn=self.container.dataAvail.connect(self.dataAvail)
+            self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
+            self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
         self.onLayoutFinish.append(self.startRun)
 
     def updateTitle(self):
@@ -3006,9 +3156,9 @@ class tvConsole(Screen):
             if self.container.execute(self.cmdlist[self.run]):
                 self.runFinished(-1)
         else:
-            str=self["text"].getText()
+            str= self["text"].getText()
             if not retval and self.endstr.startswith("Swapping"):
-               str += _("\n\n"+self.endstr)
+               str += _("\n\n" + self.endstr)
             else:
                str += _("Execution finished!!\n")
             self["text"].setText(str)
@@ -3022,8 +3172,8 @@ class tvConsole(Screen):
         if self.run == len(self.cmdlist):
             self.close()
             try:
-                self.appClosed_conn=None
-                self.dataAvail_conn=None
+                self.appClosed_conn = None
+                self.dataAvail_conn = None
             except:
                 self.container.appClosed.remove(self.runFinished)
                 self.container.dataAvail.remove(self.dataAvail)
@@ -3037,14 +3187,14 @@ class tvConsole(Screen):
             trace_error()
         return
         if self["text"].getText().endswith("Do you want to continue? [Y/n] "):
-            msg=self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
+            msg= self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
 
     def processAnswer(self, retval):
         if retval:
             self.container.write("Y",1)
         else:
             self.container.write("n",1)
-        self.dataSent_conn=self.container.dataSent.connect(self.processInput)
+        self.dataSent_conn = self.container.dataSent.connect(self.processInput)
 
     def processInput(self, retval):
         self.container.sendEOF()
@@ -3062,8 +3212,9 @@ class tvIPK(Screen):
                 self.skin = f.read()
         self.setup_title = ('IPK')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.flist = []
+        self['ipkglisttmp'] = List(self.flist)
         idx = 0
         ipkpth = config.plugins.tvPanel.ipkpth.value
         pkgs = listdir(ipkpth)
@@ -3072,8 +3223,7 @@ class tvIPK(Screen):
                 res = (fil, idx)
                 self.flist.append(res)
                 idx = idx + 1
-        self['ipkglisttmp'] = List(self.flist)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['info1'] = Label(_('Put addon .ipk .tar.gz .deb and install from config path') + ' ' + str(ipkpth) )
         self['info'] = Label('')
         self['key_green'] = Button(_('Install'))
@@ -3089,6 +3239,25 @@ class tvIPK(Screen):
          'cancel': self.close}, -1)
         self.onLayoutFinish.append(self.getfreespace)
 
+    # def openlist(self):
+        # self.flist = []
+        # idx = 0
+        # ipkpth = str(config.plugins.tvPanel.ipkpth.value)
+        # pkgs = listdir(ipkpth)
+        # for fil in pkgs:
+            # if fil.find('.ipk') != -1 or fil.find('.tar.gz') != -1 or fil.find('.deb') != -1:
+                # res = (fil, idx)
+                # self.flist.append(res)
+                # idx = idx + 1
+        # self['ipkglisttmp'] = List(self.flist)
+        # self.getfreespace()
+        # if os.path.exists(ipkpth):
+            # self.flist = []
+
+            # self["ipkglisttmp"].setList(self.flist)
+            # self["ipkglisttmp"].updateList(self.flist)
+            
+            
     def getfreespace(self):
         fspace = freespace()
         self['info'].setText(fspace)
@@ -3109,28 +3278,29 @@ class tvIPK(Screen):
             try:
                 if self.sel.find('.ipk') != -1:
                     self.sel = self.sel[0]
-                    cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";opkg update > /dev/null; echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest + ' > /dev/null'
-                    self.session.open(tvConsole, title='IPK Local Installation', cmdlist=[cmd0, 'sleep 5'], finishedCallback=self.msgipkinst)
+                    # cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";opkg update > /dev/null; echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest + ' > /dev/null'
+                    cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest #+ ' > /dev/null'
+                    self.session.open(tvConsole, title ='IPK Local Installation', cmdlist =[cmd0, 'sleep 5'], finishedCallback = self.msgipkinst)
 
                 elif self.sel.find('.tar.gz') != -1:
                     self.sel = self.sel[0]
                     cmd0 = 'tar -xzvf ' + dest + ' -C /'
-                    self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[cmd0, 'sleep 5'], finishedCallback=self.msgipkinst)
+                    self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'], finishedCallback = self.msgipkinst)
 
                 elif self.sel.find('.deb') != -1:
                     if isDreamOS:
                         self.sel = self.sel[0]
-                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";dpkg --force-all -i ' + dest + ' > /dev/null 2>&1' #+ dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
-                        self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0, 'sleep 3'], finishedCallback=self.msgipkinst)
+                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";dpkg --force-all -i ' + dest #+ ' > /dev/null 2>&1' #+ dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
+                        self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0, 'sleep 3'], finishedCallback = self.msgipkinst)
                     else:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                 else:
-                    self.session.open(MessageBox, MessageBox.TYPE_ERROR, timeout=10)
+                    self.session.open(tvMessageBox, _('Unknow Error!'), tvMessageBox.TYPE_ERROR, timeout=10)
             except:
                 self.delFile(dest)
                 self['info1'].text = _('File: %s\nInstallation failed!') % dest
 
-    def delFile(self,dest):
+    def delFile(self, dest):
         if fileExists(dest):
             os.system('rm -rf ' + dest)
 
@@ -3140,12 +3310,15 @@ class tvIPK(Screen):
             self.sel = self.sel[0]
             self.session.openWithCallback(self.msgipkrmv2, tvMessageBox, (_('Do you really want to remove selected?')+ '\n' + self.sel), tvMessageBox.TYPE_YESNO)
 
-    def msgipkrmv2(self, answer):
-        if answer is True:
-            ipkpth = config.plugins.tvPanel.ipkpth.value
-            dest = ipkpth + '/' + self.sel
-            cmd0 = 'rm -rf ' + dest
-            self.session.open(tvConsole, title='IPK Local Remove', cmdlist=[cmd0, 'sleep 3'], finishedCallback=self.finished)
+    # def msgipkrmv2(self, answer):
+        # if answer is True:
+            # ipkpth = config.plugins.tvPanel.ipkpth.value
+            # dest = ipkpth + '/' + self.sel
+            # cmd0 = 'rm -rf ' + dest
+            # self.session.open(tvConsole, title ='IPK Local Remove', cmdlist =[cmd0, 'sleep 3'], finishedCallback = self.finished)
+
+    def finished(self, result):
+        return
 
     def msgipkinst(self):
         self.session.openWithCallback(self.ipkrestart, MessageBox, (_('Restart Enigma to load the installed plugin?')), MessageBox.TYPE_YESNO)
@@ -3156,9 +3329,25 @@ class tvIPK(Screen):
         else:
             self.close()
 
-    def finished(self,result):
-         return
+    def msgipkrmv2(self, result):
+        if result:
+            self.flist = []
+            ipkpth = str(config.plugins.tvPanel.ipkpth.value)
+            idx = self['ipkglisttmp'].getCurrent()
+            if idx:
+                idx = idx[0]
+            dom = ipkpth + '/' + idx
+            if fileExists(dom):
+                os.remove(dom)
+                self.session.open(MessageBox, dom +"   has been successfully deleted\nwait time to refresh the list...", MessageBox.TYPE_INFO, timeout=5)
+                # del self.flist[idx]
+                # self.flist[:]
+                # self.flist.clear()
+            else:
+                self.session.open(MessageBox, dom +"   not exist!\nwait time to refresh the list...", MessageBox.TYPE_INFO, timeout=5)
+        self.close()
 
+            
 class tvUpdate(Screen):
 
     def __init__(self, session):
@@ -3168,7 +3357,7 @@ class tvUpdate(Screen):
                 self.skin = f.read()
         self.setup_title = ('Update')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Restart'))
@@ -3180,7 +3369,7 @@ class tvUpdate(Screen):
         self['progress'] = ProgressBar()
         self['progresstext'] = StaticText()
         self['text'] = tvList([])
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self.Update = False
         global link, dmlink
         dmlink=''
@@ -3215,11 +3404,11 @@ class tvUpdate(Screen):
                 fp.close()
                 cstr = s1 + ' ' + s2
                 if s1 <= currversion:
-                    self['info'].setText('TiVuStream Panel version: ' + currversion )
+                    self['info'].setText(title_plug)
                     self['pth'].setText('No updates available!')
                     self.Update = False
                 else:
-                    updatestr = 'TiVuStream Panel version: ' + currversion
+                    updatestr = title_plug
                     cvrs = 'New update ' + s1 + ' is available!! '
                     cvrt = 'Updates: ' + self.info + '\nPress yellow button to start updating'
                     self.Update = True
@@ -3228,7 +3417,7 @@ class tvUpdate(Screen):
                     self['pform'].setText(cvrt)
         except:
             self.Update = False
-            self['info'].setText('TiVuStream Panel version: ' + currversion )
+            self['info'].setText(title_plug)
             self['pth'].setText('No updates available!')
 
         self.timer = eTimer()
@@ -3264,11 +3453,11 @@ class tvUpdate(Screen):
                 dom = 'New version ' + self.version
                 os.system('wget %s -O /tmp/tvpanel.tar > /dev/null' % com)
                 os.system('sleep 3')
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvpanel.tar -C /'], finishedCallback=self.msgipkrst1) #, closeOnSuccess=True)
+                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvpanel.tar -C /'], finishedCallback = self.msgipkrst1) #, closeOnSuccess =True)
             else:
                 com = link
                 dom = 'New Version ' + self.version
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback=self.msgipkrst1) #, closeOnSuccess=True)
+                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback = self.msgipkrst1) #, closeOnSuccess =True)
 
     def msgipkrst1(self):
         self.session.openWithCallback(self.ipkrestrt, tvMessageBox, (_('Do you want restart enigma2 ?')), tvMessageBox.TYPE_YESNO)
@@ -3295,10 +3484,10 @@ class tvRemove(Screen):
             self.skin = f.read()
         self.setup_title = ('Remove')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['key_green'] = Button(_('Uninstall'))
         self['key_yellow'] = Button(_('Restart'))
         self['key_red'] = Button(_('Back'))
@@ -3344,9 +3533,9 @@ class tvRemove(Screen):
             dom = self.names[idx]
             com = dom
             if isDreamOS:
-                self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com], self.getfreespace, False)
+                self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com], self.openList, False)
             else:
-                self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], self.getfreespace, False)
+                self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], self.openList, False)
 
     def getfreespace(self):
         fspace = freespace()
@@ -3354,7 +3543,7 @@ class tvRemove(Screen):
         self.openList()
 
     def message1(self):
-        self.session.openWithCallback(self.callMyMsg1,tvMessageBox,_("Do you want to remove?"), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.callMyMsg1, tvMessageBox,_("Do you want to remove?"), tvMessageBox.TYPE_YESNO)
 
     def msgipkrst(self):
         self.session.openWithCallback(self.ipkrestrt, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
@@ -3386,7 +3575,7 @@ class tvMessageBox(Screen):
         self.setup_title = ('MessageBox')
         self.type = type
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.msgBoxID = msgBoxID
         self['text'] = Label(text)
         self['Text'] = StaticText(text)
@@ -3398,7 +3587,7 @@ class tvMessageBox(Screen):
         self['QuestionPixmap'] = Pixmap()
         self['InfoPixmap'] = Pixmap()
         self['WarningPixmap'] = Pixmap()
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        # self['title'] = Label(_(title_plug))
         self.timerRunning = False
         self.initTimeout(timeout)
         picon = picon or type
@@ -3546,10 +3735,10 @@ class tvConfig(Screen, ConfigListScreen):
         self.setup_title = _("Config")
         self.onChangedEntry = [ ]
         self.session = session
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self['description'] = Label('')
         info = ''
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['info'] = Label(_('Config Panel Addon'))
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Save'))
@@ -3562,6 +3751,7 @@ class tvConfig(Screen, ConfigListScreen):
          'left': self.keyLeft,
          'right': self.keyRight,
          'yellow': self.tvUpdate,
+         "showVirtualKeyboard": self.KeyText,
          'ok': self.Ok_edit,
          'green': self.msgok}, -1)
         self.list = []
@@ -3588,7 +3778,7 @@ class tvConfig(Screen, ConfigListScreen):
         self.list.append(getConfigListEntry(_('Path Manual IPK'), config.plugins.tvPanel.ipkpth, _("Path to the addon installation folder")))
         self.list.append(getConfigListEntry(_('Link in Extensions Menu'), config.plugins.tvPanel.strtext, _("Link in Extensions button")))
         self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvPanel.strtmain, _("Link in Main Menu")))
-        self.list.append(getConfigListEntry(_('Link in Setup Menu'), config.plugins.tvPanel.strtst, _("Link in Setup Menu")))
+        # self.list.append(getConfigListEntry(_('Link in Setup Menu'), config.plugins.tvPanel.strtst, _("Link in Setup Menu")))
         self["config"].list = self.list
         self["config"].setList(self.list)
 
@@ -3640,9 +3830,9 @@ class tvConfig(Screen, ConfigListScreen):
             self.session.openWithCallback(
              self.openDirectoryBrowserCB,
              LocationBox,
-             windowTitle=_('Choose Directory:'),
+             windowtitle =_('Choose Directory:'),
              text=_('Choose directory'),
-             currDir=str(path),
+             currDir= str(path),
              bookmarks=config.movielist.videodirs,
              autoAdd=False,
              editDir=True,
@@ -3662,7 +3852,7 @@ class tvConfig(Screen, ConfigListScreen):
     def KeyText(self):
         sel = self['config'].getCurrent()
         if sel:
-            self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self['config'].getCurrent()[0], text=self['config'].getCurrent()[1].value)
+            self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title = self['config'].getCurrent()[0], text= self['config'].getCurrent()[1].value)
 
     def VirtualKeyBoardCallback(self, callback = None):
         if callback is not None and len(callback):
@@ -3692,11 +3882,11 @@ class SelectPicons(Screen):
             self.skin = f.read()
         self.setup_title = ('Select Picons')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self['text'] = tvList([])
         self.working = False
         self.selection = 'all'
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
@@ -3753,11 +3943,11 @@ class SelectPicons(Screen):
             self.session.open(ColomboTrasp)
 
     def remove(self):
-        self.session.openWithCallback(self.okRemove,MessageBox,(_("Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait .." %mmkpicon)), MessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okRemove,tvMessageBox,(_("Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait .." % mmkpicon)), tvMessageBox.TYPE_YESNO)
 
     def okRemove(self, result):
         if result:
-            self['info'].setText(_('Erase %s... please wait' %mmkpicon))
+            self['info'].setText(_('Erase %s... please wait' % mmkpicon))
             # print("Folder picons : ", mmkpicon)
             piconsx = glob.glob(str(mmkpicon) + '/*.png')
             for f in piconsx:
@@ -3777,7 +3967,7 @@ class MMarkFolderBlk(Screen):
             self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -3802,7 +3992,7 @@ class MMarkFolderBlk(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -3835,7 +4025,7 @@ class MMarkFolderBlk(Screen):
                 url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
                 url = url.replace('\\','')
                 pic = no_cover
-                name = 'MMark Picons ' + name #+ ' ' + data[0:10]
+                name = 'MMark Picons ' + name
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -3866,7 +4056,7 @@ class MMarkBlack(Screen):
             self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -3884,7 +4074,7 @@ class MMarkBlack(Screen):
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.url = url
-        name = name
+        self.name = name
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
@@ -3893,7 +4083,7 @@ class MMarkBlack(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -3937,7 +4127,7 @@ class MMarkBlack(Screen):
             pass
 
     def okRun(self):
-            self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -3964,7 +4154,7 @@ class MMarkBlack(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
     def install(self, fplug):
-        if os.path.exists('/tmp/download.zip'):    
+        if os.path.exists('/tmp/download.zip'):
             self['info'].setText(_('Install ...'))
             myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
             subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
@@ -3995,7 +4185,7 @@ class MMarkFolderTrs(Screen):
                 self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -4020,7 +4210,7 @@ class MMarkFolderTrs(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -4052,7 +4242,7 @@ class MMarkFolderTrs(Screen):
             for url, name, data in match:
                 url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
                 pic = no_cover
-                name = 'MMark Picons ' + name #+ ' ' + data[0:10]
+                name = 'MMark Picons ' + name
                 self.urls.append(url)
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
@@ -4082,7 +4272,7 @@ class MMarkTrasp(Screen):
                 self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -4109,7 +4299,7 @@ class MMarkTrasp(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -4153,7 +4343,7 @@ class MMarkTrasp(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -4180,7 +4370,7 @@ class MMarkTrasp(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
     def install(self, fplug):
-        if os.path.exists('/tmp/download.zip'):    
+        if os.path.exists('/tmp/download.zip'):
             self['info'].setText(_('Install ...'))
             myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
             subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
@@ -4206,7 +4396,7 @@ class MMarkMov(Screen):
                 self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -4233,7 +4423,7 @@ class MMarkMov(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -4277,7 +4467,7 @@ class MMarkMov(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -4304,7 +4494,7 @@ class MMarkMov(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
     def install(self, fplug):
-        if os.path.exists('/tmp/download.zip'):    
+        if os.path.exists('/tmp/download.zip'):
             self['info'].setText(_('Install ...'))
             myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
             subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
@@ -4330,7 +4520,7 @@ class ColomboTrasp(Screen):
             self.skin = f.read()
         self.setup_title = ('Colombo')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -4355,7 +4545,7 @@ class ColomboTrasp(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -4403,7 +4593,7 @@ class ColomboTrasp(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -4463,11 +4653,11 @@ class mainkodilite(Screen):
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self['text'] = tvList([])
         self.working = False
         self.selection = 'all'
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -4529,7 +4719,7 @@ class kodilite(Screen):
                 self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -4554,7 +4744,7 @@ class kodilite(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -4599,7 +4789,7 @@ class kodilite(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -4626,7 +4816,7 @@ class kodilite(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
+            self.session.open(tvConsole, _(title), cmd, finishedCallback = self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4652,7 +4842,7 @@ class plugins(Screen):
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -4677,7 +4867,7 @@ class plugins(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -4721,7 +4911,7 @@ class plugins(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -4749,7 +4939,7 @@ class plugins(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
+            self.session.open(tvConsole, _(title), cmd, finishedCallback = self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4775,7 +4965,7 @@ class plugins_adult(Screen):
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -4800,7 +4990,7 @@ class plugins_adult(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun1,
          'red': self.close,
@@ -4867,7 +5057,7 @@ class plugins_adult(Screen):
             self.close()
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -4895,7 +5085,7 @@ class plugins_adult(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
+            self.session.open(tvConsole, _(title), cmd, finishedCallback = self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -4921,7 +5111,7 @@ class script(Screen):
                 self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -4946,7 +5136,7 @@ class script(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -4991,7 +5181,7 @@ class script(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -5019,7 +5209,7 @@ class script(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
+            self.session.open(tvConsole, _(title), cmd, finishedCallback = self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -5045,7 +5235,7 @@ class repository(Screen):
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
         self.addon = 'emu'
@@ -5070,7 +5260,7 @@ class repository(Screen):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_('..:: TiVuStream Addons V. %s ::..' % currversion))
+        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
@@ -5115,7 +5305,7 @@ class repository(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall,tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -5143,7 +5333,7 @@ class repository(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole,_(title),cmd, finishedCallback=self.finished)
+            self.session.open(tvConsole, _(title), cmd, finishedCallback = self.finished)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -5199,21 +5389,22 @@ def StartSetup(menuid):
     else:
         return []
 
-extDescriptor = PluginDescriptor(name='TiVuStream Panel', description=_('TiVuStream Addons'), where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=ico_path, fnc=main)
-mainDescriptor = PluginDescriptor(name='TiVuStream Panel', description=_('TiVuStream Addons V.' + currversion), where=PluginDescriptor.WHERE_MENU, icon=ico_path, fnc=cfgmain)
-strtstDescriptor = PluginDescriptor(name=_('TiVuStream Panel'), description=_('TiVuStream Addons'), where=PluginDescriptor.WHERE_MENU, icon=ico_path, fnc=StartSetup)
+
 
 def Plugins(**kwargs):
     ico_path = 'logo.png'
     if not isDreamOS:
         ico_path = plugin_path + '/res/pics/logo.png'
-    result = [PluginDescriptor(name='TiVuStream Panel', description=_('TiVuStream Addons V.' + currversion), where=[PluginDescriptor.WHERE_PLUGINMENU], icon=ico_path, fnc=main)]
+    extDescriptor = PluginDescriptor(name =name_plug, description =_(title_plug), where =PluginDescriptor.WHERE_EXTENSIONSMENU, icon =ico_path, fnc =main)
+    mainDescriptor = PluginDescriptor(name =name_plug, description =_(title_plug), where =PluginDescriptor.WHERE_MENU, icon =ico_path, fnc =cfgmain)
+    # strtstDescriptor = PluginDescriptor(name =_(name_plug), description =_(title_plug), where =PluginDescriptor.WHERE_MENU, icon =ico_path, fnc = startSetup)
+    result = [PluginDescriptor(name =name_plug, description =_(title_plug), where =[PluginDescriptor.WHERE_PLUGINMENU], icon =ico_path, fnc =main)]
     if config.plugins.tvPanel.strtext.value:
         result.append(extDescriptor)
     if config.plugins.tvPanel.strtmain.value:
         result.append(mainDescriptor)
-    if config.plugins.tvPanel.strtst.value:
-        result.append(strtstDescriptor)
+    # if config.plugins.tvPanel.strtst.value:
+        # result.append(strtstDescriptor)
     return result
 
 def terrestrial():
@@ -5324,7 +5515,7 @@ def StartSavingTerrestrialChannels():
                         TrasponderListOldLamedb.write(line)
                     if inService:
                         tmp = line.split(':')
-                        ServiceListOldLamedb.write(tmp[0] +":"+tmp[1]+":"+tmp[2]+":"+tmp[3]+":"+tmp[4]+":0\n")
+                        ServiceListOldLamedb.write(tmp[0] + ":" + tmp[1]+":"+tmp[2]+":" + tmp[3]+":" + tmp[4] + ":0\n")
                         line = LamedbFile.readline()
                         ServiceListOldLamedb.write(line)
                         line = LamedbFile.readline()
@@ -5332,8 +5523,8 @@ def StartSavingTerrestrialChannels():
             TrasponderListOldLamedb.close()
             ServiceListOldLamedb.close()
             if not Trasponder:
-                os.system('rm -fr '+plugin_path +'/temp/TrasponderListOldLamedb')
-                os.system('rm -fr '+plugin_path +'/temp/ServiceListOldLamedb')
+                os.system('rm -fr '+ plugin_path +'/temp/TrasponderListOldLamedb')
+                os.system('rm -fr '+ plugin_path +'/temp/ServiceListOldLamedb')
         except:
             pass
         return Trasponder
@@ -5345,7 +5536,7 @@ def StartSavingTerrestrialChannels():
         for jx in ReadingTempServicelist:
             if jx.find('eeee') != -1:
                 String = jx.split(':')
-                WritingBouquetTemporary.write('#SERVICE 1:0:%s:%s:%s:%s:%s:0:0:0:\n'% (hex(int(String[4]))[2:],String[0],String[2],String[3],String[1]))
+                WritingBouquetTemporary.write('#SERVICE 1:0:%s:%s:%s:%s:%s:0:0:0:\n'% (hex(int(String[4]))[2:], String[0], String[2], String[3], String[1]))
         WritingBouquetTemporary.close()
 
     def SaveBouquetTerrestrial():
@@ -5423,7 +5614,7 @@ def TransferBouquetTerrestrialFinal():
             if re.search('^userbouquet.*.tv', file):
                 f = open("/etc/enigma2/" + file, "r")
                 x = f.read()
-            if re.search("#NAME Digitale Terrestre",x, flags=re.IGNORECASE):
+            if re.search("#NAME Digitale Terrestre",x, flags = re.IGNORECASE):
                 return "/etc/enigma2/"+file
             else:
                 return  "/etc/enigma2/userbouquet.terrestrial.tv"
