@@ -5,6 +5,7 @@
 #   skin by MMark    #
 #     02/01/2021     #
 #--------------------#
+#Info http://t.me/tivustream
 # from __future__ import print_function
 from . import _
 from Components.ActionMap import ActionMap, NumberActionMap
@@ -35,8 +36,8 @@ from Screens.Screen import Screen
 from Screens.Standby import *
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Tools.Directories import SCOPE_SKIN_IMAGE, SCOPE_PLUGINS, SCOPE_LANGUAGE
-from Tools.Directories import resolveFilename, pathExists, fileExists, copyfile
+from Tools.Directories import SCOPE_SKIN_IMAGE, SCOPE_PLUGINS
+from Tools.Directories import pathExists, fileExists, copyfile
 from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from enigma import *
@@ -72,6 +73,8 @@ PY3 = version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request
     from urllib.error import URLError
+                                     
+                                             
     from urllib.request import urlretrieve
     from urllib.parse import urlparse
 else:
@@ -124,13 +127,10 @@ except:
 # Small test program #
 #--------------------#
 def checkStr(txt):
-    # convert variable to type str both in Python 2 and 3
     if PY3:
-        # Python 3
         if type(txt) == type(bytes()):
             txt = txt.decode('utf-8')
     else:
-        #Python 2
         if type(txt) == type(unicode()):
             txt = txt.encode('utf-8')
     return txt
@@ -206,7 +206,7 @@ def mountipkpth():
     ipkpth.append('/tmp')
     return ipkpth
 
-#======================================================config
+#================config
 config.plugins.tvaddon = ConfigSubsection()
 config.plugins.tvaddon.strtext = ConfigYesNo(default=True)
 config.plugins.tvaddon.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
@@ -279,7 +279,6 @@ else:
             # self.timer_conn = self.timer.timeout.connect(self.disappear)
         # else:
             # self.timer.callback.append(self.disappear)
-
     # def disappear(self):
         # self.session.openWithCallback(self.close, Hometv)
 
@@ -352,9 +351,11 @@ def OnclearMem():
 def DailyListEntry(name, idx):
     res = [name]
     if HD.width() > 1280:
+
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=7, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
+
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 5), size=(1000, 50), font=1, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
     return res
@@ -412,8 +413,6 @@ class Hometv(Screen):
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
             fp = checkStr(urlopen(req))
             fp = fp.read()
-            # print("fp3 =", fp)
-
             with open(destr, 'w') as f:
                 f.write(fp)
                 f.close()
@@ -627,7 +626,6 @@ class Drivers(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -698,7 +696,6 @@ class Dependencies(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -769,7 +766,6 @@ class Picons(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -840,7 +836,6 @@ class PluginBackup(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow':self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -911,7 +906,6 @@ class PluginEmulators(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -982,7 +976,6 @@ class PluginEpg(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1040,7 +1033,7 @@ class PluginMultimedia(Screen):
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_(''))
         self["key_blue"] = Button(_(''))
-        # # self['key_yellow'].hide()
+        self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self['progress'] = ProgressBar()
@@ -1054,7 +1047,6 @@ class PluginMultimedia(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1125,7 +1117,6 @@ class PluginMultiboot(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow':self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1196,7 +1187,6 @@ class PluginPpanel(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1267,7 +1257,6 @@ class PluginSettings(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1339,7 +1328,6 @@ class PluginSkins(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1410,7 +1398,6 @@ class PluginSport(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1482,7 +1469,6 @@ class PluginUtility(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1553,7 +1539,6 @@ class PluginWeather(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1624,7 +1609,6 @@ class debian(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow':self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1696,7 +1680,7 @@ class tvDailySetting(Screen):
         self.onLayoutFinish.append(self.updateMenuList)
 
     def Lcn(self):
-        self.mbox = self.session.open(tvMessageBox, _('Reorder terrestrial channels with Lcn rules'), tvMessageBox.TYPE_INFO, timeout=5)
+        self.mbox = self.session.open(tvMessageBox, _('Reorder Terrestrial channels with Lcn rules'), tvMessageBox.TYPE_INFO, timeout=5)
         lcnstart()
 
     def closerm(self):
@@ -1815,7 +1799,6 @@ class SettingColombo(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow':self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -1954,7 +1937,6 @@ class SettingVhan(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2006,6 +1988,7 @@ class SettingVhan(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
+                                     
                 if 'dtt' not in url.lower():
                     if not isDreamOS:
                         set = 1
@@ -2043,6 +2026,7 @@ class SettingVhan(Screen):
 
 class Milenka61(Screen):
 
+                               
     def __init__(self, session):
 
         self.session = session
@@ -2078,7 +2062,6 @@ class Milenka61(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2132,6 +2115,7 @@ class Milenka61(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
+                                     
                 if 'dtt' not in url.lower():
                     if not isDreamOS:
                         set = 1
@@ -2150,6 +2134,7 @@ class Milenka61(Screen):
             os.system('rm -rf /etc/enigma2/*.radio')
             os.system('rm -rf /etc/enigma2/*.tv')
             cmd1 = "tar -xvf /tmp/*.tar.gz -C /"
+                                   
             cmd3 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
             cmd4 = "rm -rf /tmp/*.tar.gz"
             cmd = []
@@ -2197,7 +2182,6 @@ class SettingManutek(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2249,6 +2233,7 @@ class SettingManutek(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
+                                     
                 if 'dtt' not in url.lower():
                     if not isDreamOS:
                         set = 1
@@ -2327,7 +2312,6 @@ class SettingMorpheus(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2453,7 +2437,6 @@ class SettingCiefp(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2505,6 +2488,7 @@ class SettingCiefp(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
+                                     
                 if 'dtt' not in url.lower():
                     if not isDreamOS:
                         set = 1
@@ -2571,7 +2555,6 @@ class SettingBi58(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2584,6 +2567,7 @@ class SettingBi58(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
+
         self.xml = data
         self.names = []
         self.urls = []
@@ -2622,6 +2606,7 @@ class SettingBi58(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
+                                   
                 if 'dtt' not in url.lower():
                     if not isDreamOS:
                         set = 1
@@ -2640,6 +2625,7 @@ class SettingBi58(Screen):
             os.system('rm -rf /etc/enigma2/*.radio')
             os.system('rm -rf /etc/enigma2/*.tv')
             cmd1 = "tar -xvf /tmp/*.tar.gz -C /"
+                                   
             cmd3 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
             cmd4 = "rm -rf /tmp/*.tar.gz"
             cmd = []
@@ -2688,7 +2674,6 @@ class SettingPredrag(Screen):
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
          'red': self.close,
-         # 'yellow': self.okDown,
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
@@ -2701,6 +2686,7 @@ class SettingPredrag(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
+
         self.xml = data
         self.names = []
         self.urls = []
@@ -3054,7 +3040,6 @@ class tvInstall(Screen):
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))
         print("download error =", error)
-        # self.close()
 
     def finished(self,result):
          return
@@ -3062,13 +3047,10 @@ class tvInstall(Screen):
     def ipkinst(self, dest):
         self.sel = dest
         if self.sel:
-            # self.sel = self.sel[0]
             self.session.openWithCallback(self.ipkinst2, tvMessageBox, (_('Do you really want to install the selected Addon?')+ '\n' + self.sel), tvMessageBox.TYPE_YESNO)
 
     def ipkinst2(self, answer):
         if answer is True:
-            # ipkpth = config.plugins.tvaddon.ipkpth.value
-            # dest = ipkpth + '/' + self.sel
             try:
                 if self.sel.find('.ipk') != -1:
                     self.sel = self.sel[0]
@@ -3091,7 +3073,7 @@ class tvInstall(Screen):
                 else:
                     self.session.open(tvMessageBox, _('Unknow Error!'), tvMessageBox.TYPE_ERROR, timeout=10)
             except:
-                # self.delFile(dest)
+                self.delFile(dest)
                 self['info'].text = _('File: %s\nInstallation failed!') % dest
 
     def delFile(self, dest):
@@ -3240,25 +3222,18 @@ class tvIPK(Screen):
          'cancel': self.close}, -1)
         self.onLayoutFinish.append(self.getfreespace)
 
-    # def openlist(self):
-        # self.flist = []
-        # idx = 0
-        # ipkpth = str(config.plugins.tvaddon.ipkpth.value)
-        # pkgs = listdir(ipkpth)
-        # for fil in pkgs:
-            # if fil.find('.ipk') != -1 or fil.find('.tar.gz') != -1 or fil.find('.deb') != -1:
-                # res = (fil, idx)
-                # self.flist.append(res)
-                # idx = idx + 1
-        # self['ipkglisttmp'] = List(self.flist)
-        # self.getfreespace()
-        # if os.path.exists(ipkpth):
-            # self.flist = []
+    def refreshlist(self):
+        self.flist = []
+        self['ipkglisttmp'] = List(self.flist)
+        idx = 0
+        ipkpth = config.plugins.tvaddon.ipkpth.value
+        pkgs = listdir(ipkpth)
+        for fil in pkgs:
+            if fil.find('.ipk') != -1 or fil.find('.tar.gz') != -1 or fil.find('.deb') != -1:
+                res = (fil, idx)
+                self.flist.append(res)
+                idx = idx + 1
 
-            # self["ipkglisttmp"].setList(self.flist)
-            # self["ipkglisttmp"].updateList(self.flist)
-            
-            
     def getfreespace(self):
         fspace = freespace()
         self['info'].setText(fspace)
@@ -3347,6 +3322,7 @@ class tvIPK(Screen):
             else:
                 self.session.open(MessageBox, dom +"   not exist!\nwait time to refresh the list...", MessageBox.TYPE_INFO, timeout=5)
         self.close()
+        # self.refreshlist()
 
             
 class tvUpdate(Screen):
@@ -5373,7 +5349,7 @@ def cfgmain(menuid):
     if menuid == 'mainmenu':
         return [('TiVuStream Addons',
           main,
-          'TiVuStream Panel',
+          'TiVuStream Addons',
           44)]
     else:
         return []
@@ -5385,7 +5361,7 @@ def StartSetup(menuid):
     if menuid == 'setup':
         return [('TiVuStream Addons',
           main,
-          'TiVuStream Panel',
+          'TiVuStream Addons',
           44)]
     else:
         return []
@@ -5516,7 +5492,7 @@ def StartSavingTerrestrialChannels():
                         TrasponderListOldLamedb.write(line)
                     if inService:
                         tmp = line.split(':')
-                        ServiceListOldLamedb.write(tmp[0] + ":" + tmp[1]+":"+tmp[2]+":" + tmp[3]+":" + tmp[4] + ":0\n")
+                        ServiceListOldLamedb.write(tmp[0] + ":" + tmp[1] + ":" + tmp[2] + ":" + tmp[3] + ":" + tmp[4] + ":0\n")
                         line = LamedbFile.readline()
                         ServiceListOldLamedb.write(line)
                         line = LamedbFile.readline()
@@ -5524,8 +5500,8 @@ def StartSavingTerrestrialChannels():
             TrasponderListOldLamedb.close()
             ServiceListOldLamedb.close()
             if not Trasponder:
-                os.system('rm -fr '+ plugin_path +'/temp/TrasponderListOldLamedb')
-                os.system('rm -fr '+ plugin_path +'/temp/ServiceListOldLamedb')
+                os.system('rm -fr ' + plugin_path + '/temp/TrasponderListOldLamedb')
+                os.system('rm -fr ' + plugin_path + '/temp/ServiceListOldLamedb')
         except:
             pass
         return Trasponder
@@ -5615,7 +5591,7 @@ def TransferBouquetTerrestrialFinal():
             if re.search('^userbouquet.*.tv', file):
                 f = open("/etc/enigma2/" + file, "r")
                 x = f.read()
-            if re.search("#NAME Digitale Terrestre",x, flags = re.IGNORECASE):
+            if re.search("#NAME Digitale Terrestre", x, flags = re.IGNORECASE):
                 return "/etc/enigma2/"+file
             else:
                 return  "/etc/enigma2/userbouquet.terrestrial.tv"
