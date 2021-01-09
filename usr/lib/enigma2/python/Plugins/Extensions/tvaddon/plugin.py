@@ -2827,8 +2827,16 @@ class tvInstall(Screen):
         useragent = {'User-Agent': 'Enigma2 - tvaddon Plugin'}
         # useragent = "--header='User-Agent: QuickTime/7.6.2 (qtver=7.6.2;os=Windows NT 5.1Service Pack 3)'"
         self.com = com
-        dom = dom.strip().lower()
-        downplug = dom.replace(' ','').replace('-','_').replace('deb','').replace('ipk','')
+        # dom = dom.strip().lower()
+        
+        n2 = self.com.rfind("/",0)
+        dom = self.com[:n2]
+        print('dommmm : ', dom)
+        downplug = self.com.replace(dom,'').replace('/','')
+        print('downplug : ', downplug)
+            
+        
+        # downplug = dom.replace(' ','').replace('-','_').replace('deb','').replace('ipk','')
         
         
         self['info'].setText(_('Installing ') + dom + _('... please wait'))
@@ -2841,11 +2849,11 @@ class tvInstall(Screen):
                 if extension in ["gz","bz2"] and tar == "tar":
                     self.command = ['']
                     if extension == "gz":
-                        dest = '/tmp/' + downplug + '.gz'
+                        dest = '/tmp/' + downplug #+ '.gz'
                         self.command = [ "tar -xzvf " + dest + " -C /" ]
                     elif extension == "bz2":
                         self.command = [ "tar -xjvf " + dest + " -C /" ]
-                        dest = '/tmp/' + downplug + '.bz2'
+                        dest = '/tmp/' + downplug #+ '.bz2'
                     self.timer = eTimer()
                     self.timer.start(2000, True)
                     # try:
@@ -2868,7 +2876,7 @@ class tvInstall(Screen):
                         # except:
                             # self.timer_conn = self.timer.timeout.connect(deletetmp)
                         # cmd = 'wget -q -O /tmp/tmp.deb %s;dpkg --force-all -i /tmp/tmp.deb' % str(self.com)
-                        dest = '/tmp/' + downplug + '.deb'
+                        dest = '/tmp/' + downplug #+ '.deb'
                         # cmd = 'wget -q -O %s %s;dpkg --install --force-depends --force-overwrite %s' % (dest, str(self.com), dest)
                         cmd = 'wget -q -O %s %s;dpkg --install --force-overwrite %s' % (dest, str(self.com), dest)
                         self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd])
@@ -2878,7 +2886,7 @@ class tvInstall(Screen):
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Installation canceled!'))
                     else:
-                        dest = '/tmp/' + downplug + '.ipk'
+                        dest = '/tmp/' + downplug #+ '.ipk'
                         self.timer = eTimer()
                         self.timer.start(2000, True)
                         # try:
@@ -2892,7 +2900,7 @@ class tvInstall(Screen):
                         self['info'].setText(_('Installation done !!!'))
 
                 elif self.com.endswith('.zip'):
-                    if 'setting' in dom:
+                    if 'setting' in dom.lower():
                         if not isDreamOS:
                             set = 1
                             terrestrial()
@@ -2935,7 +2943,7 @@ class tvInstall(Screen):
                             # self.timer_conn = self.timer.timeout.connect(deletetmp)
                         self.session.open(tvConsole, _('SETTING - install: %s') % dom, [cmd])
                         self['info'].setText(_('Installation done !!!'))
-                    elif 'picon' in dom:
+                    elif 'picon' in dom.lower():
                         dest = '/tmp/picon.zip'
                         self.timer = eTimer()
                         self.timer.start(500, True)
@@ -2948,7 +2956,7 @@ class tvInstall(Screen):
                         self['info'].setText(_('Installation done !!!'))
                     else:
                         self['info'].setText(_('Downloading the selected file in /tmp') + dom + _('... please wait'))
-                        dest = '/tmp/' + downplug + '.zip'
+                        dest = '/tmp/' + downplug #+ '.zip'
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         # try:
@@ -2982,7 +2990,15 @@ class tvInstall(Screen):
             idx = self["text"].getSelectionIndex()
             dom = self.names[idx]
             self.com = self.urls[idx]
-            downplug = dom.replace(' ','').replace('-','_').replace('deb','').replace('ipk','')
+            
+            n2 = self.com.rfind("/",0)
+            dom = self.com[:n2]
+            print('dommmm : ', dom)
+            downplug = self.com.replace(dom,'').replace('/','')
+            print('downplug : ', downplug)
+            
+            # dom = dom.strip().lower()
+            # downplug = dom.replace(' ','').replace('-','_').replace('deb','').replace('ipk','')
             if self.com != None:
                 global dest
                 dest='/tmp/' + downplug
@@ -2994,23 +3010,23 @@ class tvInstall(Screen):
                 print('extension: ', extension)
                 if extension in ["gz","bz2"] and tar == "tar":
                     if extension == "gz":
-                        dest = '/tmp/' + downplug + '.gz'
+                        dest = '/tmp/' + downplug #+ '.gz'
                     elif extension == "bz2":
-                        dest = '/tmp/' + downplug + '.bz2'
+                        dest = '/tmp/' + downplug #+ '.bz2'
                 elif extension == "deb":
                     if not isDreamOS:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                     else:
-                        dest = '/tmp/' + downplug + '.deb'
+                        dest = '/tmp/' + downplug #+ '.deb'
                 elif self.com.endswith(".ipk"):
                     if isDreamOS:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                     else:
-                        dest = '/tmp/' + downplug + '.ipk'
+                        dest = '/tmp/' + downplug #+ '.ipk'
                 elif self.com.endswith('.zip'):
-                        dest = '/tmp/' + downplug + '.zip'
+                        dest = '/tmp/' + downplug #+ '.zip'
 
                 dest = dest.replace('..','.')
                 print('dest = :', dest)
