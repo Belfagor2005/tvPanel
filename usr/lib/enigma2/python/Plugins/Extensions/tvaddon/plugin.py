@@ -3017,12 +3017,14 @@ class tvInstall(Screen):
                     if not isDreamOS:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
+                        return
                     else:
                         dest = '/tmp/' + downplug #+ '.deb'
                 elif self.com.endswith(".ipk"):
                     if isDreamOS:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
+                        return
                     else:
                         dest = '/tmp/' + downplug #+ '.ipk'
                 elif self.com.endswith('.zip'):
