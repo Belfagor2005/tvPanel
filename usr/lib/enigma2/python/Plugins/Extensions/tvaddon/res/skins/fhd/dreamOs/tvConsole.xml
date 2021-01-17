@@ -1,4 +1,4 @@
-<screen name="tvConsole" position="0,150" size="800,800" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#20000000">
+<screen name="tvConsole" position="center,center" size="800,800" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#20000000">
 	<widget name="title" position="27,16" size="772,61" font="Console;24" backgroundColor="#000000" foregroundColor="#ffffff" transparent="1" />
 	<widget name="text" position="20,90" size="777,703" font="Console;24" backgroundColor="#000000" foregroundColor="#ffffff" transparent="1" />
 </screen>
