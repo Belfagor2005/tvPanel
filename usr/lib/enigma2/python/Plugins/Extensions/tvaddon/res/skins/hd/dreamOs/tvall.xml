@@ -17,7 +17,7 @@
 	<widget source="progresstext" render="Label" font="Regular;13" position="390,643" size="200,33" backgroundColor="#202020" transparent="1" halign="center" zPosition="6" />
 	<!-- Colors 1220 -->
 	<ePixmap position="146,606" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" zPosition="5" />
-	<ePixmap position="146,606" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" blend="blend" zPosition="5" />	
+	<ePixmap position="146,606" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" zPosition="5" />	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_red.png" position="146,630" size="20,20" alphatest="on" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_green.png" position="146,670" size="20,20" alphatest="on" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_yellow.png" position="813,630" size="20,20" alphatest="on" zPosition="5" />

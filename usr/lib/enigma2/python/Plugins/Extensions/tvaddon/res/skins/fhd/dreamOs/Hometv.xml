@@ -7,7 +7,7 @@
 <!-- 	<ePixmap position="0,0" size="1920,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main1.png" blend="blend" zPosition="1" />
 	<ePixmap position="220,40" size="279,50" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" blend="blend" zPosition="5" />
 	<ePixmap position="220,130" size="830,8" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" blend="blend" zPosition="5" /> -->	
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_menu.png" scale="strech" position="975,90" size="80,35" zPosition="10" blend="blend" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_menu.png" scale="strech" position="975,90" size="80,35" zPosition="10" />
 	<!-- Menu List -->
 	<widget name="text" position="220,170" size="830,700" itemHeight="50" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="10" 
 		foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#000b2049" backgroundColorSelected="#0b2049" 
