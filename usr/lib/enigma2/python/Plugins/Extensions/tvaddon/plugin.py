@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     15/01/2021     #
+#     07/02/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -66,7 +66,7 @@ global skin_path, mmkpicon, isDreamOS, set, regexC, regexL
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 
-currversion      = '1.9.7'
+currversion      = '1.9.8'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 PY3 = version_info[0] == 3
@@ -287,6 +287,7 @@ Panel_list2 = [
  ('UPDATE TERRESTRIAL.XML'),
  ('SETTINGS BI58'),
  ('SETTINGS CIEFP'),
+ ('SETTINGS CYRUS'), 
  ('SETTINGS COLOMBO'),
  ('SETTINGS MANUTEK'),
  ('SETTINGS MILENKA61'),
@@ -1676,6 +1677,8 @@ class tvDailySetting(Screen):
             self.okTERRESTRIAL()
         elif sel == ('SETTINGS CIEFP'):
             self.session.open(SettingCiefp)
+        elif sel == ('SETTINGS CYRUS'):
+            self.session.open(SettingCyrus)            
         elif sel == ('SETTINGS COLOMBO'):
             self.session.open(SettingColombo)
         elif sel == ('SETTINGS BI58'):
@@ -2696,7 +2699,129 @@ class SettingPredrag(Screen):
             if not isDreamOS:
                 self.onShown.append(resettings)
 
+class SettingCyrus(Screen):
 
+    def __init__(self, session):
+        self.session = session
+        skin = skin_path + 'tvall.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('Setting Cyrus')
+        Screen.__init__(self, session)
+        self.setTitle(_(title_plug))
+        self.list = []
+        self['text'] = tvList([])
+        # self.addon = 'emu'
+        self.icount = 0
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['pth'] = Label('')
+        self['pform'] = Label('')
+        self['progress'] = ProgressBar()
+        self['progresstext'] = StaticText()        
+        self['key_green'] = Button(_('Install'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.downloading = False
+        self.timer = eTimer()
+        self.timer.start(500, 1)
+        if isDreamOS:
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self['title'] = Label(_(title_plug))
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+    def downxmlpage(self):
+        url = base64.b64decode("aHR0cDovL3d3dy5jeXJ1c3NldHRpbmdzLmNvbS9TZXRfMjlfMTFfMjAxMS9EcmVhbWJveC1JcEJveC9Db25maWcueG1s")
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    def errorLoad(self, error):
+        print(str(error))
+        self['info'].setText(_('Try again later ...'))
+        self.downloading = False
+
+    def _gotPageLoad(self, data):
+
+        self.xml = data
+        self.names = []
+        self.urls = []
+        try:
+            n1 = data.find('name="Sat">', 0)
+            n2 = data.find("/ruleset>", n1)
+            data1 = data[n1:n2]
+        
+            regex = 'Name="(.*?)".*?Link="(.*?)".*?Date="(.*?)"><'
+            match = re.compile(regex,re.DOTALL).findall(data1)
+            for name, url, date in match:
+                if url.find('.zip') != -1 :
+                    if 'ddt' in name.lower():
+                        continue
+                    if 'Sat' in name.lower():
+                        continue
+                    name = name + ' ' + date
+                    self.urls.append(url)
+                    self.names.append(name)
+                    self.downloading = True
+                    self['info'].setText(_('Please select ...'))
+                else:
+                    self['info'].setText(_('no data ...'))
+                    self.downloading = False
+            showlist(self.names, self['text'])
+        except:
+            pass
+
+    def okRun(self):
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+
+    def okInstall(self, result):
+        global set
+        set = 0
+        if result:
+            if self.downloading == True:
+                idx = self["text"].getSelectionIndex()
+                url = self.urls[idx]
+                dest = "/tmp/settings.zip"
+                if 'dtt' not in url.lower():
+                    if not isDreamOS:
+                        set = 1
+                        terrestrial()
+                downloadPage(url, dest).addCallback(self.install).addErrback(self.showError)
+            else:
+                self.close()
+
+    def showError(self, error):
+        print("download error =", error)
+        self.close()
+
+    def install(self, fplug):
+        if os.path.exists('/tmp/settings.zip'):
+            if os.path.exists("/tmp/unzipped"):
+                os.system('rm -rf /tmp/unzipped')
+            os.makedirs('/tmp/unzipped')
+            os.system('unzip -o -q /tmp/settings.zip -d /tmp/unzipped')
+            path = '/tmp/unzipped'
+            for root, dirs, files in os.walk(path):
+                for pth in dirs:
+                    cmd = []
+                    os.system('rm -rf /etc/enigma2/lamedb')
+                    os.system('rm -rf /etc/enigma2/*.radio')
+                    os.system('rm -rf /etc/enigma2/*.tv')
+                    cmd1 = "cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'"
+                    cmd2 = "wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"
+                    cmd.append(cmd1)
+                    cmd.append(cmd2)
+            title = _("Installation Settings")
+            self.session.open(tvConsole, _(title), cmd)
+        # deletetmp()
+            if not isDreamOS:
+                self.onShown.append(resettings)
+                
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection = None):
         self.session = session
