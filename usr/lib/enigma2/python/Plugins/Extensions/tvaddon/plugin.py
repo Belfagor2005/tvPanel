@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     07/02/2021     #
+#     13/02/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -66,14 +66,13 @@ global skin_path, mmkpicon, isDreamOS, set, regexC, regexL
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 
-currversion      = '1.9.8'
+currversion      = '1.9.9'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 PY3 = version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request
     from urllib.error import URLError
-
 
     from urllib.request import urlretrieve
     from urllib.parse import urlparse
@@ -263,9 +262,10 @@ else:
         skin_path = plugin_path + '/res/skins/hd/'
 
 Panel_list = [
- _('DAILY PICONS'),
- _('DAILY SETTINGS'),
+ _('LULULLA CORNER'),
  _('DEBIAN DREAMOS'),
+ _('DAILY PICONS'),
+ _('DAILY SETTINGS'), 
  _('KODILITE BY PCD'),
  _('DEPENDENCIES'),
  _('DRIVERS'),
@@ -283,8 +283,6 @@ Panel_list = [
  _('PLUGIN WEATHER')]
 
 Panel_list2 = [
- ('UPDATE SATELLITES.XML'),
- ('UPDATE TERRESTRIAL.XML'),
  ('SETTINGS BI58'),
  ('SETTINGS CIEFP'),
  ('SETTINGS CYRUS'), 
@@ -293,7 +291,9 @@ Panel_list2 = [
  ('SETTINGS MILENKA61'),
  ('SETTINGS MORPHEUS'),
  ('SETTINGS PREDRAG'),
- ('SETTINGS VHANNIBAL')
+ ('SETTINGS VHANNIBAL'),
+ ('UPDATE SATELLITES.XML'),
+ ('UPDATE TERRESTRIAL.XML')
  ]
 
 Panel_list3 = [
@@ -332,11 +332,9 @@ def OnclearMem():
 def DailyListEntry(name, idx):
     res = [name]
     if HD.width() > 1280:
-
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=7, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 5), size=(1000, 50), font=1, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
     return res
@@ -536,6 +534,8 @@ class Hometv(Screen):
             self.session.open(PluginUtility)
         elif sel == _('PLUGIN WEATHER'):
             self.session.open(PluginWeather)
+        elif sel == _('LULULLA CORNER'):
+            self.session.open(PluginLululla)            
 
     def msgupdate1(self):
         if self.Update == False :
@@ -641,6 +641,77 @@ class Drivers(Screen):
                 return
         else:
             self.close()
+
+
+class PluginLululla(Screen):
+
+    def __init__(self, session):
+        self.session = session
+        skin = skin_path + 'tvall.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('Lululla Corner')
+        Screen.__init__(self, session)
+        self.list = []
+        self['text'] = tvList([])
+        # self.addon = 'emu'
+        self.icount = 0
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['pth'] = Label('')
+        self['pform'] = Label('')
+        self['progress'] = ProgressBar()
+        self['progresstext'] = StaticText()        
+        self['key_green'] = Button(_('Select'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.downloading = False
+        self.timer = eTimer()
+        self.timer.start(500, 1)
+        if isDreamOS:
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self['title'] = Label(_(title_plug))
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+    def downxmlpage(self):
+        url = xml_path + 'lululla.xml'
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    def errorLoad(self, error):
+        print(str(error))
+        self['info'].setText(_('Try again later ...'))
+        self.downloading = False
+
+    def _gotPageLoad(self, data):
+        self.xml = data
+        try:
+            match = re.compile(regexC, re.DOTALL).findall(self.xml)
+            for name in match:
+                self.list.append(name)
+                self['info'].setText(_('Please select ...'))
+            showlist(self.list, self['text'])
+            self.downloading = True
+        except:
+            pass
+
+    def okRun(self):
+        if self.downloading == True:
+            try:
+                idx = self["text"].getSelectionIndex()
+                name = self.list[idx]
+                self.session.open(tvInstall, self.xml, name)
+            except:
+                return
+        else:
+            self.close()
+
 
 class Dependencies(Screen):
 
@@ -3020,7 +3091,7 @@ class tvInstall(Screen):
             n2 = self.com.rfind("/",0)
             dom = self.com[:n2]
             print('dommmm : ', dom)
-            downplug = self.com.replace(dom,'').replace('/','').lower()
+            downplug = self.com.replace('/','').lower()# .replace(dom,'')
             print('downplug : ', downplug)
             if self.com != None:
                 global dest          
