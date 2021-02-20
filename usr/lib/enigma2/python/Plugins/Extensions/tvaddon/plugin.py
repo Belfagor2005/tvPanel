@@ -72,17 +72,20 @@ name_plug        = 'TiVuStream Addon Panel'
 PY3 = version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request
-    from urllib.error import URLError
+    from urllib.error import URLError, HTTPError
 
+    from urllib.parse import urlencode, quote                                             
     from urllib.request import urlretrieve
     from urllib.parse import urlparse
 else:
-    from urllib2 import urlopen, Request, URLError
+    from urllib2 import urlopen, Request
+    from urllib2 import URLError, HTTPError                                           
+    from urllib import urlencode, quote                                       
     from urllib import urlretrieve
     from urlparse import urlparse
 
 
-if version_info >= (2, 7, 9):
+if sys.version_info >= (2, 7, 9):
     try:
         import ssl
         sslContext = ssl._create_unverified_context()
@@ -336,7 +339,7 @@ def DailyListEntry(name, idx):
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=7, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(60, 5), size=(1000, 50), font=1, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=2, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
     return res
 
 def oneListEntry(name):
@@ -346,7 +349,7 @@ def oneListEntry(name):
         res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =7, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 5), size =(1000, 50), font=1, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
+        res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=2, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
     return res
 
 def showlist(data, list):
