@@ -5578,6 +5578,7 @@ def terrestrial():
     ttime = time.localtime(now)
     tt = str('{0:02d}'.format(ttime[2])) + str('{0:02d}'.format(ttime[1])) + str(ttime[0])[2:] + '_' + str('{0:02d}'.format(ttime[3])) + str('{0:02d}'.format(ttime[4])) + str('{0:02d}'.format(ttime[5]))
     os.system('tar -czvf /tmp/' + tt + '_enigma2settingsbackup.tar.gz' + ' -C / /etc/enigma2/*.tv /etc/enigma2/*.radio /etc/enigma2/lamedb')
+
     if SavingProcessTerrestrialChannels:
         print('ok')
     return
@@ -5609,15 +5610,16 @@ def terrestrial_rest():
 def lcnstart():
     print(' lcnstart ')
     if os.path.exists('/etc/enigma2/lcndb'):
+    # if os.path.exists('/var/etc/enigma2/lamedb') :   
         lcn = LCN()
         lcn.read()
         if len(lcn.lcnlist) > 0:
             lcn.writeBouquet()
+            # lcn.reloadBouquets()
             ReloadBouquet()
     return
 
 def StartSavingTerrestrialChannels():
-
     def ForceSearchBouquetTerrestrial():
         for file in sorted(glob.glob("/etc/enigma2/*.tv")):
             if 'tivustream' in file:
@@ -5648,6 +5650,7 @@ def StartSavingTerrestrialChannels():
                         break
         return
 
+
     def SaveTrasponderService():
         TrasponderListOldLamedb = open(plugin_path +'/temp/TrasponderListOldLamedb', 'w')
         ServiceListOldLamedb = open(plugin_path +'/temp/ServiceListOldLamedb', 'w')
@@ -5655,147 +5658,150 @@ def StartSavingTerrestrialChannels():
         inTransponder = False
         inService = False
         try:
-            LamedbFile = open('/etc/enigma2/lamedb')
-            while 1:
+          LamedbFile = open('/etc/enigma2/lamedb')
+          while 1:
+            line = LamedbFile.readline()
+            if not line: break
+            if not (inTransponder or inService):
+              if line.find('transponders') == 0:
+                inTransponder = True
+              if line.find('services') == 0:
+                inService = True
+            if line.find('end') == 0:
+              inTransponder = False
+              inService = False
+            line = line.lower()
+            if line.find('eeee0000') != -1:
+              Trasponder = True
+              if inTransponder:
+                TrasponderListOldLamedb.write(line)
                 line = LamedbFile.readline()
-                if not line: break
-                if not (inTransponder or inService):
-                    if line.find('transponders') == 0:
-                        inTransponder = True
-                    if line.find('services') == 0:
-                        inService = True
-                if line.find('end') == 0:
-                    inTransponder = False
-                    inService = False
-                line = line.lower()
-                if line.find('eeee0000') != -1:
-                    Trasponder = True
-                    if inTransponder:
-                        TrasponderListOldLamedb.write(line)
-                        line = LamedbFile.readline()
-                        TrasponderListOldLamedb.write(line)
-                        line = LamedbFile.readline()
-                        TrasponderListOldLamedb.write(line)
-                    if inService:
-                        tmp = line.split(':')
-                        ServiceListOldLamedb.write(tmp[0] + ":" + tmp[1] + ":" + tmp[2] + ":" + tmp[3] + ":" + tmp[4] + ":0\n")
-                        line = LamedbFile.readline()
-                        ServiceListOldLamedb.write(line)
-                        line = LamedbFile.readline()
-                        ServiceListOldLamedb.write(line)
-            TrasponderListOldLamedb.close()
-            ServiceListOldLamedb.close()
-            if not Trasponder:
-                os.system('rm -fr ' + plugin_path + '/temp/TrasponderListOldLamedb')
-                os.system('rm -fr ' + plugin_path + '/temp/ServiceListOldLamedb')
+                TrasponderListOldLamedb.write(line)
+                line = LamedbFile.readline()
+                TrasponderListOldLamedb.write(line)
+              if inService:
+                tmp = line.split(':')
+                ServiceListOldLamedb.write(tmp[0] +":"+tmp[1]+":"+tmp[2]+":"+tmp[3]+":"+tmp[4]+":0\n")
+                line = LamedbFile.readline()
+                ServiceListOldLamedb.write(line)
+                line = LamedbFile.readline()
+                ServiceListOldLamedb.write(line)
+          TrasponderListOldLamedb.close()
+          ServiceListOldLamedb.close()
+          if not Trasponder:
+            os.system('rm -fr ' + plugin_path + '/temp/TrasponderListOldLamedb')
+            os.system('rm -fr ' + plugin_path + '/temp/ServiceListOldLamedb')
         except:
             pass
         return Trasponder
-
+        
+       
     def CreateBouquetForce():
         WritingBouquetTemporary = open(plugin_path +'/temp/TerrestrialChannelListArchive','w')
-        WritingBouquetTemporary.write('#NAME Digitale Terrestre\n')
+        WritingBouquetTemporary.write('#NAME Terrestre\n')
         ReadingTempServicelist = open(plugin_path +'/temp/ServiceListOldLamedb').readlines()
         for jx in ReadingTempServicelist:
-            if jx.find('eeee') != -1:
-                String = jx.split(':')
-                WritingBouquetTemporary.write('#SERVICE 1:0:%s:%s:%s:%s:%s:0:0:0:\n'% (hex(int(String[4]))[2:], String[0], String[2], String[3], String[1]))
+          if jx.find('eeee') != -1:
+             String = jx.split(':')
+             WritingBouquetTemporary.write('#SERVICE 1:0:%s:%s:%s:%s:%s:0:0:0:\n'% (hex(int(String[4]))[2:],String[0],String[2],String[3],String[1]))
         WritingBouquetTemporary.close()
 
+   
     def SaveBouquetTerrestrial():
         NameDirectory = ResearchBouquetTerrestrial('terr')
         if not NameDirectory:
-            NameDirectory = ForceSearchBouquetTerrestrial()
+          NameDirectory = ForceSearchBouquetTerrestrial()
         try:
-            shutil.copyfile(NameDirectory,plugin_path +'/temp/TerrestrialChannelListArchive')
-            return True
+          shutil.copyfile(NameDirectory,plugin_path +'/temp/TerrestrialChannelListArchive')
+          return True
         except :
-            pass
+          pass
         return
+
     Service = SaveTrasponderService()
     if Service:
-        if not SaveBouquetTerrestrial():
-            CreateBouquetForce()
-        return True
+      if not SaveBouquetTerrestrial():
+        CreateBouquetForce()
+      return True
     return
 
 def LamedbRestore():
     try:
-        TrasponderListNewLamedb = open(plugin_path +'/temp/TrasponderListNewLamedb', 'w')
-        ServiceListNewLamedb = open(plugin_path +'/temp/ServiceListNewLamedb', 'w')
-        inTransponder = False
-        inService = False
-        infile = open("/etc/enigma2/lamedb")
-        while 1:
-            line = infile.readline()
-            if not line: break
-            if not (inTransponder or inService):
-                if line.find('transponders') == 0:
-                    inTransponder = True
-                if line.find('services') == 0:
-                    inService = True
-                if line.find('end') == 0:
-                    inTransponder = False
-                    inService = False
-                if inTransponder:
-                    TrasponderListNewLamedb.write(line)
-                if inService:
-                    ServiceListNewLamedb.write(line)
-        TrasponderListNewLamedb.close()
-        ServiceListNewLamedb.close()
-        WritingLamedbFinal=open("/etc/enigma2/lamedb", "w")
-        WritingLamedbFinal.write("eDVB services /4/\n")
-        TrasponderListNewLamedb = open(plugin_path +'/temp/TrasponderListNewLamedb').readlines()
-        for x in TrasponderListNewLamedb:
-            WritingLamedbFinal.write(x)
-        try:
-            TrasponderListOldLamedb = open(plugin_path +'/temp/TrasponderListOldLamedb').readlines()
-            for x in TrasponderListOldLamedb:
-                WritingLamedbFinal.write(x)
-        except:
-            pass
-        WritingLamedbFinal.write("end\n")
-        ServiceListNewLamedb = open(plugin_path +'/temp/ServiceListNewLamedb').readlines()
-        for x in ServiceListNewLamedb:
-            WritingLamedbFinal.write(x)
-        try:
-            ServiceListOldLamedb = open(plugin_path +'/temp/ServiceListOldLamedb').readlines()
-            for x in ServiceListOldLamedb:
-                WritingLamedbFinal.write(x)
-        except:
-            pass
-        WritingLamedbFinal.write("end\n")
-        WritingLamedbFinal.close()
-        return True
+
+      TrasponderListNewLamedb = open(plugin_path +'/temp/TrasponderListNewLamedb', 'w')
+      ServiceListNewLamedb = open(plugin_path +'/temp/ServiceListNewLamedb', 'w')
+      inTransponder = False
+      inService = False
+      infile = open("/etc/enigma2/lamedb")
+      while 1:
+        line = infile.readline()
+        if not line: break
+        if not (inTransponder or inService):
+          if line.find('transponders') == 0:
+            inTransponder = True
+          if line.find('services') == 0:
+            inService = True
+        if line.find('end') == 0:
+          inTransponder = False
+          inService = False
+        if inTransponder:
+          TrasponderListNewLamedb.write(line)
+        if inService:
+          ServiceListNewLamedb.write(line)
+      TrasponderListNewLamedb.close()
+      ServiceListNewLamedb.close()
+      WritingLamedbFinal=open("/etc/enigma2/lamedb", "w")
+      WritingLamedbFinal.write("eDVB services /4/\n")
+      TrasponderListNewLamedb = open(plugin_path +'/temp/TrasponderListNewLamedb').readlines()
+      for x in TrasponderListNewLamedb:
+        WritingLamedbFinal.write(x)
+      try:
+        TrasponderListOldLamedb = open(plugin_path +'/temp/TrasponderListOldLamedb').readlines()
+        for x in TrasponderListOldLamedb:
+          WritingLamedbFinal.write(x)
+      except:
+        pass
+      WritingLamedbFinal.write("end\n")
+      ServiceListNewLamedb = open(plugin_path +'/temp/ServiceListNewLamedb').readlines()
+      for x in ServiceListNewLamedb:
+        WritingLamedbFinal.write(x)
+      try:
+        ServiceListOldLamedb = open(plugin_path +'/temp/ServiceListOldLamedb').readlines()
+        for x in ServiceListOldLamedb:
+          WritingLamedbFinal.write(x)
+      except:
+        pass
+      WritingLamedbFinal.write("end\n")
+      WritingLamedbFinal.close()
+      return True
     except:
-        return False
+      return False
+
+
 
 def TransferBouquetTerrestrialFinal():
 
-    def RestoreTerrestrial():
-        for file in os.listdir("/etc/enigma2/"):
+        def RestoreTerrestrial():
+          for file in os.listdir("/etc/enigma2/"):
             if re.search('^userbouquet.*.tv', file):
-                f = open("/etc/enigma2/" + file, "r")
-                x = f.read()
-            if re.search("#NAME Digitale Terrestre", x, flags = re.IGNORECASE):
+              f = open("/etc/enigma2/" + file, "r")
+              x = f.read()
+              if re.search("#NAME Digitale Terrestre",x, flags=re.IGNORECASE):
                 return "/etc/enigma2/"+file
-            else:
-                return  "/etc/enigma2/userbouquet.terrestrial.tv"
-        return
-    try:
-        TerrestrialChannelListArchive = open(plugin_path +'/temp/TerrestrialChannelListArchive').readlines()
-        DirectoryUserBouquetTerrestrial = RestoreTerrestrial()
-        if DirectoryUserBouquetTerrestrial:
+          # return
+
+        try:
+          TerrestrialChannelListArchive = open(plugin_path +'/temp/TerrestrialChannelListArchive').readlines()
+          DirectoryUserBouquetTerrestrial = RestoreTerrestrial()
+          if DirectoryUserBouquetTerrestrial:
             TrasfBouq = open(DirectoryUserBouquetTerrestrial,'w')
             for Line in TerrestrialChannelListArchive:
-                if Line.lower().find('#name') != -1 :
-                    TrasfBouq.write('#NAME Digitale Terrestre\n')
-                else:
-                    TrasfBouq.write(Line)
+              if Line.lower().find('#name') != -1 :
+                TrasfBouq.write('#NAME Digitale Terrestre\n')
+              else:
+                TrasfBouq.write(Line)
             TrasfBouq.close()
-        return True
-    except:
-        return False
-    return
+            return True
+        except:
+          return False    
 #======================================================
-
