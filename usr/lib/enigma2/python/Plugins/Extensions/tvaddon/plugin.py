@@ -69,6 +69,9 @@ headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple
 currversion      = '1.9.9'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
+
+
+
 PY3 = version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request

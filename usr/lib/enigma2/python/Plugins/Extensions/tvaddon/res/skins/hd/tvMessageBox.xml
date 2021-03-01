@@ -6,10 +6,10 @@
 	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="13,16" size="53,53" />
 	<widget name="InfoPixmap"     pixmap="skin_default/icons/input_info.png"     position="13,16" size="53,53" />
 	<widget name="WarningPixmap"  pixmap="skin_default/icons/input_error.png"     position="13,16" size="53,53" />
-<!-- 	<widget name="ErrorPixmap"    pixmap="skin_default/icons/input_error.png"    position="13,16" size="53,53" blend="blend"/>
-	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="13,16" size="53,53" blend="blend"/>
-	<widget name="InfoPixmap"     pixmap="skin_default/icons/input_info.png"     position="13,16" size="53,53" blend="blend"/>
-	<widget name="WarningPixmap"  pixmap="skin_default/icons/input_error.png"     position="13,16" size="53,53" blend="blend"/> -->	
+<!-- 	<widget name="ErrorPixmap"    pixmap="skin_default/icons/input_error.png"    position="13,16" size="53,53" alphatest="blend"/>
+	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="13,16" size="53,53" alphatest="blend"/>
+	<widget name="InfoPixmap"     pixmap="skin_default/icons/input_info.png"     position="13,16" size="53,53" alphatest="blend"/>
+	<widget name="WarningPixmap"  pixmap="skin_default/icons/input_error.png"     position="13,16" size="53,53" alphatest="blend"/> -->	
 	
 	
 	<widget name="list" position="13,40" size="626,233" itemHeight="33" transparent="1"

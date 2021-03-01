@@ -2,10 +2,10 @@
 	<!-- <widget name="title" position="189,-33" size="600,26" font="Regular;20" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" /> -->
 	<widget name="Text" position="93,3" size="533,26" font="Regular;21" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1" />
 	<widget name="text" position="93,3" size="533,26" font="Regular;21" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1" />
-<!-- 	<widget name="ErrorPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" blend="blend" />
-	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="13,16" size="53,53" blend="blend" />
-	<widget name="InfoPixmap" pixmap="skin_default/icons/input_info.png" position="13,16" size="53,53" blend="blend" />
-	<widget name="WarningPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" blend="blend" /> -->	
+<!-- 	<widget name="ErrorPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" alphatest="blend" />
+	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="13,16" size="53,53" alphatest="blend" />
+	<widget name="InfoPixmap" pixmap="skin_default/icons/input_info.png" position="13,16" size="53,53" alphatest="blend" />
+	<widget name="WarningPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" alphatest="blend" /> -->	
 	<widget name="ErrorPixmap" pixmap="skin_default/icons/input_error.png" position="13,16" size="53,53" />
 	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="13,16" size="53,53" />
 	<widget name="InfoPixmap" pixmap="skin_default/icons/input_info.png" position="13,16" size="53,53" />
