@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     13/02/2021     #
+#     07/03/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -66,7 +66,7 @@ global skin_path, mmkpicon, isDreamOS, set, regexC, regexL
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 
-currversion      = '1.9.9'
+currversion      = '2.0.0'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 
@@ -239,6 +239,8 @@ no_cover         = plugin_path + '/no_coverArt.png'
 mmkpicon         = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC           = '<plugins cont="(.*?)"'
 regexL           = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
+
+#<img src="/_autoindex/icons/unknown.png" alt="unknown"> <a href="/panel-addons/EnigmaOE2.0/kodilite/enigma2-plugin-extensions-kodilite_6.0_r0_all.ipk">enigma2-plugin-extensions-kodilite_6.0_r0_all.ipk</a> 
 #======================================================config
 
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -4826,7 +4828,7 @@ class ColomboTrasp(Screen):
          # return
 
 Panel_list4 = [
- _('KODILITE'),
+ # _('KODILITE'),
  _('VIDEO ADDONS'),
  _('ADULT ADDON'),
  _('SCRIPT'),
@@ -4889,136 +4891,180 @@ class mainkodilite(Screen):
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
-        if sel == _('KODILITE') or sel == 0:
-            self.session.open(kodilite)
-        elif sel == _('VIDEO ADDONS') or sel == 1:
+        # if sel == _('KODILITE') or sel == 0:
+            # self.session.open(kodilite)
+        if sel == _('VIDEO ADDONS') or sel == 0:
             self.session.open(plugins)
-        elif sel == _('ADULT ADDON') or sel == 2:
+        elif sel == _('ADULT ADDON') or sel == 1:
             self.session.open(plugins_adult)
-        elif sel == _('SCRIPT') or sel == 3:
+        elif sel == _('SCRIPT') or sel == 2:
             self.session.open(script)
-        elif sel == _('REPOSITORY') or sel == 4:
+        elif sel == _('REPOSITORY') or sel == 3:
             self.session.open(repository)
 
-class kodilite(Screen):
+# class kodilite(Screen):
 
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Kodilite by pcd')
-        Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
-        self.list = []
-        self['text'] = tvList([])
-        # self.addon = 'emu'
-        self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
-        self['pth'] = Label('')
-        self['pth'].setText(_('Support on'))
-        self['pform'] = Label('')
-        self['pform'].setText(_('linuxsat-support.com '))
-        self['progress'] = ProgressBar()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
+    # def __init__(self, session):
+        # self.session = session
+        # skin = skin_path + 'tvall.xml'
+        # with open(skin, 'r') as f:
+            # self.skin = f.read()
+        # self.setup_title = ('Kodilite by pcd')
+        # Screen.__init__(self, session)
+        # self.setTitle(_(title_plug))
+        # self.list = []
+        # self['text'] = tvList([])
+        # # self.addon = 'emu'
+        # self.icount = 0
+        # self['info'] = Label(_('Load selected filter list, please wait ...'))
+        # self['pth'] = Label('')
+        # self['pth'].setText(_('Support on'))
+        # self['pform'] = Label('')
+        # self['pform'].setText(_('linuxsat-support.com '))
+        # self['progress'] = ProgressBar()
+        # self['progresstext'] = StaticText()
+        # self['key_green'] = Button(_('Install'))
+        # self['key_red'] = Button(_('Back'))
+        # self['key_yellow'] = Button(_(''))
+        # self["key_blue"] = Button(_(''))
+        # self['key_yellow'].hide()
+        # self['key_blue'].hide()
+        # self.downloading = False
+        # self.timer = eTimer()
+        # self.timer.start(500, 1)
+        # if isDreamOS:
+            # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        # else:
+            # self.timer.callback.append(self.downxmlpage)
+        # self['title'] = Label(_(title_plug))
+        # self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         # 'green': self.okRun,
+         # 'red': self.close,
+         # 'cancel': self.close}, -2)
 
-    def downxmlpage(self):
-        url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGU=")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+    # def downxmlpage(self):
+        # url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGU=")
+        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
+    # def errorLoad(self, error):
+        # print(str(error))
+        # self['info'].setText(_('Try again later ...'))
+        # self.downloading = False
 
-    def _gotPageLoad(self, data):
-        self.xml = data
-        self.names = []
-        self.urls = []
-        try:
-            match = re.compile(regexL,re.DOTALL).findall(self.xml)
-            for url, name, date1, date2, date3 in match:
-                if 'ipk' in url:
-                    url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
-                    url = url64b + url
-                    name = name.replace("%20", " ")
-                    name = name.replace("-", " ")
-                    name = name.replace("_", " ")
-                    date = date1 + '-' + date2 + '-' + date3
-                    date = date.replace(' ','')
-                    name = name +' - '+ date
-                    self.urls.append(url)
-                    self.names.append(name)
-                else:
-                    self['info'].setText(_('No File!!'))
-                    self.downloading = False
+    # def _gotPageLoad(self, data):
+        # # global downn
+        # self.xml = data
+        # self.names = []
+        # self.urls = []
+        # self.downx = []
+        # try:
+            # match = re.compile(regexL,re.DOTALL).findall(self.xml)
+            # for url, name, date1, date2, date3 in match:
+                # if 'ipk' in url or 'deb' in url:
+                    # url64b = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbQ==")
+                    # url = url64b + url
+                    # downn= name
+                    # name = name.replace("enigma2-", "").replace("plugin-", "").replace("extensions-", "")
+                    # name = name.replace("%20", " ")
+                    # name = name.replace("-", " ")
+                    # name = name.replace("_", " ")
+                    # date = date1 + '-' + date2 + '-' + date3
+                    # date = date.replace(' ','')
+                    # name = name +' - '+ date
+                    # self.urls.append(url)
+                    # self.names.append(name)
+                    # self.downx.append(downn)
+                # else:
+                    # self['info'].setText(_('No File!!'))
+                    # self.downloading = False
 
-            showlist(self.names, self['text'])
-            self.downloading = True
-        except:
-            pass
+            # showlist(self.names, self['text'])
+            # self.downloading = True
+        # except:
+            # pass
 
-    def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+    # def okRun(self):
+        # self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
-    def okInstall(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
-            if self.downloading == True:
-                idx = self["text"].getSelectionIndex()
-                self.name = self.names[idx]
-                url = self.urls[idx]
-                dest = "/tmp/download.ipk"
-                self.download = downloadWithProgress(url, dest)
-                self.download.addProgress(self.downloadProgress)
-                self.download.start().addCallback(self.install).addErrback(self.showError)
-            else:
-                self.close()
+    # def okInstall(self, result):
+        # self['info'].setText(_('... please wait'))
+        # if result:
+            # if self.downloading == True:
+                # global down
+                # idx = self["text"].getSelectionIndex()
+                # self.name = self.names[idx]
+                # url = self.urls[idx]
+                # down = self.downx[idx]
+                # # dest = "/tmp/download.ipk"
+                # dest = "/tmp/" + down
+                
+                # self.download = downloadWithProgress(url, dest)
+                # self.download.addProgress(self.downloadProgress)
+                # self.download.start().addCallback(self.install).addErrback(self.showError)
+            # else:
+                # self.close()
 
-    def downloadProgress(self, recvbytes, totalbytes):
-        self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
-    def install(self, fplug):
-        if os.path.exists('/tmp/download.ipk'):
-            cmd1 = "opkg install /tmp/download.ipk"
-            cmd = []
-            cmd.append(cmd1)
-            title = _("Installation")
-            self.session.open(tvConsole, _(title), cmd )
-        self['info'].setText(_('Please select ...'))
-        self['progresstext'].text = ''
-        self.progclear = 0
-        self['progress'].setValue(self.progclear)
 
-    def showError(self, error):
-        print("download error =", error)
-        self.close()
+    # # def install(self, fplug):
+        # # if os.path.exists('/tmp/download.ipk'):
+            # # cmd1 = "opkg install /tmp/download.ipk"
+            # # cmd = []
+            # # cmd.append(cmd1)
+            # # title = _("Installation")
+            # # self.session.open(tvConsole, _(title), cmd )
+        # # self['info'].setText(_('Please select ...'))
+        # # self['progresstext'].text = ''
+        # # self.progclear = 0
+        # # self['progress'].setValue(self.progclear)
 
-    def cancel(self, result = None):
-        self.close(None)
-        return
 
-    def finished(self,result):
-         return
+    # def install(self, fplug):
+        # dest = "/tmp/" + down
+        # print('dest: ', dest)
+        # if os.path.exists(dest):
+            # if dest.endswith('.ipk'):
+                # cmd1 = "opkg install /tmp/download.ipk"
+                # cmd = []
+                # cmd.append(cmd1)
+                # title = _("Installation")
+                # print('---------ok ipk')
+                # self.session.open(Console, _(title), cmd )
+                
+
+            # if dest.endswith('.deb'):
+                # if not isDreamOS:            
+                    # self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                    # self['info'].setText(_('Installation canceled!'))            
+            
+                # cmd1 = "dpkg --install --force-overwrite %s" % dest
+                # cmd = []
+                # cmd.append(cmd1)
+                # title = _("Installation")
+                # print('---------ok deb')
+                # self.session.open(Console, _(title), cmd )
+                
+                
+                       
+                
+        # self['info'].setText(_('Please select ...'))
+        # self['progresstext'].text = ''
+        # self.progclear = 0
+        # self['progress'].setValue(self.progclear)
+
+    # def showError(self, error):
+        # print("download error =", error)
+        # self.close()
+
+    # def cancel(self, result = None):
+        # self.close(None)
+        # return
+
+    # def finished(self,result):
+         # return
 
 class plugins(Screen):
 
@@ -5077,7 +5123,7 @@ class plugins(Screen):
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
-                    url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
+                    url64b = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbQ==")
                     url = url64b + url
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
@@ -5196,7 +5242,7 @@ class plugins_adult(Screen):
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
-                    url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
+                    url64b = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbQ==")
                     url = url64b + url
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
@@ -5338,7 +5384,7 @@ class script(Screen):
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
-                    url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
+                    url64b = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbQ==")
                     url = url64b + url
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
@@ -5458,7 +5504,7 @@ class repository(Screen):
             match = re.compile(regexL,re.DOTALL).findall(self.xml)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
-                    url64b = base64.b64decode("aHR0cHM6Ly9wYXRidXdlYi5jb20=")
+                    url64b = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbQ==")
                     url = url64b + url
                     name = name.replace("%20", " ")
                     name = name.replace("-", " ")
