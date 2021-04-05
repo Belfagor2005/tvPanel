@@ -108,7 +108,9 @@ try:
     isDreamOS = True
 except:
     isDreamOS = False
-
+# def isDreamOS():
+    # if os_path.exists('/var/lib/dpkg/status'):
+        # return isDreamOS
 try:
     from enigma import eDVBDB
 except ImportError:
@@ -598,7 +600,8 @@ class Drivers(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
-        self['progresstext'] = StaticText()        
+        self["progress"].hide()
+        self['progresstext'] = StaticText()  
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_(''))
@@ -668,6 +671,7 @@ class PluginLululla(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -738,6 +742,7 @@ class Dependencies(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -807,6 +812,7 @@ class Picons(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -876,6 +882,7 @@ class PluginBackup(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -946,6 +953,7 @@ class PluginEmulators(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1015,6 +1023,7 @@ class PluginEpg(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1085,6 +1094,7 @@ class PluginMultimedia(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1154,6 +1164,7 @@ class PluginMultiboot(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1223,6 +1234,7 @@ class PluginPpanel(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1292,6 +1304,7 @@ class PluginSettings(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1361,6 +1374,7 @@ class PluginSkins(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1430,6 +1444,7 @@ class PluginSport(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1500,6 +1515,7 @@ class PluginUtility(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1569,6 +1585,7 @@ class PluginWeather(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1638,6 +1655,7 @@ class debian(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -1704,6 +1722,7 @@ class tvDailySetting(Screen):
         # self.working = False
         # self.selection = 'all'
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -1829,6 +1848,7 @@ class SettingColombo(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -1963,6 +1983,7 @@ class SettingVhan(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -2086,6 +2107,7 @@ class Milenka61(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -2203,6 +2225,7 @@ class SettingManutek(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -2329,6 +2352,7 @@ class SettingMorpheus(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -2452,6 +2476,7 @@ class SettingCiefp(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -2567,6 +2592,7 @@ class SettingBi58(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -2682,6 +2708,7 @@ class SettingPredrag(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -2796,6 +2823,7 @@ class SettingCyrus(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -2915,6 +2943,7 @@ class tvInstall(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         list = []
         list.sort()
@@ -3141,6 +3170,7 @@ class tvInstall(Screen):
             # return
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['info'].setText(_('Download...'))
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
@@ -3154,6 +3184,7 @@ class tvInstall(Screen):
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
+        self["progress"].hide() 
 
 
     def showError(self, error):
@@ -3560,6 +3591,7 @@ class tvUpdate(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['text'] = tvList([])
         self.Update = False
@@ -3687,6 +3719,7 @@ class tvRemove(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['info'] = Label()
         self['title'] = Label(_(title_plug))
@@ -4096,6 +4129,7 @@ class SelectPicons(Screen):
         # self['key_yellow'].hide()
         self['key_blue'].hide()
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['title'] = Label(_(title_plug))
         self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
@@ -4175,6 +4209,7 @@ class MMarkFolderBlk(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()        
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -4264,6 +4299,7 @@ class MMarkBlack(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -4345,6 +4381,7 @@ class MMarkBlack(Screen):
                 self.close(None)
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['info'].setText(_('Download ...'))
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
@@ -4358,6 +4395,7 @@ class MMarkBlack(Screen):
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
+        self["progress"].hide() 
         self.downloading = False
 
     def showError(self, error):
@@ -4392,6 +4430,7 @@ class MMarkFolderTrs(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
@@ -4479,6 +4518,7 @@ class MMarkTrasp(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -4560,6 +4600,7 @@ class MMarkTrasp(Screen):
                 self.close(None)
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['info'].setText(_('Download ...'))
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
@@ -4573,6 +4614,7 @@ class MMarkTrasp(Screen):
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
+        self["progress"].hide() 
         # self.downloading = False
 
     def showError(self, error):
@@ -4602,6 +4644,7 @@ class MMarkMov(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -4683,6 +4726,7 @@ class MMarkMov(Screen):
                 self.close(None)
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['info'].setText(_('Download ...'))
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
@@ -4696,6 +4740,7 @@ class MMarkMov(Screen):
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
+        self["progress"].hide() 
 
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))
@@ -4724,6 +4769,7 @@ class ColomboTrasp(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -4803,6 +4849,7 @@ class ColomboTrasp(Screen):
                 self.close()
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['info'].setText(_('Download...'))
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
@@ -4817,6 +4864,7 @@ class ColomboTrasp(Screen):
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
+        self["progress"].hide() 
         self.close()
 
     def showError(self, error):
@@ -4862,6 +4910,7 @@ class mainkodilite(Screen):
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['title'] = Label(_(title_plug))
         self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
@@ -4922,6 +4971,7 @@ class mainkodilite(Screen):
         # self['pform'] = Label('')
         # self['pform'].setText(_('linuxsat-support.com '))
         # self['progress'] = ProgressBar()
+        self["progress"].hide()
         # self['progresstext'] = StaticText()
         # self['key_green'] = Button(_('Install'))
         # self['key_red'] = Button(_('Back'))
@@ -5005,6 +5055,7 @@ class mainkodilite(Screen):
                 # self.close()
 
     # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show() 
         # self['progress'].value = int(100 * recvbytes / float(totalbytes))
         # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
@@ -5019,6 +5070,7 @@ class mainkodilite(Screen):
         # # self['info'].setText(_('Please select ...'))
         # # self['progresstext'].text = ''
         # # self.progclear = 0
+        # # self["progress"].hide() 
         # # self['progress'].setValue(self.progclear)
 
 
@@ -5086,6 +5138,7 @@ class plugins(Screen):
         self['pform'] = Label('')
         self['pform'].setText(_('linuxsat-support.com '))
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -5158,6 +5211,7 @@ class plugins(Screen):
                 self.close()
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
@@ -5172,6 +5226,7 @@ class plugins(Screen):
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
+        self["progress"].hide() 
         self['progress'].setValue(self.progclear)
 
     def showError(self, error):
@@ -5205,6 +5260,7 @@ class plugins_adult(Screen):
         self['pform'] = Label('')
         self['pform'].setText(_('linuxsat-support.com '))
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -5300,6 +5356,7 @@ class plugins_adult(Screen):
                 self.close()
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
@@ -5315,6 +5372,7 @@ class plugins_adult(Screen):
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
+        self["progress"].hide() 
 
     def showError(self, error):
         print("download error =", error)
@@ -5347,6 +5405,7 @@ class script(Screen):
         self['pform'] = Label('')
         self['pform'].setText(_('linuxsat-support.com '))
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -5420,6 +5479,7 @@ class script(Screen):
                 self.close()
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
@@ -5435,6 +5495,7 @@ class script(Screen):
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
+        self["progress"].hide() 
 
     def showError(self, error):
         print("download error =", error)
@@ -5467,6 +5528,7 @@ class repository(Screen):
         self['pform'] = Label('')
         self['pform'].setText(_('linuxsat-support.com '))
         self['progress'] = ProgressBar()
+        self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
@@ -5540,6 +5602,7 @@ class repository(Screen):
                 self.close()
 
     def downloadProgress(self, recvbytes, totalbytes):
+        self["progress"].show() 
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
@@ -5555,6 +5618,7 @@ class repository(Screen):
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
+        self["progress"].hide() 
 
     def showError(self, error):
         print("download error =", error)
