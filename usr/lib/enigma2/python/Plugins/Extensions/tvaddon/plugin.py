@@ -55,9 +55,10 @@ import shutil
 import ssl
 import socket
 import glob
+import six
 import subprocess
 from sys import version_info
-from Lcn import *
+from . import Lcn
 # try:
     # import commands
 # except ImportError:
@@ -622,7 +623,7 @@ class Drivers(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'Drivers.xml'
+        url = xml_path + six.binary_type('Drivers.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -631,7 +632,7 @@ class Drivers(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -693,7 +694,7 @@ class PluginLululla(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'lululla.xml'
+        url = xml_path + six.binary_type('lululla.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -702,7 +703,7 @@ class PluginLululla(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -764,7 +765,7 @@ class Dependencies(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'Dependencies.xml'
+        url = xml_path + six.binary_type('Dependencies.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -773,7 +774,7 @@ class Dependencies(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -834,7 +835,7 @@ class Picons(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'Picons.xml'
+        url = xml_path + six.binary_type('Picons.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -843,7 +844,7 @@ class Picons(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -904,7 +905,7 @@ class PluginBackup(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginBackup.xml'
+        url = xml_path + six.binary_type('PluginBackup.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -913,7 +914,7 @@ class PluginBackup(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -975,7 +976,7 @@ class PluginEmulators(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginEmulators.xml'
+        url = xml_path + six.binary_type('PluginEmulators.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -984,7 +985,7 @@ class PluginEmulators(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1045,7 +1046,7 @@ class PluginEpg(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginEpg.xml'
+        url = xml_path + six.binary_type('PluginEpg.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1054,7 +1055,7 @@ class PluginEpg(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1116,7 +1117,7 @@ class PluginMultimedia(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginMultimedia.xml'
+        url = xml_path + six.binary_type('PluginMultimedia.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1125,7 +1126,7 @@ class PluginMultimedia(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1186,7 +1187,7 @@ class PluginMultiboot(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginMultiboot.xml'
+        url = xml_path + six.binary_type('PluginMultiboot.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1195,7 +1196,7 @@ class PluginMultiboot(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1256,7 +1257,7 @@ class PluginPpanel(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginPpanel.xml'
+        url = xml_path + six.binary_type('PluginPpanel.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1265,7 +1266,7 @@ class PluginPpanel(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1326,7 +1327,7 @@ class PluginSettings(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginSettings.xml'
+        url = xml_path + six.binary_type('PluginSettings.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1335,7 +1336,7 @@ class PluginSettings(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1396,7 +1397,7 @@ class PluginSkins(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginSkins.xml'
+        url = xml_path + six.binary_type('PluginSkins.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1405,7 +1406,7 @@ class PluginSkins(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1466,7 +1467,7 @@ class PluginSport(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginSport.xml'
+        url = xml_path + six.binary_type('PluginSport.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1475,7 +1476,7 @@ class PluginSport(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1537,7 +1538,7 @@ class PluginUtility(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginUtility.xml'
+        url = xml_path + six.binary_type('PluginUtility.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1546,7 +1547,7 @@ class PluginUtility(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1607,7 +1608,7 @@ class PluginWeather(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'PluginWeather.xml'
+        url = xml_path + six.binary_type('PluginWeather.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1616,7 +1617,7 @@ class PluginWeather(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1677,7 +1678,7 @@ class debian(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = xml_path + 'debian.xml'
+        url = xml_path + six.binary_type('debian.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1686,7 +1687,7 @@ class debian(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1879,7 +1880,7 @@ class SettingColombo(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -2014,7 +2015,7 @@ class SettingVhan(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -2138,7 +2139,7 @@ class Milenka61(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -2256,7 +2257,7 @@ class SettingManutek(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -2383,7 +2384,7 @@ class SettingMorpheus(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -2507,7 +2508,7 @@ class SettingCiefp(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -2624,7 +2625,7 @@ class SettingBi58(Screen):
 
     def _gotPageLoad(self, data):
 
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -2740,7 +2741,7 @@ class SettingPredrag(Screen):
 
     def _gotPageLoad(self, data):
 
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -2855,7 +2856,7 @@ class SettingCyrus(Screen):
 
     def _gotPageLoad(self, data):
 
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -4805,7 +4806,7 @@ class ColomboTrasp(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -5003,7 +5004,7 @@ class mainkodilite(Screen):
 
     # def _gotPageLoad(self, data):
         # # global downn
-        # self.xml = data
+        # self.xml = six.ensure_str(data)
         # self.names = []
         # self.urls = []
         # self.downx = []
@@ -5169,7 +5170,7 @@ class plugins(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -5291,7 +5292,7 @@ class plugins_adult(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -5436,7 +5437,7 @@ class script(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -5559,7 +5560,7 @@ class repository(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
