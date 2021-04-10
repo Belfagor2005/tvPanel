@@ -3981,8 +3981,8 @@ class tvConfig(Screen, ConfigListScreen):
         self["setupActions"] = ActionMap(['OkCancelActions', 'DirectionActions', 'ColorActions', 'VirtualKeyboardActions', 'ActiveCodeActions'], {'cancel': self.extnok,
          'red': self.extnok,
          'back': self.close,
-         'left': self.keyLeft,
-         'right': self.keyRight,
+         # 'left': self.keyLeft,
+         # 'right': self.keyRight,
          'yellow': self.tvUpdate,
          "showVirtualKeyboard": self.KeyText,
          'ok': self.Ok_edit,
@@ -3991,6 +3991,9 @@ class tvConfig(Screen, ConfigListScreen):
         ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
         self.createSetup()
         self.onLayoutFinish.append(self.layoutFinished)
+        if self.setInfo not in self['config'].onSelectionChanged:
+            self['config'].onSelectionChanged.append(self.setInfo)
+                
 
     def layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -4000,17 +4003,35 @@ class tvConfig(Screen, ConfigListScreen):
         currentip = currentip1.read()
         self['info'].setText(_('Config Panel Addon\nYour current IP is %s') %currentip)
 
+    def setInfo(self):
+        entry = str(self.getCurrentEntry())
+        if entry == _('Auto Update Plugin'):
+            self['description'].setText(_("If Active: Automatic Update Plugin"))
+            return
+        if entry == _('Set the path to the Picons folder'):
+            self['description'].setText(_("Configure folder containing picons files"))
+            return
+        if entry == _('Path Manual IPK'):
+            self['description'].setText(_("Path to the addon installation folder"))
+            return
+        if entry == _('Link in Extensions Menu'):
+            self['description'].setText(_("Link in Extensions button"))
+        if entry == _('Link in Main Menu'):
+            self['description'].setText(_("Link in Main Menu"))            
+            
+        return  
+            
     def tvUpdate(self):
         self.session.open(tvUpdate)
 
     def createSetup(self):
         self.editListEntry = None
         self.list = []
-        self.list.append(getConfigListEntry(_('Auto Update Plugin'), config.plugins.tvaddon.autoupd, _("If Active: Automatic Update Plugin")))
-        self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), config.plugins.tvaddon.mmkpicon, _("Configure folder containing picons files")))
-        self.list.append(getConfigListEntry(_('Path Manual IPK'), config.plugins.tvaddon.ipkpth, _("Path to the addon installation folder")))
-        self.list.append(getConfigListEntry(_('Link in Extensions Menu'), config.plugins.tvaddon.strtext, _("Link in Extensions button")))
-        self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvaddon.strtmain, _("Link in Main Menu")))
+        self.list.append(getConfigListEntry(_('Auto Update Plugin'), config.plugins.tvaddon.autoupd))
+        self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), config.plugins.tvaddon.mmkpicon))
+        self.list.append(getConfigListEntry(_('Path Manual IPK'), config.plugins.tvaddon.ipkpth))
+        self.list.append(getConfigListEntry(_('Link in Extensions Menu'), config.plugins.tvaddon.strtext))
+        self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvaddon.strtmain))
         self["config"].list = self.list
         self["config"].setList(self.list)
 
@@ -4028,15 +4049,15 @@ class tvConfig(Screen, ConfigListScreen):
         from Screens.Setup import SetupSummary
         return SetupSummary
 
-    def keyLeft(self):
-        ConfigListScreen.keyLeft(self)
-        print("current selection:", self["config"].l.getCurrentSelection())
-        self.createSetup()
+    # def keyLeft(self):
+        # ConfigListScreen.keyLeft(self)
+        # print("current selection:", self["config"].l.getCurrentSelection())
+        # self.createSetup()
 
-    def keyRight(self):
-        ConfigListScreen.keyRight(self)
-        print("current selection:", self["config"].l.getCurrentSelection())
-        self.createSetup()
+    # def keyRight(self):
+        # ConfigListScreen.keyRight(self)
+        # print("current selection:", self["config"].l.getCurrentSelection())
+        # self.createSetup()
 
     def msgok(self):
         if os.path.exists(config.plugins.tvaddon.ipkpth.value) is False:
