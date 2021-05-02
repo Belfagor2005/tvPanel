@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     07/03/2021     #
+#     01/05/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -109,6 +109,7 @@ try:
     isDreamOS = True
 except:
     isDreamOS = False
+    
 # def isDreamOS():
     # if os_path.exists('/var/lib/dpkg/status'):
         # return isDreamOS
@@ -121,14 +122,6 @@ try:
     import zipfile
 except:
     pass
-
-
-# try:
-    # _create_unverified_https_context = ssl._create_unverified_context
-# except AttributeError:
-    # pass
-# else:
-    # ssl._create_default_https_context = _create_unverified_https_context
 
 
 #--------------------#
@@ -155,25 +148,66 @@ def checkInternet():
         return False
     else:
         return True
+        
+try:
+    from OpenSSL import SSL
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+if sslverify:
+    try:
+        from urlparse import urlparse
+    except:
+        from urllib.parse import urlparse
+
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
 
 def checkMyFile(url):
+        try:
+            dest = "/tmp/download.zip"
+            req = Request(url)
+            req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+            req.add_header('Referer', 'https://www.mediafire.com/')
+            req.add_header('X-Requested-With', 'XMLHttpRequest')
+            page = urlopen(req)
+            r = page.read()
+            n1 = r.find('"Download file"', 0)
+            n2 = r.find('Repair your download', n1)
+            r2 = r[n1:n2]
+            myfile = re.findall('href="http://download(.*?)">', r2)
+            return myfile
+        except:
+            return ''
+
+def make_request(url):
     try:
-        # dest = "/tmp/download.zip"
         req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
-        req.add_header('Referer', 'https://www.mediafire.com/')
-        req.add_header('X-Requested-With', 'XMLHttpRequest')
-        page = urlopen(req)
-        r = page.read()
-        n1 = r.find('"Download file"', 0)
-        n2 = r.find('Repair your download', n1)
-        r2 = r[n1:n2]
-        myfile = re.findall('href="http://download(.*?)">', r2)
-
-        return myfile
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
+        response = urlopen(req)
+        link = response.read()
+        response.close()
+        # logdata("Link ", link)
+        return link
     except:
-        return ''
-
+        e = URLError #, e:
+        print('We failed to open "%s".' % url)
+        if hasattr(e, 'code'):
+            print('We failed with error code - %s.' % e.code)
+        if hasattr(e, 'reason'):
+            print('We failed to reach a server.')
+            print('Reason: ', e.reason)
+            
 def freespace():
     try:
         diskSpace = os.statvfs('/')
@@ -626,7 +660,7 @@ class Drivers(Screen):
         try:
             url = xml_path + 'Drivers.xml'
         except:
-            url = six.binary_type(url,encoding="utf-8")
+            url = xml_path + six.binary_type('Drivers.xml',encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -1920,6 +1954,11 @@ class SettingColombo(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmcvY29sb21iby9jb2xvbWJvLw==")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
+            
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -2055,6 +2094,10 @@ class SettingVhan(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL3NhdC5hbGZhLXRlY2gubmV0L3VwbG9hZC9zZXR0aW5ncy92aGFubmliYWwv")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -2179,6 +2222,10 @@ class Milenka61(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovLzE3OC42My4xNTYuNzUvdGFyR3ov")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -2297,6 +2344,10 @@ class SettingManutek(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL3d3dy5tYW51dGVrLml0L2lzZXR0aW5nLw==")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -2424,6 +2475,10 @@ class SettingMorpheus(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL21vcnBoZXVzODgzLmFsdGVydmlzdGEub3JnL2Rvd25sb2FkL2luZGV4LnBocD9kaXI9")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -2548,6 +2603,10 @@ class SettingCiefp(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovLzE3OC42My4xNTYuNzUvcGFuZWxhZGRvbnMvQ2llZnA=")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -2664,6 +2723,10 @@ class SettingBi58(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovLzE3OC42My4xNTYuNzUvcGFuZWxhZGRvbnMvQmk1OC8=")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -2779,6 +2842,10 @@ class SettingPredrag(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovLzE3OC42My4xNTYuNzUvcGFuZWxhZGRvbnMvUHJlZHJAZy8=")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -2893,6 +2960,10 @@ class SettingCyrus(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL3d3dy5jeXJ1c3NldHRpbmdzLmNvbS9TZXRfMjlfMTFfMjAxMS9EcmVhbWJveC1JcEJveC9Db25maWcueG1s")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -4094,16 +4165,6 @@ class tvConfig(Screen, ConfigListScreen):
         from Screens.Setup import SetupSummary
         return SetupSummary
 
-    # def keyLeft(self):
-        # ConfigListScreen.keyLeft(self)
-        # print("current selection:", self["config"].l.getCurrentSelection())
-        # self.createSetup()
-
-    # def keyRight(self):
-        # ConfigListScreen.keyRight(self)
-        # print("current selection:", self["config"].l.getCurrentSelection())
-        # self.createSetup()
-
     def msgok(self):
         if os.path.exists(config.plugins.tvaddon.ipkpth.value) is False:
             self.mbox = self.session.open(MessageBox, _('Device not detected!'), MessageBox.TYPE_INFO, timeout=4)
@@ -4303,7 +4364,10 @@ class MMarkFolderBlk(Screen):
         self['pform'].setText(fspace)
 
     def downxmlpage(self):
-        url = host_blk
+        try:
+            url = host_blk
+        except:
+            url = six.binary_type(host_blk,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -4312,7 +4376,7 @@ class MMarkFolderBlk(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        r = data
+        r = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -4396,18 +4460,14 @@ class MMarkBlack(Screen):
 
     def downxmlpage(self):
         url = self.url
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        r = data
+        content = make_request(url)
+        content = six.ensure_str(content)
+        print('live_stream content B =', content)
         self.names = []
         self.urls = []
+        
         try:
+            r = content
             n1 = r.find('"quickkey":', 0)
             n2 = r.find('more_chunks', n1)
             data2 = r[n1:n2]
@@ -4423,9 +4483,10 @@ class MMarkBlack(Screen):
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
             self.downloading = True
+            
         except:
             pass
-
+            
     def okRun(self):
             self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
@@ -4524,7 +4585,11 @@ class MMarkFolderTrs(Screen):
         self['pform'].setText(fspace)
 
     def downxmlpage(self):
-        url = host_trs
+        try:
+            url = host_trs
+        except:
+            url = six.binary_type(host_trs,encoding="utf-8")
+
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -4533,7 +4598,7 @@ class MMarkFolderTrs(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        r = data
+        r = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -4596,7 +4661,7 @@ class MMarkTrasp(Screen):
         self.getfreespace()
         self.downloading = False
         self.url = url
-        name = name
+        self.name = name
         self.timer = eTimer()
         self.timer.start(500, 1)
         if isDreamOS:
@@ -4615,18 +4680,14 @@ class MMarkTrasp(Screen):
 
     def downxmlpage(self):
         url = self.url
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        r = data
+        content = make_request(url)
+        content = six.ensure_str(content)
+        print('live_stream content B =', content)
         self.names = []
         self.urls = []
+        
         try:
+            r = content
             n1 = r.find('"quickkey":', 0)
             n2 = r.find('more_chunks', n1)
             data2 = r[n1:n2]
@@ -4636,15 +4697,16 @@ class MMarkTrasp(Screen):
                 if 'zip' in url:
                     url = url.replace('\\','')
                     name = name.replace('_',' ').replace('mmk','MMark').replace('.zip','')
-                    name = name + ' ' + data[0:10] + ' ' + 'Down: ' + download
+                    name = name + ' ' + data[0:10] + ' ' + 'Down:' + download
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
             self.downloading = True
+            
         except:
             pass
-
+            
     def okRun(self):
         self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
@@ -4749,7 +4811,7 @@ class MMarkMov(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        r = data
+        r = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -4862,22 +4924,23 @@ class ColomboTrasp(Screen):
         fspace = freespace()
         self['pform'].setText(fspace)
 
+
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmcvY29sb21iby9jb2xvbWJvLw==")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
+        
+        content = make_request(url)
+        # content = six.ensure_str(content)
+        print('live_stream content B =', content)
         self.names = []
         self.urls = []
         try:
+
             regex = '<a href="(.*?)"'
-            match = re.compile(regex,re.DOTALL).findall(self.xml)
+            match = re.compile(regex,re.DOTALL).findall(content)
             for url in match:
                 if 'picon' in url.lower():
                     url64b = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmc=")
@@ -4895,9 +4958,50 @@ class ColomboTrasp(Screen):
                 else:
                     self['info'].setText(_('no data ...'))
                     self.downloading = False
-            showlist(self.names, self['text'])
+            showlist(self.names, self['text'])            
         except:
             pass
+
+    # def downxmlpage(self):
+        # url = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmcvY29sb21iby9jb2xvbWJvLw==")
+        # try:
+            # url = url
+        # except:
+            # url = six.binary_type(url,encoding="utf-8")
+        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    # def errorLoad(self, error):
+        # print(str(error))
+        # self['info'].setText(_('Try again later ...'))
+        # self.downloading = False
+
+    # def _gotPageLoad(self, data):
+        # self.xml = six.ensure_str(data)
+        # self.names = []
+        # self.urls = []
+        # try:
+            # regex = '<a href="(.*?)"'
+            # match = re.compile(regex,re.DOTALL).findall(self.xml)
+            # for url in match:
+                # if 'picon' in url.lower():
+                    # url64b = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmc=")
+                    # name = url
+                    # url = url64b + url
+                    # name = name.replace("/colombo/colombo/", "")
+                    # name = name.replace(".zip", "")
+                    # name = name.replace("%20", " ")
+                    # name = name.replace("-", " ")
+                    # name = name.replace("_", " ")
+                    # self.urls.append(url)
+                    # self.names.append(name)
+                    # self.downloading = True
+                    # self['info'].setText(_('Please select ...'))
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
+            # showlist(self.names, self['text'])
+        # except:
+            # pass
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
@@ -4943,7 +5047,6 @@ class ColomboTrasp(Screen):
          # return
 
 Panel_list4 = [
- # _('KODILITE'),
  _('VIDEO ADDONS'),
  _('ADULT ADDON'),
  _('SCRIPT'),
@@ -5007,8 +5110,6 @@ class mainkodilite(Screen):
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
-        # if sel == _('KODILITE') or sel == 0:
-            # self.session.open(kodilite)
         if sel == _('VIDEO ADDONS') or sel == 0:
             self.session.open(plugins)
         elif sel == _('ADULT ADDON') or sel == 1:
@@ -5017,173 +5118,6 @@ class mainkodilite(Screen):
             self.session.open(script)
         elif sel == _('REPOSITORY') or sel == 3:
             self.session.open(repository)
-
-# class kodilite(Screen):
-
-    # def __init__(self, session):
-        # self.session = session
-        # skin = skin_path + 'tvall.xml'
-        # with open(skin, 'r') as f:
-            # self.skin = f.read()
-        # self.setup_title = ('Kodilite by pcd')
-        # Screen.__init__(self, session)
-        # self.setTitle(_(title_plug))
-        # self.list = []
-        # self['text'] = tvList([])
-        # # self.addon = 'emu'
-        # self.icount = 0
-        # self['info'] = Label(_('Load selected filter list, please wait ...'))
-        # self['pth'] = Label('')
-        # self['pth'].setText(_('Support on'))
-        # self['pform'] = Label('')
-        # self['pform'].setText(_('linuxsat-support.com '))
-        # self['progress'] = ProgressBar()
-        self["progress"].hide()
-        # self['progresstext'] = StaticText()
-        # self['key_green'] = Button(_('Install'))
-        # self['key_red'] = Button(_('Back'))
-        # self['key_yellow'] = Button(_(''))
-        # self["key_blue"] = Button(_(''))
-        # self['key_yellow'].hide()
-        # self['key_blue'].hide()
-        # self.downloading = False
-        # self.timer = eTimer()
-        # self.timer.start(500, 1)
-        # if isDreamOS:
-            # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        # else:
-            # self.timer.callback.append(self.downxmlpage)
-        # self['title'] = Label(_(title_plug))
-        # self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         # 'green': self.okRun,
-         # 'red': self.close,
-         # 'cancel': self.close}, -2)
-
-    # def downxmlpage(self):
-        # url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGU=")
-        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    # def errorLoad(self, error):
-        # print(str(error))
-        # self['info'].setText(_('Try again later ...'))
-        # self.downloading = False
-
-    # def _gotPageLoad(self, data):
-        # # global downn
-        # self.xml = six.ensure_str(data)
-        # self.names = []
-        # self.urls = []
-        # self.downx = []
-        # try:
-            # match = re.compile(regexL,re.DOTALL).findall(self.xml)
-            # for url, name, date1, date2, date3 in match:
-                # if 'ipk' in url or 'deb' in url:
-                    # url64b = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbQ==")
-                    # url = url64b + url
-                    # downn= name
-                    # name = name.replace("enigma2-", "").replace("plugin-", "").replace("extensions-", "")
-                    # name = name.replace("%20", " ")
-                    # name = name.replace("-", " ")
-                    # name = name.replace("_", " ")
-                    # date = date1 + '-' + date2 + '-' + date3
-                    # date = date.replace(' ','')
-                    # name = name +' - '+ date
-                    # self.urls.append(url)
-                    # self.names.append(name)
-                    # self.downx.append(downn)
-                # else:
-                    # self['info'].setText(_('No File!!'))
-                    # self.downloading = False
-
-            # showlist(self.names, self['text'])
-            # self.downloading = True
-        # except:
-            # pass
-
-    # def okRun(self):
-        # self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
-
-    # def okInstall(self, result):
-        # self['info'].setText(_('... please wait'))
-        # if result:
-            # if self.downloading == True:
-                # global down
-                # idx = self["text"].getSelectionIndex()
-                # self.name = self.names[idx]
-                # url = self.urls[idx]
-                # down = self.downx[idx]
-                # # dest = "/tmp/download.ipk"
-                # dest = "/tmp/" + down
-                
-                # self.download = downloadWithProgress(url, dest)
-                # self.download.addProgress(self.downloadProgress)
-                # self.download.start().addCallback(self.install).addErrback(self.showError)
-            # else:
-                # self.close()
-
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # self["progress"].show() 
-        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-
-
-    # # def install(self, fplug):
-        # # if os.path.exists('/tmp/download.ipk'):
-            # # cmd1 = "opkg install /tmp/download.ipk"
-            # # cmd = []
-            # # cmd.append(cmd1)
-            # # title = _("Installation")
-            # # self.session.open(tvConsole, _(title), cmd )
-        # # self['info'].setText(_('Please select ...'))
-        # # self['progresstext'].text = ''
-        # # self.progclear = 0
-        # # self["progress"].hide() 
-        # # self['progress'].setValue(self.progclear)
-
-
-    # def install(self, fplug):
-        # dest = "/tmp/" + down
-        # print('dest: ', dest)
-        # if os.path.exists(dest):
-            # if dest.endswith('.ipk'):
-                # cmd1 = "opkg install /tmp/download.ipk"
-                # cmd = []
-                # cmd.append(cmd1)
-                # title = _("Installation")
-                # print('---------ok ipk')
-                # self.session.open(Console, _(title), cmd )
-                
-
-            # if dest.endswith('.deb'):
-                # if not isDreamOS:            
-                    # self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
-                    # self['info'].setText(_('Installation canceled!'))            
-            
-                # cmd1 = "dpkg --install --force-overwrite %s" % dest
-                # cmd = []
-                # cmd.append(cmd1)
-                # title = _("Installation")
-                # print('---------ok deb')
-                # self.session.open(Console, _(title), cmd )
-                
-                
-                       
-                
-        # self['info'].setText(_('Please select ...'))
-        # self['progresstext'].text = ''
-        # self.progclear = 0
-        # self['progress'].setValue(self.progclear)
-
-    # def showError(self, error):
-        # print("download error =", error)
-        # self.close()
-
-    # def cancel(self, result = None):
-        # self.close(None)
-        # return
-
-    # def finished(self,result):
-         # return
 
 class plugins(Screen):
 
@@ -5228,6 +5162,11 @@ class plugins(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGUvcGx1Z2lucw==")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
+        
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -5350,6 +5289,10 @@ class plugins_adult(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGUvcGx1Z2luYWR1bHQ=")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -5495,6 +5438,10 @@ class script(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGUvc2NyaXB0")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -5618,6 +5565,10 @@ class repository(Screen):
 
     def downxmlpage(self):
         url = base64.b64decode("aHR0cDovL3BhdGJ1d2ViLmNvbS9wYW5lbC1hZGRvbnMvRW5pZ21hT0UyLjAva29kaWxpdGUvcmVwb3NpdG9yeQ==")
+        try:
+            url = url
+        except:
+            url = six.binary_type(url,encoding="utf-8")
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
