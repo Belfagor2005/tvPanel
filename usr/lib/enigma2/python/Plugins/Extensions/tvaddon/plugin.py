@@ -181,33 +181,31 @@ if sslverify:
 
 
 def checkMyFile(url):
-        try:
-            dest = "/tmp/download.zip"
-            req = Request(url)
-            req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
-            req.add_header('Referer', 'https://www.mediafire.com/')
-            req.add_header('X-Requested-With', 'XMLHttpRequest')
-            page = urlopen(req)
-            r = page.read()
-            print('pageread : ', r)
-            n1 = r.find('"Download file"', 0)
-            n2 = r.find('Repair your download', n1)
-            r2 = r[n1:n2]
-            link = re.findall('href="http://download(.*?)">', r2)
-            
-            # link = six.ensure_str(link)
-            
-            return link
-        except:
-            e = URLError #, e:
-            print('We failed to open "%s".' % url)
-            if hasattr(e, 'code'):
-                print('We failed with error code - %s.' % e.code)
-            if hasattr(e, 'reason'):
-                print('We failed to reach a server.')
-                print('Reason: ', e.reason)    
-            return ''
-        return
+    # FIXME urlopen will cause a full download of file and this is not what you want //thank's @jbleyel 
+    return []
+    try:
+        dest = "/tmp/download.zip"
+        req = Request(url)
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+        req.add_header('Referer', 'https://www.mediafire.com/')
+        req.add_header('X-Requested-With', 'XMLHttpRequest')
+        page = urlopen(req)
+        r = page.read()
+        n1 = r.find('"Download file"', 0)
+        n2 = r.find('Repair your download', n1)
+        r2 = r[n1:n2]
+        myfile = re.findall('href="http://download(.*?)">', r2)
+        return myfile
+    except:
+        e = URLError #, e:
+        print('We failed to open "%s".' % url)
+        if hasattr(e, 'code'):
+            print('We failed with error code - %s.' % e.code)
+        if hasattr(e, 'reason'):
+            print('We failed to reach a server.')
+            print('Reason: ', e.reason)    
+        return ''
+    return
 
 def make_request(url):
     try:
@@ -282,18 +280,16 @@ config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
 
-# pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
-# ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
-# ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
-# host_trs        = base64.b64decode(ptrs)
-# host_blk        = base64.b64decode(pblk)
-# host_mov        = base64.b64decode(ptmov)
+pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
+host_trs        = base64.b64decode(ptrs)
+host_blk        = base64.b64decode(pblk)
+host_mov        = base64.b64decode(ptmov)
 
-host_trs        = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=tvbds59y9hr19&content_type=folders&chunk_size=1000&response_format=json'
-host_blk        = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=ovz04mrpzo9pw&content_type=folders&chunk_size=1000&response_format=json'
-host_mov        = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=nk8t522bv4909&content_type=files&chunk_size=1000&response_format=json'
-
-
+# host_trs        = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=tvbds59y9hr19&content_type=folders&chunk_size=1000&response_format=json'
+# host_blk        = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=ovz04mrpzo9pw&content_type=folders&chunk_size=1000&response_format=json'
+# host_mov        = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=nk8t522bv4909&content_type=files&chunk_size=1000&response_format=json'
 
 HD               = getDesktop(0).size()
 # plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
@@ -663,7 +659,6 @@ class Drivers(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -737,7 +732,6 @@ class PluginLululla(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -811,7 +805,6 @@ class Dependencies(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -884,7 +877,6 @@ class Picons(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -957,7 +949,6 @@ class PluginBackup(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1031,7 +1022,6 @@ class PluginEmulators(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1104,7 +1094,6 @@ class PluginEpg(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1178,7 +1167,6 @@ class PluginMultimedia(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1251,7 +1239,6 @@ class PluginMultiboot(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1324,7 +1311,6 @@ class PluginPpanel(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1397,7 +1383,6 @@ class PluginSettings(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1470,7 +1455,6 @@ class PluginSkins(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1543,7 +1527,6 @@ class PluginSport(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1616,7 +1599,6 @@ class PluginUtility(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1689,7 +1671,6 @@ class PluginWeather(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1762,7 +1743,6 @@ class debian(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1958,7 +1938,6 @@ class SettingColombo(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1986,10 +1965,7 @@ class SettingColombo(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        # url = base64.b64decode("aHR0cDovL2NvbG9tYm8uYWx0ZXJ2aXN0YS5vcmcvY29sb21iby9jb2xvbWJvLw==")
         url = 'http://colombo.altervista.org/colombo/colombo/'
-        # print('url ', url)
-        # r = make_request(url)
         data = make_request(url)
         r = data
         print('rrrrrrrr ', r)
@@ -2041,7 +2017,6 @@ class SettingColombo(Screen):
                 url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 with urlopen(url) as response, open(dest, 'wb') as destlocal:
                     shutil.copyfileobj(response, destlocal)
-
                 if os.path.exists('/tmp/settings.zip'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -2080,7 +2055,7 @@ class SettingVhan(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2184,7 +2159,6 @@ class Milenka61(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2258,11 +2232,9 @@ class Milenka61(Screen):
                     if not isDreamOS:
                         set = 1
                         terrestrial()
-
                 url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 with urlopen(url) as response, open(dest, 'wb') as destlocal:
                     shutil.copyfileobj(response, destlocal)
-
                 if os.path.exists('/tmp/settings.tar.gz'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -2290,7 +2262,6 @@ class SettingManutek(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2405,7 +2376,7 @@ class SettingMorpheus(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2525,7 +2496,7 @@ class SettingCiefp(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2628,7 +2599,7 @@ class SettingBi58(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2728,7 +2699,7 @@ class SettingPredrag(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2831,7 +2802,7 @@ class SettingCyrus(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -4217,7 +4188,7 @@ class MMarkFolderBlk(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -4250,18 +4221,6 @@ class MMarkFolderBlk(Screen):
     def getfreespace(self):
         fspace = freespace()
         self['pform'].setText(fspace)
-
-    # def downxmlpage(self):
-        # try:
-            # url = host_blk
-        # except:
-            # url = six.binary_type(host_blk,encoding="utf-8")
-        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    # def errorLoad(self, error):
-        # print(str(error))
-        # self['info'].setText(_('Try again later ...'))
-        # self.downloading = False
 
     def downxmlpage(self):
         url = self.url
@@ -4313,7 +4272,7 @@ class MMarkBlack(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -4378,7 +4337,7 @@ class MMarkBlack(Screen):
             pass
 
     def okRun(self):
-            self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -4389,6 +4348,8 @@ class MMarkBlack(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
                 myfile = checkMyFile(url)
+                if os.path.exists(dest):
+                    os.remove(dest) 
                 for url in myfile:
                     img = no_cover
                     url = 'http://download' + url
@@ -4441,7 +4402,7 @@ class MMarkFolderTrs(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -4536,7 +4497,7 @@ class MMarkTrasp(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -4570,15 +4531,6 @@ class MMarkTrasp(Screen):
     def getfreespace(self):
         fspace = freespace()
         self['pform'].setText(fspace)
-
-    # def downxmlpage(self):
-        # url = str(self.url)
-        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    # def errorLoad(self, error):
-        # print(str(error))
-        # self['info'].setText(_('Try again later ...'))
-        # self.downloading = False
 
     def downxmlpage(self):
         url = self.url
@@ -4617,8 +4569,8 @@ class MMarkTrasp(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
                 myfile = checkMyFile(url)
-                # url = 'http://download' + str(myfile)
-                print('urlsslslsls: ', myfile)                    
+                if os.path.exists(dest):
+                    os.remove(dest)                    
                 for url in myfile:
                         img = no_cover
                         url = 'http://download' + url
@@ -4629,7 +4581,6 @@ class MMarkTrasp(Screen):
             else:
                 self['info'].setText(_('Picons Not Installed ...'))
                     
-
     def downloadProgress(self, recvbytes, totalbytes):
         self["progress"].show()
         self['info'].setText(_('Download ...'))
@@ -4668,7 +4619,7 @@ class MMarkMov(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -4703,17 +4654,6 @@ class MMarkMov(Screen):
         fspace = freespace()
         self['pform'].setText(fspace)
 
-    # def downxmlpage(self):
-        # url = self.url
-        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    # def errorLoad(self, error):
-        # print(str(error))
-        # self['info'].setText(_('Try again later ...'))
-        # self.downloading = False
-
-    # def _gotPageLoad(self, data):
-    
     def downxmlpage(self):
         url = self.url
         data = make_request(url)
@@ -4751,6 +4691,8 @@ class MMarkMov(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
                 myfile = checkMyFile(url)
+                if os.path.exists(dest):
+                    os.remove(dest)
                 for url in myfile:
                     img = no_cover
                     url = 'http://download' + url
@@ -4797,7 +4739,7 @@ class ColomboTrasp(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -4986,7 +4928,7 @@ class plugins(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -5101,7 +5043,7 @@ class plugins_adult(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -5238,7 +5180,7 @@ class script(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -5353,7 +5295,7 @@ class repository(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-        # self.addon = 'emu'
+
         self.icount = 0
         self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
@@ -5486,15 +5428,6 @@ def cfgmain(menuid):
 def mainmenu(session, **kwargs):
         main(session, **kwargs)
 
-# def StartSetup(menuid):
-    # if menuid == 'setup':
-        # return [('TiVuStream Addons',
-          # main,
-          # 'TiVuStream Addons',
-          # 44)]
-    # else:
-        # return []
-
 def Plugins(**kwargs):
     ico_path = 'logo.png'
     if not isDreamOS:
@@ -5548,7 +5481,6 @@ def terrestrial_rest():
 def lcnstart():
     print(' lcnstart ')
     if os.path.exists('/etc/enigma2/lcndb'):
-    # if os.path.exists('/var/etc/enigma2/lamedb') :
         lcn = LCN()
         lcn.read()
         if len(lcn.lcnlist) > 0:
