@@ -1,10 +1,7 @@
+<!-- Skin tvMessageBox 11/5/2021 -->
 <screen name="tvMessageBox" title="..::TiVuStream Panel Addon Manager::.." position="center,center" size="1200, 120" backgroundColor="#10101010" > 
 	<widget name="Text" position="140,5" size="800,40" font="Regular;32" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1" />
 	<widget name="text" position="140,5" size="800,40" font="Regular;32" halign="left" valign="center" foregroundColor="white" backgroundColor="#0b2049" transparent="1" zPosition="1" />
-<!-- 	<widget name="ErrorPixmap"    pixmap="skin_default/icons/input_error.png"    position="20,25" size="80,80" alphatest="blend"/>
-	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="20,25" size="80,80" alphatest="blend"/>
-	<widget name="InfoPixmap"     pixmap="skin_default/icons/input_info.png"     position="20,25" size="80,80" alphatest="blend"/>
-	<widget name="WarningPixmap"  pixmap="skin_default/icons/input_error.png"     position="20,25" size="80,80" alphatest="blend"/> -->	
 	<widget name="ErrorPixmap"    pixmap="skin_default/icons/input_error.png"    position="20,25" size="80,80" />
 	<widget name="QuestionPixmap" pixmap="skin_default/icons/input_question.png" position="20,25" size="80,80" />
 	<widget name="InfoPixmap"     pixmap="skin_default/icons/input_info.png"     position="20,25" size="80,80" />

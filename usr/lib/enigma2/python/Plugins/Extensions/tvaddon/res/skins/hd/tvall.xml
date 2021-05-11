@@ -1,9 +1,6 @@
-<!-- Skin tvAll 15/08/2020 -->
+<!-- Skin tvAll 11/5/2021 -->
 <screen name="tvall" position="0,0" size="1280,720" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="transparent" flags="wfNoBorder">
 	<widget name="title" position="146,60" size="600,26" font="Regular;20" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
-<!-- 	<ePixmap position="0,0" size="1280,720" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/main2.png" alphatest="blend" zPosition="1" />
-	<ePixmap position="146,26" size="186,33" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/tvs.png" alphatest="blend" zPosition="5" />
-	<ePixmap position="146,86" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" alphatest="blend" zPosition="5" /> -->	
 	<ePixmap position="0,0" size="1280,720" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/main2.png" zPosition="1" />
 	<ePixmap position="146,26" size="186,33" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/tvs.png" alphatest="blend" zPosition="5" />
 	<ePixmap position="146,86" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" zPosition="5" />
@@ -18,7 +15,6 @@
 	<widget source="progresstext" render="Label" font="Regular;13" position="390,643" size="200,33" backgroundColor="#202020" transparent="1" halign="center" zPosition="6" />
 	<!-- Colors 1220 -->
 	<ePixmap position="146,606" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" zPosition="5" />
-<!-- 	<ePixmap position="146,606" size="686,5" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" alphatest="blend" zPosition="5" /> -->	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_red.png" position="146,630" size="20,20" alphatest="on" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_green.png" position="146,670" size="20,20" alphatest="on" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_yellow.png" position="813,630" size="20,20" alphatest="on" zPosition="5" />

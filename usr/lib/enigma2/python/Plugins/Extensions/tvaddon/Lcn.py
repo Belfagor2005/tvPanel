@@ -1,5 +1,5 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 from __future__ import print_function                                     
 from enigma import eDVBDB, eServiceReference, eServiceCenter
 from Screens.Screen import Screen
@@ -196,7 +196,7 @@ class LCN():
             for xx in LineMaker:
                 if i + 1 < len(LineMaker):
                     START = LineMaker[i]
-                    STOP = LineMaker[i + 1]
+                    STOP = LineMaker[(i + 1)]
                     if STOP - START < 3:
                         PosDelMaker.append(START)
                         PosDelMaker.append(START + 1)
