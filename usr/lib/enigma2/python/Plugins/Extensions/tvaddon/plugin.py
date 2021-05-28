@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     01/05/2021     #
+#     15/05/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -67,7 +67,7 @@ global skin_path, mmkpicon, isDreamOS, set, regexC, regexL
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 
-currversion      = '2.0.0'
+currversion      = '2.0.1'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 
@@ -416,7 +416,7 @@ def oneListEntry(name):
     res = [name]
     if HD.width() > 1280:
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =0, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =6, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
@@ -1980,6 +1980,8 @@ class SettingColombo(Screen):
                         name = name.replace("%20", " ")
                         name = name.replace("_", " ")
                         name = name.replace("-", " ")
+                        url = checkStr(url)
+                        name = checkStr(name)
                         self.urls.append(url)
                         self.names.append(name)
                         self.downloading = True
@@ -2094,6 +2096,8 @@ class SettingVhan(Screen):
                     name = name.replace(".zip", "")
                     name = name.replace("%20", " ")
                     url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url
+                    url = checkStr(url)
+                    name = checkStr(name)                    
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -2199,6 +2203,8 @@ class Milenka61(Screen):
                     name = name.replace("Lista", "").replace("%20", " ")
                     name = name.replace("-", " ").replace("_", " ")
                     url = "http://178.63.156.75/tarGz/Satvenus" + url
+                    url = checkStr(url)
+                    name = checkStr(name)                    
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -2300,6 +2306,8 @@ class SettingManutek(Screen):
                     name = name.replace("NemoxyzRLS_", "")
                     name = name.replace("_", " ")
                     url = 'http://www.manutek.it/isetting/enigma2/' + url
+                    url = checkStr(url)
+                    name = checkStr(name)                    
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -2418,6 +2426,8 @@ class SettingMorpheus(Screen):
                     name = name.replace("Morph883", "Morpheus883")
                     name = name.replace("E2", "")
                     url = "http://morpheus883.altervista.org/settings/" + url
+                    url = checkStr(url)
+                    name = checkStr(name)                    
                     self.urls.append(url)
                     self.names.append(name)
                     print("url =", url)
@@ -2535,7 +2545,8 @@ class SettingCiefp(Screen):
                     name = name.replace(".tar.gz", "")
                     name = name.replace("%20", " ")
                     url = "http://178.63.156.75/paneladdons/Ciefp/ciefp" + url
-
+                    url = checkStr(url)
+                    name = checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -2637,6 +2648,8 @@ class SettingBi58(Screen):
                     name = name.replace(".tar.gz", "")
                     name = name.replace("%20", " ")
                     url = "http://178.63.156.75/paneladdons/Bi58/bi58-e2" + url
+                    url = checkStr(url)
+                    name = checkStr(name)                    
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -2737,6 +2750,9 @@ class SettingPredrag(Screen):
                     name = name + date1 + '-' + date2 + '-' + date3
                     name = name.replace(".tar.gz", "")
                     url = "http://178.63.156.75/paneladdons/Predr@g/predrag" + url
+                    
+                    url = checkStr(url)
+                    name = checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -2842,6 +2858,10 @@ class SettingCyrus(Screen):
                     if 'Sat' in name.lower():
                         continue
                     name = name + ' ' + date
+                    
+                    name = checkStr(name)
+                    url = checkStr(url)
+                    
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -4216,7 +4236,7 @@ class MMarkFolderBlk(Screen):
     def downxmlpage(self):
         url = self.url
         data = make_request(url)
-        r = data
+        r = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -4575,7 +4595,7 @@ class MMarkTrasp(Screen):
         self.progclear = 0
         self['progress'].setValue(self.progclear)
         self["progress"].hide()
-        # self.downloading = False
+        self.downloading = False
 
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))
@@ -4752,7 +4772,8 @@ class ColomboTrasp(Screen):
     def downxmlpage(self):
         urlsite = 'http://colombo.altervista.org/colombo/colombo/'
         data = make_request(urlsite)
-        r = data
+        r = six.ensure_str(data)
+        # r = data
         print('rrrrrrrr ', r)
         self.names  = []
         self.urls   = []
@@ -4774,7 +4795,7 @@ class ColomboTrasp(Screen):
                     print('urrrrrrlllll ', url)
                     self['info'].setText(_('Please select ...'))
                 else:
-                    self['info'].setText(_('no data ...'))
+                    self['info'].setText(_('Please select ...'))
                     # self.downloading = False
             showlist(self.names, self['text'])
         except:
