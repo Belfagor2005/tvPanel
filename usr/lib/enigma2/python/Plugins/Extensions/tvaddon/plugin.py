@@ -63,7 +63,7 @@ from . import Lcn
     # import commands
 # except ImportError:
     # import subprocess
-global skin_path, mmkpicon, isDreamOS, set, regexC, regexL
+global skin_path, mmkpicon, isDreamOS, set, regexC, regexL, category
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 
@@ -71,15 +71,13 @@ currversion      = '2.0.1'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 
-
+category = 'lululla.xml'
 
 PY3 = version_info[0] == 3
 if PY3:
     from urllib.request import urlopen, Request
     from urllib.error import URLError, HTTPError
-
     from urllib.parse import urlencode, quote
-
     from urllib.request import urlretrieve
     from urllib.parse import urlparse
 else:
@@ -191,6 +189,7 @@ def checkMyFile(url):
         req.add_header('X-Requested-With', 'XMLHttpRequest')
         page = urlopen(req)
         r = page.read()
+        # page.close()
         n1 = r.find('"Download file"', 0)
         n2 = r.find('Repair your download', n1)
         r2 = r[n1:n2]
@@ -206,7 +205,8 @@ def checkMyFile(url):
             print('Reason: ', e.reason)
         return ''
     return
-
+    
+# User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0
 def make_request(url):
     try:
         import requests
@@ -220,6 +220,16 @@ def make_request(url):
         response.close()
         return link
     except:
+        # import ssl
+        # gcontext = ssl._create_unverified_context()
+        # try:
+            # response = urlopen(req)
+        # except:       
+            # response = urlopen(req)
+        # link=response.read()
+        # response.close()
+        # return link
+    # # except:
         e = URLError #, e:
         print('We failed to open "%s".' % url)
         if hasattr(e, 'code'):
@@ -227,7 +237,6 @@ def make_request(url):
         if hasattr(e, 'reason'):
             print('We failed to reach a server.')
             print('Reason: ', e.reason)
-
         return
     return
 
@@ -279,29 +288,25 @@ config.plugins.tvaddon.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
 config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
-
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
-host_trs        = base64.b64decode(ptrs)
-host_blk        = base64.b64decode(pblk)
-host_mov        = base64.b64decode(ptmov)
-
-
-HD               = getDesktop(0).size()
-# plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
-plugin_path      = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
-skin_path        = plugin_path
-ico_path         = plugin_path + '/logo.png'
-no_cover         = plugin_path + '/no_coverArt.png'
+host_trs = base64.b64decode(ptrs)
+host_blk = base64.b64decode(pblk)
+host_mov = base64.b64decode(ptmov)
+HD = getDesktop(0).size()
+# plugin_path = os.path.dirname(sys.modules[__name__].__file__)
+plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
+skin_path = plugin_path
+ico_path = plugin_path + '/logo.png'
+no_cover = plugin_path + '/no_coverArt.png'
 res_plugin_path = plugin_path + '/res/'
-pngl            = res_plugin_path + 'pics/plugin.png'
-pngs            = res_plugin_path + 'pics/setting.png'
-pngx            = res_plugin_path + 'pics/plugins.png'
-
-mmkpicon         = config.plugins.tvaddon.mmkpicon.value.strip()
-regexC           = '<plugins cont="(.*?)"'
-regexL           = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
+pngl = res_plugin_path + 'pics/plugin.png'
+pngs = res_plugin_path + 'pics/setting.png'
+pngx = res_plugin_path + 'pics/plugins.png'
+mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
+regexC = '<plugins cont="(.*?)"'
+regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
 
 #<img src="/_autoindex/icons/unknown.png" alt="unknown"> <a href="/panel-addons/EnigmaOE2.0/kodilite/enigma2-plugin-extensions-kodilite_6.0_r0_all.ipk">enigma2-plugin-extensions-kodilite_6.0_r0_all.ipk</a>
 #======================================================config
@@ -317,10 +322,12 @@ if not os.path.exists(mmkpicon):
         print(('Error creating directory %s:\n%s') % (mmkpicon, str(e)))
 
 print('****************************************path Picons: ', mmkpicon)
-data_upd        = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
-upd_path        = base64.b64decode(data_upd)
-data_xml        = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
-xml_path        = base64.b64decode(data_xml)
+# data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
+# upd_path = base64.b64decode(data_upd)
+upd_path = b'http://corvone.altervista.org/tvPanel/'
+# data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
+# xml_path = base64.b64decode(data_xml)
+xml_path = b'http://patbuweb.com/xml/'
 
 res_plugin_path = plugin_path + '/res/'
 pngl = res_plugin_path + 'pics/plugin.png'
@@ -569,13 +576,19 @@ class Hometv(Screen):
         self.session.open(tvIPK)
 
     def keyNumberGlobalCB(self, idx):
+        global category
         sel = self.menu_list[idx]
         if sel == _('DEBIAN DREAMOS'):
-            self.session.open(debian)
+            category = 'debian.xml'
+            self.session.open(Categories, category)            
+            # self.session.open(debian)
         elif sel == _('DRIVERS'):
-            self.session.open(Drivers)
+            category = 'Drivers.xml'            
+            self.session.open(Categories, category)
         elif sel == _('DEPENDENCIES'):
-            self.session.open(Dependencies)
+            category = 'Dependencies.xml'            
+            self.session.open(Categories, category)        
+            # self.session.open(Dependencies)
         elif sel == _('DAILY PICONS'):
             self.session.open(SelectPicons)
         elif sel == _('DAILY SETTINGS'):
@@ -583,31 +596,57 @@ class Hometv(Screen):
         elif sel == _('KODILITE BY PCD'):
             self.session.open(mainkodilite)
         elif sel == _('PLUGIN BACKUP'):
-            self.session.open(PluginBackup)
+            category = 'PluginBackup.xml'            
+            self.session.open(Categories, category)          
+            # self.session.open(PluginBackup)
         elif sel == _('PLUGIN EMULATORS CAMS'):
-            self.session.open(PluginEmulators)
+            category = 'PluginEmulators.xml'            
+            self.session.open(Categories, category)         
+            # self.session.open(PluginEmulators)
         elif sel == _('PLUGIN EPG'):
-            self.session.open(PluginEpg)
+            category = 'PluginEpg.xml'            
+            self.session.open(Categories, category)          
+            # self.session.open(PluginEpg)
         elif sel == _('PLUGIN MULTIBOOT'):
-            self.session.open(PluginMultiboot)
+            category = 'PluginMultiboot.xml'            
+            self.session.open(Categories, category)        
+            # self.session.open(PluginMultiboot)
         elif sel == _('PLUGIN MULTIMEDIA'):
-            self.session.open(PluginMultimedia)
+            category = 'PluginMultimedia.xml'            
+            self.session.open(Categories, category)          
+            # self.session.open(PluginMultimedia)
         elif sel == _('PLUGIN PICONS'):
-            self.session.open(Picons)
+            category = 'Picons.xml'            
+            self.session.open(Categories, category)            
+            # self.session.open(Picons)
         elif sel == _('PLUGIN PPANEL'):
-            self.session.open(PluginPpanel)
+            category = 'PluginPpanel.xml'            
+            self.session.open(Categories, category)        
+            # self.session.open(PluginPpanel)
         elif sel == _('PLUGIN SETTINGS PANEL'):
-            self.session.open(PluginSettings)
+            category = 'PluginSettings.xml'            
+            self.session.open(Categories, category)         
+            # self.session.open(PluginSettings)
         elif sel == _('PLUGIN SKINS'):
-            self.session.open(PluginSkins)
+            category = 'PluginSkins.xml'            
+            self.session.open(Categories, category)          
+            # self.session.open(PluginSkins)
         elif sel == _('PLUGIN SPORT'):
-            self.session.open(PluginSport)
+            category = 'PluginSport.xml'            
+            self.session.open(Categories, category)         
+            # self.session.open(PluginSport)
         elif sel == _('PLUGIN UTILITY'):
-            self.session.open(PluginUtility)
+            category = 'PluginUtility.xml'            
+            self.session.open(Categories, category)         
+            # self.session.open(PluginUtility)
         elif sel == _('PLUGIN WEATHER'):
-            self.session.open(PluginWeather)
+            category = 'PluginWeather.xml'            
+            self.session.open(Categories, category)           
+            # self.session.open(PluginWeather)
         elif sel == _('LULULLA CORNER'):
-            self.session.open(PluginLululla)
+            category = 'lululla.xml'
+            self.session.open(Categories, category)         
+            # self.session.open(PluginLululla)
 
     def msgupdate1(self):
         if self.Update == False :
@@ -645,18 +684,19 @@ class Hometv(Screen):
         else:
             self.close()
 
-class Drivers(Screen):
+class Categories(Screen):
 
-    def __init__(self, session):
+    def __init__(self, session, category):
         self.session = session
         skin = skin_path + 'tvall.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
-        self.setup_title = ('Drivers')
+        self.setup_title = (category)
         Screen.__init__(self, session)
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
+        category = category
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -682,1095 +722,19 @@ class Drivers(Screen):
          'red': self.close,
          'cancel': self.close}, -2)
 
+    # def downxmlpage(self):
+        # try:
+            # url = xml_path + 'Drivers.xml'
+        # except:
+            # url = xml_path + six.binary_type('Drivers.xml',encoding="utf-8")
+        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+        
     def downxmlpage(self):
         try:
-            url = xml_path + 'Drivers.xml'
+            url = xml_path + category
         except:
-            url = xml_path + six.binary_type('Drivers.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-
-class PluginLululla(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Lululla Corner')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'lululla.xml'
-        except:
-            url = xml_path + six.binary_type('lululla.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-
-class Dependencies(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Dependencies')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'Dependencies.xml'
-        except:
-            url = xml_path + six.binary_type('Dependencies.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class Picons(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Picons')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'Picons.xml'
-        except:
-            url = xml_path + six.binary_type('Picons.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginBackup(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Backup')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginBackup.xml'
-        except:
-            url = xml_path + six.binary_type('PluginBackup.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginEmulators(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Emulators')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginEmulators.xml'
-        except:
-            url = xml_path + six.binary_type('PluginEmulators.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginEpg(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Epg')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginEpg.xml'
-        except:
-            url = xml_path + six.binary_type('PluginEpg.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-
-class PluginMultimedia(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Multimedia')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginMultimedia.xml'
-        except:
-            url = xml_path + six.binary_type('PluginMultimedia.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginMultiboot(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Multiboot')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginMultiboot.xml'
-        except:
-            url = xml_path + six.binary_type('PluginMultiboot.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginPpanel(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Ppanel')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginPpanel.xml'
-        except:
-            url = xml_path + six.binary_type('PluginPpanel.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginSettings(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Settings')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginSettings.xml'
-        except:
-            url = xml_path + six.binary_type('PluginSettings.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginSkins(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Skins')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path +'PluginSkins.xml'
-        except:
-            url = xml_path + six.binary_type('PluginSkins.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginSport(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Sport')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginSport.xml'
-        except:
-            url = xml_path + six.binary_type('PluginSport.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginUtility(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Utility')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginUtility.xml'
-        except:
-            url = xml_path + six.binary_type('PluginUtility.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class PluginWeather(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Plugin Weather')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'PluginWeather.xml'
-        except:
-            url = xml_path + six.binary_type('PluginWeather.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self, error):
-        print(str(error))
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
-        try:
-            match = re.compile(regexC, re.DOTALL).findall(self.xml)
-            for name in match:
-                self.list.append(name)
-                self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
-            self.downloading = True
-        except:
-            pass
-
-    def okRun(self):
-        if self.downloading == True:
-            try:
-                idx = self["text"].getSelectionIndex()
-                name = self.list[idx]
-                self.session.open(tvInstall, self.xml, name)
-            except:
-                return
-        else:
-            self.close()
-
-class debian(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Debian')
-        Screen.__init__(self, session)
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        try:
-            url = xml_path + 'debian.xml'
-        except:
-            url = xml_path + six.binary_type('debian.xml',encoding="utf-8")
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+            url = xml_path + six.binary_type(category, encoding="utf-8")
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)        
 
     def errorLoad(self, error):
         print(str(error))
@@ -2144,7 +1108,6 @@ class SettingVhan(Screen):
             self.onShown.append(resettings)
         self['info'].setText(_('Settings Installed ...'))
 
-
 class Milenka61(Screen):
 
     def __init__(self, session):
@@ -2335,7 +1298,6 @@ class SettingManutek(Screen):
                     if not isDreamOS:
                         set = 1
                         terrestrial()
-
                 url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 with urlopen(url) as response, open(dest, 'wb') as destlocal:
                     shutil.copyfileobj(response, destlocal)
@@ -2365,7 +1327,6 @@ class SettingManutek(Screen):
             self.onShown.append(resettings)
         self['info'].setText(_('Settings Installed ...'))
 
-#no work
 class SettingMorpheus(Screen):
 
     def __init__(self, session):
@@ -2378,7 +1339,6 @@ class SettingMorpheus(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2461,7 +1421,6 @@ class SettingMorpheus(Screen):
                 url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 with urlopen(url) as response, open(dest, 'wb') as destlocal:
                     shutil.copyfileobj(response, destlocal)
-
                 if os.path.exists('/tmp/settings.zip'):
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
@@ -2478,7 +1437,6 @@ class SettingMorpheus(Screen):
                             os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
-
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -2486,7 +1444,6 @@ class SettingMorpheus(Screen):
         if not isDreamOS:
             self.onShown.append(resettings)
         self['info'].setText(_('Settings Installed ...'))
-
 
 class SettingCiefp(Screen):
 
@@ -2750,7 +1707,6 @@ class SettingPredrag(Screen):
                     name = name + date1 + '-' + date2 + '-' + date3
                     name = name.replace(".tar.gz", "")
                     url = "http://178.63.156.75/paneladdons/Predr@g/predrag" + url
-                    
                     url = checkStr(url)
                     name = checkStr(name)
                     self.urls.append(url)
@@ -2858,10 +1814,8 @@ class SettingCyrus(Screen):
                     if 'Sat' in name.lower():
                         continue
                     name = name + ' ' + date
-                    
                     name = checkStr(name)
                     url = checkStr(url)
-                    
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -2916,6 +1870,7 @@ class SettingCyrus(Screen):
         if not isDreamOS:
             self.onShown.append(resettings)
         self['info'].setText(_('Settings Installed ...'))
+
 
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection = None):
@@ -3173,7 +2128,6 @@ class tvInstall(Screen):
         self.progclear = 0
         self['progress'].setValue(self.progclear)
         self["progress"].hide()
-
 
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))
@@ -3686,7 +2640,6 @@ class tvUpdate(Screen):
         else:
             self.close()
 
-
 class tvRemove(Screen):
 
     def __init__(self, session):
@@ -3981,7 +2934,6 @@ class tvConfig(Screen, ConfigListScreen):
         if self.setInfo not in self['config'].onSelectionChanged:
             self['config'].onSelectionChanged.append(self.setInfo)
 
-
     def layoutFinished(self):
         self.setTitle(self.setup_title)
         if not os.path.exists('/tmp/currentip'):
@@ -4102,6 +3054,9 @@ class tvConfig(Screen, ConfigListScreen):
             self.session.openWithCallback(self.cancelConfirm, tvMessageBox, _('Really close without saving the settings?'))
         else:
             self.close()
+
+
+
 
 class SelectPicons(Screen):
 
@@ -4270,7 +3225,6 @@ class MMarkFolderBlk(Screen):
         self.close(None)
         return
 
-
 class MMarkBlack(Screen):
 
     def __init__(self, session, name, url):
@@ -4319,8 +3273,8 @@ class MMarkBlack(Screen):
 
     def downxmlpage(self):
         url = self.url
-        content = make_request(url)
-        r = six.ensure_str(content)
+        data = make_request(url)
+        r = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -4355,7 +3309,6 @@ class MMarkBlack(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-
                 if os.path.exists(dest):
                     os.remove(dest)
                 myfile = checkMyFile(url)
@@ -4398,7 +3351,6 @@ class MMarkBlack(Screen):
 
     def finished(self,result):
          return
-
 
 class MMarkFolderTrs(Screen):
 
@@ -4530,8 +3482,8 @@ class MMarkTrasp(Screen):
 
     def downxmlpage(self):
         url = self.url
-        content = make_request(url)
-        r = six.ensure_str(content)
+        data = make_request(url)
+        r = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
@@ -4770,8 +3722,8 @@ class ColomboTrasp(Screen):
         self['pform'].setText(fspace)
 
     def downxmlpage(self):
-        urlsite = 'http://colombo.altervista.org/colombo/colombo/'
-        data = make_request(urlsite)
+        url = 'http://colombo.altervista.org/colombo/colombo/'
+        data = make_request(url)
         r = six.ensure_str(data)
         # r = data
         print('rrrrrrrr ', r)
@@ -4843,7 +3795,6 @@ class ColomboTrasp(Screen):
         self['info'].setText(_('Download Error ...'))
         print("download error =", error)
         self.close()
-
 
 Panel_list4 = [
  _('VIDEO ADDONS'),
@@ -4955,7 +3906,6 @@ class plugins(Screen):
          'green': self.okRun,
          'red': self.close,
          'cancel': self.close}, -2)
-
 
     def downxmlpage(self):
         url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/plugins"
