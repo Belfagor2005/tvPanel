@@ -581,14 +581,12 @@ class Hometv(Screen):
         if sel == _('DEBIAN DREAMOS'):
             category = 'debian.xml'
             self.session.open(Categories, category)            
-            # self.session.open(debian)
         elif sel == _('DRIVERS'):
             category = 'Drivers.xml'            
             self.session.open(Categories, category)
         elif sel == _('DEPENDENCIES'):
             category = 'Dependencies.xml'            
             self.session.open(Categories, category)        
-            # self.session.open(Dependencies)
         elif sel == _('DAILY PICONS'):
             self.session.open(SelectPicons)
         elif sel == _('DAILY SETTINGS'):
@@ -598,55 +596,42 @@ class Hometv(Screen):
         elif sel == _('PLUGIN BACKUP'):
             category = 'PluginBackup.xml'            
             self.session.open(Categories, category)          
-            # self.session.open(PluginBackup)
         elif sel == _('PLUGIN EMULATORS CAMS'):
             category = 'PluginEmulators.xml'            
             self.session.open(Categories, category)         
-            # self.session.open(PluginEmulators)
         elif sel == _('PLUGIN EPG'):
             category = 'PluginEpg.xml'            
             self.session.open(Categories, category)          
-            # self.session.open(PluginEpg)
         elif sel == _('PLUGIN MULTIBOOT'):
             category = 'PluginMultiboot.xml'            
             self.session.open(Categories, category)        
-            # self.session.open(PluginMultiboot)
         elif sel == _('PLUGIN MULTIMEDIA'):
             category = 'PluginMultimedia.xml'            
             self.session.open(Categories, category)          
-            # self.session.open(PluginMultimedia)
         elif sel == _('PLUGIN PICONS'):
             category = 'Picons.xml'            
             self.session.open(Categories, category)            
-            # self.session.open(Picons)
         elif sel == _('PLUGIN PPANEL'):
             category = 'PluginPpanel.xml'            
             self.session.open(Categories, category)        
-            # self.session.open(PluginPpanel)
         elif sel == _('PLUGIN SETTINGS PANEL'):
             category = 'PluginSettings.xml'            
             self.session.open(Categories, category)         
-            # self.session.open(PluginSettings)
         elif sel == _('PLUGIN SKINS'):
             category = 'PluginSkins.xml'            
             self.session.open(Categories, category)          
-            # self.session.open(PluginSkins)
         elif sel == _('PLUGIN SPORT'):
             category = 'PluginSport.xml'            
             self.session.open(Categories, category)         
-            # self.session.open(PluginSport)
         elif sel == _('PLUGIN UTILITY'):
             category = 'PluginUtility.xml'            
             self.session.open(Categories, category)         
-            # self.session.open(PluginUtility)
         elif sel == _('PLUGIN WEATHER'):
             category = 'PluginWeather.xml'            
             self.session.open(Categories, category)           
-            # self.session.open(PluginWeather)
         elif sel == _('LULULLA CORNER'):
             category = 'lululla.xml'
             self.session.open(Categories, category)         
-            # self.session.open(PluginLululla)
 
     def msgupdate1(self):
         if self.Update == False :
@@ -3117,12 +3102,12 @@ class SelectPicons(Screen):
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
-        if sel == _('MMARK PICONS BLACK'):
-            self.session.open(MMarkFolderBlk)
-        elif sel == _('MMARK PICONS TRANSPARENT'):
-            self.session.open(MMarkFolderTrs)
-        elif sel == _('MMARK PICONS MOVIE'):
-            self.session.open(MMarkMov)
+        if sel == ('MMARK PICONS BLACK'):
+            self.session.open(MMarkFolderScreen, host_blk)
+        elif sel == 'MMARK PICONS TRANSPARENT':
+            self.session.open(MMarkFolderScreen, host_trs)
+        elif sel == ('MMARK PICONS MOVIE'):
+            self.session.open(MMarkPiconsScreen, 'MMark-Picons', host_mov, True)
         elif sel == _('COLOMBO PICONS'):
             self.session.open(ColomboTrasp)
 
@@ -3143,9 +3128,9 @@ class SelectPicons(Screen):
         self.mbox = self.session.open(MessageBox, _('%s it has been cleaned'% mmkpicon), MessageBox.TYPE_INFO, timeout = 4)
         self['info'].setText(_('Please select ...'))
 
-class MMarkFolderBlk(Screen):
+class MMarkFolderScreen(Screen):                                   
 
-    def __init__(self, session):
+    def __init__(self, session, url):
         self.session = session
         skin = skin_path + 'tvall.xml'
         with open(skin, 'r') as f:
@@ -3169,7 +3154,7 @@ class MMarkFolderBlk(Screen):
         self["key_blue"] = Button(_(''))
         self['key_yellow'].hide()
         self['key_blue'].hide()
-        self.url = host_blk
+        self.url = url
         self.getfreespace()
         self.downloading = False
         self.timer = eTimer()
@@ -3219,15 +3204,15 @@ class MMarkFolderBlk(Screen):
             return
         name = self.names[idx]
         url = self.urls[idx]
-        self.session.open(MMarkBlack, name, url)
+        self.session.open(MMarkPiconsScreen, name, url)
 
     def cancel(self, result = None):
         self.close(None)
         return
 
-class MMarkBlack(Screen):
+class MMarkPiconsScreen(Screen):
 
-    def __init__(self, session, name, url):
+    def __init__(self, session, name, url, movie=False):
         self.session = session
         skin = skin_path + 'tvall.xml'
         with open(skin, 'r') as f:
@@ -3253,6 +3238,7 @@ class MMarkBlack(Screen):
         self['key_blue'].hide()
         self.getfreespace()
         self.downloading = False
+        self.movie = movie
         self.url = url
         self.name = name
         self.timer = eTimer()
@@ -3282,344 +3268,16 @@ class MMarkBlack(Screen):
             n2 = r.find('more_chunks', n1)
             data2 = r[n1:n2]
             regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"downloads":"(.*?)".*?"normal_download":"(.*?)"'
-            match = re.compile(regex,re.DOTALL).findall(data2)
-            for name, data, download, url  in match:
-                if 'zip' in url:
-                    url = url.replace('\\','')
-                    name = name.replace('_',' ').replace('mmk','MMark').replace('.zip','')
-                    name = name + ' ' + data[0:10] + ' ' + 'Down:' + download
-                    self.urls.append(url)
-                    self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-            self.downloading = True
-        except:
-            self.downloading = False
-
-    def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        self['info'].setText(_('... please wait'))
-        global dest
-        if result:
-            if self.downloading == True:
-
-                idx = self["text"].getSelectionIndex()
-                self.name = self.names[idx]
-                url = self.urls[idx]
-                dest = "/tmp/download.zip"
-                if os.path.exists(dest):
-                    os.remove(dest)
-                myfile = checkMyFile(url)
-                for url in myfile:
-                    img = no_cover
-                    url = 'http://download' + url
-                self.download = downloadWithProgress(url, dest)
-                self.download.addProgress(self.downloadProgress)
-                self.download.start().addCallback(self.install).addErrback(self.showError)
-            else:
-                self['info'].setText(_('Picons Not Installed ...'))
-
-    def downloadProgress(self, recvbytes, totalbytes):
-        self["progress"].show()
-        self['info'].setText(_('Download ...'))
-        self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-
-    def install(self, fplug):
-        if os.path.exists(dest):
-            self['info'].setText(_('Install ...'))
-            myCmd = "unzip -o -q '%s' -d %s/" % (dest, str(mmkpicon))
-            subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
-            self.mbox = self.session.open(MessageBox, _('Successfully Picons Installed'), MessageBox.TYPE_INFO, timeout=5)
-        self['info'].setText(_('Please select ...'))
-        self['progresstext'].text = ''
-        self.progclear = 0
-        self['progress'].setValue(self.progclear)
-        self["progress"].hide()
-        self.downloading = False
-
-    def showError(self, error):
-        self['info'].setText(_('Download Error ...'))
-        print("download error =", error)
-        self.close()
-
-    def cancel(self, result = None):
-        self.close(None)
-        return
-
-    def finished(self,result):
-         return
-
-class MMarkFolderTrs(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('MMark')
-        Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
-        self['pth'] = Label('')
-        self['pth'].setText(_('Folder picons ') + mmkpicon)
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.url = host_trs
-        self.getfreespace()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def getfreespace(self):
-        fspace = freespace()
-        self['pform'].setText(fspace)
-
-    def downxmlpage(self):
-        url = self.url
-        data = make_request(url)
-        r = six.ensure_str(data)
-        self.names = []
-        self.urls = []
-        try:
-            n1 = r.find('"folderkey"', 0)
-            n2 = r.find('more_chunks', n1)
-            data2 = r[n1:n2]
-            regex = '{"folderkey":"(.*?)".*?"name":"(.*?)".*?"created":"(.*?)"'
             match = re.compile(regex, re.DOTALL).findall(data2)
-            for url, name, data in match:
-                url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
-                url = url.replace('\\', '')
-                pic = no_cover
-                name = 'Picons-' + name
-                self.urls.append(url)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-            self.downloading = True
-        except:
-            self.downloading = False
-
-    def okRun(self):
-        idx = self['text'].getSelectionIndex()
-        if idx == -1 or None:
-            return
-        name = self.names[idx]
-        url = self.urls[idx]
-        self.session.open(MMarkTrasp, name, url)
-
-    def cancel(self, result = None):
-        self.close(None)
-        return
-
-class MMarkTrasp(Screen):
-
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('MMark')
-        Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
-        self['pth'] = Label('')
-        self['pth'].setText(_('Folder picons ') + mmkpicon)
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.getfreespace()
-        self.downloading = False
-        self.url = url
-        self.name = name
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def getfreespace(self):
-        fspace = freespace()
-        self['pform'].setText(fspace)
-
-    def downxmlpage(self):
-        url = self.url
-        data = make_request(url)
-        r = six.ensure_str(data)
-        self.names = []
-        self.urls = []
-        try:
-            n1 = r.find('"quickkey":', 0)
-            n2 = r.find('more_chunks', n1)
-            data2 = r[n1:n2]
-            regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"downloads":"(.*?)".*?"normal_download":"(.*?)"'
-            match = re.compile(regex,re.DOTALL).findall(data2)
-            for name, data, download, url  in match:
-                if 'zip' in url:
-                    url = url.replace('\\','')
-                    name = name.replace('_',' ').replace('mmk','MMark').replace('.zip','')
-                    name = name + ' ' + data[0:10] + ' ' + 'Down:' + download
-                    self.urls.append(url)
-                    self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
-            self.downloading = True
-        except:
-            # self.downloading = True
-            self['info'].setText(_('Picons Not Installed ...'))
-
-    def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
-            global dest
-            if self.downloading == True:
-                idx = self["text"].getSelectionIndex()
-                self.name = self.names[idx]
-                url = self.urls[idx]
-                dest = "/tmp/download.zip"
-                if os.path.exists(dest):
-                    os.remove(dest)
-                myfile = checkMyFile(url)
-                for url in myfile:
-                    img = no_cover
-                    url = 'http://download' + url
-                self.download = downloadWithProgress(url, dest)
-                self.download.addProgress(self.downloadProgress)
-                self.download.start().addCallback(self.install).addErrback(self.showError)
-            else:
-                self['info'].setText(_('Picons Not Installed ...'))
-
-    def downloadProgress(self, recvbytes, totalbytes):
-        self["progress"].show()
-        self['info'].setText(_('Download ...'))
-        self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-
-    def install(self, fplug):
-        if os.path.exists(dest):
-            self['info'].setText(_('Install ...'))
-            myCmd = "unzip -o -q '%s' -d %s/" % (dest, str(mmkpicon))
-            subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
-            self.mbox = self.session.open(MessageBox, _('Successfully Picons Installed'), MessageBox.TYPE_INFO, timeout=5)
-        self['info'].setText(_('Please select ...'))
-        self['progresstext'].text = ''
-        self.progclear = 0
-        self['progress'].setValue(self.progclear)
-        self["progress"].hide()
-        self.downloading = False
-
-    def showError(self, error):
-        self['info'].setText(_('Download Error ...'))
-        print("download error =", error)
-        self.close()
-
-    def finished(self,result):
-         return
-
-class MMarkMov(Screen):
-
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('MMark')
-        Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
-        self['pth'] = Label('')
-        self['pth'].setText(_('Folder picons ') + mmkpicon)
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.getfreespace()
-        self.downloading = False
-        self.url = host_mov
-        name = 'MMark-Picons'
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
-
-    def getfreespace(self):
-        fspace = freespace()
-        self['pform'].setText(fspace)
-
-    def downxmlpage(self):
-        url = self.url
-        data = make_request(url)
-        r = six.ensure_str(data)
-        self.names = []
-        self.urls = []
-        try:
-            n1 = r.find('"quickkey":', 0)
-            n2 = r.find('more_chunks', n1)
-            data2 = r[n1:n2]
-            regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"downloads":"(.*?)".*?"normal_download":"(.*?)"'
-            match = re.compile(regex, re.DOTALL).findall(data2)
-            for name, data, download, url  in match:
+            for name, data, download, url in match:
                 if 'zip' in url:
                     url = url.replace('\\', '')
-                    name = name.replace('_',' ').replace('-',' ').replace('mmk','').replace('.zip','')
-                    name = name + ' ' + data[0:10] + ' ' + 'Down: ' + download
+                    if self.movie:
+                        name = name.replace('_', ' ').replace('-', ' ').replace('mmk', '').replace('.zip', '')
+                        name = name + ' ' + data[0:10] + ' ' + 'Down: ' + download
+                    else:
+                        name = name.replace('_', ' ').replace('mmk', 'MMark').replace('.zip', '')
+                        name = name + ' ' + data[0:10] + ' ' + 'Down:' + download            
                     self.urls.append(url)
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
