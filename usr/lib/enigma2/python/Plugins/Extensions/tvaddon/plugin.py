@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     15/05/2021     #
+#     19/06/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -59,39 +59,52 @@ import six
 import subprocess
 from sys import version_info
 from . import Lcn
-# try:
-    # import commands
-# except ImportError:
-    # import subprocess
 global skin_path, mmkpicon, isDreamOS, set, regexC, regexL, category
-headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
-                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
-
 currversion      = '2.0.1'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
-
+headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
+                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
 category = 'lululla.xml'
+from six.moves.urllib.parse import quote_plus
+from six.moves.urllib.request import urlopen
+from six.moves.urllib.request import Request
+from six.moves.urllib.parse import urlparse
+from six.moves.urllib.parse import quote
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.error import HTTPError
+from six.moves.urllib.error import URLError
+from six.moves.urllib.request import urlretrieve    
+#six.ensure_text
 
-PY3 = version_info[0] == 3
-if PY3:
-    from urllib.request import urlopen, Request
-    from urllib.error import URLError, HTTPError
-    from urllib.parse import urlencode, quote
-    from urllib.request import urlretrieve
-    from urllib.parse import urlparse
-else:
-    from urllib2 import urlopen, Request
-    from urllib2 import URLError, HTTPError
-    from urllib import urlencode, quote
-    from urllib import urlretrieve
-    from urlparse import urlparse
-
+PY3 = sys.version_info.major >= 3
+# try:
+    # from urllib.request import urlopen, Request
+# except ImportError:
+    # from urllib2 import urlopen, Request
+# try:
+    # import commands
+# except ImportError:
+    # import subprocess    
+# if PY3:
+    # from urllib.error import URLError, HTTPError
+    # from urllib.parse import urlencode, quote
+    # from urllib.request import urlretrieve
+    # from urllib.parse import urlparse
+# else:
+#    from urllib2 import urlopen, Request
+    # from urllib2 import URLError, HTTPError
+    # from urllib import urlencode, quote
+    # from urllib import urlretrieve
+    # from urlparse import urlparse
+    
+# def isDreamOS():
+    # if os_path.exists('/var/lib/dpkg/status'):
+        # return isDreamOS
 try:
     from requests import get
 except ImportError:
     pass
-
 
 if sys.version_info >= (2, 7, 9):
     try:
@@ -114,9 +127,7 @@ try:
 except:
     isDreamOS = False
 
-# def isDreamOS():
-    # if os_path.exists('/var/lib/dpkg/status'):
-        # return isDreamOS
+
 try:
     from enigma import eDVBDB
 except ImportError:
@@ -126,7 +137,6 @@ try:
     import zipfile
 except:
     pass
-
 
 #--------------------#
 # Small test program #
@@ -162,11 +172,6 @@ except:
     sslverify = False
 
 if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
-
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
             self.hostname = hostname
@@ -176,7 +181,6 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
-
 
 def checkMyFile(url):
     # FIXME urlopen will cause a full download of file and this is not what you want //thank's @jbleyel
@@ -308,7 +312,6 @@ mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC = '<plugins cont="(.*?)"'
 regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
 
-#<img src="/_autoindex/icons/unknown.png" alt="unknown"> <a href="/panel-addons/EnigmaOE2.0/kodilite/enigma2-plugin-extensions-kodilite_6.0_r0_all.ipk">enigma2-plugin-extensions-kodilite_6.0_r0_all.ipk</a>
 #======================================================config
 
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -706,13 +709,6 @@ class Categories(Screen):
          'green': self.okRun,
          'red': self.close,
          'cancel': self.close}, -2)
-
-    # def downxmlpage(self):
-        # try:
-            # url = xml_path + 'Drivers.xml'
-        # except:
-            # url = xml_path + six.binary_type('Drivers.xml',encoding="utf-8")
-        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
         
     def downxmlpage(self):
         try:
@@ -1000,7 +996,6 @@ class SettingVhan(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -2881,7 +2876,6 @@ class tvMessageBox(Screen):
     def __repr__(self):
         return str(type(self)) + '(' + self.text + ')'
 
-
 class tvConfig(Screen, ConfigListScreen):
 
     def __init__(self, session):
@@ -2942,7 +2936,6 @@ class tvConfig(Screen, ConfigListScreen):
             self['description'].setText(_("Link in Extensions button"))
         if entry == _('Link in Main Menu'):
             self['description'].setText(_("Link in Main Menu"))
-
         return
 
     def tvUpdate(self):
@@ -3039,9 +3032,6 @@ class tvConfig(Screen, ConfigListScreen):
             self.session.openWithCallback(self.cancelConfirm, tvMessageBox, _('Really close without saving the settings?'))
         else:
             self.close()
-
-
-
 
 class SelectPicons(Screen):
 

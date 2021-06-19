@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from __future__ import print_function                                     
 from enigma import eDVBDB, eServiceReference, eServiceCenter
@@ -141,7 +141,6 @@ class LCN():
             # if line.lower().find('p:') == -1:    
                 # pass                                    
             # #end edit lululla               
-            
             
             if len(tmp) != 6:
                 continue
