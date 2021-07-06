@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     19/06/2021     #
+#     06/07/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -4070,7 +4070,8 @@ def terrestrial_rest():
                 new_bouquet.close()
                 os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
                 os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
-        lcnstart()
+        if not isDreamOS:
+            lcnstart()
 
 def lcnstart():
     print(' lcnstart ')
