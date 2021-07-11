@@ -32,7 +32,7 @@ class LCN():
     service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
 
     def __init__(self):
-        self.dbfile = '/var/etc/enigma2/lcndb'
+        self.dbfile = '/etc/enigma2/lcndb'
         self.bouquetfile = Bouquet()
         self.lcnlist = []
         self.markers = []
@@ -117,7 +117,13 @@ class LCN():
             line = f.readline()
             if line == '':
                 break
-
+            # line = line.strip()
+            # if len(line) != 38:
+                # continue
+            # tmp = line.split(':')
+            # if len(tmp) != 6:
+                # continue
+            # self.addLcnToList(int(tmp[0], 16), int(tmp[1], 16), int(tmp[2], 16), int(tmp[3], 16), int(tmp[4]), int(tmp[5]))
         if self.root is not None:
             for x in self.root:
                 if x.tag == 'rule':

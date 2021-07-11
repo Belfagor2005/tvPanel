@@ -934,10 +934,11 @@ class SettingColombo(Screen):
                         set = 1
                         terrestrial()
 
-                url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-                with urlopen(url) as response, open(dest, 'wb') as destlocal:
-                    shutil.copyfileobj(response, destlocal)                      
-                        
+                # url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                # with urlopen(url) as response, open(dest, 'wb') as destlocal:
+                    # shutil.copyfileobj(response, destlocal)                      
+                urlretrieve(url, dest) 
+                
                 if os.path.exists('/tmp/settings.zip'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -954,7 +955,7 @@ class SettingColombo(Screen):
                     os.system(cmd2)
                     if os.path.exists(fdest1):
                         title = _("Installation Settings")
-                        self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["cp -rf /tmp/unzipped/* /etc/enigma2;  wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                        self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["cp -rf /tmp/unzipped/* /etc/enigma2;  wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1063,7 +1064,7 @@ class SettingVhan(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["unzip -o -q '/tmp/settings.zip' -d /tmp; cp -rf '/tmp/" + str(self.name) + "'/* /etc/enigma2; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["unzip -o -q '/tmp/settings.zip' -d /tmp; cp -rf '/tmp/" + str(self.name) + "'/* /etc/enigma2; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
 
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
@@ -1170,7 +1171,7 @@ class Milenka61(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1286,7 +1287,7 @@ class SettingManutek(Screen):
                             os.system('rm -rf /etc/enigma2/*.tv')
                             os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
                         title = _("Installation Settings")
-                        self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"])
+                        self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"])
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1406,7 +1407,7 @@ class SettingMorpheus(Screen):
                             os.system('rm -rf /etc/enigma2/*.tv')
                             os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1512,7 +1513,7 @@ class SettingCiefp(Screen):
                     os.system('rm -rf /etc/enigma2/*.tv')
                     os.system('tar -xvf /tmp/settings.tar.gz -C /')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1616,7 +1617,7 @@ class SettingBi58(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1721,7 +1722,7 @@ class SettingPredrag(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1838,7 +1839,7 @@ class SettingCyrus(Screen):
                             os.system('rm -rf /etc/enigma2/*.tv')
                             os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, Console, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
 
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
@@ -2222,101 +2223,101 @@ class tvInstall(Screen):
         else:
             self.close()
 
-# class tvConsole(Screen):
+class tvConsole(Screen):
 
-    # def __init__(self, session, title ="Console", cmdlist =None, finishedCallback =None, closeOnSuccess =False, endstr =''):
-        # self.session = session
-        # skin = skin_path + 'tvConsole.xml'
-        # with open(skin, 'r') as f:
-            # self.skin = f.read()
-        # self.setup_title = ('Console')
-        # Screen.__init__(self, session)
-        # self.setTitle(_(title_plug))
-        # self.finishedCallback = finishedCallback
-        # self.closeOnSuccess = closeOnSuccess
-        # self.endstr = endstr
-        # self.errorOcurred = False
-        # self['text'] = ScrollLabel('')
-        # self['title'] = Label(_(title_plug))
-        # self['actions'] = ActionMap(['WizardActions', 'DirectionActions' , 'ColorActions',], {'ok': self.cancel,
-         # 'back': self.cancel,
-         # 'red': self.cancel,
-         # "blue": self.restartenigma,
-         # 'up': self['text'].pageUp,
-         # 'down': self['text'].pageDown}, -1)
-        # self.cmdlist = cmdlist
-        # self.newtitle = _(title_plug)
-        # self.onShown.append(self.updateTitle)
-        # self.container = eConsoleAppContainer()
-        # self.run=0
-        # try:
-            # self.container.appClosed.append(self.runFinished)
-            # self.container.dataAvail.append(self.dataAvail)
-        # except:
-            # self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
-            # self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
-        # self.onLayoutFinish.append(self.startRun)
+    def __init__(self, session, title ="Console", cmdlist =None, finishedCallback =None, closeOnSuccess =False, endstr =''):
+        self.session = session
+        skin = skin_path + 'tvConsole.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('Console')
+        Screen.__init__(self, session)
+        self.setTitle(_(title_plug))
+        self.finishedCallback = finishedCallback
+        self.closeOnSuccess = closeOnSuccess
+        self.endstr = endstr
+        self.errorOcurred = False
+        self['text'] = ScrollLabel('')
+        self['title'] = Label(_(title_plug))
+        self['actions'] = ActionMap(['WizardActions', 'DirectionActions' , 'ColorActions',], {'ok': self.cancel,
+         'back': self.cancel,
+         'red': self.cancel,
+         "blue": self.restartenigma,
+         'up': self['text'].pageUp,
+         'down': self['text'].pageDown}, -1)
+        self.cmdlist = cmdlist
+        self.newtitle = _(title_plug)
+        self.onShown.append(self.updateTitle)
+        self.container = eConsoleAppContainer()
+        self.run=0
+        try:
+            self.container.appClosed.append(self.runFinished)
+            self.container.dataAvail.append(self.dataAvail)
+        except:
+            self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
+            self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
+        self.onLayoutFinish.append(self.startRun)
 
-    # def updateTitle(self):
-        # self.setTitle(self.newtitle)
+    def updateTitle(self):
+        self.setTitle(self.newtitle)
 
-    # def startRun(self):
-        # self['text'].setText(_('Execution Progress:') + '\n\n')
-        # print('Console: executing in run', self.run, ' the command:', self.cmdlist[self.run])
-        # if self.container.execute(self.cmdlist[self.run]):
-            # self.runFinished(-1)
+    def startRun(self):
+        self['text'].setText(_('Execution Progress:') + '\n\n')
+        print('Console: executing in run', self.run, ' the command:', self.cmdlist[self.run])
+        if self.container.execute(self.cmdlist[self.run]):
+            self.runFinished(-1)
 
-    # def runFinished(self, retval):
-        # self.run += 1
-        # if self.run != len(self.cmdlist):
-            # if self.container.execute(self.cmdlist[self.run]):
-                # self.runFinished(-1)
-        # else:
-            # str= self["text"].getText()
-            # if not retval and self.endstr.startswith("Swapping"):
-               # str += _("\n\n" + self.endstr)
-            # else:
-               # str += _("Execution finished!!\n")
-            # self["text"].setText(str)
-            # self["text"].lastPage()
-            # # if self.finishedCallback is not None:
-                    # # self.finishedCallback(retval)
-            # # if not retval and self.closeOnSuccess:
-            # self.cancel()
+    def runFinished(self, retval):
+        self.run += 1
+        if self.run != len(self.cmdlist):
+            if self.container.execute(self.cmdlist[self.run]):
+                self.runFinished(-1)
+        else:
+            str= self["text"].getText()
+            if not retval and self.endstr.startswith("Swapping"):
+               str += _("\n\n" + self.endstr)
+            else:
+               str += _("Execution finished!!\n")
+            self["text"].setText(str)
+            self["text"].lastPage()
+            # if self.finishedCallback is not None:
+                    # self.finishedCallback(retval)
+            # if not retval and self.closeOnSuccess:
+            self.cancel()
 
-    # def cancel(self):
-        # if self.run == len(self.cmdlist):
-            # self.close()
-            # try:
-                # self.appClosed_conn = None
-                # self.dataAvail_conn = None
-            # except:
-                # self.container.appClosed.remove(self.runFinished)
-                # self.container.dataAvail.remove(self.dataAvail)
+    def cancel(self):
+        if self.run == len(self.cmdlist):
+            self.close()
+            try:
+                self.appClosed_conn = None
+                self.dataAvail_conn = None
+            except:
+                self.container.appClosed.remove(self.runFinished)
+                self.container.dataAvail.remove(self.dataAvail)
 
-    # def dataAvail(self, data):
-        # if PY3:
-            # data = data.decode("utf-8")
-        # try:
-            # self["text"].setText(self["text"].getText() + data)
-        # except:
-            # trace_error()
-        # return
-        # if self["text"].getText().endswith("Do you want to continue? [Y/n] "):
-            # msg= self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
+    def dataAvail(self, data):
+        if PY3:
+            data = data.decode("utf-8")
+        try:
+            self["text"].setText(self["text"].getText() + data)
+        except:
+            trace_error()
+        return
+        if self["text"].getText().endswith("Do you want to continue? [Y/n] "):
+            msg= self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
 
-    # def processAnswer(self, retval):
-        # if retval:
-            # self.container.write("Y",1)
-        # else:
-            # self.container.write("n",1)
-        # self.dataSent_conn = self.container.dataSent.connect(self.processInput)
+    def processAnswer(self, retval):
+        if retval:
+            self.container.write("Y",1)
+        else:
+            self.container.write("n",1)
+        self.dataSent_conn = self.container.dataSent.connect(self.processInput)
 
-    # def processInput(self, retval):
-        # self.container.sendEOF()
+    def processInput(self, retval):
+        self.container.sendEOF()
 
-    # def restartenigma(self):
-        # self.session.open(TryQuitMainloop, 3)
+    def restartenigma(self):
+        self.session.open(TryQuitMainloop, 3)
 
 class tvIPK(Screen):
 
