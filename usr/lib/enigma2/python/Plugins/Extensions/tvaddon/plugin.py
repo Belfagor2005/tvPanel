@@ -910,12 +910,12 @@ class SettingColombo(Screen):
                         self.names.append(name)
                         self.downloading = True
                         self['info'].setText(_('Please select ...'))
-                    else:
-                        self['info'].setText(_('no data ...'))
-                        self.downloading = False
+                    # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            self.downloading = False
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -1028,12 +1028,12 @@ class SettingVhan(Screen):
                     self.names.append(name)
                     self.downloading = True
                     self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            self.downloading = False
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1139,12 +1139,12 @@ class Milenka61(Screen):
                     self.names.append(name)
                     self.downloading = True
                     self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            self.downloading = False
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1244,12 +1244,12 @@ class SettingManutek(Screen):
                     self.names.append(name)
                     self.downloading = True
                     self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            self.downloading = False
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1336,17 +1336,19 @@ class SettingMorpheus(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = 'http://morpheus883.altervista.org/download/index.php?dir='
+        url = r'http://morpheus883.altervista.org/download/index.php'
         data = make_request(url)
         r = data
         print('rrrrrrrr ', r)
         self.names  = []
         self.urls   = []
         try:
+            #href="/download/index.php?dir=&amp;file=
             regex   = 'href="/download/.*?file=(.*?)">'
             match   = re.compile(regex).findall(r)
             for url in match:
                 if 'zip' in url.lower():
+                    self.downloading = True
                     if 'settings' in url.lower():
                         continue
                     name = url
@@ -1362,14 +1364,14 @@ class SettingMorpheus(Screen):
                     self.names.append(name)
                     print("url =", url)
                     print("name =", name)
-                    self.downloading = True
+                    
                     self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            self.downloading = False
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1480,12 +1482,12 @@ class SettingCiefp(Screen):
                     self.names.append(name)
                     self.downloading = True
                     self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            pass
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1585,12 +1587,12 @@ class SettingBi58(Screen):
                     self.names.append(name)
                     self.downloading = True
                     self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            pass
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1689,12 +1691,12 @@ class SettingPredrag(Screen):
                     self.names.append(name)
                     self.downloading = True
                     self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            pass
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1798,12 +1800,12 @@ class SettingCyrus(Screen):
                     self.names.append(name)
                     self.downloading = True
                     self['info'].setText(_('Please select ...'))
-                else:
-                    self['info'].setText(_('no data ...'))
-                    self.downloading = False
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
             showlist(self.names, self['text'])
-        except:
-            pass
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
