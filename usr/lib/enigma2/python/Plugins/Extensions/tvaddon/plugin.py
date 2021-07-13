@@ -348,7 +348,7 @@ Panel_list2 = [
  ('SETTINGS BI58'),
  ('SETTINGS CIEFP'),
  ('SETTINGS CYRUS'),
- ('SETTINGS COLOMBO'),
+ # ('SETTINGS COLOMBO'),
  ('SETTINGS MANUTEK'),
  ('SETTINGS MILENKA61'),
  ('SETTINGS MORPHEUS'),
@@ -791,8 +791,8 @@ class tvDailySetting(Screen):
             self.session.open(SettingCiefp)
         elif sel == ('SETTINGS CYRUS'):
             self.session.open(SettingCyrus)
-        elif sel == ('SETTINGS COLOMBO'):
-            self.session.open(SettingColombo)
+        # elif sel == ('SETTINGS COLOMBO'):
+            # self.session.open(SettingColombo)
         elif sel == ('SETTINGS BI58'):
             self.session.open(SettingBi58)
         elif sel == ('SETTINGS MANUTEK'):
@@ -844,126 +844,127 @@ class tvDailySetting(Screen):
             else:
                 self.mbox = self.session.open(tvMessageBox, "No Internet", tvMessageBox.TYPE_INFO)
 
-class SettingColombo(Screen):
+# class SettingColombo(Screen):
 
-    def __init__(self, session):
-        self.session = session
-        skin = skin_path + 'tvall.xml'
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Setting Colombo')
-        Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
-        self.list = []
-        self['text'] = tvList([])
-        self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        self.timer.start(500, 1)
-        if isDreamOS:
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-         'green': self.okRun,
-         'red': self.close,
-         'cancel': self.close}, -2)
+    # def __init__(self, session):
+        # self.session = session
+        # skin = skin_path + 'tvall.xml'
+        # with open(skin, 'r') as f:
+            # self.skin = f.read()
+        # self.setup_title = ('Setting Colombo')
+        # Screen.__init__(self, session)
+        # self.setTitle(_(title_plug))
+        # self.list = []
+        # self['text'] = tvList([])
+        # self.icount = 0
+        # self['info'] = Label(_('Getting the list, please wait ...'))
+        # self['pth'] = Label('')
+        # self['pform'] = Label('')
+        # self['progress'] = ProgressBar()
+        # self["progress"].hide()
+        # self['progresstext'] = StaticText()
+        # self['key_green'] = Button(_('Install'))
+        # self['key_red'] = Button(_('Back'))
+        # self['key_yellow'] = Button(_(''))
+        # self["key_blue"] = Button(_(''))
+        # self['key_yellow'].hide()
+        # self['key_blue'].hide()
+        # self.downloading = False
+        # self.timer = eTimer()
+        # self.timer.start(500, 1)
+        # if isDreamOS:
+            # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        # else:
+            # self.timer.callback.append(self.downxmlpage)
+        # self['title'] = Label(_(title_plug))
+        # self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         # 'green': self.okRun,
+         # 'red': self.close,
+         # 'cancel': self.close}, -2)
 
-    def downxmlpage(self):
-        url = 'http://colombo.altervista.org/colombo/colombo/'
-        data = make_request(url)
-        r = data
-        print('rrrrrrrr ', r)
-        self.names  = []
-        self.urls   = []
-        try:
-            regex   = '<a href="(.*?)"'
-            match   = re.compile(regex).findall(r)
-            for url in match:
-                if 'zip' in url.lower():
-                    if 'setting' in url.lower():
-                        if '.php' in url.lower():
-                            continue
-                        name = url
-                        url = "http://colombo.altervista.org" + url
-                        name = name.replace("/colombo/colombo/", "")
-                        name = name.replace(".zip", "")
-                        name = name.replace("%20", " ")
-                        name = name.replace("_", " ")
-                        name = name.replace("-", " ")
-                        url = checkStr(url)
-                        name = checkStr(name)
-                        self.urls.append(url)
-                        self.names.append(name)
-                        self.downloading = True
-                        self['info'].setText(_('Please select ...'))
-                    # else:
-                    # self['info'].setText(_('no data ...'))
-                    # self.downloading = False
-            showlist(self.names, self['text'])
-        except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
 
-    def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+# #<a href="/colombo/colombo/Colombo_Picon_trasp_220x132_1.9_Est_02072020.zip" target="_blank" class="item _blank zip">Colombo_Picon_trasp_220x132_1.9_Est_02072020.zip											</a>
+    # def downxmlpage(self):
+        # url = 'http://colombo.altervista.org/colombo/colombo/'
+        # data = make_request(url)
+        # r = data
+        # print('rrrrrrrr ', r)
+        # self.names  = []
+        # self.urls   = []
+        # try:
+            # regex   = '<a href="(.*?)"'
+            # match   = re.compile(regex).findall(r)
+            # for url in match:
+                # if 'zip' in url.lower():
+                    # if 'setting' in url.lower():
+                        # if '.php' in url.lower():
+                            # continue
+                        # name = url
+                        # url = "http://colombo.altervista.org" + url
+                        # name = name.replace("/colombo/colombo/", "")
+                        # name = name.replace(".zip", "")
+                        # name = name.replace("%20", " ")
+                        # name = name.replace("_", " ")
+                        # name = name.replace("-", " ")
+                        # url = checkStr(url)
+                        # name = checkStr(name)
+                        # self.urls.append(url)
+                        # self.names.append(name)
+                        # self.downloading = True
+                        # self['info'].setText(_('Please select ...'))
+                    # # else:
+                    # # self['info'].setText(_('no data ...'))
+                    # # self.downloading = False
+            # showlist(self.names, self['text'])
+        # except Exception as e:
+            # print(('downxmlpage get failed: ', str(e)))
 
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
-            if self.downloading == True:
-                idx = self["text"].getSelectionIndex()
-                url = self.urls[idx]
-                dest = "/tmp/settings.zip"
-                print("url =", url)
-                if 'dtt' not in str(url).lower():
-                    # if not isDreamOS:
-                        set = 1
-                        terrestrial()
+    # def okRun(self):
+        # self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
 
-                # url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-                # with urlopen(url) as response, open(dest, 'wb') as destlocal:
-                    # shutil.copyfileobj(response, destlocal)                      
-                urlretrieve(url, dest) 
+    # def okInstall(self, result):
+        # global set
+        # set = 0
+        # if result:
+            # if self.downloading == True:
+                # idx = self["text"].getSelectionIndex()
+                # url = self.urls[idx]
+                # dest = "/tmp/settings.zip"
+                # print("url =", url)
+                # if 'dtt' not in str(url).lower():
+                    # # if not isDreamOS:
+                        # set = 1
+                        # terrestrial()
+                # # url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                # # with urlopen(url) as response, open(dest, 'wb') as destlocal:
+                    # # shutil.copyfileobj(response, destlocal)                      
+                # urlretrieve(url, dest) 
                 
-                if os.path.exists('/tmp/settings.zip'):
-                    os.system('rm -rf /etc/enigma2/lamedb')
-                    os.system('rm -rf /etc/enigma2/*.radio')
-                    os.system('rm -rf /etc/enigma2/*.tv')
+                # if os.path.exists(dest):
+                    # os.system('rm -rf /etc/enigma2/lamedb')
+                    # os.system('rm -rf /etc/enigma2/*.radio')
+                    # os.system('rm -rf /etc/enigma2/*.tv')
 
-                    fdest1 = "/tmp/unzipped"
-                    fdest2 = "/etc/enigma2"
-                    if os.path.exists(fdest1):
-                        cmd = "rm -rf '/tmp/unzipped'"
-                        os.system(cmd)
-                    os.makedirs('/tmp/unzipped')
+                    # fdest1 = "/tmp/unzipped"
+                    # fdest2 = "/etc/enigma2"
+                    # if os.path.exists(fdest1):
+                        # cmd = "rm -rf '/tmp/unzipped'"
+                        # os.system(cmd)
+                    # os.makedirs('/tmp/unzipped')
 
-                    cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
-                    os.system(cmd2)
-                    if os.path.exists(fdest1):
-                        title = _("Installation Settings")
-                        self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["cp -rf /tmp/unzipped/* /etc/enigma2;  wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
-            else:
-                self['info'].setText(_('Settings Not Installed ...'))
+                    # cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
+                    # os.system(cmd2)
+                    # if os.path.exists(fdest1):
+                        # title = _("Installation Settings")
+                        # self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["cp -rf /tmp/unzipped/* /etc/enigma2;  wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+            # else:
+                # self['info'].setText(_('Settings Not Installed ...'))
 
-    def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
-        self['info'].setText(_('Settings Installed ...'))
+    # def yes(self):
+        # # if not isDreamOS:
+        # # self.onShown.append(resettings)
+        # resettings()        
+        # self['info'].setText(_('Settings Installed ...'))
 
 
 class SettingVhan(Screen):
@@ -1056,10 +1057,8 @@ class SettingVhan(Screen):
                 # url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
                 # with urlopen(url) as response, open(dest, 'wb') as destlocal:
                     # shutil.copyfileobj(response, destlocal)
-                    
                 urlretrieve(url, dest)    
-                    
-                if os.path.exists('/tmp/settings.zip'):
+                if os.path.exists(dest):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
@@ -1271,7 +1270,7 @@ class SettingManutek(Screen):
                 # with urlopen(url) as response, open(dest, 'wb') as destlocal:
                     # shutil.copyfileobj(response, destlocal)
                 urlretrieve(url, dest) 
-                if os.path.exists('/tmp/settings.zip'):
+                if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1394,7 +1393,7 @@ class SettingMorpheus(Screen):
                 # with urlopen(url) as response, open(dest, 'wb') as destlocal:
                     # shutil.copyfileobj(response, destlocal)
                 urlretrieve(url, dest)     
-                if os.path.exists('/tmp/settings.zip'):
+                if os.path.exists(dest):
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
                     os.makedirs('/tmp/unzipped')
@@ -1827,7 +1826,7 @@ class SettingCyrus(Screen):
                 # with urlopen(url) as response, open(dest, 'wb') as destlocal:
                     # shutil.copyfileobj(response, destlocal)
                 urlretrieve(url, dest) 
-                if os.path.exists('/tmp/settings.zip'):
+                if os.path.exists(dest):
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
                     os.makedirs('/tmp/unzipped')
