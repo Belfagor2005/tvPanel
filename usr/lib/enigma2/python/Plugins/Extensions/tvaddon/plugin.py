@@ -122,11 +122,6 @@ except:
 #--------------------#
 # Small test program #
 #--------------------#
-     
-                                                                      
-
-
-                  
 def checkStr(txt):
     if PY3:
         if isinstance(txt, type(bytes())):
@@ -397,9 +392,6 @@ def OnclearMem():
         os.system("echo 3 > /proc/sys/vm/drop_caches")
     except:
         pass
-                            
-                                                         
-
 
 def DailyListEntry(name, idx):
     res = [name]
@@ -434,8 +426,6 @@ def showlist(data, list):
         list.setList(plist)
 
 class Hometv(Screen):
-
-                                
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'Hometv.xml'
@@ -666,7 +656,6 @@ class Hometv(Screen):
             self.close()
 
 class Categories(Screen):
-
     def __init__(self, session, category):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -739,7 +728,6 @@ class Categories(Screen):
             self.close()
 
 class tvDailySetting(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -859,7 +847,6 @@ class tvDailySetting(Screen):
                 self.mbox = self.session.open(tvMessageBox, "No Internet", tvMessageBox.TYPE_INFO)
 
 # class SettingColombo(Screen):
-
     # def __init__(self, session):
         # self.session = session
         # skin = skin_path + 'tvall.xml'
@@ -895,7 +882,6 @@ class tvDailySetting(Screen):
          # 'green': self.okRun,
          # 'red': self.close,
          # 'cancel': self.close}, -2)
-
 
 # #<a href="/colombo/colombo/Colombo_Picon_trasp_220x132_1.9_Est_02072020.zip" target="_blank" class="item _blank zip">Colombo_Picon_trasp_220x132_1.9_Est_02072020.zip											</a>
     # def downxmlpage(self):
@@ -980,9 +966,7 @@ class tvDailySetting(Screen):
         # resettings()        
         # self['info'].setText(_('Settings Installed ...'))
 
-
 class SettingVhan(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -1080,7 +1064,6 @@ class SettingVhan(Screen):
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["unzip -o -q '/tmp/settings.zip' -d /tmp; cp -rf '/tmp/" + str(self.name) + "'/* /etc/enigma2; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
-
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1091,7 +1074,6 @@ class SettingVhan(Screen):
         self['info'].setText(_('Settings Installed ...'))
 
 class Milenka61(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -1196,9 +1178,7 @@ class Milenka61(Screen):
         resettings()        
         self['info'].setText(_('Settings Installed ...'))
 
-
 class SettingManutek(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -1314,7 +1294,6 @@ class SettingManutek(Screen):
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingMorpheus(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -1357,8 +1336,6 @@ class SettingMorpheus(Screen):
         r = data
         print('rrrrrrrr ', r)
         self.names  = []
-                                  
-                     
         self.urls   = []
         try:
             #href="/download/index.php?dir=&amp;file=
@@ -1382,7 +1359,6 @@ class SettingMorpheus(Screen):
                     self.names.append(name)
                     print("url =", url)
                     print("name =", name)
-                    
                     self['info'].setText(_('Please select ...'))
                 # else:
                     # self['info'].setText(_('no data ...'))
@@ -1439,7 +1415,6 @@ class SettingMorpheus(Screen):
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingCiefp(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -1450,7 +1425,6 @@ class SettingCiefp(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1483,8 +1457,6 @@ class SettingCiefp(Screen):
         r = data
         print('rrrrrrrr ', r)
         self.names  = []
-                                  
-                     
         self.urls   = []
         try:
             regex   = '<a href="ciefp(.*?)".*?align="right">(.*?)-(.*?)-(.*?) '
@@ -1547,7 +1519,6 @@ class SettingCiefp(Screen):
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingBi58(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -1558,7 +1529,6 @@ class SettingBi58(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1591,8 +1561,6 @@ class SettingBi58(Screen):
         r = data
         print('rrrrrrrr ', r)
         self.names  = []
-                                  
-                     
         self.urls   = []
         try:
             regex   = '<a href="bi58-e2(.*?)".*?align="right">(.*?)-(.*?)-(.*?) '
@@ -1653,7 +1621,6 @@ class SettingBi58(Screen):
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingPredrag(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -1664,7 +1631,6 @@ class SettingPredrag(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1697,8 +1663,6 @@ class SettingPredrag(Screen):
         r = data
         print('rrrrrrrr ', r)
         self.names  = []
-                                  
-                     
         self.urls   = []
         try:
             regex   = '<a href="predrag(.*?)".*?align="right">(.*?)-(.*?)-(.*?) '
@@ -1762,7 +1726,6 @@ class SettingPredrag(Screen):
 
 
 class SettingCyrus(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -1773,7 +1736,6 @@ class SettingCyrus(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1806,8 +1768,6 @@ class SettingCyrus(Screen):
         r = data
         print('rrrrrrrr ', r)
         self.names  = []
-                                  
-                     
         self.urls   = []
         try:
             n1 = r.find('name="Sat">', 0)
@@ -1835,9 +1795,6 @@ class SettingCyrus(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
-
-                    
-                                                                                                                       
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -1874,7 +1831,6 @@ class SettingCyrus(Screen):
                             os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
-
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
@@ -1883,7 +1839,6 @@ class SettingCyrus(Screen):
         # self.onShown.append(resettings)
         resettings()        
         self['info'].setText(_('Settings Installed ...'))
-
 
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection = None):
@@ -2076,7 +2031,6 @@ class tvInstall(Screen):
 
     def okDownload(self, result):
         self['info'].setText(_('... please wait'))
-
         if result:
             idx = self["text"].getSelectionIndex()
             dom = self.names[idx]
@@ -2187,7 +2141,6 @@ class tvInstall(Screen):
                         # dest = '/tmp/picon.zip'
                         self.sel = self.sel[0]
                         print('self.sel zip: ', self.sel)
-
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         cmd = ['unzip -o -q /tmp/%s -d %s' %(dest, mmkpicon)]
@@ -2258,7 +2211,7 @@ class tvInstall(Screen):
             self.close()
 
 class tvConsole(Screen):
-
+# def __init__(self, session, title = 'Console', cmdlist = None, finishedCallback = None, closeOnSuccess = False, showStartStopText = True, skin = None):
     def __init__(self, session, title ="Console", cmdlist =None, finishedCallback =None, closeOnSuccess =False, endstr =''):
         self.session = session
         skin = skin_path + 'tvConsole.xml'
@@ -2354,9 +2307,7 @@ class tvConsole(Screen):
         self.session.open(TryQuitMainloop, 3)
 
 class tvIPK(Screen):
-
     def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
-
         self.session = session
         skin = skin_path + 'tvIPK.xml'
         with open(skin, 'r') as f:
@@ -2426,12 +2377,10 @@ class tvIPK(Screen):
                     # cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";opkg update > /dev/null; echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest + ' > /dev/null'
                     cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";opkg install ' + dest  + ' > /dev/null'
                     self.session.open(tvConsole, title ='IPK Local Installation', cmdlist =[cmd0, 'sleep 5'] )
-
                 elif self.sel.find('.tar.gz') != -1:
                     self.sel = self.sel[0]
                     cmd0 = 'tar -xzvf ' + dest + ' -C /'
                     self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'] )
-
                 elif self.sel.find('.deb') != -1:
                     if isDreamOS:
                         self.sel = self.sel[0]
@@ -2439,7 +2388,6 @@ class tvIPK(Screen):
                         self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0] )
                     else:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
-
                 elif self.sel.find('.zip') != -1:
                     if 'picon' in self.sel.lower():
                         self.timer = eTimer()
@@ -2528,7 +2476,6 @@ class tvIPK(Screen):
         self.close()
 
 class tvUpdate(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -2654,7 +2601,6 @@ class tvUpdate(Screen):
             self.close()
 
 class tvRemove(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -2708,7 +2654,6 @@ class tvRemove(Screen):
                             name= name.replace('.control', '')
                         if name.endswith('.list'):
                             continue
-
                     self.names.append(name)
         showlist(self.names, self['text'])
 
@@ -2753,7 +2698,6 @@ class tvMessageBox(Screen):
     TYPE_WARNING = 2
     TYPE_ERROR = 3
     TYPE_MESSAGE = 4
-
     def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, picon = None, simple = False, list = [], timeout_default = None):
         self.session = session
         skin = skin_path + 'tvMessageBox.xml'
@@ -2824,7 +2768,6 @@ class tvMessageBox(Screen):
         self.timeout = timeout
         if timeout > 0:
             self.timer = eTimer()
-
             if isDreamOS:
                 self.timer_conn = self.timer.timeout.connect(self.timerTick)
             else:
@@ -2910,7 +2853,6 @@ class tvMessageBox(Screen):
         return str(type(self)) + '(' + self.text + ')'
 
 class tvConfig(Screen, ConfigListScreen):
-
     def __init__(self, session):
         skin = skin_path + 'tvConfig.xml'
         f = open(skin, 'r')
@@ -3067,7 +3009,6 @@ class tvConfig(Screen, ConfigListScreen):
             self.close()
 
 class SelectPicons(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3152,7 +3093,6 @@ class SelectPicons(Screen):
         self['info'].setText(_('Please select ...'))
 
 class MMarkFolderScreen(Screen):                                   
-
     def __init__(self, session, url):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3234,7 +3174,6 @@ class MMarkFolderScreen(Screen):
         return
 
 class MMarkPiconsScreen(Screen):
-
     def __init__(self, session, name, url, movie=False):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3359,7 +3298,6 @@ class MMarkPiconsScreen(Screen):
          return
 
 class ColomboTrasp(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3486,7 +3424,6 @@ Panel_list4 = [
 global KodilitePcd
 KodilitePcd = "/usr/lib/enigma2/python/Plugins/Extensions/KodiLite"
 class mainkodilite(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3549,7 +3486,6 @@ class mainkodilite(Screen):
             self.session.open(repository)
 
 class plugins(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3662,7 +3598,6 @@ class plugins(Screen):
          return
 
 class plugins_adult(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3798,7 +3733,6 @@ class plugins_adult(Screen):
          return
 
 class script(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3912,7 +3846,6 @@ class script(Screen):
          return
 
 class repository(Screen):
-
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -4148,7 +4081,6 @@ def StartSavingTerrestrialChannels():
                         break
         return
 
-
     def SaveTrasponderService():
         TrasponderListOldLamedb = open(plugin_path +'/temp/TrasponderListOldLamedb', 'w')
         ServiceListOldLamedb = open(plugin_path +'/temp/ServiceListOldLamedb', 'w')
@@ -4193,7 +4125,6 @@ def StartSavingTerrestrialChannels():
             pass
         return Trasponder
 
-
     def CreateBouquetForce():
         WritingBouquetTemporary = open(plugin_path +'/temp/TerrestrialChannelListArchive','w')
         WritingBouquetTemporary.write('#NAME Terrestre\n')
@@ -4225,7 +4156,6 @@ def StartSavingTerrestrialChannels():
 
 def LamedbRestore():
     try:
-
       TrasponderListNewLamedb = open(plugin_path +'/temp/TrasponderListNewLamedb', 'w')
       ServiceListNewLamedb = open(plugin_path +'/temp/ServiceListNewLamedb', 'w')
       inTransponder = False
@@ -4276,7 +4206,6 @@ def LamedbRestore():
       return False
 
 def TransferBouquetTerrestrialFinal():
-
         def RestoreTerrestrial():
           for file in os.listdir("/etc/enigma2/"):
             if re.search('^userbouquet.*.tv', file):
@@ -4285,7 +4214,6 @@ def TransferBouquetTerrestrialFinal():
               if re.search("#NAME Digitale Terrestre",x, flags=re.IGNORECASE):
                 return "/etc/enigma2/"+file
           # return
-
         try:
           TerrestrialChannelListArchive = open(plugin_path +'/temp/TerrestrialChannelListArchive').readlines()
           DirectoryUserBouquetTerrestrial = RestoreTerrestrial()
