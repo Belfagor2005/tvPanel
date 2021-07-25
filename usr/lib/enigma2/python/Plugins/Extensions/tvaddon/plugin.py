@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     13/07/2021     #
+#     25/07/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -48,7 +48,6 @@ from os.path import splitext
 from twisted.web.client import downloadPage, getPage
 from xml.dom import Node, minidom
 import base64
-              
 import os
 import re
 import sys
@@ -71,7 +70,6 @@ category = 'lululla.xml'
 from six.moves.urllib.parse import quote_plus
 from six.moves.urllib.request import urlopen
 from six.moves.urllib.request import Request
-                                           
 from six.moves.urllib.parse import urlparse
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import urlencode
@@ -133,16 +131,11 @@ def checkStr(txt):
 
 def checkInternet():
     try:
-        response = checkStr(urlopen("http://google.com", None, 5))
-        response.close()
-    except HTTPError:
-        return False
-    except URLError:
-        return False
-    except socket.timeout:
-        return False
-    else:
+        socket.setdefaulttimeout(0.5)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
         return True
+    except:
+        return False
 
 try:
     from OpenSSL import SSL
