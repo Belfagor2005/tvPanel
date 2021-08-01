@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     25/07/2021     #
+#     01/08/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 # from __future__ import print_function
@@ -61,7 +61,7 @@ from sys import version_info
 # from . import Lcn
 from .Lcn import *
 global skin_path, mmkpicon, isDreamOS, set, regexC, regexL, category
-currversion      = '2.0.1'
+currversion      = '2.0.2'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
@@ -198,16 +198,6 @@ def make_request(url):
         response.close()
         return link
     except:
-        # import ssl
-        # gcontext = ssl._create_unverified_context()
-        # try:
-            # response = urlopen(req)
-        # except:       
-            # response = urlopen(req)
-        # link=response.read()
-        # response.close()
-        # return link
-    # # except:
         e = URLError #, e:
         print('We failed to open "%s".' % url)
         if hasattr(e, 'code'):
@@ -232,17 +222,14 @@ def freespace():
 
 def ReloadBouquet():
     print('\n----Reloading bouquets----')
+    if set == 1:
+        terrestrial_rest()    
     if eDVBDB:
         eDVBDB.getInstance().reloadBouquets()
         print('bouquets reloaded...')
     else:
         os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
         print('bouquets reloaded...')
-
-def resettings():
-    if set == 1:
-        terrestrial_rest()
-        os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &")
 
 def deletetmp():
     os.system('rm -rf /tmp/unzipped;rm -f /tmp/*.ipk;rm -f /tmp/*.tar;rm -f /tmp/*.zip;rm -f /tmp/*.tar.gz;rm -f /tmp/*.tar.bz2;rm -f /tmp/*.tar.tbz2;rm -f /tmp/*.tar.tbz')
@@ -955,8 +942,8 @@ class tvDailySetting(Screen):
 
     # def yes(self):
         # # if not isDreamOS:
-        # # self.onShown.append(resettings)
-        # resettings()        
+        # # self.onShown.append(ReloadBouquet)
+        # ReloadBouquet()        
         # self['info'].setText(_('Settings Installed ...'))
 
 class SettingVhan(Screen):
@@ -1062,8 +1049,8 @@ class SettingVhan(Screen):
 
     def yes(self):
         # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
+        # self.onShown.append(ReloadBouquet)
+        ReloadBouquet()        
         self['info'].setText(_('Settings Installed ...'))
 
 class Milenka61(Screen):
@@ -1167,8 +1154,8 @@ class Milenka61(Screen):
 
     def yes(self):
         # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
+        # self.onShown.append(ReloadBouquet)
+        ReloadBouquet()        
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingManutek(Screen):
@@ -1282,8 +1269,8 @@ class SettingManutek(Screen):
 
     def yes(self):
         # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
+        # self.onShown.append(ReloadBouquet)
+        ReloadBouquet()        
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingMorpheus(Screen):
@@ -1403,8 +1390,8 @@ class SettingMorpheus(Screen):
 
     def yes(self):
         # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
+        # self.onShown.append(ReloadBouquet)
+        ReloadBouquet()        
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingCiefp(Screen):
@@ -1507,8 +1494,8 @@ class SettingCiefp(Screen):
 
     def yes(self):
         # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
+        # self.onShown.append(ReloadBouquet)
+        ReloadBouquet()        
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingBi58(Screen):
@@ -1609,8 +1596,8 @@ class SettingBi58(Screen):
 
     def yes(self):
         # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
+        # self.onShown.append(ReloadBouquet)
+        ReloadBouquet()        
         self['info'].setText(_('Settings Installed ...'))
 
 class SettingPredrag(Screen):
@@ -1713,8 +1700,8 @@ class SettingPredrag(Screen):
 
     def yes(self):
         # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
+        # self.onShown.append(ReloadBouquet)
+        ReloadBouquet()        
         self['info'].setText(_('Settings Installed ...'))
 
 
@@ -1829,8 +1816,8 @@ class SettingCyrus(Screen):
 
     def yes(self):
         # if not isDreamOS:
-        # self.onShown.append(resettings)
-        resettings()        
+        # self.onShown.append(ReloadBouquet)
+        ReloadBouquet()        
         self['info'].setText(_('Settings Installed ...'))
 
 class tvInstall(Screen):
