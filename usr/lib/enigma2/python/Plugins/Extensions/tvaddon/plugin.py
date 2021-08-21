@@ -489,7 +489,10 @@ class Hometv(Screen):
         if dependencies is False:
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh", 0o0755)
             cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh"
-            self.session.openWithCallback(self.starts, tvConsole, title ="Checking Python Dependencies", cmdlist =[cmd1], closeOnSuccess =False)
+            # self.session.openWithCallback(self.starts, tvConsole, title ="Checking Python Dependencies", cmdlist =[cmd1], closeOnSuccess =False)
+          
+            self.session.openWithCallback(self.starts, Console, title ="Checking Python Dependencies", cmdlist =[cmd1], closeOnSuccess =False)          
+            
         else:
             self.starts()
 
@@ -614,12 +617,15 @@ class Hometv(Screen):
                 dom = 'New version ' + self.version
                 os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
                 os.system('sleep 3')
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], finishedCallback = self.msgipkrst1) #, closeOnSuccess =False)
+                # self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], finishedCallback = self.msgipkrst1) #, closeOnSuccess =False)
+                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], closeOnSuccess =False)               
+                
             else:
                 com = link
                 dom = 'New Version ' + self.version
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback = self.msgipkrst1) #, closeOnSuccess =False)
-
+                # self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback = self.msgipkrst1) #, closeOnSuccess =False)
+                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], closeOnSuccess =False)                
+                
     def msgipkrst1(self):
         self.session.openWithCallback(self.ipkrestrt, tvMessageBox, (_('Do you want restart enigma2 ?')), tvMessageBox.TYPE_YESNO)
 
@@ -937,14 +943,12 @@ class tvDailySetting(Screen):
                     # if os.path.exists(fdest1):
                         # title = _("Installation Settings")
                         # self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["cp -rf /tmp/unzipped/* /etc/enigma2;  wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    # self['info'].setText(_('Settings Installed ...'))
             # else:
                 # self['info'].setText(_('Settings Not Installed ...'))
 
     # def yes(self):
-        # # if not isDreamOS:
-        # # self.onShown.append(ReloadBouquet)
         # ReloadBouquet()        
-        # self['info'].setText(_('Settings Installed ...'))
 
 class SettingVhan(Screen):
     def __init__(self, session):
@@ -1043,16 +1047,17 @@ class SettingVhan(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["unzip -o -q '/tmp/settings.zip' -d /tmp; cp -rf '/tmp/" + str(self.name) + "'/* /etc/enigma2; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["unzip -o -q '/tmp/settings.zip' -d /tmp; cp -rf '/tmp/" + str(self.name) + "'/* /etc/enigma2; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess =False) 
+                self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(ReloadBouquet)
         ReloadBouquet()        
-        self['info'].setText(_('Settings Installed ...'))
 
+    def retps(self):
+        pass
+    
 class Milenka61(Screen):
     def __init__(self, session):
         self.session = session
@@ -1148,16 +1153,17 @@ class Milenka61(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess =False)
+                self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(ReloadBouquet)
         ReloadBouquet()        
-        self['info'].setText(_('Settings Installed ...'))
 
+    def retps(self):
+        pass
+        
 class SettingManutek(Screen):
     def __init__(self, session):
         self.session = session
@@ -1263,15 +1269,16 @@ class SettingManutek(Screen):
                             os.system('rm -rf /etc/enigma2/*.tv')
                             os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
                         title = _("Installation Settings")
-                        self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"])
+                        self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
+                    self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(ReloadBouquet)
         ReloadBouquet()        
-        self['info'].setText(_('Settings Installed ...'))
+
+    def retps(self):
+        pass
 
 class SettingMorpheus(Screen):
     def __init__(self, session):
@@ -1384,16 +1391,17 @@ class SettingMorpheus(Screen):
                             os.system('rm -rf /etc/enigma2/*.tv')
                             os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"],closeOnSuccess =False)
+                self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(ReloadBouquet)
         ReloadBouquet()        
-        self['info'].setText(_('Settings Installed ...'))
 
+    def retps(self):
+        pass
+        
 class SettingCiefp(Screen):
     def __init__(self, session):
         self.session = session
@@ -1488,15 +1496,16 @@ class SettingCiefp(Screen):
                     os.system('rm -rf /etc/enigma2/*.tv')
                     os.system('tar -xvf /tmp/settings.tar.gz -C /')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"],closeOnSuccess =False)
+                self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(ReloadBouquet)
         ReloadBouquet()        
-        self['info'].setText(_('Settings Installed ...'))
+        
+    def retps(self):
+        pass
 
 class SettingBi58(Screen):
     def __init__(self, session):
@@ -1590,15 +1599,16 @@ class SettingBi58(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"],closeOnSuccess =False)
+                self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(ReloadBouquet)
         ReloadBouquet()        
-        self['info'].setText(_('Settings Installed ...'))
+
+    def retps(self):
+        pass
 
 class SettingPredrag(Screen):
     def __init__(self, session):
@@ -1694,17 +1704,17 @@ class SettingPredrag(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess =False)
+                self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(ReloadBouquet)
         ReloadBouquet()        
-        self['info'].setText(_('Settings Installed ...'))
 
-
+    def retps(self):
+        pass
+        
 class SettingCyrus(Screen):
     def __init__(self, session):
         self.session = session
@@ -1810,15 +1820,16 @@ class SettingCyrus(Screen):
                             os.system('rm -rf /etc/enigma2/*.tv')
                             os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"])
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"] , closeOnSuccess =False)
+                self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        # if not isDreamOS:
-        # self.onShown.append(ReloadBouquet)
         ReloadBouquet()        
-        self['info'].setText(_('Settings Installed ...'))
+
+    def retps(self):
+        pass
 
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection = None):
@@ -1908,7 +1919,7 @@ class tvInstall(Screen):
                     self.timer = eTimer()
                     self.timer.start(2000, True)
                     cmd = 'wget -q -O %s %s;' +  self.command[0] % (dest, str(self.com))
-                    self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd] )
+                    self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd],closeOnSuccess =False)
                     self['info'].setText(_('Installation done !!!'))
                 elif extension == "deb":
                     if not isDreamOS:
@@ -1919,9 +1930,11 @@ class tvInstall(Screen):
                         self.timer.start(2000, True)
                         dest = '/tmp/' + downplug #+ '.deb'
                         cmd = 'wget -q -O %s %s;dpkg --install --force-overwrite %s' % (dest, str(self.com), dest)
-                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd] )
+                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
-                elif self.com.endswith(".ipk"):
+                # elif self.com.endswith(".ipk"):
+                elif extension == "ipk":                
+                
                     if isDreamOS:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Installation canceled!'))
@@ -1930,7 +1943,12 @@ class tvInstall(Screen):
                         self.timer = eTimer()
                         self.timer.start(2000, True)
                         cmd = 'wget -q -O %s %s;opkg install %s' % (dest, str(self.com), dest)
-                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd] )
+                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd],closeOnSuccess =False)
+                        
+                        # myCmd = 'wget -q -O %s %s;opkg install %s' % (dest, str(self.com), dest)
+                        # subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
+            
+                        
                         self['info'].setText(_('Installation done !!!'))
 
                 elif self.com.endswith('.zip'):
@@ -1971,14 +1989,14 @@ class tvInstall(Screen):
                         self.reloadSettings2()
                         self.timer = eTimer()
                         self.timer.start(500, True)
-                        self.session.open(tvConsole, _('SETTING - install: %s') % dom, [cmd] )
+                        self.session.open(tvConsole, _('SETTING - install: %s') % dom, [cmd], closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                     elif 'picon' in dom.lower():
                         dest = '/tmp/picon.zip'
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         cmd = ['wget -q -O /tmp/picon.zip %s; unzip -o -q /tmp/picon.zip -d %s' %(str(self.com), mmkpicon)]
-                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd] )
+                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                     else:
                         self['info'].setText(_('Downloading the selected file in /tmp') + dom + _('... please wait'))
@@ -1986,7 +2004,7 @@ class tvInstall(Screen):
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         cmd = ["wget %s -c '%s' -O '%s' > /dev/null" % (useragent, self.com, dest)]
-                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd] )
+                        self.session.open(tvConsole, _('Downloading-installing: %s') % dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                         self.mbox = self.session.open(tvMessageBox, _('Download file in /tmp successful!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download file in /tmp successful!!'))
@@ -2099,21 +2117,24 @@ class tvInstall(Screen):
                         # cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";opkg update > /dev/null; echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest + ' > /dev/null'
                         #--force-overwrite install
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";opkg install ' + dest + ' > /dev/null'
-                        self.session.open(tvConsole, title ='IPK Local Installation', cmdlist =[cmd0, 'sleep 5'] )
+                        # self.session.open(tvConsole, title ='IPK Local Installation', cmdlist =[cmd0, 'sleep 5'] )
+                        
+                        self.session.open(tvConsole, _('IPK Local Installation') % dom,  cmdlist =[cmd0, 'sleep 5'], closeOnSuccess =False)
+                        
                     else:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                 elif self.sel.find('.tar.gz') != -1:
                     self.sel = self.sel[0]
                     print('self.sel tar: ', self.sel)
                     cmd0 = 'tar -xzvf ' + dest + ' -C /'
-                    self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'] )
+                    self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'],closeOnSuccess =False)
 
                 elif self.sel.find('.deb') != -1:
                     if isDreamOS:
                         self.sel = self.sel[0]
                         print('self.sel deb: ', self.sel)
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";dpkg --force-all -i ' + dest + ' > /dev/null 2>&1' #+ dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
-                        self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0] )
+                        self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0], closeOnSuccess =False)
                     else:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                 elif self.sel.find('.zip') != -1:
@@ -2124,7 +2145,7 @@ class tvInstall(Screen):
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         cmd = ['unzip -o -q /tmp/%s -d %s' %(dest, mmkpicon)]
-                        self.session.open(tvConsole, _('Installing: %s') % dest, [cmd] )
+                        self.session.open(tvConsole, _('Installing: %s') % dest, [cmd], closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                     elif 'setting' in self.sel.lower():
                         self.sel = self.sel[0]
@@ -2166,7 +2187,7 @@ class tvInstall(Screen):
                         self.reloadSettings2()
                         self.timer = eTimer()
                         self.timer.start(500, True)
-                        self.session.open(tvConsole, _('SETTING - install: %s') % dest, [cmd] )
+                        self.session.open(tvConsole, _('SETTING - install: %s') % dest, [cmd], closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                     else:
                         self.mbox = self.session.open(tvMessageBox, _('Download file in /tmp successful!'), tvMessageBox.TYPE_INFO, timeout=5)
@@ -2191,12 +2212,13 @@ class tvInstall(Screen):
             self.close()
 
 class tvConsole(Screen):
-# def __init__(self, session, title = 'Console', cmdlist = None, finishedCallback = None, closeOnSuccess = False, showStartStopText = True, skin = None):
+
     def __init__(self, session, title ="Console", cmdlist =None, finishedCallback =None, closeOnSuccess =False, endstr =''):
         self.session = session
         skin = skin_path + 'tvConsole.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
+        # self.skin = 'Console'
         self.setup_title = ('Console')
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
@@ -2204,9 +2226,9 @@ class tvConsole(Screen):
         self.closeOnSuccess = closeOnSuccess
         self.endstr = endstr
         self.errorOcurred = False
-        self['text'] = ScrollLabel('')
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['WizardActions', 'DirectionActions' , 'ColorActions',], {'ok': self.cancel,
+        self['text'] = ScrollLabel('')
+        self['actions'] = ActionMap(['WizardActions', 'DirectionActions' 'ColorActions',], {'ok': self.cancel,
          'back': self.cancel,
          'red': self.cancel,
          "blue": self.restartenigma,
@@ -2240,6 +2262,8 @@ class tvConsole(Screen):
             if self.container.execute(self.cmdlist[self.run]):
                 self.runFinished(-1)
         else:
+            self.show()
+            self.finished = True
             str= self["text"].getText()
             if not retval and self.endstr.startswith("Swapping"):
                str += _("\n\n" + self.endstr)
@@ -2262,16 +2286,17 @@ class tvConsole(Screen):
                 self.container.appClosed.remove(self.runFinished)
                 self.container.dataAvail.remove(self.dataAvail)
 
-    def dataAvail(self, data):
-        if PY3:
-            data = data.decode("utf-8")
-        try:
-            self["text"].setText(self["text"].getText() + data)
-        except:
-            trace_error()
+    def cancelCallback(self, ret = None):
+        self.cancel_msg = None
+        if ret:
+            self.container.appClosed.remove(self.runFinished)
+            self.container.dataAvail.remove(self.dataAvail)
+            self.container.kill()
+            self.close()
         return
-        if self["text"].getText().endswith("Do you want to continue? [Y/n] "):
-            msg= self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
+
+    def dataAvail(self, str):
+        self['text'].appendText(str)
 
     def processAnswer(self, retval):
         if retval:
@@ -2285,6 +2310,18 @@ class tvConsole(Screen):
 
     def restartenigma(self):
         self.session.open(TryQuitMainloop, 3)
+        
+    def closeConsole(self):
+        if self.finished:
+            try:
+                self.container.appClosed.append(self.runFinished)
+                self.container.dataAvail.append(self.dataAvail)
+            except:
+                self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
+                self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
+                self.close()
+            else:
+                self.show()        
 
 class tvIPK(Screen):
     def __init__(self, session, title = None, cmdlist = None, finishedCallback = None, closeOnSuccess = False):
@@ -2356,16 +2393,16 @@ class tvIPK(Screen):
                     self.sel = self.sel[0]
                     # cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";opkg update > /dev/null; echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest + ' > /dev/null'
                     cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";opkg install ' + dest  + ' > /dev/null'
-                    self.session.open(tvConsole, title ='IPK Local Installation', cmdlist =[cmd0, 'sleep 5'] )
+                    self.session.open(tvConsole, title ='IPK Local Installation', cmdlist =[cmd0, 'sleep 5'],closeOnSuccess =False)  
                 elif self.sel.find('.tar.gz') != -1:
                     self.sel = self.sel[0]
                     cmd0 = 'tar -xzvf ' + dest + ' -C /'
-                    self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'] )
+                    self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'],closeOnSuccess =False) 
                 elif self.sel.find('.deb') != -1:
                     if isDreamOS:
                         self.sel = self.sel[0]
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + dest + '";dpkg --force-all -i ' + dest #+ ' > /dev/null 2>&1' #+ dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
-                        self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0] )
+                        self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0], closeOnSuccess =False)  
                     else:
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                 elif self.sel.find('.zip') != -1:
@@ -2373,7 +2410,8 @@ class tvIPK(Screen):
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         cmd = ['unzip -o -q /tmp/%s -d %s' %(dest, mmkpicon)]
-                        self.session.open(tvConsole, _('Installing: %s') % dest, cmdlist =[cmd])
+                        # self.session.open(tvConsole, _('Installing: %s') % dest, cmdlist =[cmd])
+                        self.session.open(tvConsole, _('Installing: %s') % dest, cmdlist =[cmd], closeOnSuccess =False)                     
                     elif 'setting' in self.sel.lower():
                         if not isDreamOS:
                             set = 1
@@ -2411,7 +2449,10 @@ class tvIPK(Screen):
                         self.reloadSettings2()
                         self.timer = eTimer()
                         self.timer.start(500, True)
-                        self.session.open(tvConsole, _('SETTING - install: %s') % dest, cmdlist =[cmd])
+                        # self.session.open(tvConsole, _('SETTING - install: %s') % dest, cmdlist =[cmd])
+                        self.session.open(tvConsole, _('SETTING - install: %s') % dest, cmdlist =[cmd],closeOnSuccess =False)                         
+                        
+                        
                 else:
                     self.session.open(tvMessageBox, _('Unknow Error!'), tvMessageBox.TYPE_ERROR, timeout=10)
             except:
@@ -2559,12 +2600,16 @@ class tvUpdate(Screen):
                 dom = 'New version ' + self.version
                 os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
                 os.system('sleep 3')
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], finishedCallback = self.msgipkrst1) #, closeOnSuccess =True)
+                # self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], finishedCallback = self.msgipkrst1) #, closeOnSuccess =True)
+                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], finishedCallback =self.msgipkrst1, closeOnSuccess =False)         
+                
             else:
                 com = link
                 dom = 'New Version ' + self.version
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback = self.msgipkrst1) #, closeOnSuccess =True)
-
+                # self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback = self.msgipkrst1) #, closeOnSuccess =True)
+                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback =self.msgipkrst1, closeOnSuccess =False)            
+                
+                
     def msgipkrst1(self):
         self.session.openWithCallback(self.ipkrestrt, tvMessageBox, (_('Do you want restart enigma2 ?')), tvMessageBox.TYPE_YESNO)
 
@@ -2645,10 +2690,9 @@ class tvRemove(Screen):
             dom = self.names[idx]
             com = dom
             if isDreamOS:
-                self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com], self.openList, False)
+                self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com],closeOnSuccess =False) 
             else:
-                self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], self.openList, False)
-
+                self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess =False) 
     def getfreespace(self):
         fspace = freespace()
         self['info'].setText(fspace)
@@ -2932,6 +2976,7 @@ class tvConfig(Screen, ConfigListScreen):
     def Ok_edit(self):
         ConfigListScreen.keyOK(self)
         sel = self['config'].getCurrent()[1]
+        print("current selection:", sel)
         if sel and sel == config.plugins.tvaddon.mmkpicon:
             self.setting = 'mmkpicon'
             print("current selection:", self["config"].l.getCurrentSelection())
@@ -2943,18 +2988,18 @@ class tvConfig(Screen, ConfigListScreen):
     def openDirectoryBrowser(self, path):
         try:
             self.session.openWithCallback(
-             self.openDirectoryBrowserCB,
-             LocationBox,
-             windowtitle =_('Choose Directory:'),
-             text=_('Choose directory'),
-             currDir= str(path),
-             bookmarks=config.movielist.videodirs,
-             autoAdd=False,
-             editDir=True,
-             inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
-             minFree=15)
-        except Exception as e:
-            print(('openDirectoryBrowser get failed: ', str(e)))
+                self.openDirectoryBrowserCB,
+                LocationBox,
+                windowTitle=_("Choose Directory:"),
+                text=_("Choose directory"),
+                currDir=str(path),
+                bookmarks=config.movielist.videodirs,
+                autoAdd=False,
+                editDir=True,
+                inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/var"],
+                minFree=15)
+        except Exception as ex:
+            print("openDirectoryBrowser get failed: ", str(ex))
 
     def openDirectoryBrowserCB(self, path):
         if path is not None:
@@ -3507,11 +3552,11 @@ class plugins(Screen):
     def downxmlpage(self):
         url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/plugins"
         data = make_request(url)
-        r = six.ensure_str(data)
+        data = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL).findall(r)
+            match = re.compile(regexL).findall(data)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url = 'http://patbuweb.com' + url
@@ -3559,7 +3604,9 @@ class plugins(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole, _(title), cmdlist =[cmd] )
+            # self.session.open(tvConsole, _(title), cmdlist =[cmd] )
+            self.session.open(tvConsole, _(title), cmdlist =[cmd], closeOnSuccess =False)        
+            
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -3576,6 +3623,9 @@ class plugins(Screen):
 
     def finished(self,result):
          return
+
+    def rst1(self):
+        pass
 
 class plugins_adult(Screen):
     def __init__(self, session):
@@ -3694,8 +3744,10 @@ class plugins_adult(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole, _(title), cmdlist =[cmd] )
-        self['info'].setText(_('Please select ...'))
+            # self.session.open(tvConsole, _(title), cmdlist =[cmd] )
+
+            self.session.open(tvConsole, _(title), cmdlist =[cmd], closeOnSuccess =False)  
+            self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
@@ -3712,6 +3764,9 @@ class plugins_adult(Screen):
     def finished(self,result):
          return
 
+    def rst1(self):
+        pass
+        
 class script(Screen):
     def __init__(self, session):
         self.session = session
@@ -3807,7 +3862,9 @@ class script(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole, _(title), cmdlist =[cmd] )
+            # self.session.open(tvConsole, _(title), cmdlist =[cmd] )
+            self.session.open(tvConsole, _(title), cmdlist =[cmd], closeOnSuccess =False)             
+            
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -3825,6 +3882,9 @@ class script(Screen):
     def finished(self,result):
          return
 
+    def rst1(self):
+        pass
+        
 class repository(Screen):
     def __init__(self, session):
         self.session = session
@@ -3865,7 +3925,7 @@ class repository(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/repository"
+        url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/Kodilite/repository"
         data = make_request(url)
         r = six.ensure_str(data)
         self.names = []
@@ -3920,7 +3980,10 @@ class repository(Screen):
             cmd = []
             cmd.append(cmd1)
             title = _("Installation")
-            self.session.open(tvConsole, _(title), cmdlist =[cmd] )
+            # self.session.open(tvConsole, _(title), cmdlist =[cmd] )
+            self.session.open(tvConsole, _(title), cmdlist =[cmd], closeOnSuccess =False) 
+            
+            
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
@@ -3937,6 +4000,10 @@ class repository(Screen):
 
     def finished(self,result):
          return
+
+    def rst1(self):
+        pass
+
 
 def main(session, **kwargs):
     if checkInternet():
