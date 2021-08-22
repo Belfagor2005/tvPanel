@@ -2295,9 +2295,19 @@ class tvConsole(Screen):
             self.close()
         return
 
-    def dataAvail(self, str):
-        self['text'].appendText(str)
-
+    # def dataAvail(self, str):
+        # self['text'].appendText(str)
+    def dataAvail(self, data):
+        if PY3:
+            data = data.decode("utf-8")
+        try:
+            self["text"].setText(self["text"].getText() + data)
+        except:
+            trace_error()
+        return
+        if self["text"].getText().endswith("Do you want to continue? [Y/n] "):
+            msg= self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
+            
     def processAnswer(self, retval):
         if retval:
             self.container.write("Y",1)
