@@ -61,7 +61,7 @@ from sys import version_info
 # from . import Lcn
 from .Lcn import *
 global skin_path, mmkpicon, isDreamOS, set, regexC, regexL, category
-currversion      = '2.0.2'
+currversion      = '2.0.3'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
@@ -76,7 +76,6 @@ from six.moves.urllib.parse import urlencode
 from six.moves.urllib.error import HTTPError
 from six.moves.urllib.error import URLError
 from six.moves.urllib.request import urlretrieve    
-#six.ensure_text
 
 PY3 = sys.version_info.major >= 3
 
@@ -776,7 +775,7 @@ class tvDailySetting(Screen):
         elif sel == _('UPDATE TERRESTRIAL.XML'):
             self.okTERRESTRIAL()
         elif sel == ('SETTINGS CIEFP'):
-            self.session.open(SettingCiefp)
+            self.session.open(SettingCiefp2)
         elif sel == ('SETTINGS CYRUS'):
             self.session.open(SettingCyrus)
         # elif sel == ('SETTINGS COLOMBO'):
@@ -1507,6 +1506,129 @@ class SettingCiefp(Screen):
     def retps(self):
         pass
 
+class SettingCiefp2(Screen):
+    def __init__(self, session):
+        self.session = session
+        skin = skin_path + 'tvall.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('Setting Ciefp')
+        Screen.__init__(self, session)
+        self.setTitle(_(title_plug))
+        self.list = []
+        self['text'] = tvList([])
+        self.icount = 0
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['pth'] = Label('')
+        self['pform'] = Label('')
+        self['progress'] = ProgressBar()
+        self["progress"].hide()
+        self['progresstext'] = StaticText()
+        self['key_green'] = Button(_('Install'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.downloading = False
+        self.timer = eTimer()
+        self.timer.start(500, 1)
+        if isDreamOS:
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self['title'] = Label(_(title_plug))
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+#https://github.com/ciefp/ciefpsettings-enigma2-zipped/raw/master/ciefp-E2-4satA-28E-19E-13E-30W-14.08.2021.zip
+#/ciefp/ciefpsettings-enigma2-zipped/blob/master/ciefp-E2-9sat-28E-23E-19E-16E-13E-9E-1.9E-0.8W-5W-14.08.2021.zip
+#https://github.com//ciefp/ciefpsettings-enigma2-zipped/raw/master/ciefp-E2-9sat-28E-23E-19E-16E-13E-9E-1.9E-0.8W-5W-14.08.2021.zip
+#<span class="css-truncate css-truncate-target d-block width-fit"><a class="js-navigation-open Link--primary" title="ciefp-E2-10sat-39E-28E-23E-19E-16E-13E-9E-4.8E-1.9E-0.8W-14.08.2021.zip" data-pjax="#repo-content-pjax-container" href="/ciefp/ciefpsettings-enigma2-zipped/blob/master/ciefp-E2-10sat-39E-28E-23E-19E-16E-13E-9E-4.8E-1.9E-0.8W-14.08.2021.zip">ciefp-E2-10sat-39E-28E-23E-19E-16E-13E-9E-4.8E-1.9E-0.8W-14.08.2021.zip</a></span>
+    def downxmlpage(self):
+        url = 'https://github.com/ciefp/ciefpsettings-enigma2-zipped'
+        data = make_request(url)
+        r = data
+        print('rrrrrrrr ', r)
+        self.names  = []
+        self.urls   = []
+        try:
+            n1 = r.find('Details">', 0)
+            n2 = r.find('href="#readme">', n1)
+            r = r[n1:n2]
+            regex   = 'title="ciefp-E2-(.*?)".*?href="(.*?)"'
+            match   = re.compile(regex).findall(r)
+            for name, url in match:
+                if url.find('.zip') != -1 :
+                    if 'ddt' in name.lower():
+                        continue
+                    if 'Sat' in name.lower():
+                        continue
+                    # name = name + ' ' + date
+                    name = checkStr(name)
+                    url = url.replace('blob', 'raw')
+                    url = 'https://github.com' + url
+                    url = checkStr(url)
+                    print('name ', name)
+                    print('url ', url)
+                    self.urls.append(url)
+                    self.names.append(name)
+                    self.downloading = True
+                    self['info'].setText(_('Please select ...'))
+                # else:
+                    # self['info'].setText(_('no data ...'))
+                    # self.downloading = False
+            showlist(self.names, self['text'])
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
+
+    def okRun(self):
+        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+
+    def okInstall(self, result):
+        global set
+        set = 0
+        if result:
+            if self.downloading == True:
+                idx = self["text"].getSelectionIndex()
+                url = self.urls[idx]
+                dest = "/tmp/settings.zip"
+                if 'dtt' not in url.lower():
+                    # if not isDreamOS:
+                        set = 1
+                        terrestrial()
+
+                # url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                # with urlopen(url) as response, open(dest, 'wb') as destlocal:
+                    # shutil.copyfileobj(response, destlocal)
+                urlretrieve(url, dest) 
+                if os.path.exists(dest):
+                    if os.path.exists("/tmp/unzipped"):
+                        os.system('rm -rf /tmp/unzipped')
+                    os.makedirs('/tmp/unzipped')
+                    os.system('unzip -o -q /tmp/settings.zip -d /tmp/unzipped')
+                    path = '/tmp/unzipped'
+                    for root, dirs, files in os.walk(path):
+                        for pth in dirs:
+                            pth = pth
+                            os.system('rm -rf /etc/enigma2/lamedb')
+                            os.system('rm -rf /etc/enigma2/*.radio')
+                            os.system('rm -rf /etc/enigma2/*.tv')
+                            os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
+                    title = _("Installation Settings")
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"] , closeOnSuccess =False)
+                self['info'].setText(_('Settings Installed ...'))
+            else:
+                self['info'].setText(_('Settings Not Installed ...'))
+
+    def yes(self):
+        ReloadBouquet()        
+
+    def retps(self):
+        pass
+        
 class SettingBi58(Screen):
     def __init__(self, session):
         self.session = session
@@ -1715,6 +1837,7 @@ class SettingPredrag(Screen):
     def retps(self):
         pass
         
+
 class SettingCyrus(Screen):
     def __init__(self, session):
         self.session = session
