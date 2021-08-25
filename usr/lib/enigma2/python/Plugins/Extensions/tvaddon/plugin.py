@@ -680,10 +680,12 @@ class Categories(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        try:
-            url = xml_path + category
-        except:
+        # if six.PY2
+        url = str(xml_path) + category
+        print('py2------>')
+        if six.PY3:
             url = xml_path + six.binary_type(category, encoding="utf-8")
+            print('py3------>')
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
     def errorLoad(self, error):
@@ -692,7 +694,9 @@ class Categories(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = six.ensure_str(data)
+        self.xml = str(data)
+        if six.PY3:
+            self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
