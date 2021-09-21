@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     03/09/2021     #
+#     21/09/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -48,6 +48,7 @@ from os.path import splitext
 from twisted.web.client import downloadPage, getPage
 from xml.dom import Node, minidom
 import base64
+import gettext
 import os
 import re
 import sys
@@ -60,7 +61,7 @@ import subprocess
 from sys import version_info
 # from . import Lcn
 from .Lcn import *
-global skin_path, mmkpicon, isDreamOS, set, regexC, regexL, category
+global skin_path, mmkpicon, set, regexC, regexL, category
 currversion      = '2.0.4'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
@@ -76,9 +77,6 @@ from six.moves.urllib.parse import urlencode
 from six.moves.urllib.error import HTTPError
 from six.moves.urllib.error import URLError
 from six.moves.urllib.request import urlretrieve
-
-PY3 = sys.version_info.major >= 3
-
 try:
     from requests import get
 except ImportError:
@@ -98,14 +96,6 @@ def ssl_urlopen(url):
         return urlopen(url)
 
 set = 0
-isDreamOS = False
-try:
-    from enigma import eMediaDatabase
-    isDreamOS = True
-except:
-    isDreamOS = False
-
-
 try:
     from enigma import eDVBDB
 except ImportError:
@@ -120,7 +110,7 @@ except:
 # Small test program #
 #--------------------#
 def checkStr(txt):
-    if PY3:
+    if six.PY3:
         if isinstance(txt, type(bytes())):
             txt = txt.decode('utf-8')
     else:
@@ -156,7 +146,7 @@ if sslverify:
             return ctx
 
 def checkMyFile(url):
-    # FIXME urlopen will cause a full download of file and this is not what you want //thank's @jbleyel
+    # FIXME urlopen will cause a full download of file and this != what you want //thank's @jbleyel
     return []
     try:
         dest = "/tmp/download.zip"
@@ -166,7 +156,6 @@ def checkMyFile(url):
         req.add_header('X-Requested-With', 'XMLHttpRequest')
         page = urlopen(req)
         r = page.read()
-        # page.close()
         n1 = r.find('"Download file"', 0)
         n2 = r.find('Repair your download', n1)
         r2 = r[n1:n2]
@@ -254,12 +243,12 @@ config.plugins.tvaddon.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
 config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
-pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
-ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
-ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
-host_trs = base64.b64decode(ptrs)
-host_blk = base64.b64decode(pblk)
-host_mov = base64.b64decode(ptmov)
+host_blk = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=ovz04mrpzo9pw&content_type=folders&chunk_size=1000&response_format=json'
+host_trs = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=tvbds59y9hr19&content_type=folders&chunk_size=1000&response_format=json'
+host_mov = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=nk8t522bv4909&content_type=files&chunk_size=1000&response_format=json'
+# host_trs = base64.b64decode(ptrs).decode('utf-8')
+# host_blk = base64.b64decode(pblk).decode('utf-8')
+# host_mov = base64.b64decode(ptmov).decode('utf-8')
 HD = getDesktop(0).size()
 # plugin_path = os.path.dirname(sys.modules[__name__].__file__)
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
@@ -302,7 +291,7 @@ if HD.width() > 1280:
     skin_path = res_plugin_path + 'skins/fhd/'
 else:
     skin_path = res_plugin_path + 'skins/hd/'
-if isDreamOS:
+if os.path.exists('/var/lib/dpkg/status'):
     skin_path = skin_path + 'dreamOs/'
 
 
@@ -344,8 +333,8 @@ Panel_list2 = [
 Panel_list3 = [
  _('MMARK PICONS BLACK'),
  _('MMARK PICONS TRANSPARENT'),
- _('MMARK PICONS MOVIE'),
- _('COLOMBO PICONS')]
+ _('MMARK PICONS MOVIE')]
+ # _('COLOMBO PICONS')]
 
 class tvList(MenuList):
     def __init__(self, list):
@@ -429,9 +418,9 @@ class Hometv(Screen):
             # self['key_blue'] = Label(_('checklib'))
         # else:
             # self['key_blue'].hide()
-            
-        global dmlink, link
-        dmlink = ''
+
+        global link
+        self.dmlink = ''
         link =''
         try:
             fp = ''
@@ -458,7 +447,7 @@ class Hometv(Screen):
                 self.version = s1
                 link = s2
                 self.info = s3
-                dmlink = s4
+                self.dmlink = s4
                 fp.close()
                 cstr = s1 + ' ' + s2
                 if s1 <= currversion:
@@ -469,7 +458,7 @@ class Hometv(Screen):
             self.Update = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
@@ -619,8 +608,8 @@ class Hometv(Screen):
 
     def runupdate(self, result):
         if result:
-            if isDreamOS:
-                com = dmlink
+            if os.path.exists('/var/lib/dpkg/status'):
+                com = self.dmlink
                 dom = 'New version ' + self.version
                 os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
                 os.system('sleep 3')
@@ -675,7 +664,7 @@ class Categories(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -744,7 +733,7 @@ class tvDailySetting(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Lcn'))
-        # if isDreamOS:
+        # if os.path.exists('/var/lib/dpkg/status'):
         #   self['key_yellow'].hide()
         self["key_blue"] = Button(_(''))
         self['key_blue'].hide()
@@ -870,7 +859,7 @@ class tvDailySetting(Screen):
         # self.downloading = False
         # self.timer = eTimer()
         # self.timer.start(500, 1)
-        # if isDreamOS:
+        # if os.path.exists('/var/lib/dpkg/status'):
             # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         # else:
             # self.timer.callback.append(self.downxmlpage)
@@ -929,7 +918,7 @@ class tvDailySetting(Screen):
                 # dest = "/tmp/settings.zip"
                 # print("url =", url)
                 # if 'dtt' not in str(url).lower():
-                    # # if not isDreamOS:
+                    # # if not os.path.exists('/var/lib/dpkg/status'):
                         # set = 1
                         # terrestrial()
                 # # url = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -988,7 +977,7 @@ class SettingVhan(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1001,23 +990,22 @@ class SettingVhan(Screen):
     def downxmlpage(self):
         url='http://sat.alfa-tech.net/upload/settings/vhannibal/'
         r=make_request(url)
-
         print('rrrrrrrr ', r)
-        if isDreamOS:
+        if six.PY3:
             r  = six.ensure_str(r)
         self.names=[]
         self.urls=[]
         try:
-            regex   = '<a href="Vhannibal(.*?)"'
+            regex   = '<a href="Vhannibal(.*?).zip"'
             match   = re.compile(regex).findall(r)
             for url in match:
-                if 'zip' in url.lower():
+                # if 'zip' in url.lower():
                     if '.php' in url.lower():
                         continue
                     name = "Vhannibal" + url
                     name = name.replace(".zip", "")
                     name = name.replace("%20", " ")
-                    url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url
+                    url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
                     url = checkStr(url)
                     name = checkStr(name)
                     self.urls.append(url)
@@ -1045,7 +1033,7 @@ class SettingVhan(Screen):
                 self.dest = "/tmp/settings.zip"
                 print("url =", url)
                 if 'dtt' not in url.lower():
-                    # if not isDreamOS:
+                    # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
                 urlretrieve(url, self.dest)
@@ -1061,9 +1049,6 @@ class SettingVhan(Screen):
 
     def yes(self):
         ReloadBouquet()
-
-    def retps(self):
-        pass
 
 class Milenka61(Screen):
     def __init__(self, session):
@@ -1092,7 +1077,7 @@ class Milenka61(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1114,13 +1099,9 @@ class Milenka61(Screen):
             match   = re.compile(regex).findall(r)
             for url, date1, date2, date3 in match:
                 if url.find('.tar.gz') != -1 :
-                    name = url.replace('Satvenus_EX-YU_Lista_za_milenka61_', '')
+                    name = url.replace('_EX-YU_Lista_za_milenka61_', '')
                     name = name + ' ' + date1 + '-' + date2 + '-' + date3
-                    name = name.replace(".tar.gz", "")
-                    name = name.replace("Satvenus", "").replace("milenka61 ", "")
-                    name = name.replace("EX YU", "").replace("za", "")
-                    name = name.replace("Lista", "").replace("%20", " ")
-                    name = name.replace("-", " ").replace("_", " ")
+                    name = name.replace("_", " ").replace(".tar.gz", "")
                     url = "http://178.63.156.75/tarGz/Satvenus" + url
                     url = checkStr(url)
                     name = checkStr(name)
@@ -1145,7 +1126,7 @@ class Milenka61(Screen):
                 self.dest = "/tmp/settings.tar.gz"
                 print("url =", url)
                 if 'dtt' not in url.lower():
-                    # if not isDreamOS:
+                    # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
                 urlretrieve(url, self.dest)
@@ -1161,9 +1142,6 @@ class Milenka61(Screen):
 
     def yes(self):
         ReloadBouquet()
-
-    def retps(self):
-        pass
 
 class SettingManutek(Screen):
     def __init__(self, session):
@@ -1192,7 +1170,7 @@ class SettingManutek(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1211,22 +1189,22 @@ class SettingManutek(Screen):
 
         self.urls   = []
         try:
-            regex   = 'href=".*?file=(.+?)">'
+            regex   = 'href=".*?file=(.+?).zip">'
             match   = re.compile(regex).findall(r)
             for url in match:
-                if 'zip' in url.lower():
-                    name = url
-                    name = name.replace(".zip", "")
-                    name = name.replace("%20", " ")
-                    name = name.replace("NemoxyzRLS_", "")
-                    name = name.replace("_", " ")
-                    url = 'http://www.manutek.it/isetting/enigma2/' + url
-                    url = checkStr(url)
-                    name = checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
-                    self.downloading = True
-                    self['info'].setText(_('Please select ...'))
+                # if 'zip' in url.lower():
+                name = url
+                name = name.replace(".zip", "")
+                name = name.replace("%20", " ")
+                name = name.replace("NemoxyzRLS_", "")
+                name = name.replace("_", " ")
+                url = 'http://www.manutek.it/isetting/enigma2/' + url + '.zip'
+                url = checkStr(url)
+                name = checkStr(name)
+                self.urls.append(url)
+                self.names.append(name)
+                self.downloading = True
+                self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
@@ -1244,7 +1222,7 @@ class SettingManutek(Screen):
                 self.dest = "/tmp/settings.zip"
                 print("url =", url)
                 if 'dtt' not in url.lower():
-                    # if not isDreamOS:
+                    # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
                 urlretrieve(url, self.dest)
@@ -1271,9 +1249,6 @@ class SettingManutek(Screen):
 
     def yes(self):
         ReloadBouquet()
-
-    def retps(self):
-        pass
 
 class SettingMorpheus(Screen):
     def __init__(self, session):
@@ -1302,7 +1277,7 @@ class SettingMorpheus(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1360,7 +1335,7 @@ class SettingMorpheus(Screen):
                 self.dest = "/tmp/settings.zip"
                 print("url =", url)
                 if 'dtt' not in url.lower():
-                    # if not isDreamOS:
+                    # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
                 urlretrieve(url, self.dest)
@@ -1386,9 +1361,6 @@ class SettingMorpheus(Screen):
 
     def yes(self):
         ReloadBouquet()
-
-    def retps(self):
-        pass
 
 # class SettingCiefp(Screen):
     # def __init__(self, session):
@@ -1417,7 +1389,7 @@ class SettingMorpheus(Screen):
         # self.downloading = False
         # self.timer = eTimer()
         # self.timer.start(500, 1)
-        # if isDreamOS:
+        # if os.path.exists('/var/lib/dpkg/status'):
             # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         # else:
             # self.timer.callback.append(self.downxmlpage)
@@ -1468,7 +1440,7 @@ class SettingMorpheus(Screen):
                 # self.dest = "/tmp/settings.tar.gz"
                 # print("url =", url)
                 # if 'dtt' not in url.lower():
-                    # # if not isDreamOS:
+                    # # if not os.path.exists('/var/lib/dpkg/status'):
                         # set = 1
                         # terrestrial()
                 # urlretrieve(url, self.dest)
@@ -1486,9 +1458,6 @@ class SettingMorpheus(Screen):
     # def yes(self):
         # ReloadBouquet()
 
-    # def retps(self):
-        # pass
-
 class SettingCiefp2(Screen):
     def __init__(self, session):
         self.session = session
@@ -1500,6 +1469,7 @@ class SettingCiefp2(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
+
         self.icount = 0
         self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
@@ -1516,7 +1486,7 @@ class SettingCiefp2(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1576,7 +1546,7 @@ class SettingCiefp2(Screen):
                 url = self.urls[idx]
                 self.dest = "/tmp/settings.zip"
                 if 'dtt' not in url.lower():
-                    # if not isDreamOS:
+                    # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
                 urlretrieve(url, self.dest)
@@ -1601,9 +1571,6 @@ class SettingCiefp2(Screen):
 
     def yes(self):
         ReloadBouquet()
-
-    def retps(self):
-        pass
 
 class SettingBi58(Screen):
     def __init__(self, session):
@@ -1632,7 +1599,7 @@ class SettingBi58(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1682,7 +1649,7 @@ class SettingBi58(Screen):
                 self.dest = "/tmp/settings.tar.gz"
                 print("url =", url)
                 if 'dtt' not in url.lower():
-                    # if not isDreamOS:
+                    # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
                 urlretrieve(url, self.dest)
@@ -1691,16 +1658,13 @@ class SettingBi58(Screen):
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"],closeOnSuccess =False)
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
         ReloadBouquet()
-
-    def retps(self):
-        pass
 
 class SettingPredrag(Screen):
     def __init__(self, session):
@@ -1729,7 +1693,7 @@ class SettingPredrag(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1781,7 +1745,7 @@ class SettingPredrag(Screen):
                 self.dest = "/tmp/settings.tar.gz"
                 print("url =", url)
                 if 'dtt' not in url.lower():
-                    # if not isDreamOS:
+                    # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
                 urlretrieve(url, self.dest)
@@ -1797,10 +1761,6 @@ class SettingPredrag(Screen):
 
     def yes(self):
         ReloadBouquet()
-
-    def retps(self):
-        pass
-
 
 class SettingCyrus(Screen):
     def __init__(self, session):
@@ -1829,7 +1789,7 @@ class SettingCyrus(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1881,7 +1841,7 @@ class SettingCyrus(Screen):
                 url = self.urls[idx]
                 self.dest = "/tmp/settings.zip"
                 if 'dtt' not in url.lower():
-                    # if not isDreamOS:
+                    # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
                 urlretrieve(url, self.dest)
@@ -1906,9 +1866,6 @@ class SettingCyrus(Screen):
 
     def yes(self):
         ReloadBouquet()
-
-    def retps(self):
-        pass
 
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection = None):
@@ -1978,9 +1935,9 @@ class tvInstall(Screen):
         dom = self.com[:n2]
         print('dommmm : ', dom)
         self.downplug = self.com.replace(dom,'').replace('/','').lower()
-        print('self.downplug : ', self.downplug)           
+        print('self.downplug : ', self.downplug)
         self.dest = '/tmp/' + self.downplug
-        
+
         self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
         if self.com != None:
                 extensionlist = self.com.split('.')
@@ -1999,7 +1956,7 @@ class tvInstall(Screen):
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
                     self['info'].setText(_('Installation done !!!'))
                 elif extension == "deb":
-                    if not isDreamOS:
+                    if not os.path.exists('/var/lib/dpkg/status'):
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Installation canceled!'))
                     else:
@@ -2009,7 +1966,7 @@ class tvInstall(Screen):
                         self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                 elif extension == "ipk":
-                    if isDreamOS:
+                    if os.path.exists('/var/lib/dpkg/status'):
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Installation canceled!'))
                     else:
@@ -2020,7 +1977,7 @@ class tvInstall(Screen):
                         self['info'].setText(_('Installation done !!!'))
                 elif self.com.endswith('.zip'):
                     if 'setting' in self.dom.lower():
-                        if not isDreamOS:
+                        if not os.path.exists('/var/lib/dpkg/status'):
                             set = 1
                             terrestrial()
                         if os.path.exists("/tmp/unzipped"):
@@ -2051,7 +2008,7 @@ class tvInstall(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        if not isDreamOS:
+                        if not os.path.exists('/var/lib/dpkg/status'):
                             terrestrial_rest()
                         self.reloadSettings2()
                         self.timer = eTimer()
@@ -2102,7 +2059,7 @@ class tvInstall(Screen):
             dom = self.com[:n2]
             self.downplug = self.com.replace(dom,'').replace('/','').lower()
             self.dest = '/tmp/' + self.downplug
-        
+
             if self.com != None:
                 # global dest
                 # dest = '/tmp/' + self.downplug
@@ -2118,14 +2075,14 @@ class tvInstall(Screen):
                     # elif extension == "bz2":
                         # self.dest = '/tmp/' + self.downplug
                 if extension == "deb":
-                    if not isDreamOS:
+                    if not os.path.exists('/var/lib/dpkg/status'):
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                         return
                     # else:
                         # dest = '/tmp/' + self.downplug
                 elif self.com.endswith(".ipk"):
-                    if isDreamOS:
+                    if os.path.exists('/var/lib/dpkg/status'):
                         self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                         return
@@ -2174,7 +2131,7 @@ class tvInstall(Screen):
         if answer is True:
             try:
                 if self.dest.find('.ipk') != -1:
-                    if not isDreamOS:
+                    if not os.path.exists('/var/lib/dpkg/status'):
                         self.dest = self.dest[0]
                         print('self.sel ipk: ', self.dest)
                         # cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";opkg update > /dev/null; echo ":Install ' + dest + '";opkg install --force-overwrite ' + dest + ' > /dev/null'
@@ -2191,7 +2148,7 @@ class tvInstall(Screen):
                     self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'],closeOnSuccess =False)
 
                 elif self.dest.find('.deb') != -1:
-                    if isDreamOS:
+                    if os.path.exists('/var/lib/dpkg/status'):
                         self.dest = self.dest[0]
                         print('self.dest deb: ', self.dest)
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";dpkg --force-all -i ' + self.dest + ' > /dev/null 2>&1' #+ dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
@@ -2211,7 +2168,7 @@ class tvInstall(Screen):
                         self.dest = self.dest[0]
                         print('self.dest setting: ', self.dest)
 
-                        if not isDreamOS:
+                        if not os.path.exists('/var/lib/dpkg/status'):
                             set = 1
                             terrestrial()
                         if os.path.exists("/tmp/unzipped"):
@@ -2242,7 +2199,7 @@ class tvInstall(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        if not isDreamOS:
+                        if not os.path.exists('/var/lib/dpkg/status'):
                             terrestrial_rest()
                         self.reloadSettings2()
                         self.timer = eTimer()
@@ -2331,7 +2288,7 @@ class tvConsole(Screen):
                str += _("Execution finished!!\n")
             self["text"].setText(str)
             self["text"].lastPage()
-            # if self.finishedCallback is not None:
+            # if self.finishedCallback != None:
                     # self.finishedCallback(retval)
             # if not retval and self.closeOnSuccess:
             self.cancel()
@@ -2358,7 +2315,7 @@ class tvConsole(Screen):
     # def dataAvail(self, str):
         # self['text'].appendText(str)
     def dataAvail(self, data):
-        if PY3:
+        if six.PY3:
             data = data.decode("utf-8")
         try:
             self["text"].setText(self["text"].getText() + data)
@@ -2469,7 +2426,7 @@ class tvIPK(Screen):
                     cmd0 = 'tar -xzvf ' + self.dest + ' -C /'
                     self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'],closeOnSuccess =False)
                 elif self.sel.find('.deb') != -1:
-                    if isDreamOS:
+                    if os.path.exists('/var/lib/dpkg/status'):
                         self.sel = self.sel[0]
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";dpkg --force-all -i ' + self.dest #+ ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
                         self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0], closeOnSuccess =False)
@@ -2483,7 +2440,7 @@ class tvIPK(Screen):
                         # self.session.open(tvConsole, _('Installing: %s') % self.dest, cmdlist =[cmd])
                         self.session.open(tvConsole, _('Installing: %s') % self.dest, cmdlist =[cmd], closeOnSuccess =False)
                     elif 'setting' in self.sel.lower():
-                        if not isDreamOS:
+                        if not os.path.exists('/var/lib/dpkg/status'):
                             set = 1
                             terrestrial()
                         if os.path.exists("/tmp/unzipped"):
@@ -2514,7 +2471,7 @@ class tvIPK(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        if not isDreamOS:
+                        if not os.path.exists('/var/lib/dpkg/status'):
                             terrestrial_rest()
                         self.reloadSettings2()
                         self.timer = eTimer()
@@ -2590,8 +2547,8 @@ class tvUpdate(Screen):
         self['progresstext'] = StaticText()
         self['text'] = tvList([])
         self.Update = False
-        global link, dmlink
-        dmlink=''
+        global link
+        self.dmlink=''
         link=''
         try:
             fp = ''
@@ -2618,7 +2575,7 @@ class tvUpdate(Screen):
                 self.version = s1
                 link = s2
                 self.info = s3
-                dmlink = s4
+                self.dmlink = s4
                 fp.close()
                 cstr = s1 + ' ' + s2
                 if s1 <= currversion:
@@ -2640,7 +2597,7 @@ class tvUpdate(Screen):
 
         self.timer = eTimer()
         self.timer.start(1000, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
@@ -2667,8 +2624,8 @@ class tvUpdate(Screen):
 
     def runupdate(self, result):
         if result:
-            if isDreamOS:
-                com = dmlink
+            if os.path.exists('/var/lib/dpkg/status'):
+                com = self.dmlink
                 dom = 'New version ' + self.version
                 os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
                 os.system('sleep 3')
@@ -2731,19 +2688,19 @@ class tvRemove(Screen):
     def openList(self):
         self.names = []
         patch= ''
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             path= ('/var/lib/dpkg/info')
         else:
             path = ('/var/lib/opkg/info')
         for root, dirs, files in os.walk(path):
-            if files is not None:
+            if files != None:
                 files.sort()
                 for name in files:
                     if name.endswith('.postinst') or name.endswith('.preinst') or name.endswith('.prerm') or name.endswith('.postrm'):
                         continue
                     if name.endswith('.md5sums') or name.endswith('.conffiles') or name.endswith('~') :
                         continue
-                    if isDreamOS:
+                    if os.path.exists('/var/lib/dpkg/status'):
                         if name.endswith('.list'):
                             name= name.replace('.list', '')
                     else:
@@ -2761,7 +2718,7 @@ class tvRemove(Screen):
                 return
             dom = self.names[idx]
             com = dom
-            if isDreamOS:
+            if os.path.exists('/var/lib/dpkg/status'):
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com],closeOnSuccess =False)
             else:
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess =False)
@@ -2864,7 +2821,7 @@ class tvMessageBox(Screen):
         self.timeout = timeout
         if timeout > 0:
             self.timer = eTimer()
-            if isDreamOS:
+            if os.path.exists('/var/lib/dpkg/status'):
                 self.timer_conn = self.timer.timeout.connect(self.timerTick)
             else:
                 self.timer.callback.append(self.timerTick)
@@ -2907,7 +2864,7 @@ class tvMessageBox(Screen):
 
     def timeoutCallback(self):
         print('Timeout!')
-        if self.timeout_default is not None:
+        if self.timeout_default != None:
             self.close(self.timeout_default)
         else:
             self.ok()
@@ -3074,7 +3031,7 @@ class tvConfig(Screen, ConfigListScreen):
             print("openDirectoryBrowser get failed: ", str(ex))
 
     def openDirectoryBrowserCB(self, path):
-        if path is not None:
+        if path != None:
             if self.setting == 'mmkpicon':
                 config.plugins.tvaddon.mmkpicon.setValue(path)
             if self.setting == 'ipkpth':
@@ -3087,7 +3044,7 @@ class tvConfig(Screen, ConfigListScreen):
             self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title = self['config'].getCurrent()[0], text= self['config'].getCurrent()[1].value)
 
     def VirtualKeyBoardCallback(self, callback = None):
-        if callback is not None and len(callback):
+        if callback != None and len(callback):
             self['config'].getCurrent()[1].value = callback
             self['config'].invalidate(self['config'].getCurrent())
         return
@@ -3169,8 +3126,10 @@ class SelectPicons(Screen):
             self.session.open(MMarkFolderScreen, host_trs)
         elif sel == ('MMARK PICONS MOVIE'):
             self.session.open(MMarkPiconsScreen, 'MMark-Picons', host_mov, True)
-        elif sel == _('COLOMBO PICONS'):
-            self.session.open(ColomboTrasp)
+        # elif sel == _('COLOMBO PICONS'):
+            # self.session.open(ColomboTrasp)
+        else:
+            return
 
     def remove(self):
         self.session.openWithCallback(self.okRemove,tvMessageBox,(_("Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait .." % mmkpicon)), tvMessageBox.TYPE_YESNO)
@@ -3219,7 +3178,7 @@ class MMarkFolderScreen(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3233,9 +3192,19 @@ class MMarkFolderScreen(Screen):
         fspace = freespace()
         self['pform'].setText(fspace)
 
+
     def downxmlpage(self):
-        url = self.url
-        data = make_request(url)
+        url = six.ensure_binary(self.url)
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    def errorLoad(self, error):
+        print(str(error))
+        self['info'].setText(_('Try again later ...'))
+        logdata("errorLoad ", error)
+        self.downloading = False
+
+    def _gotPageLoad(self, data):
+        r = data
         if six.PY3:
             r = six.ensure_str(data)
         self.names = []
@@ -3259,6 +3228,32 @@ class MMarkFolderScreen(Screen):
         except:
             self.downloading = False
 
+    # def downxmlpage(self):
+        # url = self.url
+        # data = make_picons(url)
+        # if six.PY3:
+            # r = six.ensure_str(data)
+        # self.names = []
+        # self.urls = []
+        # try:
+            # n1 = r.find('"folderkey"', 0)
+            # n2 = r.find('more_chunks', n1)
+            # data2 = r[n1:n2]
+            # regex = '{"folderkey":"(.*?)".*?"name":"(.*?)".*?"created":"(.*?)"'
+            # match = re.compile(regex, re.DOTALL).findall(data2)
+            # for url, name, data in match:
+                # url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
+                # url = url.replace('\\', '')
+                # pic = no_cover
+                # name = 'Picons-' + name
+                # self.urls.append(url)
+                # self.names.append(name)
+            # self['info'].setText(_('Please select ...'))
+            # showlist(self.names, self['text'])
+            # self.downloading = True
+        # except:
+            # self.downloading = False
+
     def okRun(self):
         idx = self['text'].getSelectionIndex()
         if idx == -1 or None:
@@ -3268,6 +3263,7 @@ class MMarkFolderScreen(Screen):
         self.session.open(MMarkPiconsScreen, name, url)
 
     def cancel(self, result = None):
+        self.downloading = False
         self.close(None)
         return
 
@@ -3303,7 +3299,7 @@ class MMarkPiconsScreen(Screen):
         self.name = name
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3318,8 +3314,17 @@ class MMarkPiconsScreen(Screen):
         self['pform'].setText(fspace)
 
     def downxmlpage(self):
-        url = self.url
-        data = make_request(url)
+        url = six.ensure_binary(self.url)
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    def errorLoad(self, error):
+        print(str(error))
+        self['info'].setText(_('Try again later ...'))
+        logdata("errorLoad ", error)
+        self.downloading = False
+
+    def _gotPageLoad(self, data):
+        r = data
         if six.PY3:
             r = six.ensure_str(data)
         self.names = []
@@ -3346,14 +3351,43 @@ class MMarkPiconsScreen(Screen):
             self.downloading = True
         except:
             self.downloading = False
-            self['info'].setText(_('Picons Not Installed ...'))
+
+    # def downxmlpage(self):
+        # url = self.url
+        # data = make_request(url)
+        # if six.PY3:
+            # r = six.ensure_str(data)
+        # self.names = []
+        # self.urls = []
+        # try:
+            # n1 = r.find('"quickkey":', 0)
+            # n2 = r.find('more_chunks', n1)
+            # data2 = r[n1:n2]
+            # regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"downloads":"(.*?)".*?"normal_download":"(.*?)"'
+            # match = re.compile(regex, re.DOTALL).findall(data2)
+            # for name, data, download, url in match:
+                # if 'zip' in url:
+                    # url = url.replace('\\', '')
+                    # if self.movie:
+                        # name = name.replace('_', ' ').replace('-', ' ').replace('mmk', '').replace('.zip', '')
+                        # name = name + ' ' + data[0:10] + ' ' + 'Down: ' + download
+                    # else:
+                        # name = name.replace('_', ' ').replace('mmk', 'MMark').replace('.zip', '')
+                        # name = name + ' ' + data[0:10] + ' ' + 'Down:' + download
+                    # self.urls.append(url)
+                    # self.names.append(name)
+            # self['info'].setText(_('Please select ...'))
+            # showlist(self.names, self['text'])
+            # self.downloading = True
+        # except:
+            # self.downloading = False
+            # self['info'].setText(_('Picons No Found ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
-        # global dest
         if result:
             if self.downloading == True:
                 idx = self["text"].getSelectionIndex()
@@ -3387,10 +3421,12 @@ class MMarkPiconsScreen(Screen):
         self.progclear = 0
         self['progress'].setValue(self.progclear)
         self["progress"].hide()
+        self.downloading = False
 
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))
         print("download error =", error)
+        self.downloading = False
         self.close()
 
     def finished(self,result):
@@ -3425,7 +3461,7 @@ class ColomboTrasp(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3614,7 +3650,7 @@ class plugins(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3682,9 +3718,9 @@ class plugins(Screen):
     def install(self, fplug):
         if os.path.exists(KodilitePcd):
             self.fdest = KodilitePcd + "/plugins"
-            if fileExists(self.dest):        
+            if fileExists(self.dest):
                 title = _("Installation")
-                cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)                
+                cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)
                 # print("debug: cmd:",type(cmd))
                 self.session.open(tvConsole, _(title), cmdlist =[str(cmd)], closeOnSuccess =False)
 
@@ -3737,7 +3773,7 @@ class plugins_adult(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3766,7 +3802,7 @@ class plugins_adult(Screen):
                     date = date.replace(' ','')
                     name = name +' - '+ date
                     url = checkStr(url)
-                    name= checkStr(name)                    
+                    name= checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
                 else:
@@ -3828,9 +3864,9 @@ class plugins_adult(Screen):
     def install(self, fplug):
         if os.path.exists(KodilitePcd):
             self.fdest = KodilitePcd + "/plugins"
-            if fileExists(self.dest):        
+            if fileExists(self.dest):
                 title = _("Installation")
-                cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)                
+                cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)
                 # print("debug: cmd:",type(cmd))
                 self.session.open(tvConsole, _(title), cmdlist =[str(cmd)], closeOnSuccess =False)
 
@@ -3883,7 +3919,7 @@ class script(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3912,7 +3948,7 @@ class script(Screen):
                     date = date.replace(' ','')
                     name = name +' - '+ date
                     url = checkStr(url)
-                    name= checkStr(name)                     
+                    name= checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -3952,9 +3988,9 @@ class script(Screen):
     def install(self, fplug):
         if os.path.exists(KodilitePcd):
             self.fdest = KodilitePcd + "/scripts"
-            if fileExists(self.dest):        
+            if fileExists(self.dest):
                 title = _("Installation")
-                cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)                
+                cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)
                 # print("debug: cmd:",type(cmd))
                 self.session.open(tvConsole, _(title), cmdlist =[str(cmd)], closeOnSuccess =False)
 
@@ -4007,7 +4043,7 @@ class repository(Screen):
         self.downloading = False
         self.timer = eTimer()
         self.timer.start(500, 1)
-        if isDreamOS:
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -4036,7 +4072,7 @@ class repository(Screen):
                     date = date.replace(' ','')
                     name = name +' - '+ date
                     url = checkStr(url)
-                    name= checkStr(name)                     
+                    name= checkStr(name)
                     self.urls.append(url)
                     self.names.append(name)
                     self.downloading = True
@@ -4076,9 +4112,9 @@ class repository(Screen):
     def install(self, fplug):
         if os.path.exists(KodilitePcd):
             self.fdest = KodilitePcd + "/repos"
-            if fileExists(self.dest):        
+            if fileExists(self.dest):
                 title = _("Installation")
-                cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)                
+                cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)
                 # print("debug: cmd:",type(cmd))
                 self.session.open(tvConsole, _(title), cmdlist =[str(cmd)], closeOnSuccess =False)
 
@@ -4105,7 +4141,7 @@ class repository(Screen):
 
 def main(session, **kwargs):
     if checkInternet():
-        # if isDreamOS:
+        # if os.path.exists('/var/lib/dpkg/status'):
             session.open(Hometv)
         # else:
             # session.open(logoStrt)
@@ -4135,7 +4171,7 @@ def mainmenu(session, **kwargs):
 
 def Plugins(**kwargs):
     ico_path = 'logo.png'
-    if not isDreamOS:
+    if not os.path.exists('/var/lib/dpkg/status'):
         ico_path = plugin_path + '/res/pics/logo.png'
     extDescriptor = PluginDescriptor(name =name_plug, description =_(title_plug), where =PluginDescriptor.WHERE_EXTENSIONSMENU, icon =ico_path, fnc =main)
     mainDescriptor = PluginDescriptor(name =name_plug, description =_(title_plug), where =PluginDescriptor.WHERE_MENU, icon =ico_path, fnc =cfgmain)
@@ -4181,7 +4217,7 @@ def terrestrial_rest():
                 new_bouquet.close()
                 os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
                 os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
-        # if not isDreamOS:
+        # if not os.path.exists('/var/lib/dpkg/status'):
         lcnstart()
 
 def lcnstart():

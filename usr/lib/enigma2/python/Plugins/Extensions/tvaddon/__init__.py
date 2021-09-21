@@ -1,22 +1,18 @@
 from Components.Language import language
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, SCOPE_LANGUAGE
 import gettext
+import os
 from os import environ as os_environ
 PluginLanguageDomain = 'tvaddon'
 PluginLanguagePath = 'Extensions/tvaddon/res/locale'
-try:
-    from enigma import eMediaDatabase
-    isDreamOS = True
-except:
-    isDreamOS = False
 
 def localeInit():
-    if isDreamOS:
+    if os.path.exists('/var/lib/dpkg/status'):
         lang = language.getLanguage()[:2]
         os_environ['LANGUAGE'] = lang
     gettext.bindtextdomain(PluginLanguageDomain, resolveFilename(SCOPE_PLUGINS, PluginLanguagePath))
 
-if isDreamOS:
+if os.path.exists('/var/lib/dpkg/status'):
     _ = lambda txt: gettext.dgettext(PluginLanguageDomain, txt) if txt else ""
     localeInit()
     language.addCallback(localeInit)
