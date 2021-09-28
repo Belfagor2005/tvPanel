@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     21/09/2021     #
+#     27/09/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -62,7 +62,7 @@ from sys import version_info
 # from . import Lcn
 from .Lcn import *
 global skin_path, mmkpicon, set, regexC, regexL, category
-currversion      = '2.0.4'
+currversion      = '2.0.5'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
@@ -181,7 +181,7 @@ def make_request(url):
     except ImportError:
         req = Request(url)
         req.add_header('User-Agent', 'TVS')
-        response = urlopen(req, None, 3)
+        response = urlopen(req, None, 7)
         link = response.read().decode('utf-8')
         response.close()
         return link
@@ -325,6 +325,7 @@ Panel_list2 = [
  ('SETTINGS MORPHEUS'),
  ('SETTINGS PREDRAG'),
  ('SETTINGS VHANNIBAL'),
+ ('SETTINGS VHANNIBAL 2'), 
  ('UPDATE SATELLITES.XML'),
  ('UPDATE TERRESTRIAL.XML')
  ]
@@ -790,6 +791,8 @@ class tvDailySetting(Screen):
             self.session.open(SettingPredrag)
         elif sel == ('SETTINGS VHANNIBAL'):
             self.session.open(SettingVhan)
+        elif sel == ('SETTINGS VHANNIBAL 2'):
+            self.session.open(SettingVhan2)            
 
     def okSATELLITE(self):
         self.session.openWithCallback(self.okSatInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
@@ -867,33 +870,41 @@ class SettingVhan(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url='http://sat.alfa-tech.net/upload/settings/vhannibal/'
-        r=make_request(url)
-        print('rrrrrrrr ', r)
-        if six.PY3:
-            r  = six.ensure_str(r)
         self.names=[]
         self.urls=[]
         try:
-            regex   = '<a href="Vhannibal(.*?).zip"'
-            match   = re.compile(regex).findall(r)
-            for url in match:
-                # if 'zip' in url.lower():
-                    if '.php' in url.lower():
-                        continue
-                    name = "Vhannibal" + url
-                    name = name.replace(".zip", "")
-                    name = name.replace("%20", " ")
-                    url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
-                    url = checkStr(url)
-                    name = checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
-                    self.downloading = True
-                    self['info'].setText(_('Please select ...'))
-                # else:
-                    # self['info'].setText(_('no data ...'))
-                    # self.downloading = False
+            urlsat='https://www.vhannibal.net/enigma2.php'
+            urldtt = 'https://www.vhannibal.net/enigma2dtt.php'
+            r=make_request(urlsat)
+            print('rrrrrrrr ', r)
+            if six.PY3:
+                r  = six.ensure_str(r)
+            match   = re.compile('<td><a href="(.+?)" target="_blank">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(r)
+            for url, name, date in match:
+                name = name + ' ' + date
+                url = "https://www.vhannibal.net/" + url
+                url = checkStr(url)
+                name = checkStr(name)
+                print('url : ', url)
+                print('name : ', name)
+                self.urls.append(url)
+                self.names.append(name)
+            r2=make_request(urldtt)
+            print('rrrrrrrr ', r2)
+            if six.PY3:
+                r2  = six.ensure_str(r2)                    
+            match2   = re.compile('<td><a href="(.+?)" target="_blank">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(r2)
+            for url, name, date in match2:
+                name = name + ' ' + date
+                url = "https://www.vhannibal.net/" + url
+                url = checkStr(url)
+                name = checkStr(name)
+                print('url : ', url)
+                print('name : ', name)
+                self.urls.append(url)
+                self.names.append(name)
+            self.downloading = True                 
+            self['info'].setText(_('Please select ...'))                    
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
@@ -911,20 +922,196 @@ class SettingVhan(Screen):
                 url = self.urls[idx]
                 self.dest = "/tmp/settings.zip"
                 print("url =", url)
-                if 'dtt' not in url.lower():
-                    # if not os.path.exists('/var/lib/dpkg/status'):
-                        set = 1
-                        terrestrial()
-                urlretrieve(url, self.dest)
+                urlretrieve(url, self.dest)                
+                if 'dtt' not in self.name.lower():
+                    set = 1
+                    terrestrial()
                 if os.path.exists(self.dest):
-                    os.system('rm -rf /etc/enigma2/lamedb')
-                    os.system('rm -rf /etc/enigma2/*.radio')
-                    os.system('rm -rf /etc/enigma2/*.tv')
+                    fdest1 = "/tmp/unzipped"
+                    fdest2 = "/etc/enigma2"
+                    if os.path.exists("/tmp/unzipped"):
+                        cmd = "rm -rf '/tmp/unzipped'"
+                        os.system(cmd)
+                    os.makedirs('/tmp/unzipped')
+                    cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
+                    os.system(cmd2)
+                    for root, dirs, files in os.walk(fdest1):
+                        for name in dirs:
+                            os.system('rm -rf /etc/enigma2/lamedb')
+                            os.system('rm -rf /etc/enigma2/*.radio')
+                            os.system('rm -rf /etc/enigma2/*.tv')
+                            os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
+                        title = _("Installation Settings")
+                        self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
+                    self['info'].setText(_('Settings Installed ...'))
+                else:
+                    self['info'].setText(_('Settings Not Installed ...'))
+            else:
+                self['info'].setText(_('No Downloading ...'))
+
+    def yes(self):
+        ReloadBouquet()
+
+class SettingVhan2(Screen):
+    def __init__(self, session):
+        self.session = session
+        skin = skin_path + 'tvall.xml'
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+        self.setup_title = ('Setting Vhannibal')
+        Screen.__init__(self, session)
+        self.setTitle(_(title_plug))
+        self.list = []
+        self['text'] = tvList([])
+        self.icount = 0
+        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['pth'] = Label('')
+        self['pform'] = Label('')
+        self['progress'] = ProgressBar()
+        self["progress"].hide()
+        self['progresstext'] = StaticText()
+        self['key_green'] = Button(_('Install'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_(''))
+        self["key_blue"] = Button(_(''))
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self.downloading = False
+        self.timer = eTimer()
+        self.timer.start(500, 1)
+        if os.path.exists('/var/lib/dpkg/status'):
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self['title'] = Label(_(title_plug))
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
+         'green': self.okRun,
+         'red': self.close,
+         'cancel': self.close}, -2)
+
+    def downxmlpage(self):
+        url='http://sat.alfa-tech.net/upload/settings/vhannibal/'
+        r=make_request(url)
+        print('rrrrrrrr ', r)
+        if six.PY3:
+            r  = six.ensure_str(r)
+        self.names=[]
+        self.urls=[]
+        try:
+            regex   = '<a href="Vhannibal(.*?).zip"'
+            match   = re.compile(regex).findall(r)
+            for url in match:
+                if '.php' in url.lower():
+                    continue
+                name = "Vhannibal" + url
+                name = name.replace(".zip", "")
+                name = name.replace("%20", " ")
+                url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
+                url = checkStr(url)
+                name = checkStr(name)
+                self.urls.append(url)
+                self.names.append(name)
+                self.downloading = True
+                self['info'].setText(_('Please select ...'))
+            showlist(self.names, self['text'])
+        except Exception as e:
+            print(('downxmlpage get failed: ', str(e)))
+
+    def okRun(self):
+        self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
+
+    def okInstall(self, result):
+        global set
+        set = 0
+        if result:
+            if self.downloading == True:
+                try:
+                    idx = self["text"].getSelectionIndex()
+                    self.name = self.names[idx]
+                    url = self.urls[idx]
+                    self.dest = "/tmp/settings.zip"
+                    print("url =", url)
+
+                    # urlretrieve(url, self.dest)    
+                    # if 'dtt' not in self.name.lower():
+                            # set = 1
+                            # terrestrial()
+                    # if os.path.exists(self.dest):
+                        # fdest1 = "/tmp/unzipped"
+                        # fdest2 = "/etc/enigma2"
+                        # if os.path.exists("/tmp/unzipped"):
+                            # cmd = "rm -rf '/tmp/unzipped'"
+                            # os.system(cmd)
+                        # os.makedirs('/tmp/unzipped')
+                        # cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
+                        # os.system(cmd2)
+                        # for root, dirs, files in os.walk(fdest1):
+                            # for name in dirs:
+                                # os.system('rm -rf /etc/enigma2/lamedb')
+                                # os.system('rm -rf /etc/enigma2/*.radio')
+                                # os.system('rm -rf /etc/enigma2/*.tv')
+                                # os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
+                            # title = _("Installation Settings")
+                            # self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
+                        # self['info'].setText(_('Settings Installed ...'))
+                    # else:
+                        # self['info'].setText(_('Settings Not Installed ...'))
+                # else:
+                    # self['info'].setText(_('No Downloading ...'))
+                    if six.PY3:
+                        url = six.ensure_binary(url)
+                            
+                    if url.startswith(b"https") and sslverify:
+                        parsed_uri = urlparse(url)
+                        domain = parsed_uri.hostname
+                        sniFactory = SNIFactory(domain)
+                        # if six.PY3:
+                            # url = url.encode()
+                        print('uurrll: ', url)
+                        downloadPage(url, self.dest, sniFactory, timeout=5).addCallback(self.download, self.dest).addErrback(self.downloadError)
+                    else:
+                        downloadPage(url, self.dest).addCallback(self.download, self.dest).addErrback(self.downloadError)
+                except Exception as ex:
+                    print(ex)
+                    print("Error: can't find file or read data")
+                
+    def download(self, data, dest):
+        try:
+            if 'dtt' not in self.name.lower():
+                set = 1
+                terrestrial()
+            if os.path.exists(self.dest):
+                fdest1 = "/tmp/unzipped"
+                fdest2 = "/etc/enigma2"
+                if os.path.exists("/tmp/unzipped"):
+                    cmd = "rm -rf '/tmp/unzipped'"
+                    os.system(cmd)
+                os.makedirs('/tmp/unzipped')
+                cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
+                os.system(cmd2)
+                for root, dirs, files in os.walk(fdest1):
+                    for name in dirs:
+                        os.system('rm -rf /etc/enigma2/lamedb')
+                        os.system('rm -rf /etc/enigma2/*.radio')
+                        os.system('rm -rf /etc/enigma2/*.tv')
+                        os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["unzip -o -q '/tmp/settings.zip' -d /tmp; cp -rf '/tmp/" + str(self.name) + "'/* /etc/enigma2; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess =False)
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
+
+        except Exception as ex:
+            print("* error ** %s" % ex)
+            self['info'].setText(_('Not Installed ...'))                
+
+    def downloadError(self, png):
+        try:
+            if fileExists(png):
+                self.poster_resize(no_cover)
+        except Exception as ex:
+            print(ex)
+            print('downloadError')
 
     def yes(self):
         ReloadBouquet()
