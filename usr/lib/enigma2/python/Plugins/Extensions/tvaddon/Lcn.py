@@ -14,7 +14,7 @@ import os
 import sys
 import re
 import shutil
-import xml.etree.cElementTree
+import xml.etree.ElementTree
 
 plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
 rules            = plugin_path + '/rules.xml'

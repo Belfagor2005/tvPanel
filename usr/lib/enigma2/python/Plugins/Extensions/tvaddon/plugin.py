@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     27/09/2021     #
+#     29/09/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -186,7 +186,7 @@ def make_request(url):
         response.close()
         return link
     except:
-        e = URLError #, e:
+        e = URLError
         print('We failed to open "%s".' % url)
         if hasattr(e, 'code'):
             print('We failed with error code - %s.' % e.code)
@@ -874,7 +874,6 @@ class SettingVhan(Screen):
         self.urls=[]
         try:
             urlsat='https://www.vhannibal.net/enigma2.php'
-            urldtt = 'https://www.vhannibal.net/enigma2dtt.php'
             r=make_request(urlsat)
             print('rrrrrrrr ', r)
             if six.PY3:
@@ -889,6 +888,8 @@ class SettingVhan(Screen):
                 print('name : ', name)
                 self.urls.append(url)
                 self.names.append(name)
+                
+            urldtt = 'https://www.vhannibal.net/enigma2dtt.php'                
             r2=make_request(urldtt)
             print('rrrrrrrr ', r2)
             if six.PY3:
@@ -921,6 +922,7 @@ class SettingVhan(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 self.dest = "/tmp/settings.zip"
+                self.namel = ''
                 print("url =", url)
                 urlretrieve(url, self.dest)                
                 if 'dtt' not in self.name.lower():
@@ -937,12 +939,14 @@ class SettingVhan(Screen):
                     os.system(cmd2)
                     for root, dirs, files in os.walk(fdest1):
                         for name in dirs:
-                            os.system('rm -rf /etc/enigma2/lamedb')
-                            os.system('rm -rf /etc/enigma2/*.radio')
-                            os.system('rm -rf /etc/enigma2/*.tv')
-                            os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
-                        title = _("Installation Settings")
-                        self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
+                            self.namel = name
+                            
+                    os.system('rm -rf /etc/enigma2/lamedb')
+                    os.system('rm -rf /etc/enigma2/*.radio')
+                    os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
+                    title = _("Installation Settings")
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
                     self['info'].setText(_('Settings Installed ...'))
                 else:
                     self['info'].setText(_('Settings Not Installed ...'))
@@ -1031,36 +1035,8 @@ class SettingVhan2(Screen):
                     url = self.urls[idx]
                     self.dest = "/tmp/settings.zip"
                     print("url =", url)
-
-                    # urlretrieve(url, self.dest)    
-                    # if 'dtt' not in self.name.lower():
-                            # set = 1
-                            # terrestrial()
-                    # if os.path.exists(self.dest):
-                        # fdest1 = "/tmp/unzipped"
-                        # fdest2 = "/etc/enigma2"
-                        # if os.path.exists("/tmp/unzipped"):
-                            # cmd = "rm -rf '/tmp/unzipped'"
-                            # os.system(cmd)
-                        # os.makedirs('/tmp/unzipped')
-                        # cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
-                        # os.system(cmd2)
-                        # for root, dirs, files in os.walk(fdest1):
-                            # for name in dirs:
-                                # os.system('rm -rf /etc/enigma2/lamedb')
-                                # os.system('rm -rf /etc/enigma2/*.radio')
-                                # os.system('rm -rf /etc/enigma2/*.tv')
-                                # os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
-                            # title = _("Installation Settings")
-                            # self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
-                        # self['info'].setText(_('Settings Installed ...'))
-                    # else:
-                        # self['info'].setText(_('Settings Not Installed ...'))
-                # else:
-                    # self['info'].setText(_('No Downloading ...'))
                     if six.PY3:
                         url = six.ensure_binary(url)
-                            
                     if url.startswith(b"https") and sslverify:
                         parsed_uri = urlparse(url)
                         domain = parsed_uri.hostname
@@ -1080,7 +1056,8 @@ class SettingVhan2(Screen):
             if 'dtt' not in self.name.lower():
                 set = 1
                 terrestrial()
-            if os.path.exists(self.dest):
+            if os.path.exists(dest):
+                self.namel = ''
                 fdest1 = "/tmp/unzipped"
                 fdest2 = "/etc/enigma2"
                 if os.path.exists("/tmp/unzipped"):
@@ -1091,12 +1068,13 @@ class SettingVhan2(Screen):
                 os.system(cmd2)
                 for root, dirs, files in os.walk(fdest1):
                     for name in dirs:
-                        os.system('rm -rf /etc/enigma2/lamedb')
-                        os.system('rm -rf /etc/enigma2/*.radio')
-                        os.system('rm -rf /etc/enigma2/*.tv')
-                        os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
-                    title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
+                        self.namel = name
+                os.system('rm -rf /etc/enigma2/lamedb')
+                os.system('rm -rf /etc/enigma2/*.radio')
+                os.system('rm -rf /etc/enigma2/*.tv')
+                os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
+                title = _("Installation Settings")
+                self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
@@ -1286,6 +1264,7 @@ class SettingManutek(Screen):
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
                 self.dest = "/tmp/settings.zip"
+                self.namel = ''
                 print("url =", url)
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
@@ -1303,12 +1282,13 @@ class SettingManutek(Screen):
                     os.system(cmd2)
                     for root, dirs, files in os.walk(fdest1):
                         for name in dirs:
-                            os.system('rm -rf /etc/enigma2/lamedb')
-                            os.system('rm -rf /etc/enigma2/*.radio')
-                            os.system('rm -rf /etc/enigma2/*.tv')
-                            os.system("cp -rf  '/tmp/unzipped/" + name + "'/* " + fdest2)
-                        title = _("Installation Settings")
-                        self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
+                            self.namel = name
+                    os.system('rm -rf /etc/enigma2/lamedb')
+                    os.system('rm -rf /etc/enigma2/*.radio')
+                    os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
+                    title = _("Installation Settings")
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
                     self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
@@ -1399,6 +1379,7 @@ class SettingMorpheus(Screen):
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
                 self.dest = "/tmp/settings.zip"
+                self.namel = ''
                 print("url =", url)
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
@@ -1413,12 +1394,13 @@ class SettingMorpheus(Screen):
                     path = '/tmp/unzipped'
                     # pth = ''
                     for root, dirs, files in os.walk(path):
-                        for pth in dirs:
-                            cmd = []
-                            os.system('rm -rf /etc/enigma2/lamedb')
-                            os.system('rm -rf /etc/enigma2/*.radio')
-                            os.system('rm -rf /etc/enigma2/*.tv')
-                            os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
+                        for name in dirs:
+                            self.namel = name
+                    cmd = []
+                    os.system('rm -rf /etc/enigma2/lamedb')
+                    os.system('rm -rf /etc/enigma2/*.radio')
+                    os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"],closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
@@ -1515,6 +1497,7 @@ class SettingCiefp(Screen):
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
                 self.dest = "/tmp/settings.zip"
+                self.namel = ''
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
@@ -1527,12 +1510,12 @@ class SettingCiefp(Screen):
                     os.system('unzip -o -q /tmp/settings.zip -d /tmp/unzipped')
                     path = '/tmp/unzipped'
                     for root, dirs, files in os.walk(path):
-                        for pth in dirs:
-                            pth = pth
-                            os.system('rm -rf /etc/enigma2/lamedb')
-                            os.system('rm -rf /etc/enigma2/*.radio')
-                            os.system('rm -rf /etc/enigma2/*.tv')
-                            os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
+                        for name in dirs:
+                            self.namel = name
+                    os.system('rm -rf /etc/enigma2/lamedb')
+                    os.system('rm -rf /etc/enigma2/*.radio')
+                    os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"] , closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
@@ -1708,7 +1691,6 @@ class SettingPredrag(Screen):
         set = 0
         if result:
             if self.downloading == True:
-
                 idx = self["text"].getSelectionIndex()
                 self.name = self.names[idx]
                 url = self.urls[idx]
@@ -1810,6 +1792,7 @@ class SettingCyrus(Screen):
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
                 self.dest = "/tmp/settings.zip"
+                self.namel = ''
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
@@ -1822,12 +1805,12 @@ class SettingCyrus(Screen):
                     os.system('unzip -o -q /tmp/settings.zip -d /tmp/unzipped')
                     path = '/tmp/unzipped'
                     for root, dirs, files in os.walk(path):
-                        for pth in dirs:
-                            pth = pth
-                            os.system('rm -rf /etc/enigma2/lamedb')
-                            os.system('rm -rf /etc/enigma2/*.radio')
-                            os.system('rm -rf /etc/enigma2/*.tv')
-                            os.system("cp -rf /tmp/unzipped/" + pth + "/* '/etc/enigma2'")
+                        for name in dirs:
+                            self.namel = name
+                    os.system('rm -rf /etc/enigma2/lamedb')
+                    os.system('rm -rf /etc/enigma2/*.radio')
+                    os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"] , closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
@@ -2654,11 +2637,9 @@ class tvRemove(Screen):
 
     def openList(self):
         self.names = []
-        patch= ''
+        path = ('/var/lib/opkg/info')
         if os.path.exists('/var/lib/dpkg/status'):
             path= ('/var/lib/dpkg/info')
-        else:
-            path = ('/var/lib/opkg/info')
         for root, dirs, files in os.walk(path):
             if files != None:
                 files.sort()
