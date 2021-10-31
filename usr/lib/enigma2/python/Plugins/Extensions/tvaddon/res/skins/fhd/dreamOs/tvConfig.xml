@@ -1,5 +1,5 @@
 <!-- Skin tvConfig 11/5/2021 -->
-<screen name="tvConfig" position="0,0" size="1920,1080" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="transparent" flags="wfNoBorder">
+<screen name="tvConfig" position="0,0" size="1920,1080" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#10101010" flags="wfNoBorder">
 	<widget name="title" position="220,90" size="900,40" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<ePixmap position="0,0" size="1920,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main2.png" zPosition="1" />
 	<ePixmap position="220,40" size="279,50" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" alphatest="blend" zPosition="5" />

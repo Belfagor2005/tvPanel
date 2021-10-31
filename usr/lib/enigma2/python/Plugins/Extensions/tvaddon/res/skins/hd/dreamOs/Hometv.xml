@@ -1,5 +1,5 @@
 <!-- Skin HomeTV 11/05/2021 -->
-<screen name="Hometv" position="0,0" size="1280,720" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="transparent" flags="wfNoBorder">
+<screen name="Hometv" position="0,0" size="1280,720" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#10101010" flags="wfNoBorder">
 	<widget name="title" position="146,60" size="600,26" font="Regular;20" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<ePixmap position="0,0" size="1280,720" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/main1.png" zPosition="1" />
 	<ePixmap position="146,26" size="186,33" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/tvs.png" alphatest="blend" zPosition="5" />
