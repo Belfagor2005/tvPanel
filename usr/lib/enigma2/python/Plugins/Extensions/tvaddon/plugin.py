@@ -749,18 +749,18 @@ class tvDailySetting(Screen):
          'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
 
-    # def Lcn(self):
-        # self.session.open(MessageBox, _('Reorder Terrestrial channels with Lcn rules'), MessageBox.TYPE_INFO, timeout=5)
-        # lcnstart()
-        
     def Lcn(self):
-        if self.LcnOn:
-            lcn = LCN()
-            lcn.read()
-            if len(lcn.lcnlist) > 0:
-                lcn.writeBouquet()
-                lcn.reloadBouquets()
-                self.session.open(MessageBox, _('Sorting Lcn Completed'), MessageBox.TYPE_INFO, timeout=5)
+        self.session.open(MessageBox, _('Reorder Terrestrial channels with Lcn rules'), MessageBox.TYPE_INFO, timeout=5)
+        lcnstart()
+        
+    # def Lcn(self):
+        # if self.LcnOn:
+            # lcn = LCN()
+            # lcn.read()
+            # if len(lcn.lcnlist) > 0:
+                # lcn.writeBouquet()
+                # lcn.reloadBouquets()
+                # self.session.open(MessageBox, _('Sorting Lcn Completed'), MessageBox.TYPE_INFO, timeout=5)
                 
     def closerm(self):
         self.close()
@@ -1399,6 +1399,8 @@ class SettingMorpheus(Screen):
                         terrestrial()
                 urlretrieve(url, self.dest)
                 if os.path.exists(self.dest):
+                    fdest1 = "/tmp/unzipped"
+                    fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
                     os.makedirs('/tmp/unzipped')
@@ -1516,6 +1518,8 @@ class SettingCiefp(Screen):
                         terrestrial()
                 urlretrieve(url, self.dest)
                 if os.path.exists(self.dest):
+                    fdest1 = "/tmp/unzipped"
+                    fdest2 = "/etc/enigma2"                    
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
                     os.makedirs('/tmp/unzipped')
@@ -1811,6 +1815,8 @@ class SettingCyrus(Screen):
                         terrestrial()
                 urlretrieve(url, self.dest)
                 if os.path.exists(self.dest):
+                    fdest1 = "/tmp/unzipped"
+                    fdest2 = "/etc/enigma2"                
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
                     os.makedirs('/tmp/unzipped')
@@ -1973,9 +1979,9 @@ class tvInstall(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        if not os.path.exists('/var/lib/dpkg/status'):
-                            terrestrial_rest()
-                        self.reloadSettings2()
+                        # if not os.path.exists('/var/lib/dpkg/status'):
+                        terrestrial_rest()
+                        # self.reloadSettings2()
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         self.session.open(tvConsole, _('SETTING - install: %s') % self.dom, [cmd], closeOnSuccess =False)
@@ -2164,9 +2170,11 @@ class tvInstall(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        if not os.path.exists('/var/lib/dpkg/status'):
-                            terrestrial_rest()
-                        self.reloadSettings2()
+                        # if not os.path.exists('/var/lib/dpkg/status'):
+                        # if os.path.exists('/etc/enigma2/lcndb'):
+                            # lcnstart()
+                        terrestrial_rest()
+                        # self.reloadSettings2()
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         self.session.open(tvConsole, _('SETTING - install: %s') % self.dest, [cmd], closeOnSuccess =False)
@@ -2436,9 +2444,9 @@ class tvIPK(Screen):
                         cmd.append(cmd10)
                         cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                         cmd.append(cmd11)
-                        if not os.path.exists('/var/lib/dpkg/status'):
-                            terrestrial_rest()
-                        self.reloadSettings2()
+                        # if not os.path.exists('/var/lib/dpkg/status'):
+                        terrestrial_rest()
+                        # self.reloadSettings2()
                         self.timer = eTimer()
                         self.timer.start(500, True)
                         # self.session.open(tvConsole, _('SETTING - install: %s') % self.dest, cmdlist =[cmd])
@@ -4000,9 +4008,9 @@ def terrestrial_rest():
                 new_bouquet.close()
                 os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
                 os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
-        # if not os.path.exists('/var/lib/dpkg/status'):
-        # lcnstart()
-        tvDailySetting.Lcn()
+        if os.path.exists('/etc/enigma2/lcndb'):
+            lcnstart()
+        # tvDailySetting.Lcn()
 
 # def lcnstart():
     # print(' lcnstart ')
@@ -4021,7 +4029,8 @@ def lcnstart():
         if len(lcn.lcnlist) > 0:
             lcn.writeBouquet()
             lcn.reloadBouquets()
-            self.session.open(MessageBox, _('Sorting Lcn Completed'), MessageBox.TYPE_INFO, timeout=5)
+            # self.session.open(MessageBox, _('Sorting Lcn Completed'), MessageBox.TYPE_INFO, timeout=5)
+        return
                 
 def StartSavingTerrestrialChannels():
     def ForceSearchBouquetTerrestrial():
@@ -4100,7 +4109,7 @@ def StartSavingTerrestrialChannels():
 
     def CreateBouquetForce():
         WritingBouquetTemporary = open(plugin_path +'/temp/TerrestrialChannelListArchive','w')
-        WritingBouquetTemporary.write('#NAME Terrestre\n')
+        WritingBouquetTemporary.write('#NAME Digitale Terrestre\n')
         ReadingTempServicelist = open(plugin_path +'/temp/ServiceListOldLamedb').readlines()
         for jx in ReadingTempServicelist:
           if jx.find('eeee') != -1:

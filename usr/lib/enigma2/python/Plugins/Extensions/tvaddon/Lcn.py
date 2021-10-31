@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from __future__ import print_function                                     
-from enigma import eDVBDB, eServiceReference, eServiceCenter
+from enigma import eServiceReference, eServiceCenter
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Components.ActionMap import ActionMap
@@ -15,7 +15,10 @@ import sys
 import re
 import shutil
 import xml.etree.ElementTree
-
+try:
+    from enigma import eDVBDB
+except ImportError:
+    eDVBDB = None
 plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
 rules            = plugin_path + '/rules.xml'
 
@@ -275,4 +278,10 @@ class LCN:
         self.ClearDoubleMarker(self.bouquetfile)
 
     def reloadBouquets(self):
-        eDVBDB.getInstance().reloadBouquets()
+        # eDVBDB.getInstance().reloadBouquets()
+        if eDVBDB:
+            eDVBDB.getInstance().reloadBouquets()
+            print('bouquets reloaded...')
+        else:
+            os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
+            print('bouquets reloaded...')
