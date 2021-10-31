@@ -27,7 +27,7 @@ def Bouquet():
             if re.search('#NAME Digitale Terrestre', x, flags=re.IGNORECASE):
                 return '/etc/enigma2/' + file
 
-class LCN():
+class LCN:
 # class LCN:
     service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
 
@@ -97,7 +97,7 @@ class LCN():
                 try:
                     exec(cmd)
                 except Exception as e:
-                    print(str(e))
+                    print(e)
 
     def addMarker(self, position, text):
         self.markers.append([position, text])
@@ -110,7 +110,7 @@ class LCN():
         try:
             f = open(self.dbfile)
         except Exception as e:
-            print(str(e))
+            print(e)
             return
 
         while True:
@@ -250,7 +250,7 @@ class LCN():
         try:
             f = open(self.bouquetfile, 'w')
         except Exception as e:
-            print(str(e))
+            print(e)
             return
 
         f.write('#NAME Digitale Terrestre\n')

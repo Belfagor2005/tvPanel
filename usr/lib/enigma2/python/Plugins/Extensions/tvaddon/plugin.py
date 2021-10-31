@@ -41,7 +41,7 @@ from Tools.Directories import pathExists, fileExists, copyfile
 from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from enigma import *
-from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, getDesktop, loadPNG
+from enigma import RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_HALIGN_CENTER, RT_VALIGN_CENTER, getDesktop, loadPNG
 from enigma import eListbox, eTimer, eListboxPythonMultiContent, eConsoleAppContainer, gFont
 from os import path, listdir, remove, mkdir, access, X_OK, chmod
 from os.path import splitext
@@ -62,7 +62,7 @@ from sys import version_info
 # from . import Lcn
 from .Lcn import *
 global skin_path, mmkpicon, set, regexC, regexL, category
-currversion      = '2.0.5'
+currversion      = '2.0.6'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
@@ -407,10 +407,10 @@ class Hometv(Screen):
         self['key_yellow'] = Button(_('Uninstall'))
         self["key_blue"] = Button(_("tvManager"))
         self['key_blue'].hide()
-        if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager/plugin.pyo'):
+        if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
             self["key_blue"].show()
             self['key_blue'] = Label(_('tvManager'))
-        elif fileExists('/usr/lib/enigma2/python/Plugins/PLi/tvManager/plugin.pyo'):
+        elif os.path.exists('/usr/lib/enigma2/python/Plugins/PLi/tvManager'):
             self["key_blue"].show()
             self['key_blue'] = Label(_('tvManager'))
         # elif:
@@ -457,13 +457,14 @@ class Hometv(Screen):
         except:
             self.Update = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
+
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
+        self.timer.start(500, 1)            
         self['title'] = Label(_(title_plug))
-        self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', "MenuActions"], {'ok': self.okRun,
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions', "MenuActions"], {'ok': self.okRun,
          'green': self.tvIPK,
          'menu': self.goConfig,
          'blue': self.tvManager,
@@ -484,9 +485,7 @@ class Hometv(Screen):
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh", 0o0755)
             cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh"
             # self.session.openWithCallback(self.starts, tvConsole, title ="Checking Python Dependencies", cmdlist =[cmd1], closeOnSuccess =False)
-
             self.session.openWithCallback(self.starts, Console, title ="Checking Python Dependencies", cmdlist =[cmd1], closeOnSuccess =False)
-
         else:
             self.starts()
 
@@ -496,11 +495,11 @@ class Hometv(Screen):
     def closerm(self):
         # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
         self.timer = eTimer()
-        self.timer.start(1000, True)
         try:
             self.timer.callback.append(deletetmp)
         except:
             self.timer_conn = self.timer.timeout.connect(deletetmp)
+        self.timer.start(1000, True)
         ReloadBouquet()
         self.close()
 
@@ -526,16 +525,16 @@ class Hometv(Screen):
         self.session.open(tvRemove)
 
     def tvManager(self):
-        if fileExists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager/plugin.pyo'):
+        if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions'):
             from Plugins.Extensions.tvManager.plugin import tvManager
             self.session.openWithCallback(self.close, tvManager)
-        elif fileExists('/usr/lib/enigma2/python/Plugins/PLi/tvManager/plugin.pyo'):
+        elif os.path.exists('/usr/lib/enigma2/python/Plugins/PLi'):
             from Plugins.PLi.tvManager.plugin import tvManager
             self.session.openWithCallback(self.close, tvManager)
         # elif dependencies == False:
             # self.check_dependencies()
         else:
-            self.session.open(tvMessageBox,("tvManager Not Installed!!"), type=tvMessageBox.TYPE_INFO, timeout=3)
+            self.session.open(MessageBox,("tvManager Not Installed!!"), type=MessageBox.TYPE_INFO, timeout=3)
 
     def tvIPK(self):
         self.session.open(tvIPK)
@@ -604,7 +603,7 @@ class Hometv(Screen):
         if config.plugins.tvaddon.autoupd.value == False :
             return
         else:
-            self.session.openWithCallback(self.runupdate, tvMessageBox, (_('New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!')), tvMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.runupdate, MessageBox, (_('New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!')), MessageBox.TYPE_YESNO)
 
     def runupdate(self, result):
         if result:
@@ -623,7 +622,7 @@ class Hometv(Screen):
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], closeOnSuccess =False)
 
     def msgipkrst1(self):
-        self.session.openWithCallback(self.ipkrestrt, tvMessageBox, (_('Do you want restart enigma2 ?')), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.ipkrestrt, MessageBox, (_('Do you want restart enigma2 ?')), MessageBox.TYPE_YESNO)
 
     def ipkrestrt(self, result):
         if result:
@@ -657,17 +656,17 @@ class Categories(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -732,10 +731,14 @@ class tvDailySetting(Screen):
         self['info'].setText(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_('Lcn'))
-        # if os.path.exists('/var/lib/dpkg/status'):
-        #   self['key_yellow'].hide()
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self['key_yellow'].hide()
+        self.LcnOn = False
+        if os.path.exists('/etc/enigma2/lcndb'):
+          self['key_yellow'].show()
+          self['key_yellow'] = Button('Lcn')
+          self.LcnOn = True
+        self["key_blue"] = Button('')
         self['key_blue'].hide()
         self['title'] = Label(_(title_plug))
         self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
@@ -746,10 +749,19 @@ class tvDailySetting(Screen):
          'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
 
+    # def Lcn(self):
+        # self.session.open(MessageBox, _('Reorder Terrestrial channels with Lcn rules'), MessageBox.TYPE_INFO, timeout=5)
+        # lcnstart()
+        
     def Lcn(self):
-        self.mbox = self.session.open(tvMessageBox, _('Reorder Terrestrial channels with Lcn rules'), tvMessageBox.TYPE_INFO, timeout=5)
-        lcnstart()
-
+        if self.LcnOn:
+            lcn = LCN()
+            lcn.read()
+            if len(lcn.lcnlist) > 0:
+                lcn.writeBouquet()
+                lcn.reloadBouquets()
+                self.session.open(MessageBox, _('Sorting Lcn Completed'), MessageBox.TYPE_INFO, timeout=5)
+                
     def closerm(self):
         self.close()
 
@@ -795,7 +807,7 @@ class tvDailySetting(Screen):
             self.session.open(SettingVhan2)            
 
     def okSATELLITE(self):
-        self.session.openWithCallback(self.okSatInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okSatInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
     def okSatInstall(self, result):
         if result:
@@ -806,15 +818,15 @@ class tvDailySetting(Screen):
                     dirCopy = '/etc/tuxbox/satellites.xml'
                     # urlretrieve(url_sat_oealliance, dirCopy, context= ssl._create_unverified_context())
                     urlretrieve(link_sat, dirCopy)
-                    self.mbox = self.session.open(tvMessageBox, _('Satellites.xml Updated!'), tvMessageBox.TYPE_INFO, timeout=5)
+                    self.session.open(MessageBox, _('Satellites.xml Updated!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
                 except:
                     return
             else:
-                session.open(tvMessageBox, "No Internet", tvMessageBox.TYPE_INFO)
+                session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
     def okTERRESTRIAL(self):
-        self.session.openWithCallback(self.okTerrInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okTerrInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
     def okTerrInstall(self, result):
         if result:
@@ -825,12 +837,12 @@ class tvDailySetting(Screen):
                     dirCopy                         = '/etc/tuxbox/terrestrial.xml'
                     # urlretrieve(url_sat_oealliance, dirCopy, context= ssl._create_unverified_context())
                     urlretrieve(link_ter, dirCopy) # , context= ssl._create_unverified_context())
-                    self.mbox = self.session.open(tvMessageBox, _('Terrestrial.xml Updated!'), tvMessageBox.TYPE_INFO, timeout=5)
+                    self.session.open(MessageBox, _('Terrestrial.xml Updated!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
                 except:
                     return
             else:
-                self.mbox = self.session.open(tvMessageBox, "No Internet", tvMessageBox.TYPE_INFO)
+                self.session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
 class SettingVhan(Screen):
     def __init__(self, session):
@@ -852,17 +864,17 @@ class SettingVhan(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -976,17 +988,17 @@ class SettingVhan2(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -1114,17 +1126,17 @@ class Milenka61(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -1207,17 +1219,17 @@ class SettingManutek(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -1316,17 +1328,17 @@ class SettingMorpheus(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -1431,17 +1443,17 @@ class SettingCiefp(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -1487,7 +1499,7 @@ class SettingCiefp(Screen):
             print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -1545,17 +1557,17 @@ class SettingBi58(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -1639,17 +1651,17 @@ class SettingPredrag(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -1734,17 +1746,17 @@ class SettingCyrus(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -1782,7 +1794,7 @@ class SettingCyrus(Screen):
             print(('downxmlpage get failed: ', str(e)))
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         global set
@@ -1856,7 +1868,7 @@ class tvInstall(Screen):
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Download'))
-        self["key_blue"] = Button(_(''))
+        self["key_blue"] = Button('')
         # self['key_yellow'].hide()
         self['key_blue'].hide()
         self['actions'] = ActionMap(['SetupActions',  'ColorActions'], {'ok': self.message,
@@ -1870,7 +1882,7 @@ class tvInstall(Screen):
         showlist(self.names, self['text'])
 
     def message(self):
-        self.session.openWithCallback(self.selclicked, tvMessageBox,(_("Do you want to install?")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.selclicked, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
     def selclicked(self, result):
         if result:
@@ -1910,7 +1922,7 @@ class tvInstall(Screen):
                     self['info'].setText(_('Installation done !!!'))
                 elif extension == "deb":
                     if not os.path.exists('/var/lib/dpkg/status'):
-                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Installation canceled!'))
                     else:
                         self.timer = eTimer()
@@ -1920,7 +1932,7 @@ class tvInstall(Screen):
                         self['info'].setText(_('Installation done !!!'))
                 elif extension == "ipk":
                     if os.path.exists('/var/lib/dpkg/status'):
-                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Installation canceled!'))
                     else:
                         self.timer = eTimer()
@@ -1981,7 +1993,7 @@ class tvInstall(Screen):
                         cmd = ["wget %s -c '%s' -O '%s' > /dev/null" % (useragent, self.com, self.dest)]
                         self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
-                        self.mbox = self.session.open(tvMessageBox, _('Download file in /tmp successful!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download file in /tmp successful!!'))
                 else:
                     self['info'].setText(_('Download failed!') + self.dom + _('... Not supported'))
@@ -1992,7 +2004,7 @@ class tvInstall(Screen):
 
     def reloadSettings2(self):
         ReloadBouquet()
-        self.mbox = self.session.open(tvMessageBox, _('Setting Installed!'), tvMessageBox.TYPE_INFO, timeout=5)
+        self.session.open(MessageBox, _('Setting Installed!'), MessageBox.TYPE_INFO, timeout=5)
         self['info'].setText(_('Installation done !!!'))
 
     def startTimer(self):
@@ -2000,7 +2012,7 @@ class tvInstall(Screen):
         pass
 
     def okDown(self):
-        self.session.openWithCallback(self.okDownload, tvMessageBox,(_("Do you want to Download?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okDownload, MessageBox,(_("Do you want to Download?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
     def okDownload(self, result):
         self['info'].setText(_('... please wait'))
@@ -2029,14 +2041,14 @@ class tvInstall(Screen):
                         # self.dest = '/tmp/' + self.downplug
                 if extension == "deb":
                     if not os.path.exists('/var/lib/dpkg/status'):
-                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                         return
                     # else:
                         # dest = '/tmp/' + self.downplug
                 elif self.com.endswith(".ipk"):
                     if os.path.exists('/var/lib/dpkg/status'):
-                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                         return
                     # else:
@@ -2078,7 +2090,7 @@ class tvInstall(Screen):
 
     def ipkinst(self, dest):
         if self.dest:
-            self.session.openWithCallback(self.ipkinst2, tvMessageBox, (_('Do you really want to install the selected Addon?') + '\n' + self.downplug), tvMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.ipkinst2, MessageBox, (_('Do you really want to install the selected Addon?') + '\n' + self.downplug), MessageBox.TYPE_YESNO)
 
     def ipkinst2(self, answer ):
         if answer is True:
@@ -2093,7 +2105,7 @@ class tvInstall(Screen):
                         self.session.open(tvConsole, _('IPK Local Installation') % dom,  cmdlist =[cmd0, 'sleep 5'], closeOnSuccess =False)
 
                     else:
-                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                 elif self.dest.find('.tar.gz') != -1:
                     self.dest = self.dest[0]
                     print('self.dest tar: ', self.dest)
@@ -2107,7 +2119,7 @@ class tvInstall(Screen):
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";dpkg --force-all -i ' + self.dest + ' > /dev/null 2>&1' #+ dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
                         self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0], closeOnSuccess =False)
                     else:
-                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                 elif self.dest.find('.zip') != -1:
                     if 'picon' in self.dest.lower():
                         self.dest = self.dest[0]
@@ -2160,10 +2172,10 @@ class tvInstall(Screen):
                         self.session.open(tvConsole, _('SETTING - install: %s') % self.dest, [cmd], closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                     else:
-                        self.mbox = self.session.open(tvMessageBox, _('Download file in /tmp successful!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download file in /tmp successful!!'))
                 else:
-                    self.session.open(tvMessageBox, _('Unknow Error!'), tvMessageBox.TYPE_ERROR, timeout=10)
+                    self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
             except:
                 self.delFile(self.dest)
                 self['info'].text = _('File: Installation failed!')
@@ -2266,6 +2278,7 @@ class tvConsole(Screen):
 
     # def dataAvail(self, str):
         # self['text'].appendText(str)
+
     def dataAvail(self, data):
         if six.PY3:
             data = data.decode("utf-8")
@@ -2361,7 +2374,7 @@ class tvIPK(Screen):
         self.sel = self['ipkglisttmp'].getCurrent()
         if self.sel:
             self.sel = self.sel[0]
-            self.session.openWithCallback(self.ipkinst2, tvMessageBox, (_('Do you really want to install the selected Addon?')+ '\n' + self.sel), tvMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.ipkinst2, MessageBox, (_('Do you really want to install the selected Addon?')+ '\n' + self.sel), MessageBox.TYPE_YESNO)
 
     def ipkinst2(self, answer):
         if answer is True:
@@ -2383,7 +2396,7 @@ class tvIPK(Screen):
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";dpkg --force-all -i ' + self.dest #+ ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
                         self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0], closeOnSuccess =False)
                     else:
-                        self.mbox = self.session.open(tvMessageBox, _('Unknow Image!'), tvMessageBox.TYPE_INFO, timeout=5)
+                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                 elif self.sel.find('.zip') != -1:
                     if 'picon' in self.sel.lower():
                         self.timer = eTimer()
@@ -2433,7 +2446,7 @@ class tvIPK(Screen):
 
 
                 else:
-                    self.session.open(tvMessageBox, _('Unknow Error!'), tvMessageBox.TYPE_ERROR, timeout=10)
+                    self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
             except:
                 self.delFile(self.dest)
                 self['info1'].text = _('File: %s\nInstallation failed!') % self.dest
@@ -2447,7 +2460,7 @@ class tvIPK(Screen):
         self.sel = self['ipkglisttmp'].getCurrent()
         if self.sel:
             self.sel = self.sel[0]
-            self.session.openWithCallback(self.msgipkrmv2, tvMessageBox, (_('Do you really want to remove selected?')+ '\n' + self.sel), tvMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.msgipkrmv2, MessageBox, (_('Do you really want to remove selected?')+ '\n' + self.sel), MessageBox.TYPE_YESNO)
 
     def finished(self, result):
         return
@@ -2489,7 +2502,7 @@ class tvUpdate(Screen):
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Restart'))
-        self["key_blue"] = Button(_(''))
+        self["key_blue"] = Button('')
         self['key_blue'].hide()
         self['info'] = Label('')
         self['pth'] = Label('')
@@ -2548,11 +2561,11 @@ class tvUpdate(Screen):
             self['pth'].setText('No updates available!')
 
         self.timer = eTimer()
-        self.timer.start(1000, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
+        self.timer.start(1000, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'DirectionActions', 'ColorActions'], {'ok': self.close,
          'cancel': self.close,
@@ -2566,13 +2579,13 @@ class tvUpdate(Screen):
         if config.plugins.tvaddon.autoupd.value == False :
             return
         else:
-            self.session.openWithCallback(self.runupdate, tvMessageBox, (_('New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!')), tvMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.runupdate, MessageBox, (_('New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!')), MessageBox.TYPE_YESNO)
 
     def msgupdate(self):
         if self.Update == False:
             return
         else:
-            self.session.openWithCallback(self.runupdate, tvMessageBox, (_('Do you want update plugin ?\nPlease Reboot GUI after install!')), tvMessageBox.TYPE_YESNO)
+            self.session.openWithCallback(self.runupdate, MessageBox, (_('Do you want update plugin ?\nPlease Reboot GUI after install!')), MessageBox.TYPE_YESNO)
 
     def runupdate(self, result):
         if result:
@@ -2590,7 +2603,7 @@ class tvUpdate(Screen):
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback =self.msgipkrst1, closeOnSuccess =False)
 
     def msgipkrst1(self):
-        self.session.openWithCallback(self.ipkrestrt, tvMessageBox, (_('Do you want restart enigma2 ?')), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.ipkrestrt, MessageBox, (_('Do you want restart enigma2 ?')), MessageBox.TYPE_YESNO)
 
     def ipkrestrt(self, result):
         if result:
@@ -2618,7 +2631,7 @@ class tvRemove(Screen):
         self['key_green'] = Button(_('Uninstall'))
         self['key_yellow'] = Button(_('Restart'))
         self['key_red'] = Button(_('Back'))
-        self["key_blue"] = Button(_(''))
+        self["key_blue"] = Button('')
         self['key_blue'].hide()
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -2676,7 +2689,7 @@ class tvRemove(Screen):
         self.openList()
 
     def message1(self):
-        self.session.openWithCallback(self.callMyMsg1, tvMessageBox,_("Do you want to remove?"), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.callMyMsg1, MessageBox,_("Do you want to remove?"), MessageBox.TYPE_YESNO)
 
     def msgipkrst(self):
         self.session.openWithCallback(self.ipkrestrt, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
@@ -2693,7 +2706,7 @@ class tvRemove(Screen):
         else:
             self.close()
 
-class tvMessageBox(Screen):
+class MessageBox(Screen):
     TYPE_YESNO = 0
     TYPE_INFO = 1
     TYPE_WARNING = 2
@@ -2701,7 +2714,7 @@ class tvMessageBox(Screen):
     TYPE_MESSAGE = 4
     def __init__(self, session, text, type = TYPE_YESNO, timeout = -1, close_on_any_key = False, default = True, enable_input = True, msgBoxID = None, picon = None, simple = False, list = [], timeout_default = None):
         self.session = session
-        skin = skin_path + 'tvMessageBox.xml'
+        skin = skin_path + 'MessageBox.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('MessageBox')
@@ -2870,7 +2883,7 @@ class tvConfig(Screen, ConfigListScreen):
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Save'))
         self['key_red'] = Button(_('Back'))
-        self["key_blue"] = Button(_(''))
+        self["key_blue"] = Button('')
         self['key_blue'].hide()
         self['title'] = Label(_(title_plug))
         self["setupActions"] = ActionMap(['OkCancelActions', 'DirectionActions', 'ColorActions', 'VirtualKeyboardActions', 'ActiveCodeActions'], {'cancel': self.extnok,
@@ -2944,10 +2957,10 @@ class tvConfig(Screen, ConfigListScreen):
 
     def msgok(self):
         if os.path.exists(config.plugins.tvaddon.ipkpth.value) is False:
-            self.mbox = self.session.open(MessageBox, _('Device not detected!'), MessageBox.TYPE_INFO, timeout=4)
+            self.session.open(MessageBox, _('Device not detected!'), MessageBox.TYPE_INFO, timeout=4)
         for x in self["config"].list:
             x[1].save()
-        self.mbox = self.session.open(MessageBox, _('Successfully saved configuration'), MessageBox.TYPE_INFO, timeout=4)
+        self.session.open(MessageBox, _('Successfully saved configuration'), MessageBox.TYPE_INFO, timeout=4)
         self.close(True)
 
     def Ok_edit(self):
@@ -3006,7 +3019,7 @@ class tvConfig(Screen, ConfigListScreen):
 
     def extnok(self):
         if self['config'].isChanged():
-            self.session.openWithCallback(self.cancelConfirm, tvMessageBox, _('Really close without saving the settings?'))
+            self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving the settings?'))
         else:
             self.close()
 
@@ -3028,7 +3041,7 @@ class SelectPicons(Screen):
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Remove'))
-        self["key_blue"] = Button(_(''))
+        self["key_blue"] = Button('')
         # self['key_yellow'].hide()
         self['key_blue'].hide()
         self['progress'] = ProgressBar()
@@ -3078,7 +3091,7 @@ class SelectPicons(Screen):
             return
 
     def remove(self):
-        self.session.openWithCallback(self.okRemove,tvMessageBox,(_("Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait .." % mmkpicon)), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okRemove,MessageBox,(_("Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait .." % mmkpicon)), MessageBox.TYPE_YESNO)
 
     def okRemove(self, result):
         if result:
@@ -3091,7 +3104,7 @@ class SelectPicons(Screen):
                     os.remove(f)
                 except OSError as e:
                     print("Error: %s : %s" % (f, e.strerror))
-        self.mbox = self.session.open(MessageBox, _('%s it has been cleaned'% mmkpicon), MessageBox.TYPE_INFO, timeout = 4)
+        self.session.open(MessageBox, _('%s it has been cleaned'% mmkpicon), MessageBox.TYPE_INFO, timeout = 4)
         self['info'].setText(_('Please select ...'))
 
 class MMarkFolderScreen(Screen):
@@ -3115,19 +3128,19 @@ class MMarkFolderScreen(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.url = url
         self.getfreespace()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -3208,8 +3221,8 @@ class MMarkPiconsScreen(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.getfreespace()
@@ -3218,11 +3231,11 @@ class MMarkPiconsScreen(Screen):
         self.url = url
         self.name = name
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -3273,7 +3286,7 @@ class MMarkPiconsScreen(Screen):
             self.downloading = False
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -3347,8 +3360,8 @@ class mainkodilite(Screen):
         self['info'].setText(_('Please select ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['progress'] = ProgressBar()
@@ -3413,17 +3426,17 @@ class plugins(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -3461,7 +3474,7 @@ class plugins(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -3536,17 +3549,17 @@ class plugins_adult(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun1,
@@ -3607,7 +3620,7 @@ class plugins_adult(Screen):
             self.close()
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -3682,17 +3695,17 @@ class script(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -3731,7 +3744,7 @@ class script(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -3806,17 +3819,17 @@ class repository(Screen):
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_(''))
-        self["key_blue"] = Button(_(''))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        self.timer.start(500, 1)
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
          'green': self.okRun,
@@ -3855,7 +3868,7 @@ class repository(Screen):
             pass
 
     def okRun(self):
-        self.session.openWithCallback(self.okInstall, tvMessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), tvMessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
     def okInstall(self, result):
         self['info'].setText(_('... please wait'))
@@ -3988,19 +4001,28 @@ def terrestrial_rest():
                 os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
                 os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
         # if not os.path.exists('/var/lib/dpkg/status'):
-        lcnstart()
+        # lcnstart()
+        tvDailySetting.Lcn()
 
+# def lcnstart():
+    # print(' lcnstart ')
+    # if os.path.exists('/etc/enigma2/lcndb'):
+        # lcn = LCN()
+        # lcn.read()
+        # if len(lcn.lcnlist) > 0:
+            # lcn.writeBouquet()
+            # # lcn.reloadBouquets()
+            # ReloadBouquet()
+    # return
 def lcnstart():
-    print(' lcnstart ')
     if os.path.exists('/etc/enigma2/lcndb'):
         lcn = LCN()
         lcn.read()
         if len(lcn.lcnlist) > 0:
             lcn.writeBouquet()
-            # lcn.reloadBouquets()
-            ReloadBouquet()
-    return
-
+            lcn.reloadBouquets()
+            self.session.open(MessageBox, _('Sorting Lcn Completed'), MessageBox.TYPE_INFO, timeout=5)
+                
 def StartSavingTerrestrialChannels():
     def ForceSearchBouquetTerrestrial():
         for file in sorted(glob.glob("/etc/enigma2/*.tv")):
