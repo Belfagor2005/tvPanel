@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     29/09/2021     #
+#     29/10/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -59,7 +59,6 @@ import glob
 import six
 import subprocess
 from sys import version_info
-# from . import Lcn
 from .Lcn import *
 global skin_path, mmkpicon, set, regexC, regexL, category
 currversion      = '2.0.6'
@@ -250,7 +249,6 @@ host_mov = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=
 # host_blk = base64.b64decode(pblk).decode('utf-8')
 # host_mov = base64.b64decode(ptmov).decode('utf-8')
 HD = getDesktop(0).size()
-# plugin_path = os.path.dirname(sys.modules[__name__].__file__)
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
 skin_path = plugin_path
 ico_path = plugin_path + '/logo.png'
@@ -262,11 +260,8 @@ pngx = res_plugin_path + 'pics/plugins.png'
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC = '<plugins cont="(.*?)"'
 regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
-
 #======================================================config
-
 os.system('rm -fr ' + plugin_path + '/temp/*')
-
 if mmkpicon.endswith('/'):
     mmkpicon = mmkpicon[:-1]
 if not os.path.exists(mmkpicon):
@@ -274,7 +269,6 @@ if not os.path.exists(mmkpicon):
         os.makedirs(mmkpicon)
     except OSError as e:
         print(('Error creating directory %s:\n%s') % (mmkpicon, str(e)))
-
 print('****************************************path Picons: ', mmkpicon)
 # data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
 # upd_path = base64.b64decode(data_upd)
@@ -282,18 +276,15 @@ upd_path = b'http://corvone.altervista.org/tvPanel/'
 # data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
 # xml_path = base64.b64decode(data_xml)
 xml_path = b'http://patbuweb.com/xml/'
-
 res_plugin_path = plugin_path + '/res/'
 pngl = res_plugin_path + 'pics/plugin.png'
 pngs = res_plugin_path + 'pics/setting.png'
-
 if HD.width() > 1280:
     skin_path = res_plugin_path + 'skins/fhd/'
 else:
     skin_path = res_plugin_path + 'skins/hd/'
 if os.path.exists('/var/lib/dpkg/status'):
     skin_path = skin_path + 'dreamOs/'
-
 
 Panel_list = [
  _('LULULLA CORNER'),
@@ -413,12 +404,6 @@ class Hometv(Screen):
         elif os.path.exists('/usr/lib/enigma2/python/Plugins/PLi/tvManager'):
             self["key_blue"].show()
             self['key_blue'] = Label(_('tvManager'))
-        # elif:
-            # self["key_blue"].show()
-            # self['key_blue'] = Label(_('checklib'))
-        # else:
-            # self['key_blue'].hide()
-
         global link
         self.dmlink = ''
         link =''
@@ -525,12 +510,12 @@ class Hometv(Screen):
         self.session.open(tvRemove)
 
     def tvManager(self):
-        if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions'):
+        if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
             from Plugins.Extensions.tvManager.plugin import tvManager
             self.session.openWithCallback(self.close, tvManager)
-        elif os.path.exists('/usr/lib/enigma2/python/Plugins/PLi'):
-            from Plugins.PLi.tvManager.plugin import tvManager
-            self.session.openWithCallback(self.close, tvManager)
+        # elif os.path.exists('/usr/lib/enigma2/python/Plugins/PLi'):
+            # from Plugins.PLi.tvManager.plugin import tvManager
+            # self.session.openWithCallback(self.close, tvManager)
         # elif dependencies == False:
             # self.check_dependencies()
         else:
@@ -614,7 +599,6 @@ class Hometv(Screen):
                 os.system('sleep 3')
                 # self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], finishedCallback = self.msgipkrst1) #, closeOnSuccess =False)
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], closeOnSuccess =False)
-
             else:
                 com = link
                 dom = 'New Version ' + self.version
@@ -752,15 +736,6 @@ class tvDailySetting(Screen):
     def Lcn(self):
         self.session.open(MessageBox, _('Reorder Terrestrial channels with Lcn rules'), MessageBox.TYPE_INFO, timeout=5)
         lcnstart()
-        
-    # def Lcn(self):
-        # if self.LcnOn:
-            # lcn = LCN()
-            # lcn.read()
-            # if len(lcn.lcnlist) > 0:
-                # lcn.writeBouquet()
-                # lcn.reloadBouquets()
-                # self.session.open(MessageBox, _('Sorting Lcn Completed'), MessageBox.TYPE_INFO, timeout=5)
                 
     def closerm(self):
         self.close()
@@ -952,7 +927,6 @@ class SettingVhan(Screen):
                     for root, dirs, files in os.walk(fdest1):
                         for name in dirs:
                             self.namel = name
-                            
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
@@ -1242,7 +1216,6 @@ class SettingManutek(Screen):
         r = data
         print('rrrrrrrr ', r)
         self.names  = []
-
         self.urls   = []
         try:
             regex   = 'href=".*?file=(.+?).zip">'
@@ -2451,8 +2424,6 @@ class tvIPK(Screen):
                         self.timer.start(500, True)
                         # self.session.open(tvConsole, _('SETTING - install: %s') % self.dest, cmdlist =[cmd])
                         self.session.open(tvConsole, _('SETTING - install: %s') % self.dest, cmdlist =[cmd],closeOnSuccess =False)
-
-
                 else:
                     self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
             except:
@@ -3660,7 +3631,6 @@ class plugins_adult(Screen):
                 cmd = "unzip -o -q '%s' -d '%s'" %(self.dest, self.fdest)
                 # print("debug: cmd:",type(cmd))
                 self.session.open(tvConsole, _(title), cmdlist =[str(cmd)], closeOnSuccess =False)
-
             self['info'].setText(_('Please select ...'))
             self['progresstext'].text = ''
             self.progclear = 0
@@ -3929,11 +3899,15 @@ class repository(Screen):
     def rst1(self):
         pass
 
-
 def main(session, **kwargs):
     if checkInternet():
+        try:
+           from Plugins.Extensions.tvaddon.Update import upd_done
+           upd_done()
+        except:       
+               pass
         # if os.path.exists('/var/lib/dpkg/status'):
-            session.open(Hometv)
+        session.open(Hometv)
         # else:
             # session.open(logoStrt)
     else:
@@ -3946,7 +3920,6 @@ def menu(menuid, **kwargs):
           'TiVuStream Panel',
           44)]
     return []
-
 
 def cfgmain(menuid):
     if menuid == 'mainmenu':
@@ -4010,18 +3983,7 @@ def terrestrial_rest():
                 os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
         if os.path.exists('/etc/enigma2/lcndb'):
             lcnstart()
-        # tvDailySetting.Lcn()
 
-# def lcnstart():
-    # print(' lcnstart ')
-    # if os.path.exists('/etc/enigma2/lcndb'):
-        # lcn = LCN()
-        # lcn.read()
-        # if len(lcn.lcnlist) > 0:
-            # lcn.writeBouquet()
-            # # lcn.reloadBouquets()
-            # ReloadBouquet()
-    # return
 def lcnstart():
     if os.path.exists('/etc/enigma2/lcndb'):
         lcn = LCN()
