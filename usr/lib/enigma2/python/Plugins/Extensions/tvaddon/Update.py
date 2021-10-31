@@ -17,4 +17,3 @@ def upd_last(fplug):
     print( "cmd A =", cmd)
     os.system(cmd)
     pass
-
