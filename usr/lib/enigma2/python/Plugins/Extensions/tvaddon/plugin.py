@@ -11,7 +11,8 @@ from . import _
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
-from Components.HTMLComponent import *
+# from Components.HTMLComponent import *
+from Components.HTMLComponent import HTMLComponent
 from Components.Input import Input
 from Components.Label import Label
 from Components.MenuList import MenuList
