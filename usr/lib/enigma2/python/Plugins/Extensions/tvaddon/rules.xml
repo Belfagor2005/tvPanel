@@ -1,9 +1,9 @@
+<!-- Rules created on 02/08/2018 by Diamondear -->
 <rules>
-<!-- 	
 	<ruleset name="Default">
+		<!-- no "renumber" rules... keep the exact order from original lcn -->
 		<rule type="marker" position="1001">Duplicati</rule>				
-	</ruleset>	 
-	-->
+	</ruleset>	
 	<ruleset name="Italy">		
 		<rule type="marker" position="0">Intrattenimento</rule>
 		<rule type="marker" position="10">Emittenti Locali</rule>
@@ -29,8 +29,9 @@
 		<rule type="marker" position="417">Europa7</rule>		
 		<rule type="marker" position="455">Canali Sky</rule>		
 		<rule type="marker" position="500">Alta Definizione</rule>	
-		<rule type="marker" position="601">Emittenti Regionali</rule>							
-		<rule type="marker" position="800">Servizi On Demand</rule>		
+		<rule type="marker" position="569">Radio Tv</rule>
+		<rule type="marker" position="800">Rai Tre Regione</rule>			
+		<rule type="marker" position="830">Servizi On Demand</rule>		
 		<rule type="marker" position="1001">Duplicati</rule>				
 	</ruleset>		
 </rules>
