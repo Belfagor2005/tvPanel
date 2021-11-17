@@ -15,13 +15,12 @@ import sys
 import re
 import shutil
 import xml.etree.ElementTree
-try:
-    from enigma import eDVBDB
-except ImportError:
-    eDVBDB = None
+
 plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
 rules            = plugin_path + '/rules.xml'
 
+
+        
 def Bouquet():
     for file in os.listdir('/etc/enigma2/'):
         if re.search('^userbouquet.*.tv', file):
@@ -138,60 +137,6 @@ class LCN:
         self.markers.sort(key=lambda z: int(z[0]))
         return
         
-    # def read(self):
-        # self.readE2Services()
-        # Provider = ''
-        # try:
-            # f = open(self.dbfile)
-        # except Exception as e:
-            # print(str(e))
-            # return
-        # while True:
-            # line = f.readline()
-            # if line == '':
-                # break
-            # line = line.strip()
-            # if len(line) != 38:
-                # continue
-            # tmp = line.split(':')
-            
-            # # #edit lululla    
-            # # # if line == 'p:\n':
-                # # # print('is p: ', line)
-                # # # continue
-            # # # if line == 'end':
-                # # # break
-               
-            # # if line.lower().find('p:') != -1:
-                # # try:
-                    # # Provider = line.split('p:')[1].split(',')[0]
-                    # # print('provider:, ', Provider)
-                    # # # StateProv = True                    
-                # # except:
-                    # # try:
-                        # # Provider = line.split('p:')[1]
-                        # # print('provider a:, ', Provider)
-                        # # # StateProv = True
-                    # # except:
-                        # # pass
-            # # if line.lower().find('p:') == -1:    
-                # # pass                                    
-            # # #end edit lululla               
-            
-            # if len(tmp) != 6:
-                # continue
-            # self.addLcnToList(int(tmp[0], 16), int(tmp[1], 16), int(tmp[2], 16), int(tmp[3], 16), int(tmp[4]), int(tmp[5]))
-            
-
-        # if self.root is not None:
-            # for x in self.root:
-                # if x.tag == 'rule':
-                    # if x.get('type') == 'marker':
-                        # self.addMarker(int(x.get('position')), x.text)
-
-        # self.markers.sort(key=lambda z: int(z[0]))
-        # return
-
     def readE2Services(self):
         self.e2services = []
         refstr = '%s ORDER BY name' % self.service_types_tv
@@ -277,11 +222,14 @@ class LCN:
         f.close()
         self.ClearDoubleMarker(self.bouquetfile)
 
-    def reloadBouquets(self):
-        # eDVBDB.getInstance().reloadBouquets()
-        if eDVBDB:
+
+    def ReloadBouquet(self):
+        print('\n----Reloading bouquets----')
+        try:
+            from enigma import eDVBDB
             eDVBDB.getInstance().reloadBouquets()
-            print('bouquets reloaded...')
-        else:
+            print('bouquets reloaded...')        
+        except ImportError:
+            eDVBDB = None
             os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
             print('bouquets reloaded...')

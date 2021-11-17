@@ -1,11 +1,12 @@
-import os, re, six
+import os, re, sys
 from twisted.web.client import downloadPage
+PY3 = sys.version_info.major >= 3
 print("Update.py")
 def upd_done():        
     print( "In upd_done")
     xfile ='http://patbuweb.com/tvPanel/tvaddon.tar'
     print('xfile: ', xfile)
-    if six.PY3:
+    if PY3:
         xfile = b"http://patbuweb.com/tvPanel/tvaddon.tar"
     print("Update.py not in PY3")
     fdest = "/tmp/tvaddon.tar"
@@ -17,3 +18,4 @@ def upd_last(fplug):
     print( "cmd A =", cmd)
     os.system(cmd)
     pass
+
