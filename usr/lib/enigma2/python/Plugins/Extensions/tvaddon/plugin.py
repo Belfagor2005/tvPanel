@@ -228,7 +228,7 @@ xml_path = b'http://patbuweb.com/xml/'
 res_plugin_path = plugin_path + '/res/'
 pngl = res_plugin_path + 'pics/plugin.png'
 pngs = res_plugin_path + 'pics/setting.png'
-if isFHD:
+if isFHD():
     skin_path = res_plugin_path + 'skins/fhd/'
 else:
     skin_path = res_plugin_path + 'skins/hd/'
@@ -289,7 +289,7 @@ class tvList(MenuList):
         self.l.setFont(8, gFont('Regular', 36))
         self.l.setFont(9, gFont('Regular', 40))
         # if HD.width() > 1280:
-        if isFHD:
+        if isFHD():
             self.l.setItemHeight(50)
         else:
             self.l.setItemHeight(50)
@@ -297,7 +297,7 @@ class tvList(MenuList):
 def DailyListEntry(name, idx):
     res = [name]
     # if HD.width() > 1280:
-    if isFHD:
+    if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=6, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -308,7 +308,7 @@ def DailyListEntry(name, idx):
 
 def oneListEntry(name):
     res = [name]
-    if isFHD:
+    if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =6, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:

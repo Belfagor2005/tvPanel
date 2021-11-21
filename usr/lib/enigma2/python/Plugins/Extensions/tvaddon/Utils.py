@@ -5,6 +5,7 @@
 import sys
 import datetime
 import os
+import base64
 # from sys import version_info
 # pythonFull = float(str(sys.version_info.major) + "." + str(sys.version_info.minor))
 # pythonVer = sys.version_info.major
@@ -31,15 +32,17 @@ def getDesktopSize():
 def isUHD():
     desktopSize = getDesktopSize()
     return desktopSize[0] == 3840
-    
+
 def isFHD():
     desktopSize = getDesktopSize()
-    return desktopSize[0] == 1920
+    # return desktopSize[0] == 1920
+    return desktopSize[0] > 1280   
 
 def isHD():
     desktopSize = getDesktopSize()
     return desktopSize[0] >= 1280 and desktopSize[0] < 1920
-    
+
+
 def DreamOS():
     if os.path.exists('/var/lib/dpkg/status'):
         return DreamOS
@@ -77,6 +80,16 @@ def downloadFile(url, target):
     except:
         print("download error")
         return False
+
+def getserviceinfo(sref):## this def returns the current playing service name and stream_url from give sref
+    try:
+        from ServiceReference import ServiceReference
+        p=ServiceReference(sref)
+        servicename=str(p.getServiceName())
+        serviceurl=str(p.getPath())
+        return servicename, serviceurl
+    except:
+        return None,None
 
 def sortedDictKeys(adict):
     keys = list(adict.keys())
@@ -120,6 +133,19 @@ def freespace():
     except:
         return ''
 
+def b64encoder(source):
+    if PY3:
+        source = source.encode('utf-8')
+    content = base64.b64encode(source).decode('utf-8')
+    return content
+
+def b64decoder(source):
+    if PY3:
+        # source = source.decode('utf-8')
+        source = base64.b64decode(source).decode('utf-8')
+    content = source
+    return content
+
 def __createdir(list):
     dir = ''
     for line in list[1:].split('/'):
@@ -130,32 +156,31 @@ def __createdir(list):
             except:
                 print('Mkdir Failed', dir)
 
-def is_tmdb():
-    try:
-        from Plugins.Extensions.tmdb import tmdb
-        is_tmdb = True
-    except Exception:
-        is_tmdb = False
-        
-def is_imdb():
-    try:
-        from Plugins.Extensions.IMDb.plugin import main as imdb
-        is_imdb = True
-    except Exception:
-        is_imdb = False
+try:
+	from Plugins.Extensions.tmdb import tmdb
+	is_tmdb = True
+except Exception:
+	is_tmdb = False
+
+try:
+	from Plugins.Extensions.IMDb.plugin import main as imdb
+	is_imdb = True
+except Exception:
+	is_imdb = False
+    
 
 def substr(data,start,end):
     i1 = data.find(start)
     i2 = data.find(end,i1)
     return data[i1:i2]
 
-def uniq(inlist): 
+def uniq(inlist):
     uniques = []
     for item in inlist:
       if item not in uniques:
         uniques.append(item)
-    return uniques	
-    
+    return uniques
+
 def ReloadBouquets():
     # global set
     print('\n----Reloading bouquets----\n')
@@ -165,7 +190,7 @@ def ReloadBouquets():
     try:
         from enigma import eDVBDB
         eDVBDB.getInstance().reloadBouquets()
-        print('bouquets reloaded...')        
+        print('bouquets reloaded...')
     except ImportError:
         eDVBDB = None
         os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
@@ -174,7 +199,7 @@ def ReloadBouquets():
 def deletetmp():
     os.system('rm -rf /tmp/unzipped;rm -f /tmp/*.ipk;rm -f /tmp/*.tar;rm -f /tmp/*.zip;rm -f /tmp/*.tar.gz;rm -f /tmp/*.tar.bz2;rm -f /tmp/*.tar.tbz2;rm -f /tmp/*.tar.tbz')
     return
-    
+
 def OnclearMem():
     try:
         os.system("sync")
@@ -247,19 +272,21 @@ def ConverDateBack(data):
     return year + month + day
 
 def isExtEplayer3Available():
-        return os.path.isfile(eEnv.resolve('$bindir/exteplayer3'))
+    from enigma import eEnv
+    return os.path.isfile(eEnv.resolve('$bindir/exteplayer3'))
 
 def isStreamlinkAvailable():
-        return os.path.isdir(eEnv.resolve('/usr/lib/python2.7/site-packages/streamlink'))
+    from enigma import eEnv
+    return os.path.isdir(eEnv.resolve('/usr/lib/python2.7/site-packages/streamlink'))
 
-# def Controlexteplayer():  
+# def Controlexteplayer():
     # exteplayer = False
     # if os.path.exists("/usr/bin/exteplayer3") or os.path.exists("/bin/exteplayer3")  or os.path.exists("exteplayer3"):
-      # exteplayer = True  
+      # exteplayer = True
     # return exteplayer
 
-# if not Controlexteplayer(): 
-  # os.system("opkg update") 
+# if not Controlexteplayer():
+  # os.system("opkg update")
   # os.popen("opkg list | grep exteplayer > /tmp/exteplayer")
   # if os.path.exists("/tmp/exteplayer"):
     # File = open("/tmp/exteplayer", 'r')
@@ -271,7 +298,7 @@ def isStreamlinkAvailable():
           # break
     # File.close()
     # os.system("rm -fr /tmp/exteplayer")
-    
+
 # PluginDescriptor:
 # WHERE_EXTENSIONSMENU = 0
 # WHERE_MAINMENU = 1
@@ -289,7 +316,7 @@ def isStreamlinkAvailable():
 # WHERE_AUDIOMENU = 13
 # WHERE_SOFTWAREMANAGER = 14
 # WHERE_CHANNEL_CONTEXT_MENU = 15
-    
+
 #========================getUrl
 from random import choice
 ListAgent = [
@@ -362,11 +389,11 @@ if PY3:
 		except:
 			   import ssl
 			   gcontext = ssl._create_unverified_context()
-			   response = urlopen(req, context=gcontext)	   
+			   response = urlopen(req, context=gcontext)
 			   link=response.read().decode(errors='ignore')
 			   response.close()
 			   return link
-			   
+
 	def getUrl2(url, referer):
 		req = Request(url)
 		req.add_header('User-Agent',RequestAgent())
@@ -379,7 +406,7 @@ if PY3:
 		except:
 			   import ssl
 			   gcontext = ssl._create_unverified_context()
-			   response = urlopen(req, context=gcontext)	   
+			   response = urlopen(req, context=gcontext)
 			   link=response.read().decode()
 			   response.close()
 			   return link
@@ -397,11 +424,11 @@ else:
 		except:
 			   import ssl
 			   gcontext = ssl._create_unverified_context()
-			   response = urlopen(req, context=gcontext) 
+			   response = urlopen(req, context=gcontext)
 			   link=response.read()
 			   response.close()
 			   return link
-		
+
 	def getUrl2(url, referer):
 		req = Request(url)
 		req.add_header('User-Agent',RequestAgent())
@@ -414,7 +441,7 @@ else:
 		except:
 			   import ssl
 			   gcontext = ssl._create_unverified_context()
-			   response = urlopen(req, context=gcontext)	   
+			   response = urlopen(req, context=gcontext)
 			   link=response.read()
 			   response.close()
 			   return link
@@ -437,7 +464,7 @@ def decodeUrl(text):
 	text = text.replace('%3F','?')
 	text = text.replace('%40','@')
 	return text
-    
+
 def decodeHtml(text):
     text = text.replace('&auml;','ä')
     text = text.replace('\u00e4','ä')
@@ -540,3 +567,100 @@ def decodeHtml(text):
 
     text = text.replace('&#8234;','')
     return text
+
+def charRemove(text):
+    char = ["1080p",
+             "2018",
+             "2019",
+             "2020",
+             "2021",
+             "2022"
+             "PF1",
+             "PF2",
+             "PF3",
+             "PF4",
+             "PF5",
+             "PF6",
+             "PF7",
+             "PF8",
+             "PF9",
+             "PF10",
+             "PF11",
+             "PF12",
+             "PF13",
+             "PF14",
+             "PF15",
+             "PF16",
+             "PF17",
+             "PF18",
+             "PF19",
+             "PF20",
+             "PF21",
+             "PF22",
+             "PF23",
+             "PF24",
+             "PF25",
+             "PF26",
+             "PF27",
+             "PF28",
+             "PF29",
+             "PF30"
+             "480p",
+             "4K",
+             "720p",
+             "ANIMAZIONE",
+             # "APR",
+             # "AVVENTURA",
+             "BIOGRAFICO",
+             "BDRip",
+             "BluRay",
+             "CINEMA",
+             # "COMMEDIA",
+             "DOCUMENTARIO",
+             "DRAMMATICO",
+             "FANTASCIENZA",
+             "FANTASY",
+             # "FEB",
+             # "GEN",
+             # "GIU",
+             "HDCAM",
+             "HDTC",
+             "HDTS",
+             "LD",
+             "MAFIA",
+             # "MAG",
+             "MARVEL",
+             "MD",
+             # "ORROR",
+             "NEW_AUDIO",
+             "POLIZ",
+             "R3",
+             "R6",
+             "SD",
+             "SENTIMENTALE",
+             "TC",
+             "TEEN",
+             "TELECINE",
+             "TELESYNC",
+             "THRILLER",
+             "Uncensored",
+             "V2",
+             "WEBDL",
+             "WEBRip",
+             "WEB",
+             "WESTERN",
+             "-",
+             "_",
+             ".",
+             "+",
+             "[",
+             "]"
+             ]
+
+    myreplace = text.lower()
+    for ch in char:
+        ch= ch.lower()
+        # if myreplace == ch:
+        myreplace = myreplace.replace(ch, "").replace("  ", " ").replace("   ", " ").strip()
+    return myreplace
+
