@@ -11,7 +11,7 @@ from . import _
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
-from Components.HTMLComponent import HTMLComponent
+# from Components.HTMLComponent import HTMLComponent
 from Components.Input import Input
 from Components.Label import Label
 from Components.MenuList import MenuList
@@ -59,7 +59,7 @@ import glob
 import six
 import subprocess
 from sys import version_info
-from Plugins.Extensions.tvaddon.Utils import *
+from Plugins.Extensions.tvaddon.res.lib.Utils import *
 from .Lcn import *
 global skin_path, mmkpicon, set, regexC, regexL, category
 currversion      = '2.0.7'
@@ -2491,6 +2491,12 @@ class tvRemove(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
+        self.container = eConsoleAppContainer()
+        # self.container.appClosed.append(self.runFinished)   
+        try:
+            self.container.appClosed.append(self.runFinished)
+        except:
+            self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
         self['text'] = tvList([])
         self['key_green'] = Button(_('Uninstall'))
         self['key_yellow'] = Button(_('Restart'))
@@ -2512,8 +2518,26 @@ class tvRemove(Screen):
         self.getfreespace()
         self.onLayoutFinish.append(self.openList)
 
+    def PluginDownloadBrowserClosed(self):
+        self.openList()
+
+    def runFinished(self, retval):
+        plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
+        self.openList()
+        self['pth'].setText(_('Addons Packege removed successfully.'))
+
+    def cancel(self):
+        if not self.container.running():
+            del self.container.appClosed[:]
+            del self.container
+            self.close()
+        else:
+            self.container.kill()
+            self['pth'].setText(_('Process Killed by user.Addon not removed completly!'))
+
     def openList(self):
         self.names = []
+        del self.names [:]
         path = ('/var/lib/opkg/info')
         if os.path.exists('/var/lib/dpkg/status'):
             path= ('/var/lib/dpkg/info')
@@ -2549,6 +2573,7 @@ class tvRemove(Screen):
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com],closeOnSuccess =False)
             else:
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess =False)
+            
     def getfreespace(self):
         fspace = freespace()
         self['info'].setText(fspace)
@@ -3611,11 +3636,11 @@ class repository(Screen):
         pass
 
 def main(session, **kwargs):
-    from Plugins.Extensions.tvaddon.Utils import checkInternet
+    from Plugins.Extensions.tvaddon.res.lib.Utils import checkInternet
     checkInternet()
     if checkInternet():
         try:
-            from Plugins.Extensions.tvaddon.Update import upd_done
+            from Plugins.Extensions.tvaddon.res.lib.Update import upd_done
             upd_done()
         except:       
             pass
