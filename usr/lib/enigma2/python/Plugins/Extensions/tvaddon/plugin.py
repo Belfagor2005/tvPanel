@@ -59,7 +59,7 @@ import glob
 import six
 import subprocess
 from sys import version_info
-from Plugins.Extensions.tvaddon.res.lib.Utils import *
+from Plugins.Extensions.tvaddon.Utils import *
 from .Lcn import *
 global skin_path, mmkpicon, set, regexC, regexL, category
 currversion      = '2.0.7'
