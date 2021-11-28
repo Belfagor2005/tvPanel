@@ -59,7 +59,10 @@ import glob
 import six
 import subprocess
 from sys import version_info
-from Plugins.Extensions.tvaddon.Utils import *
+try:
+    from Plugins.Extensions.tvaddon.Utils import *
+except:
+    from . import Utils
 from .Lcn import *
 global skin_path, mmkpicon, set, regexC, regexL, category
 currversion      = '2.0.7'
@@ -116,6 +119,16 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
+def getDesktopSize():
+    from enigma import getDesktop
+    s = getDesktop(0).size()
+    return (s.width(), s.height())
+
+def isFHD():
+    desktopSize = getDesktopSize()
+    return desktopSize[0] == 1920
+    
+    
 def checkMyFile(url):
     # FIXME urlopen will cause a full download of file and this != what you want //thank's @jbleyel
     return []
