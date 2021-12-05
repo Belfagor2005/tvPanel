@@ -120,6 +120,7 @@ def checkInternet():
         return False
 
 def check(url):
+    import socket
     try:
         response = checkStr(urlopen(url, None, 5))
         response.close()
@@ -130,6 +131,15 @@ def check(url):
         return False
     except socket.timeout:
         return False
+        
+def testWebConnection(host="www.google.com", port=80, timeout=3):
+	import socket
+	try:
+		socket.setdefaulttimeout(timeout)
+		socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+		return True
+	except Exception as ex:
+		return False
 
 def checkStr(txt):
     # convert variable to type str both in Python 2 and 3

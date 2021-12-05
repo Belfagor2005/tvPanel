@@ -577,7 +577,7 @@ class Categories(Screen):
         self['text'] = tvList([])
         self.icount = 0
         category = category
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -657,7 +657,7 @@ class tvDailySetting(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['info'] = Label('')
-        self['info'].setText(_('Getting the list, please wait ...'))
+        self['info'].setText(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button('')
@@ -774,7 +774,7 @@ class SettingVhan(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -897,7 +897,7 @@ class SettingVhan2(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1034,7 +1034,7 @@ class Milenka61(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1127,7 +1127,7 @@ class SettingManutek(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1232,7 +1232,7 @@ class SettingMorpheus(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1345,7 +1345,7 @@ class SettingCiefp(Screen):
         self['text'] = tvList([])
 
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1456,7 +1456,7 @@ class SettingBi58(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1550,7 +1550,7 @@ class SettingPredrag(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1645,7 +1645,7 @@ class SettingCyrus(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -2781,7 +2781,7 @@ class SelectPicons(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['info'] = Label('')
-        self['info'].setText(_('Please select ...'))
+        self['info'].setText(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Remove'))
@@ -2818,6 +2818,7 @@ class SelectPicons(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
+        self['info'].setText(_('Please select'))
         self.getfreespace()
 
     def okRun(self):
@@ -2862,7 +2863,7 @@ class MMarkFolderScreen(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
@@ -2954,7 +2955,7 @@ class MMarkPiconsScreen(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
@@ -3099,7 +3100,7 @@ class mainkodilite(Screen):
         self['pform'] = Label('')
         self['pform'].setText(_('linuxsat-support.com '))
         self['info'] = Label('')
-        self['info'].setText(_('Please select ...'))
+        self['info'].setText(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button('')
@@ -3131,6 +3132,7 @@ class mainkodilite(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
+        self['info'].setText(_('Please select'))
 
     def okRun(self):
         self.keyNumberGlobalCB(self['text'].getSelectedIndex())
@@ -3158,7 +3160,7 @@ class plugins(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3209,6 +3211,7 @@ class plugins(Screen):
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['info'].setText(_('Please select'))
             self.downloading = True
         except:
             pass
@@ -3277,7 +3280,7 @@ class plugins_adult(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3328,6 +3331,7 @@ class plugins_adult(Screen):
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['info'].setText(_('Please select'))
             self.downloading = True
         except:
             pass
@@ -3420,7 +3424,7 @@ class script(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3473,6 +3477,7 @@ class script(Screen):
                     self['info'].setText(_('no data ...'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['info'].setText(_('Please select'))
         except:
             pass
 
@@ -3540,7 +3545,7 @@ class repository(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3593,6 +3598,7 @@ class repository(Screen):
                     self['info'].setText(_('no data ...'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['info'].setText(_('Please select'))
         except:
             pass
 
@@ -3649,11 +3655,14 @@ class repository(Screen):
         pass
 
 def main(session, **kwargs):
-    from Plugins.Extensions.tvaddon.res.lib.Utils import checkInternet
+    try:
+        from Plugins.Extensions.tvaddon.Utils import checkInternet
+    except:
+        from . import Utils.checkInternet
     checkInternet()
     if checkInternet():
         try:
-            from Plugins.Extensions.tvaddon.res.lib.Update import upd_done
+            from Plugins.Extensions.tvaddon.Update import upd_done
             upd_done()
         except:       
             pass
