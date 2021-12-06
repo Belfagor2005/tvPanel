@@ -157,28 +157,47 @@ def checkMyFile(url):
     return
 
 def make_request(url):
+    # try:
+        # import requests
+        # link = requests.get(url, headers = {'User-Agent': 'Mozilla/5.0'}).text
+        # return link
+    # except ImportError:
+        # req = Request(url)
+        # req.add_header('User-Agent', 'TVS')
+        # response = urlopen(req, None, 7)
+        # link = response.read().decode('utf-8')
+        # response.close()
+        # return link
+    # except:
+        # e = URLError
+        # print('We failed to open "%s".' % url)
+        # if hasattr(e, 'code'):
+            # print('We failed with error code - %s.' % e.code)
+        # if hasattr(e, 'reason'):
+            # print('We failed to reach a server.')
+            # print('Reason: ', e.reason)
+        # return
+    # return
     try:
-        import requests
-        link = requests.get(url, headers = {'User-Agent': 'Mozilla/5.0'}).text
-        return link
-    except ImportError:
-        req = Request(url)
-        req.add_header('User-Agent', 'TVS')
-        response = urlopen(req, None, 7)
-        link = response.read().decode('utf-8')
-        response.close()
-        return link
+        if sys.version_info.major == 3:
+             import urllib.request as urllib2
+        elif sys.version_info.major == 2:
+             import urllib2
+        req = urllib2.Request(url)                      
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        r = urllib2.urlopen(req,None,15)
+        link = r.read()
+        r.close()
+        content = link
+        if str(type(content)).find('bytes') != -1:
+            try:
+                content = content.decode("utf-8")                
+            except Exception as e:                   
+                   print("Error: %s." % e)   
+        return content           
     except:
-        e = URLError
-        print('We failed to open "%s".' % url)
-        if hasattr(e, 'code'):
-            print('We failed with error code - %s.' % e.code)
-        if hasattr(e, 'reason'):
-            print('We failed to reach a server.')
-            print('Reason: ', e.reason)
-        return
-    return
-
+        return ''
+        
 def ReloadBouquet():
     global set
     print('\n----Reloading bouquets----')
@@ -3656,9 +3675,9 @@ class repository(Screen):
 
 def main(session, **kwargs):
     try:
-        from Plugins.Extensions.tvaddon.Utils import checkInternet
+        from Plugins.Extensions.tvaddon.Utils import *
     except:
-        from . import Utils.checkInternet
+        from . import Utils
     checkInternet()
     if checkInternet():
         try:
