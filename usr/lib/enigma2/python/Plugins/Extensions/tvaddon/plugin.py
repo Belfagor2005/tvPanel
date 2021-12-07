@@ -240,7 +240,8 @@ pngs = res_plugin_path + 'pics/setting.png'
 pngx = res_plugin_path + 'pics/plugins.png'
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC = '<plugins cont="(.*?)"'
-regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
+# regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
+regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
 #======================================================config
 os.system('rm -fr ' + plugin_path + '/temp/*')
 if mmkpicon.endswith('/'):
@@ -3211,10 +3212,13 @@ class plugins(Screen):
         data = make_request(self.url)
         if six.PY3:
             data = six.ensure_str(data)
+        print('data request', data)    
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL).findall(data)
+         #regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
+            match = re.compile(regexL,re.DOTALL).findall(data)
+            print('match regex', match)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url = 'http://patbuweb.com' + str(url)
@@ -3334,7 +3338,7 @@ class plugins_adult(Screen):
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL).findall(data)
+            match = re.compile(regexL,re.DOTALL).findall(data)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url ="http://patbuweb.com" + url
@@ -3478,7 +3482,7 @@ class script(Screen):
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL,).findall(data)
+            match = re.compile(regexL,re.DOTALL).findall(data)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url = "http://patbuweb.com" + url
@@ -3675,7 +3679,7 @@ class repository(Screen):
 
 def main(session, **kwargs):
     try:
-        from Plugins.Extensions.tvaddon.Utils import *
+        from Plugins.Extensions.tvaddon.Utils import checkInternet
     except:
         from . import Utils
     checkInternet()
