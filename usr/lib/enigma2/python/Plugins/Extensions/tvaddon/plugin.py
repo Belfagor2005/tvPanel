@@ -3,15 +3,15 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     01/12/2021     #
+#     11/11/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
 from . import _
-# from Components.HTMLComponent import HTMLComponent
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
+# from Components.HTMLComponent import HTMLComponent
 from Components.Input import Input
 from Components.Label import Label
 from Components.MenuList import MenuList
@@ -20,12 +20,12 @@ from Components.Pixmap import Pixmap
 from Components.PluginComponent import plugins
 from Components.PluginList import *
 from Components.ProgressBar import ProgressBar
-from Components.ScrollLabel import ScrollLabel
 from Components.SelectionList import SelectionList
+from Components.ScrollLabel import ScrollLabel
 from Components.Sources.List import List
 from Components.Sources.Progress import Progress
-from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
+from Components.Sources.Source import Source
 from Components.config import *
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
@@ -79,8 +79,8 @@ from six.moves.urllib.request import Request
 from six.moves.urllib.parse import urlparse
 from six.moves.urllib.parse import quote
 from six.moves.urllib.parse import urlencode
-# from six.moves.urllib.error import HTTPError
-# from six.moves.urllib.error import URLError
+from six.moves.urllib.error import HTTPError
+from six.moves.urllib.error import URLError
 from six.moves.urllib.request import urlretrieve
 
 try:
@@ -157,47 +157,28 @@ def checkMyFile(url):
     return
 
 def make_request(url):
-    # try:
-        # import requests
-        # link = requests.get(url, headers = {'User-Agent': 'Mozilla/5.0'}).text
-        # return link
-    # except ImportError:
-        # req = Request(url)
-        # req.add_header('User-Agent', 'TVS')
-        # response = urlopen(req, None, 7)
-        # link = response.read().decode('utf-8')
-        # response.close()
-        # return link
-    # except:
-        # e = URLError
-        # print('We failed to open "%s".' % url)
-        # if hasattr(e, 'code'):
-            # print('We failed with error code - %s.' % e.code)
-        # if hasattr(e, 'reason'):
-            # print('We failed to reach a server.')
-            # print('Reason: ', e.reason)
-        # return
-    # return
     try:
-        if sys.version_info.major == 3:
-             import urllib.request as urllib2
-        elif sys.version_info.major == 2:
-             import urllib2
-        req = urllib2.Request(url)                      
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        r = urllib2.urlopen(req,None,15)
-        link = r.read()
-        r.close()
-        content = link
-        if str(type(content)).find('bytes') != -1:
-            try:
-                content = content.decode("utf-8")                
-            except Exception as e:                   
-                   print("Error: %s." % e)   
-        return content           
+        import requests
+        link = requests.get(url, headers = {'User-Agent': 'Mozilla/5.0'}).text
+        return link
+    except ImportError:
+        req = Request(url)
+        req.add_header('User-Agent', 'TVS')
+        response = urlopen(req, None, 7)
+        link = response.read().decode('utf-8')
+        response.close()
+        return link
     except:
-        return ''
-        
+        e = URLError
+        print('We failed to open "%s".' % url)
+        if hasattr(e, 'code'):
+            print('We failed with error code - %s.' % e.code)
+        if hasattr(e, 'reason'):
+            print('We failed to reach a server.')
+            print('Reason: ', e.reason)
+        return
+    return
+
 def ReloadBouquet():
     global set
     print('\n----Reloading bouquets----')
@@ -240,8 +221,7 @@ pngs = res_plugin_path + 'pics/setting.png'
 pngx = res_plugin_path + 'pics/plugins.png'
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC = '<plugins cont="(.*?)"'
-# regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
-regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
+regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
 #======================================================config
 os.system('rm -fr ' + plugin_path + '/temp/*')
 if mmkpicon.endswith('/'):
@@ -597,7 +577,7 @@ class Categories(Screen):
         self['text'] = tvList([])
         self.icount = 0
         category = category
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -677,7 +657,7 @@ class tvDailySetting(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['info'] = Label('')
-        self['info'].setText(_('Loading data... Please wait'))
+        self['info'].setText(_('Getting the list, please wait ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button('')
@@ -794,7 +774,7 @@ class SettingVhan(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -917,7 +897,7 @@ class SettingVhan2(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1054,7 +1034,7 @@ class Milenka61(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1147,7 +1127,7 @@ class SettingManutek(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1252,7 +1232,7 @@ class SettingMorpheus(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1365,7 +1345,7 @@ class SettingCiefp(Screen):
         self['text'] = tvList([])
 
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1476,7 +1456,7 @@ class SettingBi58(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1570,7 +1550,7 @@ class SettingPredrag(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1665,7 +1645,7 @@ class SettingCyrus(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Getting the list, please wait ...'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -2801,7 +2781,7 @@ class SelectPicons(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['info'] = Label('')
-        self['info'].setText(_('Loading data... Please wait'))
+        self['info'].setText(_('Please select ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Remove'))
@@ -2838,7 +2818,6 @@ class SelectPicons(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
-        self['info'].setText(_('Please select'))
         self.getfreespace()
 
     def okRun(self):
@@ -2883,7 +2862,7 @@ class MMarkFolderScreen(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
@@ -2975,7 +2954,7 @@ class MMarkPiconsScreen(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
@@ -3120,7 +3099,7 @@ class mainkodilite(Screen):
         self['pform'] = Label('')
         self['pform'].setText(_('linuxsat-support.com '))
         self['info'] = Label('')
-        self['info'].setText(_('Loading data... Please wait'))
+        self['info'].setText(_('Please select ...'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button('')
@@ -3152,7 +3131,6 @@ class mainkodilite(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
-        self['info'].setText(_('Please select'))
 
     def okRun(self):
         self.keyNumberGlobalCB(self['text'].getSelectedIndex())
@@ -3180,7 +3158,7 @@ class plugins(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3212,13 +3190,10 @@ class plugins(Screen):
         data = make_request(self.url)
         if six.PY3:
             data = six.ensure_str(data)
-        print('data request', data)    
         self.names = []
         self.urls = []
         try:
-         #regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
-            match = re.compile(regexL,re.DOTALL).findall(data)
-            print('match regex', match)
+            match = re.compile(regexL).findall(data)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url = 'http://patbuweb.com' + str(url)
@@ -3234,7 +3209,6 @@ class plugins(Screen):
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
-            self['info'].setText(_('Please select'))
             self.downloading = True
         except:
             pass
@@ -3303,7 +3277,7 @@ class plugins_adult(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3338,7 +3312,7 @@ class plugins_adult(Screen):
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL,re.DOTALL).findall(data)
+            match = re.compile(regexL).findall(data)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url ="http://patbuweb.com" + url
@@ -3354,7 +3328,6 @@ class plugins_adult(Screen):
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
-            self['info'].setText(_('Please select'))
             self.downloading = True
         except:
             pass
@@ -3447,7 +3420,7 @@ class script(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3482,7 +3455,7 @@ class script(Screen):
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL,re.DOTALL).findall(data)
+            match = re.compile(regexL,).findall(data)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url = "http://patbuweb.com" + url
@@ -3500,7 +3473,6 @@ class script(Screen):
                     self['info'].setText(_('no data ...'))
                     self.downloading = False
             showlist(self.names, self['text'])
-            self['info'].setText(_('Please select'))
         except:
             pass
 
@@ -3568,7 +3540,7 @@ class repository(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Loading data... Please wait'))
+        self['info'] = Label(_('Load selected filter list, please wait ...'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3621,7 +3593,6 @@ class repository(Screen):
                     self['info'].setText(_('no data ...'))
                     self.downloading = False
             showlist(self.names, self['text'])
-            self['info'].setText(_('Please select'))
         except:
             pass
 
@@ -3678,14 +3649,11 @@ class repository(Screen):
         pass
 
 def main(session, **kwargs):
-    try:
-        from Plugins.Extensions.tvaddon.Utils import checkInternet
-    except:
-        from . import Utils
+    from Plugins.Extensions.tvaddon.res.lib.Utils import checkInternet
     checkInternet()
     if checkInternet():
         try:
-            from Plugins.Extensions.tvaddon.Update import upd_done
+            from Plugins.Extensions.tvaddon.res.lib.Update import upd_done
             upd_done()
         except:       
             pass
