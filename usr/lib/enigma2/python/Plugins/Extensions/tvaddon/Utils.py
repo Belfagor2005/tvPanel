@@ -63,7 +63,6 @@ def listDir(what):
         f = listdir(what)
     except:
         pass
-
     return f
 
 def getLanguage():
