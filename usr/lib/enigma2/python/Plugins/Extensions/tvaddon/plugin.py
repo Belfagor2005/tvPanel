@@ -3,15 +3,15 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     11/11/2021     #
+#     10/12/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
 from . import _
+# from Components.HTMLComponent import HTMLComponent
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
-# from Components.HTMLComponent import HTMLComponent
 from Components.Input import Input
 from Components.Label import Label
 from Components.MenuList import MenuList
@@ -20,12 +20,12 @@ from Components.Pixmap import Pixmap
 from Components.PluginComponent import plugins
 from Components.PluginList import *
 from Components.ProgressBar import ProgressBar
-from Components.SelectionList import SelectionList
 from Components.ScrollLabel import ScrollLabel
+from Components.SelectionList import SelectionList
 from Components.Sources.List import List
 from Components.Sources.Progress import Progress
-from Components.Sources.StaticText import StaticText
 from Components.Sources.Source import Source
+from Components.Sources.StaticText import StaticText
 from Components.config import *
 from Plugins.Plugin import PluginDescriptor
 from Screens.ChoiceBox import ChoiceBox
@@ -54,7 +54,6 @@ import re
 import sys
 import shutil
 import ssl
-# import socket
 import glob
 import six
 import subprocess
@@ -64,7 +63,7 @@ try:
 except:
     from . import Utils
 from .Lcn import *
-global skin_path, mmkpicon, set, regexC, regexL, category
+global skin_path, mmkpicon, set, regexC, category
 currversion      = '2.0.7'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
@@ -73,15 +72,19 @@ headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Apple
 category = 'lululla.xml'
 set = 0
 
-from six.moves.urllib.parse import quote_plus
-from six.moves.urllib.request import urlopen
-from six.moves.urllib.request import Request
-from six.moves.urllib.parse import urlparse
-from six.moves.urllib.parse import quote
-from six.moves.urllib.parse import urlencode
-from six.moves.urllib.error import HTTPError
-from six.moves.urllib.error import URLError
-from six.moves.urllib.request import urlretrieve
+try:
+    from urlparse import urlparse
+    from urllib import urlencode
+    # from urllib import urlretrieve
+    from urllib2 import urlopen 
+    from urllib2 import Request
+    from urllib2 import HTTPError
+except ImportError:
+    from urllib.parse import urlparse, urlencode
+    from urllib.request import Request
+    from urllib.error import HTTPError
+    from urllib.request import urlopen #, urlretrieve
+    
 
 try:
     import zipfile
@@ -127,8 +130,8 @@ def getDesktopSize():
 def isFHD():
     desktopSize = getDesktopSize()
     return desktopSize[0] == 1920
-    
-    
+
+
 def checkMyFile(url):
     # FIXME urlopen will cause a full download of file and this != what you want //thank's @jbleyel
     return []
@@ -146,7 +149,7 @@ def checkMyFile(url):
         myfile = re.findall('href="http://download(.*?)">', r2)
         return myfile
     except:
-        e = URLError #, e:
+        e = URLError
         print('We failed to open "%s".' % url)
         if hasattr(e, 'code'):
             print('We failed with error code - %s.' % e.code)
@@ -163,10 +166,15 @@ def make_request(url):
         return link
     except ImportError:
         req = Request(url)
-        req.add_header('User-Agent', 'TVS')
-        response = urlopen(req, None, 7)
-        link = response.read().decode('utf-8')
+        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        response = urlopen(req, None, 10)
+        link = response.read()#.decode('utf-8')
         response.close()
+        if str(type(link)).find('bytes') != -1:
+            try:
+                link = link.decode("utf-8")
+            except Exception as e:
+                   print("Error: %s." % e)
         return link
     except:
         e = URLError
@@ -178,6 +186,27 @@ def make_request(url):
             print('Reason: ', e.reason)
         return
     return
+
+
+    # try:
+        # if sys.version_info.major == 3:
+             # import urllib.request as urllib2
+        # elif sys.version_info.major == 2:
+             # import urllib2
+        # req = urllib2.Request(url)
+        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+        # r = urllib2.urlopen(req,None,15)
+        # link = r.read()
+        # r.close()
+        # content = link
+        # if str(type(content)).find('bytes') != -1:
+            # try:
+                # content = content.decode("utf-8")
+            # except Exception as e:
+                   # print("Error: %s." % e)
+        # return content
+    # except:
+        # return ''
 
 def ReloadBouquet():
     global set
@@ -221,7 +250,8 @@ pngs = res_plugin_path + 'pics/setting.png'
 pngx = res_plugin_path + 'pics/plugins.png'
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC = '<plugins cont="(.*?)"'
-regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
+# regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
+regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
 #======================================================config
 os.system('rm -fr ' + plugin_path + '/temp/*')
 if mmkpicon.endswith('/'):
@@ -267,7 +297,7 @@ Panel_list = [
  _('PLUGIN SKINS'),
  _('PLUGIN SPORT'),
  _('PLUGIN UTILITY'),
- _('PLUGIN WEATHER')]
+ _('PLUGIN WEATHER'),]
 
 Panel_list2 = [
  ('SETTINGS BI58'),
@@ -278,15 +308,15 @@ Panel_list2 = [
  ('SETTINGS MORPHEUS'),
  ('SETTINGS PREDRAG'),
  ('SETTINGS VHANNIBAL'),
- ('SETTINGS VHANNIBAL 2'), 
+ ('SETTINGS VHANNIBAL 2'),
  ('UPDATE SATELLITES.XML'),
- ('UPDATE TERRESTRIAL.XML')
+ ('UPDATE TERRESTRIAL.XML'),
  ]
 
 Panel_list3 = [
  _('MMARK PICONS BLACK'),
  _('MMARK PICONS TRANSPARENT'),
- _('MMARK PICONS MOVIE')]
+ _('MMARK PICONS MOVIE'),]
 
 class tvList(MenuList):
     def __init__(self, list):
@@ -352,6 +382,7 @@ class Hometv(Screen):
         self['key_yellow'] = Button(_('Uninstall'))
         self["key_blue"] = Button(_("tvManager"))
         self['key_blue'].hide()
+        self.Update = False
         if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
             self["key_blue"].show()
             self['key_blue'] = Label(_('tvManager'))
@@ -379,29 +410,23 @@ class Hometv(Screen):
                 s2 = fp.readline()
                 s3 = fp.readline()
                 s4 = fp.readline()
-                s1 = s1.strip()
-                s2 = s2.strip()
-                s3 = s3.strip()
-                s4 = s4.strip()
-                self.version = s1
-                link = s2
-                self.info = s3
-                self.dmlink = s4
+                self.version = s1.strip()
+                link = s2.strip()
+                self.info = s3.strip()
+                self.dmlink = s4.strip()
                 fp.close()
-                cstr = s1 + ' ' + s2
                 if s1 <= currversion:
                     self.Update = False
                 else:
                     self.Update = True
-        except:
-            self.Update = False
+        except Exception as e:
+            print('error : ', e)
         self.timer = eTimer()
-
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
-        self.timer.start(500, 1)            
+        self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['SetupActions', 'ColorActions', "MenuActions"], {'ok': self.okRun,
          'green': self.tvIPK,
@@ -577,7 +602,7 @@ class Categories(Screen):
         self['text'] = tvList([])
         self.icount = 0
         category = category
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -610,14 +635,15 @@ class Categories(Screen):
             url = xml_path + six.binary_type(category, encoding="utf-8")
             print('py3------>')
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+        #error : url must be bytes, not unicode
 
     def errorLoad(self, error):
-        print(str(error))
+        print(error)
         self['info'].setText(_('Try again later ...'))
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = str(data)
+        self.xml = data
         if six.PY3:
             self.xml = six.ensure_str(data)
         try:
@@ -657,7 +683,7 @@ class tvDailySetting(Screen):
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['info'] = Label('')
-        self['info'].setText(_('Getting the list, please wait ...'))
+        self['info'].setText(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button('')
@@ -681,7 +707,7 @@ class tvDailySetting(Screen):
     def Lcn(self):
         self.session.open(MessageBox, _('Reorder Terrestrial channels with Lcn rules'), MessageBox.TYPE_INFO, timeout=5)
         lcnstart()
-                
+
     def closerm(self):
         self.close()
 
@@ -724,7 +750,7 @@ class tvDailySetting(Screen):
         elif sel == ('SETTINGS VHANNIBAL'):
             self.session.open(SettingVhan)
         elif sel == ('SETTINGS VHANNIBAL 2'):
-            self.session.open(SettingVhan2)            
+            self.session.open(SettingVhan2)
 
     def okSATELLITE(self):
         self.session.openWithCallback(self.okSatInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -736,7 +762,12 @@ class tvDailySetting(Screen):
                     url_sat_oealliance = 'http://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/satellites.xml'
                     link_sat = ssl_urlopen(url_sat_oealliance)
                     dirCopy = '/etc/tuxbox/satellites.xml'
-                    urlretrieve(link_sat, dirCopy)
+                    # urlretrieve(link_sat, dirCopy)
+                    import requests
+                    r = requests.get(link_sat)
+                    with open(dirCopy,'wb') as f:
+                      f.write(r.content)
+                    
                     self.session.open(MessageBox, _('Satellites.xml Updated!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
                 except:
@@ -754,7 +785,11 @@ class tvDailySetting(Screen):
                     url_sat_oealliance = 'https://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/terrestrial.xml'
                     link_ter = ssl_urlopen(url_sat_oealliance)
                     dirCopy = '/etc/tuxbox/terrestrial.xml'
-                    urlretrieve(link_ter, dirCopy)
+                    # urlretrieve(link_ter, dirCopy)
+                    import requests
+                    r = requests.get(link_ter)
+                    with open(dirCopy,'wb') as f:
+                      f.write(r.content)                    
                     self.session.open(MessageBox, _('Terrestrial.xml Updated!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
                 except:
@@ -774,7 +809,7 @@ class SettingVhan(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -818,12 +853,12 @@ class SettingVhan(Screen):
                 print('name : ', name)
                 self.urls.append(url)
                 self.names.append(name)
-                
-            urldtt = 'https://www.vhannibal.net/enigma2dtt.php'                
+
+            urldtt = 'https://www.vhannibal.net/enigma2dtt.php'
             r2=make_request(urldtt)
             print('rrrrrrrr ', r2)
             if six.PY3:
-                r2  = six.ensure_str(r2)                    
+                r2  = six.ensure_str(r2)
             match2   = re.compile('<td><a href="(.+?)" target="_blank">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(r2)
             for url, name, date in match2:
                 name = name + ' ' + date
@@ -834,8 +869,8 @@ class SettingVhan(Screen):
                 print('name : ', name)
                 self.urls.append(url)
                 self.names.append(name)
-            self.downloading = True                 
-            self['info'].setText(_('Please select ...'))                    
+            self.downloading = True
+            self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
@@ -851,14 +886,19 @@ class SettingVhan(Screen):
                 idx = self["text"].getSelectionIndex()
                 self.name = self.names[idx]
                 url = self.urls[idx]
-                self.dest = "/tmp/settings.zip"
+                dest = "/tmp/settings.zip"
                 self.namel = ''
                 print("url =", url)
-                urlretrieve(url, self.dest)                
+                # urlretrieve(url, dest)
+                import requests
+                r = requests.get(url)
+                with open(dest,'wb') as f:
+                  f.write(r.content)   
+                      
                 if 'dtt' not in self.name.lower():
                     set = 1
                     terrestrial()
-                if os.path.exists(self.dest):
+                if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -897,7 +937,7 @@ class SettingVhan2(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -978,7 +1018,7 @@ class SettingVhan2(Screen):
                 except Exception as ex:
                     print(ex)
                     print("Error: can't find file or read data")
-                
+
     def download(self, data, dest):
         try:
             if 'dtt' not in self.name.lower():
@@ -1009,7 +1049,7 @@ class SettingVhan2(Screen):
 
         except Exception as ex:
             print("* error ** %s" % ex)
-            self['info'].setText(_('Not Installed ...'))                
+            self['info'].setText(_('Not Installed ...'))
 
     def downloadError(self, png):
         try:
@@ -1034,7 +1074,7 @@ class Milenka61(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1095,13 +1135,17 @@ class Milenka61(Screen):
             if self.downloading == True:
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
-                self.dest = "/tmp/settings.tar.gz"
+                dest = "/tmp/settings.tar.gz"
                 print("url =", url)
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
-                urlretrieve(url, self.dest)
+                # urlretrieve(url, dest)
+                import requests
+                r = requests.get(url)
+                with open(dest,'wb') as f:
+                  f.write(r.content)                   
                 if os.path.exists('/tmp/settings.tar.gz'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -1127,7 +1171,7 @@ class SettingManutek(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1187,15 +1231,19 @@ class SettingManutek(Screen):
             if self.downloading == True:
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
-                self.dest = "/tmp/settings.zip"
+                dest = "/tmp/settings.zip"
                 self.namel = ''
                 print("url =", url)
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
-                urlretrieve(url, self.dest)
-                if os.path.exists(self.dest):
+                # urlretrieve(url, dest)
+                import requests
+                r = requests.get(url)
+                with open(dest,'wb') as f:
+                  f.write(r.content)                   
+                if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1232,7 +1280,7 @@ class SettingMorpheus(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1298,15 +1346,19 @@ class SettingMorpheus(Screen):
             if self.downloading == True:
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
-                self.dest = "/tmp/settings.zip"
+                dest = "/tmp/settings.zip"
                 self.namel = ''
                 print("url =", url)
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
-                urlretrieve(url, self.dest)
-                if os.path.exists(self.dest):
+                # urlretrieve(url, dest)
+                import requests
+                r = requests.get(url)
+                with open(dest,'wb') as f:
+                  f.write(r.content)                   
+                if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1345,7 +1397,7 @@ class SettingCiefp(Screen):
         self['text'] = tvList([])
 
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1413,16 +1465,20 @@ class SettingCiefp(Screen):
             if self.downloading == True:
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
-                self.dest = "/tmp/settings.zip"
+                dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
-                urlretrieve(url, self.dest)
-                if os.path.exists(self.dest):
+                # urlretrieve(url, dest)
+                import requests
+                r = requests.get(url)
+                with open(dest,'wb') as f:
+                  f.write(r.content)                   
+                if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
-                    fdest2 = "/etc/enigma2"                    
+                    fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
                     os.makedirs('/tmp/unzipped')
@@ -1456,7 +1512,7 @@ class SettingBi58(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1518,13 +1574,17 @@ class SettingBi58(Screen):
             if self.downloading == True:
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
-                self.dest = "/tmp/settings.tar.gz"
+                dest = "/tmp/settings.tar.gz"
                 print("url =", url)
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
-                urlretrieve(url, self.dest)
+                # urlretrieve(url, dest)
+                import requests
+                r = requests.get(url)
+                with open(dest,'wb') as f:
+                  f.write(r.content)                   
                 if os.path.exists('/tmp/settings.tar.gz'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -1550,7 +1610,7 @@ class SettingPredrag(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1613,13 +1673,17 @@ class SettingPredrag(Screen):
                 idx = self["text"].getSelectionIndex()
                 self.name = self.names[idx]
                 url = self.urls[idx]
-                self.dest = "/tmp/settings.tar.gz"
+                dest = "/tmp/settings.tar.gz"
                 print("url =", url)
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
-                urlretrieve(url, self.dest)
+                # urlretrieve(url, dest)
+                import requests
+                r = requests.get(url)
+                with open(dest,'wb') as f:
+                  f.write(r.content)                   
                 if os.path.exists('/tmp/settings.tar.gz'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -1645,7 +1709,7 @@ class SettingCyrus(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Getting the list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -1710,16 +1774,20 @@ class SettingCyrus(Screen):
             if self.downloading == True:
                 idx = self["text"].getSelectionIndex()
                 url = self.urls[idx]
-                self.dest = "/tmp/settings.zip"
+                dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
                     # if not os.path.exists('/var/lib/dpkg/status'):
                         set = 1
                         terrestrial()
-                urlretrieve(url, self.dest)
-                if os.path.exists(self.dest):
+                # urlretrieve(url, dest)
+                import requests
+                r = requests.get(url)
+                with open(dest,'wb') as f:
+                  f.write(r.content)
+                if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
-                    fdest2 = "/etc/enigma2"                
+                    fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
                     os.makedirs('/tmp/unzipped')
@@ -2329,7 +2397,7 @@ class tvIPK(Screen):
                     self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
             except:
                 self.delFile(self.dest)
-                self['info1'].text = _('File: %s\nInstallation failed!') %self.dest 
+                self['info1'].text = _('File: %s\nInstallation failed!') %self.dest
 
     def delFile(self, dest):
         if fileExists(self.dest):
@@ -2505,7 +2573,7 @@ class tvRemove(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self.container = eConsoleAppContainer()
-        # self.container.appClosed.append(self.runFinished)   
+        # self.container.appClosed.append(self.runFinished)
         try:
             self.container.appClosed.append(self.runFinished)
         except:
@@ -2572,7 +2640,7 @@ class tvRemove(Screen):
                             continue
                     if name.startswith('enigma2-plugin-'):
                         self.names.append(name)
-                        
+
         showlist(self.names, self['text'])
 
     def callMyMsg1(self, result):
@@ -2586,7 +2654,7 @@ class tvRemove(Screen):
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com],closeOnSuccess =False)
             else:
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess =False)
-            
+
     def getfreespace(self):
         fspace = freespace()
         self['info'].setText(fspace)
@@ -2781,7 +2849,7 @@ class SelectPicons(Screen):
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
         self['info'] = Label('')
-        self['info'].setText(_('Please select ...'))
+        self['info'].setText(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Remove'))
@@ -2818,6 +2886,7 @@ class SelectPicons(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
+        self['info'].setText(_('Please select'))
         self.getfreespace()
 
     def okRun(self):
@@ -2862,7 +2931,7 @@ class MMarkFolderScreen(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
@@ -2954,7 +3023,7 @@ class MMarkPiconsScreen(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
@@ -3099,7 +3168,7 @@ class mainkodilite(Screen):
         self['pform'] = Label('')
         self['pform'].setText(_('linuxsat-support.com '))
         self['info'] = Label('')
-        self['info'].setText(_('Please select ...'))
+        self['info'].setText(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button('')
@@ -3131,6 +3200,7 @@ class mainkodilite(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
+        self['info'].setText(_('Please select'))
 
     def okRun(self):
         self.keyNumberGlobalCB(self['text'].getSelectedIndex())
@@ -3158,7 +3228,7 @@ class plugins(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3190,10 +3260,13 @@ class plugins(Screen):
         data = make_request(self.url)
         if six.PY3:
             data = six.ensure_str(data)
+        print('data request', data)
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL).findall(data)
+         #regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
+            match = re.compile(regexL,re.DOTALL).findall(data)
+            print('match regex', match)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url = 'http://patbuweb.com' + str(url)
@@ -3209,6 +3282,7 @@ class plugins(Screen):
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['info'].setText(_('Please select'))
             self.downloading = True
         except:
             pass
@@ -3277,7 +3351,7 @@ class plugins_adult(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3312,7 +3386,7 @@ class plugins_adult(Screen):
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL).findall(data)
+            match = re.compile(regexL,re.DOTALL).findall(data)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url ="http://patbuweb.com" + url
@@ -3328,6 +3402,7 @@ class plugins_adult(Screen):
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['info'].setText(_('Please select'))
             self.downloading = True
         except:
             pass
@@ -3420,7 +3495,7 @@ class script(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3455,7 +3530,7 @@ class script(Screen):
         self.names = []
         self.urls = []
         try:
-            match = re.compile(regexL,).findall(data)
+            match = re.compile(regexL,re.DOTALL).findall(data)
             for url, name, date1, date2, date3 in match:
                 if 'zip' in url:
                     url = "http://patbuweb.com" + url
@@ -3473,6 +3548,7 @@ class script(Screen):
                     self['info'].setText(_('no data ...'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['info'].setText(_('Please select'))
         except:
             pass
 
@@ -3540,7 +3616,7 @@ class repository(Screen):
         self.list = []
         self['text'] = tvList([])
         self.icount = 0
-        self['info'] = Label(_('Load selected filter list, please wait ...'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3593,6 +3669,7 @@ class repository(Screen):
                     self['info'].setText(_('no data ...'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['info'].setText(_('Please select'))
         except:
             pass
 
@@ -3649,13 +3726,16 @@ class repository(Screen):
         pass
 
 def main(session, **kwargs):
-    from Plugins.Extensions.tvaddon.res.lib.Utils import checkInternet
+    try:
+        from Plugins.Extensions.tvaddon.Utils import checkInternet
+    except:
+        from . import Utils
     checkInternet()
     if checkInternet():
         try:
-            from Plugins.Extensions.tvaddon.res.lib.Update import upd_done
+            from Plugins.Extensions.tvaddon.Update import upd_done
             upd_done()
-        except:       
+        except:
             pass
         session.open(Hometv)
     else:
@@ -3739,7 +3819,7 @@ def lcnstart():
             lcn.writeBouquet()
             lcn.reloadBouquets()
         return
-                
+
 def StartSavingTerrestrialChannels():
     def ForceSearchBouquetTerrestrial():
         for file in sorted(glob.glob("/etc/enigma2/*.tv")):
@@ -3835,7 +3915,6 @@ def StartSavingTerrestrialChannels():
         except :
           pass
         return
-
     Service = SaveTrasponderService()
     if Service:
       if not SaveBouquetTerrestrial():

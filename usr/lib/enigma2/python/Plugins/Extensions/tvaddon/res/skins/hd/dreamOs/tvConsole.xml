@@ -1,5 +1,5 @@
 <!-- Skin tvAll 11/05/2021 -->
 <screen name="tvConsole" position="center,center" size="600,400" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#000000" flags="wfNoBorder">
-	<widget name="title" position="30,-33" size="759,32" font="Console;20" backgroundColor="#000000" foregroundColor="#00a0a0a0" transparent="1" />
-	<widget name="text" position="21,11" size="767,586" font="Console;16" backgroundColor="#000000" foregroundColor="#00a0a0a0" zPosition="5" transparent="1" />
+	<widget name="title" position="22,5" size="551,32" font="Console;20" backgroundColor="#000000" foregroundColor="#00a0a0a0" transparent="1" />
+	<widget name="text" position="22,48" size="561,337" font="Console;16" backgroundColor="#000000" foregroundColor="#00a0a0a0" zPosition="5" transparent="1" />
 </screen>
