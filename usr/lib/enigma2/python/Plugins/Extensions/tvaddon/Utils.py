@@ -163,16 +163,6 @@ def checkStr(txt):
             txt = txt.encode('utf-8')
     return txt
 
-# def checkStr(txt):
-    #import six
-    # if six.PY3:
-        # if isinstance(txt, type(bytes())):
-            # txt = txt.decode('utf-8')
-    # else:
-        # if isinstance(txt, type(six.text_type())):
-            # txt = txt.encode('utf-8')
-    # return txt
-
 def freespace():
     try:
         diskSpace = os.statvfs('/')
@@ -192,7 +182,6 @@ def b64encoder(source):
     content = base64.b64encode(source).decode('utf-8')
     return content
 
-   
 def b64decoder(s):
     """Add missing padding to string and return the decoded base64 string."""
     import base64
