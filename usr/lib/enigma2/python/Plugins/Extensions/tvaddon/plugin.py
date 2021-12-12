@@ -9,7 +9,7 @@
 from __future__ import print_function
 from . import _
 # from Components.HTMLComponent import HTMLComponent
-from Components.ActionMap import ActionMap, NumberActionMap
+from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
 from Components.Input import Input
@@ -33,7 +33,6 @@ from Screens.Console import Console
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from Screens.Standby import *
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_SKIN_IMAGE, SCOPE_PLUGINS
@@ -64,6 +63,7 @@ except:
     from . import Utils
 from .Lcn import *
 global skin_path, mmkpicon, set, regexC, category
+
 currversion      = '2.0.7'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
@@ -75,16 +75,14 @@ set = 0
 try:
     from urlparse import urlparse
     from urllib import urlencode
-    # from urllib import urlretrieve
-    from urllib2 import urlopen 
+    from urllib2 import urlopen
     from urllib2 import Request
-    from urllib2 import HTTPError
+    from urllib2 import HTTPError, URLError
 except ImportError:
     from urllib.parse import urlparse, urlencode
     from urllib.request import Request
-    from urllib.error import HTTPError
-    from urllib.request import urlopen #, urlretrieve
-    
+    from urllib.error import HTTPError, URLError
+    from urllib.request import urlopen
 
 try:
     import zipfile
@@ -158,7 +156,6 @@ def checkMyFile(url):
             print('Reason: ', e.reason)
         return ''
     return
-
 def make_request(url):
     try:
         import requests
@@ -166,15 +163,10 @@ def make_request(url):
         return link
     except ImportError:
         req = Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urlopen(req, None, 10)
-        link = response.read()#.decode('utf-8')
+        req.add_header('User-Agent', 'TVS')
+        response = urlopen(req, None, 7)
+        link = response.read().decode('utf-8')
         response.close()
-        if str(type(link)).find('bytes') != -1:
-            try:
-                link = link.decode("utf-8")
-            except Exception as e:
-                   print("Error: %s." % e)
         return link
     except:
         e = URLError
@@ -186,27 +178,33 @@ def make_request(url):
             print('Reason: ', e.reason)
         return
     return
-
-
+# def make_request(url):
     # try:
         # if sys.version_info.major == 3:
              # import urllib.request as urllib2
         # elif sys.version_info.major == 2:
              # import urllib2
         # req = urllib2.Request(url)
-        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        # r = urllib2.urlopen(req,None,15)
+        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
+        # r = urllib2.urlopen(req, None, 15)
         # link = r.read()
         # r.close()
-        # content = link
-        # if str(type(content)).find('bytes') != -1:
+        # if str(type(link)).find('bytes') != -1:
             # try:
-                # content = content.decode("utf-8")
+                # link = link.decode("utf-8")
             # except Exception as e:
                    # print("Error: %s." % e)
-        # return content
+        # return link
     # except:
-        # return ''
+        # e = URLError
+        # print('We failed to open "%s".' % url)
+        # if hasattr(e, 'code'):
+            # print('We failed with error code - %s.' % e.code)
+        # if hasattr(e, 'reason'):
+            # print('We failed to reach a server.')
+            # print('Reason: ', e.reason)
+        # return
+    # return
 
 def ReloadBouquet():
     global set
@@ -264,9 +262,9 @@ if not os.path.exists(mmkpicon):
 print('****************************************path Picons: ', mmkpicon)
 # data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
 # upd_path = base64.b64decode(data_upd)
-upd_path = b'http://corvone.altervista.org/tvPanel/'
 # data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
 # xml_path = base64.b64decode(data_xml)
+upd_path = b'http://corvone.altervista.org/tvPanel/'
 xml_path = b'http://patbuweb.com/xml/'
 res_plugin_path = plugin_path + '/res/'
 pngl = res_plugin_path + 'pics/plugin.png'
@@ -275,7 +273,7 @@ if isFHD():
     skin_path = res_plugin_path + 'skins/fhd/'
 else:
     skin_path = res_plugin_path + 'skins/hd/'
-if os.path.exists('/var/lib/dpkg/status'):
+if DreamOS():
     skin_path = skin_path + 'dreamOs/'
 
 Panel_list = [
@@ -331,7 +329,6 @@ class tvList(MenuList):
         self.l.setFont(7, gFont('Regular', 34))
         self.l.setFont(8, gFont('Regular', 36))
         self.l.setFont(9, gFont('Regular', 40))
-        # if HD.width() > 1280:
         if isFHD():
             self.l.setItemHeight(50)
         else:
@@ -339,7 +336,6 @@ class tvList(MenuList):
 
 def DailyListEntry(name, idx):
     res = [name]
-    # if HD.width() > 1280:
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=6, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -389,9 +385,8 @@ class Hometv(Screen):
         elif os.path.exists('/usr/lib/enigma2/python/Plugins/PLi/tvManager'):
             self["key_blue"].show()
             self['key_blue'] = Label(_('tvManager'))
-        global link
         self.dmlink = ''
-        link =''
+        self.tlink =''
         try:
             fp = ''
             destr = plugin_path + '/update.txt'
@@ -411,7 +406,7 @@ class Hometv(Screen):
                 s3 = fp.readline()
                 s4 = fp.readline()
                 self.version = s1.strip()
-                link = s2.strip()
+                self.tlink = s2.strip()
                 self.info = s3.strip()
                 self.dmlink = s4.strip()
                 fp.close()
@@ -422,7 +417,7 @@ class Hometv(Screen):
         except Exception as e:
             print('error : ', e)
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
@@ -564,14 +559,19 @@ class Hometv(Screen):
 
     def runupdate(self, result):
         if result:
-            if os.path.exists('/var/lib/dpkg/status'):
+            if DreamOS():
                 com = self.dmlink
                 dom = 'New version ' + self.version
-                os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
+                tvtemp='/tmp/tvaddon.tar'
+                import requests
+                r = requests.get(com)
+                with open(tvtemp,'wb') as f:
+                  f.write(r.content)
+                # os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
                 os.system('sleep 3')
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], closeOnSuccess =False)
             else:
-                com = link
+                com = self.tlink
                 dom = 'New Version ' + self.version
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], closeOnSuccess =False)
 
@@ -616,7 +616,7 @@ class Categories(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -643,7 +643,7 @@ class Categories(Screen):
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = data
+        self.xml = str(data)
         if six.PY3:
             self.xml = six.ensure_str(data)
         try:
@@ -677,13 +677,13 @@ class tvDailySetting(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self['text'] = tvList([])
+        self['title'] = Label(_(title_plug))
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['pth'] = Label('')
         self['pform'] = Label('')
-        self['info'] = Label('')
-        self['info'].setText(_('Loading data... Please wait'))
+        self['info'] = Label(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button('')
@@ -695,8 +695,7 @@ class tvDailySetting(Screen):
           self.LcnOn = True
         self["key_blue"] = Button('')
         self['key_blue'].hide()
-        self['title'] = Label(_(title_plug))
-        self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
          'green': self.okRun,
          'back': self.closerm,
          'red': self.closerm,
@@ -714,7 +713,7 @@ class tvDailySetting(Screen):
     def updateMenuList(self):
         self.menu_list = []
         for x in self.menu_list:
-                del self.menu_list[0]
+            del self.menu_list[0]
         list = []
         idx = 0
         for x in Panel_list2:
@@ -767,7 +766,7 @@ class tvDailySetting(Screen):
                     r = requests.get(link_sat)
                     with open(dirCopy,'wb') as f:
                       f.write(r.content)
-                    
+
                     self.session.open(MessageBox, _('Satellites.xml Updated!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
                 except:
@@ -789,7 +788,7 @@ class tvDailySetting(Screen):
                     import requests
                     r = requests.get(link_ter)
                     with open(dirCopy,'wb') as f:
-                      f.write(r.content)                    
+                      f.write(r.content)
                     self.session.open(MessageBox, _('Terrestrial.xml Updated!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
                 except:
@@ -823,7 +822,7 @@ class SettingVhan(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -856,7 +855,7 @@ class SettingVhan(Screen):
 
             urldtt = 'https://www.vhannibal.net/enigma2dtt.php'
             r2=make_request(urldtt)
-            print('rrrrrrrr ', r2)
+            print('aaaaaaaa ', r2)
             if six.PY3:
                 r2  = six.ensure_str(r2)
             match2   = re.compile('<td><a href="(.+?)" target="_blank">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(r2)
@@ -874,6 +873,7 @@ class SettingVhan(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -893,8 +893,8 @@ class SettingVhan(Screen):
                 import requests
                 r = requests.get(url)
                 with open(dest,'wb') as f:
-                  f.write(r.content)   
-                      
+                  f.write(r.content)
+
                 if 'dtt' not in self.name.lower():
                     set = 1
                     terrestrial()
@@ -951,7 +951,7 @@ class SettingVhan2(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -988,6 +988,7 @@ class SettingVhan2(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1088,7 +1089,7 @@ class Milenka61(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1124,6 +1125,7 @@ class Milenka61(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1145,7 +1147,7 @@ class Milenka61(Screen):
                 import requests
                 r = requests.get(url)
                 with open(dest,'wb') as f:
-                  f.write(r.content)                   
+                  f.write(r.content)
                 if os.path.exists('/tmp/settings.tar.gz'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -1185,7 +1187,7 @@ class SettingManutek(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1220,6 +1222,7 @@ class SettingManutek(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1242,7 +1245,7 @@ class SettingManutek(Screen):
                 import requests
                 r = requests.get(url)
                 with open(dest,'wb') as f:
-                  f.write(r.content)                   
+                  f.write(r.content)
                 if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
@@ -1294,7 +1297,7 @@ class SettingMorpheus(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1313,6 +1316,7 @@ class SettingMorpheus(Screen):
         self.names  = []
         self.urls   = []
         try:
+
             regex   = 'href="/download/.*?file=(.*?)">'
             match   = re.compile(regex).findall(r)
             for url in match:
@@ -1334,6 +1338,7 @@ class SettingMorpheus(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1357,7 +1362,7 @@ class SettingMorpheus(Screen):
                 import requests
                 r = requests.get(url)
                 with open(dest,'wb') as f:
-                  f.write(r.content)                   
+                  f.write(r.content)
                 if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
@@ -1411,7 +1416,7 @@ class SettingCiefp(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1454,6 +1459,7 @@ class SettingCiefp(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1475,7 +1481,7 @@ class SettingCiefp(Screen):
                 import requests
                 r = requests.get(url)
                 with open(dest,'wb') as f:
-                  f.write(r.content)                   
+                  f.write(r.content)
                 if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
@@ -1526,7 +1532,7 @@ class SettingBi58(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1563,6 +1569,7 @@ class SettingBi58(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1584,7 +1591,7 @@ class SettingBi58(Screen):
                 import requests
                 r = requests.get(url)
                 with open(dest,'wb') as f:
-                  f.write(r.content)                   
+                  f.write(r.content)
                 if os.path.exists('/tmp/settings.tar.gz'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -1624,7 +1631,7 @@ class SettingPredrag(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1661,6 +1668,7 @@ class SettingPredrag(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1683,7 +1691,7 @@ class SettingPredrag(Screen):
                 import requests
                 r = requests.get(url)
                 with open(dest,'wb') as f:
-                  f.write(r.content)                   
+                  f.write(r.content)
                 if os.path.exists('/tmp/settings.tar.gz'):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
@@ -1723,7 +1731,8 @@ class SettingCyrus(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
+
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1763,6 +1772,7 @@ class SettingCyrus(Screen):
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         self.session.openWithCallback(self.okInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
@@ -1906,7 +1916,7 @@ class tvInstall(Screen):
                         self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                 elif extension == "ipk":
-                    if os.path.exists('/var/lib/dpkg/status'):
+                    if DreamOS():
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Installation canceled!'))
                     else:
@@ -2010,7 +2020,7 @@ class tvInstall(Screen):
                         self['info'].setText(_('Download canceled!'))
                         return
                 elif self.com.endswith(".ipk"):
-                    if os.path.exists('/var/lib/dpkg/status'):
+                    if DreamOS():
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                         return
@@ -2071,7 +2081,7 @@ class tvInstall(Screen):
                     self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'],closeOnSuccess =False)
 
                 elif self.dest.find('.deb') != -1:
-                    if os.path.exists('/var/lib/dpkg/status'):
+                    if DreamOS():
                         self.dest = self.dest[0]
                         print('self.dest deb: ', self.dest)
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";dpkg --force-all -i ' + self.dest + ' > /dev/null 2>&1' #+ dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
@@ -2155,7 +2165,6 @@ class tvConsole(Screen):
         skin = skin_path + 'tvConsole.xml'
         with open(skin, 'r') as f:
             self.skin = f.read()
-        # self.skin = 'Console'
         self.setup_title = ('Console')
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
@@ -2343,7 +2352,7 @@ class tvIPK(Screen):
                     cmd0 = 'tar -xzvf ' + self.dest + ' -C /'
                     self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'],closeOnSuccess =False)
                 elif self.sel.find('.deb') != -1:
-                    if os.path.exists('/var/lib/dpkg/status'):
+                    if DreamOS():
                         self.sel = self.sel[0]
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";dpkg --force-all -i ' + self.dest #+ ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
                         self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0], closeOnSuccess =False)
@@ -2460,9 +2469,8 @@ class tvUpdate(Screen):
         self['progresstext'] = StaticText()
         self['text'] = tvList([])
         self.Update = False
-        global link
         self.dmlink=''
-        link=''
+        self.tlink=''
         try:
             fp = ''
             destr = plugin_path + '/update.txt'
@@ -2486,7 +2494,7 @@ class tvUpdate(Screen):
                 s3 = s3.strip()
                 s4 = s4.strip()
                 self.version = s1
-                link = s2
+                self.tlink = s2
                 self.info = s3
                 self.dmlink = s4
                 fp.close()
@@ -2508,7 +2516,7 @@ class tvUpdate(Screen):
             self['pth'].setText('No updates available!')
 
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
@@ -2536,14 +2544,19 @@ class tvUpdate(Screen):
 
     def runupdate(self, result):
         if result:
-            if os.path.exists('/var/lib/dpkg/status'):
+            if DreamOS():
                 com = self.dmlink
                 dom = 'New version ' + self.version
-                os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
+                tvtemp='/tmp/tvaddon.tar'
+                import requests
+                r = requests.get(com)
+                with open(tvtemp,'wb') as f:
+                  f.write(r.content)
+                # os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
                 os.system('sleep 3')
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], finishedCallback =self.msgipkrst1, closeOnSuccess =False)
             else:
-                com = link
+                com = self.tlink
                 dom = 'New Version ' + self.version
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], finishedCallback =self.msgipkrst1, closeOnSuccess =False)
 
@@ -2620,7 +2633,7 @@ class tvRemove(Screen):
         self.names = []
         del self.names [:]
         path = ('/var/lib/opkg/info')
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             path= ('/var/lib/dpkg/info')
         for root, dirs, files in os.walk(path):
             if files != None:
@@ -2630,7 +2643,7 @@ class tvRemove(Screen):
                         continue
                     if name.endswith('.md5sums') or name.endswith('.conffiles') or name.endswith('~') :
                         continue
-                    if os.path.exists('/var/lib/dpkg/status'):
+                    if DreamOS():
                         if name.endswith('.list'):
                             name= name.replace('.list', '')
                     else:
@@ -2650,7 +2663,7 @@ class tvRemove(Screen):
                 return
             dom = self.names[idx]
             com = dom
-            if os.path.exists('/var/lib/dpkg/status'):
+            if DreamOS():
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com],closeOnSuccess =False)
             else:
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess =False)
@@ -2860,7 +2873,7 @@ class SelectPicons(Screen):
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['title'] = Label(_(title_plug))
-        self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
          'green': self.okRun,
          'yellow': self.remove,
          'back': self.closerm,
@@ -2948,7 +2961,7 @@ class MMarkFolderScreen(Screen):
         self.getfreespace()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3042,7 +3055,7 @@ class MMarkPiconsScreen(Screen):
         self.url = url
         self.name = name
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3179,7 +3192,7 @@ class mainkodilite(Screen):
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['title'] = Label(_(title_plug))
-        self['actions'] = NumberActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
+        self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
          'green': self.okRun,
          'back': self.closerm,
          'red': self.closerm,
@@ -3244,7 +3257,7 @@ class plugins(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3367,7 +3380,7 @@ class plugins_adult(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3511,7 +3524,7 @@ class script(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3632,7 +3645,7 @@ class repository(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3812,13 +3825,14 @@ def terrestrial_rest():
             lcnstart()
 
 def lcnstart():
+    print(' lcnstart ')
     if os.path.exists('/etc/enigma2/lcndb'):
         lcn = LCN()
         lcn.read()
         if len(lcn.lcnlist) > 0:
             lcn.writeBouquet()
             lcn.reloadBouquets()
-        return
+    return
 
 def StartSavingTerrestrialChannels():
     def ForceSearchBouquetTerrestrial():
