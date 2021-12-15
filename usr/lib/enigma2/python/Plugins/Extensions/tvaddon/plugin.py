@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     10/12/2021     #
+#     14/12/2021     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -36,7 +36,7 @@ from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_SKIN_IMAGE, SCOPE_PLUGINS
-from Tools.Directories import pathExists, fileExists, copyfile
+from Tools.Directories import pathExists, fileExists, resolveFilename, copyfile
 from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from enigma import *
@@ -63,14 +63,6 @@ except:
     from . import Utils
 from .Lcn import *
 global skin_path, mmkpicon, set, regexC, category
-
-currversion      = '2.0.7'
-title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
-name_plug        = 'TiVuStream Addon Panel'
-headers        = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
-                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
-category = 'lululla.xml'
-set = 0
 
 try:
     from urlparse import urlparse
@@ -101,7 +93,6 @@ def ssl_urlopen(url):
         return urlopen(url, context= sslContext)
     else:
         return urlopen(url)
-
 try:
     from OpenSSL import SSL
     from twisted.internet import ssl
@@ -129,7 +120,6 @@ def isFHD():
     desktopSize = getDesktopSize()
     return desktopSize[0] == 1920
 
-
 def checkMyFile(url):
     # FIXME urlopen will cause a full download of file and this != what you want //thank's @jbleyel
     return []
@@ -156,6 +146,7 @@ def checkMyFile(url):
             print('Reason: ', e.reason)
         return ''
     return
+
 def make_request(url):
     try:
         import requests
@@ -232,6 +223,12 @@ config.plugins.tvaddon.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
 config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
+
+currversion      = '2.0.7'
+title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
+name_plug        = 'TiVuStream Addon Panel'
+category = 'lululla.xml'
+set = 0
 host_blk = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=ovz04mrpzo9pw&content_type=folders&chunk_size=1000&response_format=json'
 host_trs = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=tvbds59y9hr19&content_type=folders&chunk_size=1000&response_format=json'
 host_mov = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=nk8t522bv4909&content_type=files&chunk_size=1000&response_format=json'
@@ -240,16 +237,20 @@ host_mov = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=
 # host_mov = base64.b64decode(ptmov).decode('utf-8')
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
 skin_path = plugin_path
-ico_path = plugin_path + '/logo.png'
-no_cover = plugin_path + '/no_coverArt.png'
-res_plugin_path = plugin_path + '/res/'
-pngl = res_plugin_path + 'pics/plugin.png'
-pngs = res_plugin_path + 'pics/setting.png'
-pngx = res_plugin_path + 'pics/plugins.png'
+ico_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/logo.png".format('tvaddon'))
+no_cover = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/no_coverArt.png".format('tvaddon'))
+res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('tvaddon'))
+
+# data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
+# upd_path = base64.b64decode(data_upd)
+# data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
+# xml_path = base64.b64decode(data_xml)
+upd_path = b'http://corvone.altervista.org/tvPanel/'
+xml_path = b'http://patbuweb.com/xml/'
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC = '<plugins cont="(.*?)"'
-# regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
 regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
+# regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
 #======================================================config
 os.system('rm -fr ' + plugin_path + '/temp/*')
 if mmkpicon.endswith('/'):
@@ -260,15 +261,7 @@ if not os.path.exists(mmkpicon):
     except OSError as e:
         print(('Error creating directory %s:\n%s') % (mmkpicon, str(e)))
 print('****************************************path Picons: ', mmkpicon)
-# data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
-# upd_path = base64.b64decode(data_upd)
-# data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
-# xml_path = base64.b64decode(data_xml)
-upd_path = b'http://corvone.altervista.org/tvPanel/'
-xml_path = b'http://patbuweb.com/xml/'
-res_plugin_path = plugin_path + '/res/'
-pngl = res_plugin_path + 'pics/plugin.png'
-pngs = res_plugin_path + 'pics/setting.png'
+
 if isFHD():
     skin_path = res_plugin_path + 'skins/fhd/'
 else:
@@ -336,6 +329,7 @@ class tvList(MenuList):
 
 def DailyListEntry(name, idx):
     res = [name]
+    pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon')) #ico1_path
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=6, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -347,6 +341,7 @@ def DailyListEntry(name, idx):
 
 def oneListEntry(name):
     res = [name]
+    pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon')) #ico1_path
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =6, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -1400,7 +1395,6 @@ class SettingCiefp(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['text'] = tvList([])
-
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
