@@ -169,33 +169,6 @@ def make_request(url):
             print('Reason: ', e.reason)
         return
     return
-# def make_request(url):
-    # try:
-        # if sys.version_info.major == 3:
-             # import urllib.request as urllib2
-        # elif sys.version_info.major == 2:
-             # import urllib2
-        # req = urllib2.Request(url)
-        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
-        # r = urllib2.urlopen(req, None, 15)
-        # link = r.read()
-        # r.close()
-        # if str(type(link)).find('bytes') != -1:
-            # try:
-                # link = link.decode("utf-8")
-            # except Exception as e:
-                   # print("Error: %s." % e)
-        # return link
-    # except:
-        # e = URLError
-        # print('We failed to open "%s".' % url)
-        # if hasattr(e, 'code'):
-            # print('We failed with error code - %s.' % e.code)
-        # if hasattr(e, 'reason'):
-            # print('We failed to reach a server.')
-            # print('Reason: ', e.reason)
-        # return
-    # return
 
 def ReloadBouquet():
     global set
@@ -229,24 +202,24 @@ title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
 set = 0
-host_blk = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=ovz04mrpzo9pw&content_type=folders&chunk_size=1000&response_format=json'
-host_trs = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=tvbds59y9hr19&content_type=folders&chunk_size=1000&response_format=json'
-host_mov = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=nk8t522bv4909&content_type=files&chunk_size=1000&response_format=json'
-# host_trs = base64.b64decode(ptrs).decode('utf-8')
-# host_blk = base64.b64decode(pblk).decode('utf-8')
-# host_mov = base64.b64decode(ptmov).decode('utf-8')
-plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
+pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
+ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
+host_trs = b64decoder(ptrs)
+host_blk = b64decoder(pblk)
+host_mov = b64decoder(ptmov)
+plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvaddon'))
 skin_path = plugin_path
 ico_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/logo.png".format('tvaddon'))
 no_cover = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/no_coverArt.png".format('tvaddon'))
 res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('tvaddon'))
 
-# data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
-# upd_path = base64.b64decode(data_upd)
-# data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
-# xml_path = base64.b64decode(data_xml)
-upd_path = b'http://corvone.altervista.org/tvPanel/'
-xml_path = b'http://patbuweb.com/xml/'
+data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
+upd_path = b64decoder(data_upd)
+data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
+xml_path = b64decoder(data_xml)
+# upd_path = b'http://corvone.altervista.org/tvPanel/'
+# xml_path = b'http://patbuweb.com/xml/'
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC = '<plugins cont="(.*?)"'
 regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
@@ -2661,6 +2634,7 @@ class tvRemove(Screen):
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com],closeOnSuccess =False)
             else:
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess =False)
+            self.getfreespace()
 
     def getfreespace(self):
         fspace = freespace()
