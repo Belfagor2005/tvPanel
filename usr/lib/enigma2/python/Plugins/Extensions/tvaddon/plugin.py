@@ -36,7 +36,7 @@ from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_SKIN_IMAGE, SCOPE_PLUGINS
-from Tools.Directories import pathExists, fileExists, resolveFilename, copyfile
+from Tools.Directories import pathExists, fileExists, resolveFilename#, copyfile
 from Tools.Downloader import downloadWithProgress
 from Tools.LoadPixmap import LoadPixmap
 from enigma import *
@@ -553,7 +553,7 @@ class Hometv(Screen):
             if os.path.exists(epgbakpath):
                 os.remove(epgbakpath)
             if os.path.exists(epgpath):
-                copyfile(epgpath, epgbakpath)
+                shutil.copyfile(epgpath, epgbakpath)
             self.session.open(TryQuitMainloop, 3)
         else:
             self.close()
@@ -2537,7 +2537,7 @@ class tvUpdate(Screen):
             if os.path.exists(epgbakpath):
                 os.remove(epgbakpath)
             if os.path.exists(epgpath):
-                copyfile(epgpath, epgbakpath)
+                shutil.copyfile(epgpath, epgbakpath)
             self.session.open(TryQuitMainloop, 3)
         else:
             self.close()
@@ -2552,6 +2552,7 @@ class tvRemove(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
+        self.names = []
         self.container = eConsoleAppContainer()
         # self.container.appClosed.append(self.runFinished)
         try:
@@ -2576,16 +2577,16 @@ class tvRemove(Screen):
          'yellow': self.msgipkrst,
          'red': self.close,
          'cancel': self.close}, -1)
-        self.getfreespace()
+        # self.getfreespace()
         self.onLayoutFinish.append(self.openList)
 
     def PluginDownloadBrowserClosed(self):
         self.openList()
 
     def runFinished(self, retval):
-        plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
-        self.openList()
+        # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
         self['pth'].setText(_('Addons Packege removed successfully.'))
+        self.getfreespace()
 
     def cancel(self):
         if not self.container.running():
@@ -2597,8 +2598,13 @@ class tvRemove(Screen):
             self['pth'].setText(_('Process Killed by user.Addon not removed completly!'))
 
     def openList(self):
-        self.names = []
-        del self.names [:]
+        # self.names = [:]
+        self.lists = []
+        del self.names[: ]
+        del self.list[: ]
+        self["text"].l.setList(self.list)
+        # self.list.clear()
+        # self.names.clear()
         path = ('/var/lib/opkg/info')
         if DreamOS():
             path= ('/var/lib/dpkg/info')
@@ -2637,6 +2643,9 @@ class tvRemove(Screen):
             self.getfreespace()
 
     def getfreespace(self):
+        from Components.PluginComponent import plugins
+        plugins.clearPluginList()
+        plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
         fspace = freespace()
         self['info'].setText(fspace)
         self.openList()
@@ -2654,7 +2663,7 @@ class tvRemove(Screen):
             if os.path.exists(epgbakpath):
                 os.remove(epgbakpath)
             if os.path.exists(epgpath):
-                copyfile(epgpath, epgbakpath)
+                shutil.copyfile(epgpath, epgbakpath)
             self.session.open(TryQuitMainloop, 3)
         else:
             self.close()
