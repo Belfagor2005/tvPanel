@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     14/12/2021     #
+#     05/01/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -234,11 +234,9 @@ if not os.path.exists(mmkpicon):
     except OSError as e:
         print(('Error creating directory %s:\n%s') % (mmkpicon, str(e)))
 print('****************************************path Picons: ', mmkpicon)
-
+skin_path = res_plugin_path + 'skins/hd/'
 if isFHD():
     skin_path = res_plugin_path + 'skins/fhd/'
-else:
-    skin_path = res_plugin_path + 'skins/hd/'
 if DreamOS():
     skin_path = skin_path + 'dreamOs/'
 
@@ -419,13 +417,8 @@ class Hometv(Screen):
         OnclearMem()
 
     def closerm(self):
-        self.timer = eTimer()
-        try:
-            self.timer.callback.append(deletetmp)
-        except:
-            self.timer_conn = self.timer.timeout.connect(deletetmp)
-        self.timer.start(1000, True)
         ReloadBouquet()
+        deletetmp()
         self.close()
 
     def goConfig(self):
