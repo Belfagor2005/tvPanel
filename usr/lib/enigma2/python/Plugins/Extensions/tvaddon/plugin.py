@@ -381,7 +381,7 @@ class Hometv(Screen):
                 else:
                     self.Update = True
         except Exception as e:
-            print('error : ', e)
+            print('error: ', str(e))
         self.timer = eTimer()
         if DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
@@ -593,18 +593,25 @@ class Categories(Screen):
         url = str(xml_path) + category
         print('py2------>')
         if six.PY3:
-            url = xml_path + six.binary_type(category, encoding="utf-8")
-            print('py3------>')
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-        #error : url must be bytes, not unicode
+            url = str(xml_path) + six.binary_type(category, encoding="utf-8")
 
+        # if six.PY3:
+            # url = str(xml_path) + six.ensure_str(category)
+            
+            print('py3------>')
+        try:
+            getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+            #error : url must be bytes, not unicode
+        except Exception as e:
+            print('error: ', str(e))
+            
     def errorLoad(self, error):
         print(error)
         self['info'].setText(_('Try again later ...'))
         self.downloading = False
 
     def _gotPageLoad(self, data):
-        self.xml = str(data)
+        self.xml = data
         if six.PY3:
             self.xml = six.ensure_str(data)
         try:
@@ -614,8 +621,8 @@ class Categories(Screen):
                 self['info'].setText(_('Please select ...'))
             showlist(self.list, self['text'])
             self.downloading = True
-        except:
-            pass
+        except Exception as e:
+            print('error: ', str(e))
 
     def okRun(self):
         if self.downloading == True:
@@ -623,8 +630,8 @@ class Categories(Screen):
                 idx = self["text"].getSelectionIndex()
                 name = self.list[idx]
                 self.session.open(tvInstall, self.xml, name)
-            except:
-                return
+            except Exception as e:
+                print('error: ', str(e))
         else:
             self.close()
 
@@ -730,8 +737,8 @@ class tvDailySetting(Screen):
 
                     self.session.open(MessageBox, _('Satellites.xml Updated!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
-                except:
-                    return
+                except Exception as e:
+                    print('error: ', str(e))
             else:
                 session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
@@ -752,8 +759,8 @@ class tvDailySetting(Screen):
                       f.write(r.content)
                     self.session.open(MessageBox, _('Terrestrial.xml Updated!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation done !!!'))
-                except:
-                    return
+                except Exception as e:
+                    print('error: ', str(e))
             else:
                 self.session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
@@ -833,7 +840,7 @@ class SettingVhan(Screen):
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -948,7 +955,7 @@ class SettingVhan2(Screen):
                 self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -977,8 +984,8 @@ class SettingVhan2(Screen):
                         downloadPage(url, self.dest, sniFactory, timeout=5).addCallback(self.download, self.dest).addErrback(self.downloadError)
                     else:
                         downloadPage(url, self.dest).addCallback(self.download, self.dest).addErrback(self.downloadError)
-                except Exception as ex:
-                    print(ex)
+                except Exception as e:
+                    print('error: ', str(e))
                     print("Error: can't find file or read data")
 
     def download(self, data, dest):
@@ -1009,16 +1016,16 @@ class SettingVhan2(Screen):
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
-        except Exception as ex:
-            print("* error ** %s" % ex)
+        except Exception as e:
+            print('error: ', str(e))
             self['info'].setText(_('Not Installed ...'))
 
     def downloadError(self, png):
         try:
             if fileExists(png):
                 self.poster_resize(no_cover)
-        except Exception as ex:
-            print(ex)
+        except Exception as e:
+            print('error: ', str(e))
             print('downloadError')
 
     def yes(self):
@@ -1085,7 +1092,7 @@ class Milenka61(Screen):
                     self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -1182,7 +1189,7 @@ class SettingManutek(Screen):
                 self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -1298,7 +1305,7 @@ class SettingMorpheus(Screen):
                     self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -1418,7 +1425,7 @@ class SettingCiefp(Screen):
                     self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -1528,7 +1535,7 @@ class SettingBi58(Screen):
                     self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -1617,7 +1624,7 @@ class SettingPredrag(Screen):
                     name = url
                     name = name.replace('-settings-e2-','Predrag ')
                     name = name + date1 + '-' + date2 + '-' + date3
-                    name = name.replace(".tar.gz", "")
+                    name = name.replace(".tar.gz", " ")
                     url = "http://178.63.156.75/paneladdons/Predr@g/predrag" + url
                     url = checkStr(url)
                     name = checkStr(name)
@@ -1627,7 +1634,7 @@ class SettingPredrag(Screen):
                     self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -1731,7 +1738,7 @@ class SettingCyrus(Screen):
                     self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -2102,7 +2109,8 @@ class tvInstall(Screen):
                         self['info'].setText(_('Download file in /tmp successful!!'))
                 else:
                     self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
-            except:
+            except Exception as e:
+                print('error: ', str(e))
                 self.delFile(self.dest)
                 self['info'].text = _('File: Installation failed!')
 
@@ -2364,7 +2372,8 @@ class tvIPK(Screen):
                         self.session.open(tvConsole, _('SETTING - install: %s') %self.dest, cmdlist =[cmd],closeOnSuccess =False)
                 else:
                     self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
-            except:
+            except Exception as e:
+                print('error: ', str(e))
                 self.delFile(self.dest)
                 self['info1'].text = _('File: %s\nInstallation failed!') %self.dest
 
@@ -2783,8 +2792,8 @@ class tvConfig(Screen, ConfigListScreen):
                 editDir=True,
                 inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/var"],
                 minFree=15)
-        except Exception as ex:
-            print("openDirectoryBrowser get failed: ", str(ex))
+        except Exception as e:
+            print('error: ', str(e))
 
     def openDirectoryBrowserCB(self, path):
         if path != None:
@@ -3267,7 +3276,8 @@ class plugins(Screen):
             showlist(self.names, self['text'])
             self['info'].setText(_('Please select'))
             self.downloading = True
-        except:
+        except Exception as e:
+            print('error: ', str(e))
             pass
 
     def okRun(self):
@@ -3387,7 +3397,8 @@ class plugins_adult(Screen):
             showlist(self.names, self['text'])
             self['info'].setText(_('Please select'))
             self.downloading = True
-        except:
+        except Exception as e:
+            print('error: ', str(e))
             pass
 
     def okRun1(self):
@@ -3532,7 +3543,8 @@ class script(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
             self['info'].setText(_('Please select'))
-        except:
+        except Exception as e:
+            print('error: ', str(e))
             pass
 
     def okRun(self):
@@ -3653,7 +3665,8 @@ class repository(Screen):
                     self.downloading = False
             showlist(self.names, self['text'])
             self['info'].setText(_('Please select'))
-        except:
+        except Exception as e:
+            print('error: ', str(e))
             pass
 
     def okRun(self):
@@ -3718,7 +3731,8 @@ def main(session, **kwargs):
         try:
             from Plugins.Extensions.tvaddon.Update import upd_done
             upd_done()
-        except:
+        except Exception as e:
+            print('error: ', str(e))
             pass
         session.open(Hometv)
     else:
@@ -3875,7 +3889,8 @@ def StartSavingTerrestrialChannels():
           if not Trasponder:
             os.system('rm -fr ' + plugin_path + '/temp/TrasponderListOldLamedb')
             os.system('rm -fr ' + plugin_path + '/temp/ServiceListOldLamedb')
-        except:
+        except Exception as e:
+            print('error: ', str(e))
             pass
         return Trasponder
 
@@ -3896,8 +3911,9 @@ def StartSavingTerrestrialChannels():
         try:
           shutil.copyfile(NameDirectory,plugin_path +'/temp/TerrestrialChannelListArchive')
           return True
-        except :
-          pass
+        except Exception as e:
+            print('error: ', str(e))
+            pass
         return
     Service = SaveTrasponderService()
     if Service:

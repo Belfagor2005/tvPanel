@@ -14,12 +14,13 @@ import os
 import sys
 import re
 import shutil
-import xml.etree.ElementTree
+try:
+    from xml.etree.cElementTree import ElementTree
+except ImportError:
+    from xml.etree.ElementTree import ElementTree
 
 plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
 rules            = plugin_path + '/rules.xml'
-
-
         
 def Bouquet():
     for file in os.listdir('/etc/enigma2/'):
@@ -233,3 +234,4 @@ class LCN:
             eDVBDB = None
             os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
             print('bouquets reloaded...')
+
