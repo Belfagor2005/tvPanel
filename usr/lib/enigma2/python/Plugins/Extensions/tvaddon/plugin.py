@@ -594,10 +594,6 @@ class Categories(Screen):
         print('py2------>')
         if six.PY3:
             url = str(xml_path) + six.binary_type(category, encoding="utf-8")
-
-        # if six.PY3:
-            # url = str(xml_path) + six.ensure_str(category)
-            
             print('py3------>')
         try:
             getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
