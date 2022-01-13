@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     05/01/2022     #
+#     13/01/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -196,8 +196,8 @@ config.plugins.tvaddon.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
 config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default = "/tmp",choices = mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
-
-currversion      = '2.0.7'
+mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
+currversion      = '2.0.8'
 title_plug       = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug        = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
@@ -205,26 +205,25 @@ set = 0
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
-host_trs = b64decoder(ptrs)
-host_blk = b64decoder(pblk)
-host_mov = b64decoder(ptmov)
-plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvaddon'))
-skin_path = plugin_path
-ico_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/logo.png".format('tvaddon'))
-no_cover = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/no_coverArt.png".format('tvaddon'))
-res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('tvaddon'))
-
 data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
-upd_path = b64decoder(data_upd)
 data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
-xml_path = b64decoder(data_xml)
-# upd_path = b'http://corvone.altervista.org/tvPanel/'
-# xml_path = b'http://patbuweb.com/xml/'
-mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
 regexC = '<plugins cont="(.*?)"'
 regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
 # regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
-#======================================================config
+host_trs = b64decoder(ptrs)
+host_blk = b64decoder(pblk)
+host_mov = b64decoder(ptmov)
+upd_path = b64decoder(data_upd)
+xml_path = b64decoder(data_xml)
+plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvaddon'))
+ico_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/logo.png".format('tvaddon'))
+no_cover = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/no_coverArt.png".format('tvaddon'))
+res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('tvaddon'))
+skin_path = res_plugin_path + 'skins/hd/'
+if isFHD():
+    skin_path = res_plugin_path + 'skins/fhd/'
+if DreamOS():
+    skin_path = skin_path + 'dreamOs/'
 os.system('rm -fr ' + plugin_path + '/temp/*')
 if mmkpicon.endswith('/'):
     mmkpicon = mmkpicon[:-1]
@@ -234,11 +233,6 @@ if not os.path.exists(mmkpicon):
     except OSError as e:
         print(('Error creating directory %s:\n%s') % (mmkpicon, str(e)))
 print('****************************************path Picons: ', mmkpicon)
-skin_path = res_plugin_path + 'skins/hd/'
-if isFHD():
-    skin_path = res_plugin_path + 'skins/fhd/'
-if DreamOS():
-    skin_path = skin_path + 'dreamOs/'
 
 Panel_list = [
  _('LULULLA CORNER'),
@@ -272,42 +266,53 @@ Panel_list2 = [
  ('SETTINGS VHANNIBAL'),
  ('SETTINGS VHANNIBAL 2'),
  ('UPDATE SATELLITES.XML'),
- ('UPDATE TERRESTRIAL.XML'),
- ]
+ ('UPDATE TERRESTRIAL.XML'),]
 
 Panel_list3 = [
  _('MMARK PICONS BLACK'),
  _('MMARK PICONS TRANSPARENT'),
  _('MMARK PICONS MOVIE'),]
 
+# class tvList(MenuList):
+    # def __init__(self, list):
+        # MenuList.__init__(self, list, False, eListboxPythonMultiContent)
+        # self.l.setFont(0, gFont('Regular', 20))
+        # self.l.setFont(1, gFont('Regular', 22))
+        # self.l.setFont(2, gFont('Regular', 24))
+        # self.l.setFont(3, gFont('Regular', 26))
+        # self.l.setFont(4, gFont('Regular', 28))
+        # self.l.setFont(5, gFont('Regular', 30))
+        # self.l.setFont(6, gFont('Regular', 32))
+        # self.l.setFont(7, gFont('Regular', 34))
+        # self.l.setFont(8, gFont('Regular', 36))
+        # self.l.setFont(9, gFont('Regular', 40))
+        # if isFHD():
+            # self.l.setItemHeight(50)
+        # else:
+            # self.l.setItemHeight(50)
+
 class tvList(MenuList):
     def __init__(self, list):
-        MenuList.__init__(self, list, False, eListboxPythonMultiContent)
-        self.l.setFont(0, gFont('Regular', 20))
-        self.l.setFont(1, gFont('Regular', 22))
-        self.l.setFont(2, gFont('Regular', 24))
-        self.l.setFont(3, gFont('Regular', 26))
-        self.l.setFont(4, gFont('Regular', 28))
-        self.l.setFont(5, gFont('Regular', 30))
-        self.l.setFont(6, gFont('Regular', 32))
-        self.l.setFont(7, gFont('Regular', 34))
-        self.l.setFont(8, gFont('Regular', 36))
-        self.l.setFont(9, gFont('Regular', 40))
+        MenuList.__init__(self, list, True, eListboxPythonMultiContent)
         if isFHD():
             self.l.setItemHeight(50)
+            textfont = int(32)
+            self.l.setFont(0, gFont('Regular', textfont))
         else:
             self.l.setItemHeight(50)
+            textfont = int(24)
+            self.l.setFont(0, gFont('Regular', textfont))
 
 def DailyListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon')) #ico1_path
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=6, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
 
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def oneListEntry(name):
@@ -315,10 +320,10 @@ def oneListEntry(name):
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon')) #ico1_path
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =6, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =0, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT))
+        res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def showlist(data, list):
@@ -443,11 +448,13 @@ class Hometv(Screen):
         self.session.open(tvRemove)
 
     def tvManager(self):
-        if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
+        tvmanager = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvManager'))
+        # if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
+        if os.path.exists(tvmanager):        
             from Plugins.Extensions.tvManager.plugin import tvManager
             self.session.openWithCallback(self.close, tvManager)
         else:
-            self.session.open(MessageBox,("tvManager Not Installed!!"), type=MessageBox.TYPE_INFO, timeout=3)
+            self.session.open(MessageBox,("tvManager Not Installed!!\nInstall First"), type=MessageBox.TYPE_INFO, timeout=3)
 
     def tvIPK(self):
         self.session.open(tvIPK)
@@ -589,11 +596,12 @@ class Categories(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        # if six.PY2
+        # PY2
         url = str(xml_path) + category
         print('py2------>')
         if six.PY3:
-            url = str(xml_path) + six.binary_type(category, encoding="utf-8")
+            #url = str(xml_path) + six.binary_type(category, encoding="utf-8")
+            url = url.encode()
             print('py3------>')
         try:
             getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
@@ -3122,7 +3130,7 @@ class MMarkPiconsScreen(Screen):
         self.progclear = 0
         self['progress'].setValue(self.progclear)
         self["progress"].hide()
-        self.downloading = False
+        # self.downloading = False
 
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))
@@ -3827,7 +3835,6 @@ def StartSavingTerrestrialChannels():
                 if x.find('82000') == -1 and x.find('c0000') == -1:
                     return file
                     break
-        return
 
     def ResearchBouquetTerrestrial(search):
         for file in sorted(glob.glob("/etc/enigma2/*.tv")):
@@ -3843,7 +3850,6 @@ def StartSavingTerrestrialChannels():
                     if x.find('eeee0000')!= -1:
                         return file
                         break
-        return
 
     def SaveTrasponderService():
         TrasponderListOldLamedb = open(plugin_path +'/temp/TrasponderListOldLamedb', 'w')
@@ -3916,7 +3922,6 @@ def StartSavingTerrestrialChannels():
       if not SaveBouquetTerrestrial():
         CreateBouquetForce()
       return True
-    return
 
 def LamedbRestore():
     try:

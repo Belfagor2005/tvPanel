@@ -13,25 +13,17 @@
 		<rule type="marker" position="57">Sport</rule>
 		<rule type="marker" position="67">Musica</rule>
 		<rule type="marker" position="71">Emittenti Regionali</rule>		
-		<rule type="marker" position="101">Canali Test</rule>
+		<rule type="marker" position="100">Canali Test</rule>
 		<rule type="marker" position="104">Mediaset Canali Provvisori</rule>
 		<rule type="marker" position="107">Differite</rule>
-		<rule type="marker" position="110">Emittenti Regionali</rule>		
-		<rule type="marker" position="171">Emittenti Regionali</rule>			
-		<rule type="marker" position="210">Emittenti Regionali</rule>	
-		<rule type="marker" position="221">Cultura</rule>		
-		<rule type="marker" position="230">Emittenti Regionali</rule>		
-		<rule type="marker" position="271">Emittenti Regionali</rule>	
-		<rule type="marker" position="300">Mediaset Premium</rule>
-		<rule type="marker" position="311">Mediaset Premium - SerieTV</rule>		
-		<rule type="marker" position="330">Mediaset Premium - Cinema</rule>		
-		<rule type="marker" position="340">Mediaset Premium - Sport</rule>				
+		<rule type="marker" position="121">Canali H264</rule>		
+		<rule type="marker" position="410">Premio</rule>				
 		<rule type="marker" position="417">Europa7</rule>		
 		<rule type="marker" position="455">Canali Sky</rule>		
 		<rule type="marker" position="500">Alta Definizione</rule>	
 		<rule type="marker" position="569">Radio Tv</rule>
 		<rule type="marker" position="800">Rai Tre Regione</rule>			
-		<rule type="marker" position="830">Servizi On Demand</rule>		
+		<rule type="marker" position="828">Servizi On Demand</rule>		
 		<rule type="marker" position="1001">Duplicati</rule>				
 	</ruleset>		
 </rules>
