@@ -273,24 +273,6 @@ Panel_list3 = [
  _('MMARK PICONS TRANSPARENT'),
  _('MMARK PICONS MOVIE'),]
 
-# class tvList(MenuList):
-    # def __init__(self, list):
-        # MenuList.__init__(self, list, False, eListboxPythonMultiContent)
-        # self.l.setFont(0, gFont('Regular', 20))
-        # self.l.setFont(1, gFont('Regular', 22))
-        # self.l.setFont(2, gFont('Regular', 24))
-        # self.l.setFont(3, gFont('Regular', 26))
-        # self.l.setFont(4, gFont('Regular', 28))
-        # self.l.setFont(5, gFont('Regular', 30))
-        # self.l.setFont(6, gFont('Regular', 32))
-        # self.l.setFont(7, gFont('Regular', 34))
-        # self.l.setFont(8, gFont('Regular', 36))
-        # self.l.setFont(9, gFont('Regular', 40))
-        # if isFHD():
-            # self.l.setItemHeight(50)
-        # else:
-            # self.l.setItemHeight(50)
-
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
@@ -448,9 +430,9 @@ class Hometv(Screen):
         self.session.open(tvRemove)
 
     def tvManager(self):
-        tvmanager = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvManager'))
+        tvman = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvManager'))
         # if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
-        if os.path.exists(tvmanager):        
+        if os.path.exists(tvman):        
             from Plugins.Extensions.tvManager.plugin import tvManager
             self.session.openWithCallback(self.close, tvManager)
         else:
@@ -600,7 +582,7 @@ class Categories(Screen):
         url = str(xml_path) + category
         print('py2------>')
         if six.PY3:
-            #url = str(xml_path) + six.binary_type(category, encoding="utf-8")
+            #url = str(xml_path) + six.binary_type(category, encoding="utf-8") #no work on wix image 
             url = url.encode()
             print('py3------>')
         try:
@@ -733,7 +715,6 @@ class tvDailySetting(Screen):
                     url_sat_oealliance = 'http://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/satellites.xml'
                     link_sat = ssl_urlopen(url_sat_oealliance)
                     dirCopy = '/etc/tuxbox/satellites.xml'
-                    # urlretrieve(link_sat, dirCopy)
                     import requests
                     r = requests.get(link_sat)
                     with open(dirCopy,'wb') as f:
@@ -756,7 +737,6 @@ class tvDailySetting(Screen):
                     url_sat_oealliance = 'https://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/terrestrial.xml'
                     link_ter = ssl_urlopen(url_sat_oealliance)
                     dirCopy = '/etc/tuxbox/terrestrial.xml'
-                    # urlretrieve(link_ter, dirCopy)
                     import requests
                     r = requests.get(link_ter)
                     with open(dirCopy,'wb') as f:
@@ -866,7 +846,6 @@ class SettingVhan(Screen):
                 r = requests.get(url)
                 with open(dest,'wb') as f:
                   f.write(r.content)
-
                 if 'dtt' not in self.name.lower():
                     set = 1
                     terrestrial()
