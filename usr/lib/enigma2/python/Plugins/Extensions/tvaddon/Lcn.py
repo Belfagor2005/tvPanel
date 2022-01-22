@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 from __future__ import print_function                                     
+from enigma import eDVBDB                  
 from enigma import eServiceReference, eServiceCenter
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -14,11 +15,19 @@ import os
 import sys
 import re
 import shutil
-try:
-    from xml.etree.cElementTree import ElementTree
-except ImportError:
-    from xml.etree.ElementTree import ElementTree
 
+    
+# import xml.etree.cElementTree as ET
+
+try:
+    from xml.etree.cElementTree import ET
+    from xml.etree.cElementTree import fromstring
+    
+except ImportError:
+    from xml.etree.ElementTree import ET
+    from xml.etree.ElementTree import fromstring
+
+#NAME Digitale Terrestre
 plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
 rules            = plugin_path + '/rules.xml'
         
@@ -30,23 +39,43 @@ def Bouquet():
             if re.search('#NAME Digitale Terrestre', x, flags=re.IGNORECASE):
                 return '/etc/enigma2/' + file
 
+
 class LCN:
-# class LCN:
     service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
 
     def __init__(self):
-        self.dbfile = '/etc/enigma2/lcndb'
+        self.dbfile = '/var/etc/enigma2/lcndb'
         self.bouquetfile = Bouquet()
         self.lcnlist = []
         self.markers = []
         self.e2services = []
-        mdom = xml.etree.cElementTree.parse(rules)
+        mdom = ET.parse('/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/rules.xml')
         self.root = None
         for x in mdom.getroot():
             if x.tag == 'ruleset' and x.get('name') == 'Italy':
                 self.root = x
                 return
         return
+        
+        
+# class LCN:
+    # service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
+
+    # def __init__(self):
+        # rules = plugin_path + '/rules.xml'
+        # self.dbfile = '/etc/enigma2/lcndb'
+        # self.bouquetfile = Bouquet()
+        # self.lcnlist = []
+        # self.markers = []
+        # self.e2services = []
+        # tree = ElementTree.parse(fromstring(rules))
+        # mdom = tree
+        # self.root = None
+        # for x in mdom.getroot():
+            # if x.tag == 'ruleset' and x.get('name') == 'Italy':
+                # self.root = x
+                # return
+        # return
 
     def addLcnToList(self, namespace, nid, tsid, sid, lcn, signal):
         for x in self.lcnlist:
@@ -72,20 +101,10 @@ class LCN:
                     self.addLcnToList(znamespace, znid, ztsid, zsid, lcn + 16536, zsignal)
                 return
             if self.lcnlist[i][0] > lcn:
-                self.lcnlist.insert(i, [lcn,
-                 namespace,
-                 nid,
-                 tsid,
-                 sid,
-                 signal])
+                self.lcnlist.insert(i, [lcn, namespace, nid, tsid, sid, signal])
                 return
 
-        self.lcnlist.append([lcn,
-         namespace,
-         nid,
-         tsid,
-         sid,
-         signal])
+        self.lcnlist.append([lcn, namespace, nid, tsid, sid, signal])
 
     def renumberLcn(self, range, rule):
         tmp = range.split('-')
@@ -209,10 +228,7 @@ class LCN:
                     f.write('#SERVICE 1:64:0:0:0:0:0:0:0:0:\n')
                     f.write('#DESCRIPTION ------- ' + self.markers[0][1] + ' -------\n')
                     self.markers.remove(self.markers[0])
-            refstr = '1:0:1:%x:%x:%x:%x:0:0:0:' % (x[4],
-             x[3],
-             x[2],
-             x[1])
+            refstr = '1:0:1:%x:%x:%x:%x:0:0:0:' % (x[4], x[3], x[2], x[1])
             refsplit = eServiceReference(refstr).toString().split(':')
             for tref in self.e2services:
                 tmp = tref.split(':')

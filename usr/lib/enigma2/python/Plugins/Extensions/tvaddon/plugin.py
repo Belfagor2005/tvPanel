@@ -170,6 +170,22 @@ def make_request(url):
         return
     return
 
+
+def ReloadBouquets():
+    # global set
+    print('\n----Reloading bouquets----\n')
+    # if set == 1:
+        # set = 0
+        # terrestrial_rest()
+    try:
+        from enigma import eDVBDB
+        eDVBDB.getInstance().reloadBouquets()
+        print('bouquets reloaded...')
+    except ImportError:
+        eDVBDB = None
+        os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
+        print('bouquets reloaded...')
+        
 def ReloadBouquet():
     global set
     print('\n----Reloading bouquets----')
@@ -276,36 +292,42 @@ Panel_list3 = [
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
+        self.l.setItemHeight(50)
+        textfont = int(24)
+        self.l.setFont(0, gFont('Regular', textfont))        
         if isFHD():
             self.l.setItemHeight(50)
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
-        else:
-            self.l.setItemHeight(50)
-            textfont = int(24)
-            self.l.setFont(0, gFont('Regular', textfont))
+        # else:
+            # self.l.setItemHeight(50)
+            # textfont = int(24)
+            # self.l.setFont(0, gFont('Regular', textfont))
 
 def DailyListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon')) #ico1_path
+    res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
+    res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    # else:
+        # res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
+        # res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def oneListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon')) #ico1_path
+    res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx), flags= RT_VALIGN_CENTER))
+    res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
+        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx), flags= RT_VALIGN_CENTER))
         res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =0, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    # else:
+        # res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx)))
+        # res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 def showlist(data, list):
@@ -1788,6 +1810,7 @@ class tvInstall(Screen):
         list = []
         list.sort()
         self['info'].setText(_('... please wait'))
+        
         n1 = data.find(name, 0)
         n2 = data.find("</plugins>", n1)
         data1 = data[n1:n2]
@@ -1798,6 +1821,7 @@ class tvInstall(Screen):
         for name, url in match:
             self.names.append(name)
             self.urls.append(url)
+            
         self['text'] = tvList([])
         self['info'].setText(_('Please install ...'))
         self['title'] = Label(_(title_plug))
@@ -3798,7 +3822,8 @@ def lcnstart():
         lcn.read()
         if len(lcn.lcnlist) > 0:
             lcn.writeBouquet()
-            lcn.reloadBouquets()
+            # lcn.reloadBouquet()
+            ReloadBouquets()
     return
 
 def StartSavingTerrestrialChannels():
