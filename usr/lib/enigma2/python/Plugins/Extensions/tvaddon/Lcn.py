@@ -20,12 +20,11 @@ import shutil
 # import xml.etree.cElementTree as ET
 
 try:
-    from xml.etree.cElementTree import ElementTree as ET
-    from xml.etree.cElementTree import fromstring
-    
-except ImportError:
     from xml.etree.ElementTree import ElementTree as  ET
     from xml.etree.ElementTree import fromstring
+except ImportError:
+    from xml.etree.cElementTree import ElementTree as ET
+    from xml.etree.cElementTree import fromstring
 
 #NAME Digitale Terrestre
 plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
