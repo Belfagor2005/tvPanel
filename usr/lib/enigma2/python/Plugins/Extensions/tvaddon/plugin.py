@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     13/01/2022     #
+#     24/01/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -307,7 +307,7 @@ class tvList(MenuList):
 def DailyListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon')) #ico1_path
-    res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
+    res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
     res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
@@ -320,10 +320,10 @@ def DailyListEntry(name, idx):
 def oneListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon')) #ico1_path
-    res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx), flags= RT_VALIGN_CENTER))
+    res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
     res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx), flags= RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =0, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     # else:
         # res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx)))
