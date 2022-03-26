@@ -12,7 +12,7 @@ from . import _
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
-from Components.Input import Input
+# from Components.Input import Input
 from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
@@ -21,14 +21,14 @@ from Components.PluginComponent import plugins
 from Components.PluginList import *
 from Components.ProgressBar import ProgressBar
 from Components.ScrollLabel import ScrollLabel
-from Components.SelectionList import SelectionList
+# from Components.SelectionList import SelectionList
 from Components.Sources.List import List
 from Components.Sources.Progress import Progress
 from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
 from Components.config import *
 from Plugins.Plugin import PluginDescriptor
-from Screens.ChoiceBox import ChoiceBox
+# from Screens.ChoiceBox import ChoiceBox
 from Screens.Console import Console
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
@@ -299,22 +299,20 @@ class tvList(MenuList):
             self.l.setItemHeight(50)
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
-        # else:
-            # self.l.setItemHeight(50)
-            # textfont = int(24)
-            # self.l.setFont(0, gFont('Regular', textfont))
+        else:
+            self.l.setItemHeight(50)
+            textfont = int(24)
+            self.l.setFont(0, gFont('Regular', textfont)) 
 
 def DailyListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon')) #ico1_path
-    res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
-    res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png =loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(60, 0), size=(1900, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    # else:
-        # res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 6), size=(34, 25), png=loadPNG(pngs)))
-        # res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    else:
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 12), size=(34, 25), png=loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos=(60, 0), size=(1000, 50), font=0, text=name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
     return res
 
 def oneListEntry(name):
@@ -325,9 +323,9 @@ def oneListEntry(name):
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =0, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    # else:
-        # res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 6), size =(34, 25), png =loadPNG(pngx)))
-        # res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    else:
+        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))  
     return res
 
 def showlist(data, list):
@@ -2270,6 +2268,7 @@ class tvIPK(Screen):
                 res = (fil, idx)
                 self.flist.append(res)
                 idx = idx + 1
+        self['select'] = Label(_('Select'))
         self['ipkglisttmp'] = List(self.flist)
         self['info1'] = Label(_('Put .ipk .tar.gz .deb .zip and install (Set folder from config path) ') + ' ' + str(ipkpth) )
         self['info'] = Label('')
@@ -2586,7 +2585,7 @@ class tvRemove(Screen):
          'yellow': self.msgipkrst,
          'red': self.close,
          'cancel': self.close}, -1)
-        # self.getfreespace()
+        self.getfreespace()
         self.onLayoutFinish.append(self.openList)
 
     def PluginDownloadBrowserClosed(self):
@@ -2689,6 +2688,7 @@ class tvConfig(Screen, ConfigListScreen):
         self.session = session
         self.setTitle(_(title_plug))
         self['description'] = Label('')
+        self["paypal"] = Label()  
         info = ''
         self['info'] = Label(_('Config Panel Addon'))
         self['key_yellow'] = Button(_('Update'))
@@ -2715,12 +2715,20 @@ class tvConfig(Screen, ConfigListScreen):
 
     def layoutFinished(self):
         self.setTitle(self.setup_title)
+        paypal = self.paypal2()
+        self["paypal"].setText(paypal)
         if not os.path.exists('/tmp/currentip'):
             os.system('wget -qO- http://ipecho.net/plain > /tmp/currentip')
         currentip1 = open('/tmp/currentip', 'r')
         currentip = currentip1.read()
         self['info'].setText(_('Config Panel Addon\nYour current IP is %s') %currentip)
 
+    def paypal2(self):
+        conthelp = "If you like what I do you\n"
+        conthelp += " can contribute with a coffee\n\n"        
+        conthelp += "scan the qr code and donate € 1.00"
+        return conthelp
+        
     def setInfo(self):
         entry = str(self.getCurrentEntry())
         if entry == _('Auto Update Plugin'):
