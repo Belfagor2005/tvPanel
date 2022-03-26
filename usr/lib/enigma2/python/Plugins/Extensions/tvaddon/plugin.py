@@ -1170,7 +1170,7 @@ class SettingManutek(Screen):
          'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = 'http://www.manutek.it/isetting/'
+        url = 'http://www.manutek.it/isetting/index.php'
         data = make_request(url)
         r = data
         print('rrrrrrrr ', r)
