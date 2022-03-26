@@ -17,8 +17,6 @@ import re
 import shutil
 
     
-# import xml.etree.cElementTree as ET
-
 try:
     from xml.etree.ElementTree import ElementTree as  ET
     from xml.etree.ElementTree import fromstring
@@ -48,7 +46,10 @@ class LCN:
         self.lcnlist = []
         self.markers = []
         self.e2services = []
-        mdom = ET.parse('/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/rules.xml')
+        # mdom = ET.parse('/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/rules.xml')
+        with open(rules,'rt') as f:
+            mdom = ET()
+            mdom.parse(f) 
         self.root = None
         for x in mdom.getroot():
             if x.tag == 'ruleset' and x.get('name') == 'Italy':
@@ -56,26 +57,6 @@ class LCN:
                 return
         return
         
-        
-# class LCN:
-    # service_types_tv = '1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 22) || (type == 25) || (type == 134) || (type == 195)'
-
-    # def __init__(self):
-        # rules = plugin_path + '/rules.xml'
-        # self.dbfile = '/etc/enigma2/lcndb'
-        # self.bouquetfile = Bouquet()
-        # self.lcnlist = []
-        # self.markers = []
-        # self.e2services = []
-        # tree = ElementTree.parse(fromstring(rules))
-        # mdom = tree
-        # self.root = None
-        # for x in mdom.getroot():
-            # if x.tag == 'ruleset' and x.get('name') == 'Italy':
-                # self.root = x
-                # return
-        # return
-
     def addLcnToList(self, namespace, nid, tsid, sid, lcn, signal):
         for x in self.lcnlist:
             if x[0] == lcn and x[1] == namespace and x[2] == nid and x[3] == tsid and x[4] == sid:
@@ -105,25 +86,8 @@ class LCN:
 
         self.lcnlist.append([lcn, namespace, nid, tsid, sid, signal])
 
-    def renumberLcn(self, range, rule):
-        tmp = range.split('-')
-        if len(tmp) != 2:
-            return
-        min = int(tmp[0])
-        max = int(tmp[1])
-        for x in self.lcnlist:
-            if x[0] >= min and x[0] <= max:
-                value = x[0]
-                cmd = 'x[0] = ' + rule
-                try:
-                    exec(cmd)
-                except Exception as e:
-                    print(e)
-
     def addMarker(self, position, text):
         self.markers.append([position, text])
-
-
 
     def read(self):
         self.readE2Services()
@@ -147,15 +111,39 @@ class LCN:
                 continue
             self.addLcnToList(int(tmp[0], 16), int(tmp[1], 16), int(tmp[2], 16), int(tmp[3], 16), int(tmp[4]), int(tmp[5]))
             #########
+        # if self.root is not None:
+            # for x in self.root:
+                # if x.tag == 'rule':
+                    # if x.get('type') == 'marker':
+                        # self.addMarker(int(x.get('position')), x.text)
+
+        # self.markers.sort(key=lambda z: int(z[0]))
+        # return
         if self.root is not None:
             for x in self.root:
-                if x.tag == 'rule':
-                    if x.get('type') == 'marker':
-                        self.addMarker(int(x.get('position')), x.text)
+                if x.tag == "rule":
+                    # if x.get("type") == "renumber":
+                        # self.renumberLcn(x.get("range"), x.text)
+                        # self.lcnlist.sort(key=lambda z: int(z[0]))
+                    if x.get("type") == "marker":
+                        self.addMarker(int(x.get("position")), x.text)
+        self.markers.sort(key=lambda z: int(z[0]))        
 
-        self.markers.sort(key=lambda z: int(z[0]))
-        return
-        
+    def renumberLcn(self, range, rule):
+        tmp = range.split('-')
+        if len(tmp) != 2:
+            return
+        min = int(tmp[0])
+        max = int(tmp[1])
+        for x in self.lcnlist:
+            if x[0] >= min and x[0] <= max:
+                value = x[0]
+                cmd = 'x[0] = ' + rule
+                try:
+                    exec(cmd)
+                except Exception as e:
+                    print(e)
+
     def readE2Services(self):
         self.e2services = []
         refstr = '%s ORDER BY name' % self.service_types_tv
