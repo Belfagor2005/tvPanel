@@ -601,11 +601,11 @@ class Categories(Screen):
         # PY2
         url = str(xml_path) + category
         print('py2------>')
-        if six.PY3:
-            #url = str(xml_path) + six.binary_type(category, encoding="utf-8") #no work on wix image 
-            url = url.encode()
-            print('py3------>')
-        try:
+        try:        
+            if six.PY3:
+                #url = str(xml_path) + six.binary_type(category, encoding="utf-8") #no work on wix image 
+                url = url.encode()
+                print('py3------>')
             getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
             #error : url must be bytes, not unicode
         except Exception as e:
@@ -618,9 +618,10 @@ class Categories(Screen):
 
     def _gotPageLoad(self, data):
         self.xml = data
+        
         if six.PY3:
             self.xml = six.ensure_str(data)
-        try:
+        try: 
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
                 self.list.append(name)
@@ -2021,14 +2022,20 @@ class tvInstall(Screen):
         print('progress = ok')
 
     def finish(self, fplug):
-        if os.path.exists(self.dest):
-            self['info'].setText(_('File Downloaded ...'))
-            self.ipkinst(self.dest)
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self.progclear = 0
         self['progress'].setValue(self.progclear)
         self["progress"].hide()
+        if os.path.exists(self.dest):
+            self['info'].setText(_('File Downloaded ...'))
+            # self.ipkinst(self.dest)
+            self.tvIPK()
+
+
+    def tvIPK(self):
+        # self.session.open(tvIPK)
+        self.session.openWithCallback(self.close, tvIPK)
 
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))

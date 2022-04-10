@@ -33,28 +33,6 @@
 		<rule type="marker" position="1000">Duplicati</rule>
 	</ruleset>
 	
-	<ruleset name="Italia Mar 2022 by Morpheus883">
-		<!-- no "renumber" rules... keeping the exact order from original LCN -->
-		<rule type="marker" position="0">[1] Nazionali</rule>
-		<rule type="marker" position="9">[10] Locali</rule>
-		<rule type="marker" position="19">[20] Movie e Semigeneralista</rule>
-		<rule type="marker" position="39">[40] Ragazzi</rule>
-		<rule type="marker" position="47">[48] News</rule>
-		<rule type="marker" position="51">[52] Cultura</rule>
-		<rule type="marker" position="57">[58] Sport</rule>
-		<rule type="marker" position="65">[66] Musica</rule>
-		<rule type="marker" position="74">[75] Locali</rule>
-		<rule type="marker" position="102">[103] Nazionali</rule>
-		<rule type="marker" position="112">[113] Locali</rule>
-		<rule type="marker" position="119">[120] Nazionali</rule>
-		<rule type="marker" position="174">[175] Locali</rule>
-		<rule type="marker" position="199">[200] Nazionali</rule>
-		<rule type="marker" position="408">[409] Sport</rule>
-		<rule type="marker" position="454">[455] Sky</rule>
-		<rule type="marker" position="500">[501] SD Nazionali</rule>
-		<rule type="marker" position="828">[829] On Demand e Servizi</rule>
-		<rule type="marker" position="1000">[1000] Altri - Duplicati</rule>
-	</ruleset>
-	
+
 </rules>
 
