@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     24/01/2022     #
+#     10/04/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -884,6 +884,7 @@ class SettingVhan(Screen):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system('rm -rf /etc/enigma2/*.del')
                     os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
@@ -1012,6 +1013,7 @@ class SettingVhan2(Screen):
                 os.system('rm -rf /etc/enigma2/lamedb')
                 os.system('rm -rf /etc/enigma2/*.radio')
                 os.system('rm -rf /etc/enigma2/*.tv')
+                os.system('rm -rf /etc/enigma2/*.del')
                 os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                 title = _("Installation Settings")
                 self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
@@ -1123,6 +1125,7 @@ class Milenka61(Screen):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system('rm -rf /etc/enigma2/*.del')
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
@@ -1232,6 +1235,7 @@ class SettingManutek(Screen):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system('rm -rf /etc/enigma2/*.del')
                     os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess =False)
@@ -1350,6 +1354,7 @@ class SettingMorpheus(Screen):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system('rm -rf /etc/enigma2/*.del')
                     os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"],closeOnSuccess =False)
@@ -1466,6 +1471,7 @@ class SettingCiefp(Screen):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system('rm -rf /etc/enigma2/*.del')
                     os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"] , closeOnSuccess =False)
@@ -1566,6 +1572,7 @@ class SettingBi58(Screen):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system('rm -rf /etc/enigma2/*.del')
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
@@ -1666,6 +1673,7 @@ class SettingPredrag(Screen):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system('rm -rf /etc/enigma2/*.del')
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess =False)
                 self['info'].setText(_('Settings Installed ...'))
@@ -1779,6 +1787,7 @@ class SettingCyrus(Screen):
                     os.system('rm -rf /etc/enigma2/lamedb')
                     os.system('rm -rf /etc/enigma2/*.radio')
                     os.system('rm -rf /etc/enigma2/*.tv')
+                    os.system('rm -rf /etc/enigma2/*.del')
                     os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
                     self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"] , closeOnSuccess =False)
@@ -2640,7 +2649,7 @@ class tvRemove(Screen):
     def callMyMsg1(self, result):
         if result:
             idx = self['text'].getSelectionIndex()
-            if idx == -1 or None:
+            if idx < 0:
                 return
             dom = self.names[idx]
             com = dom
@@ -3007,7 +3016,7 @@ class MMarkFolderScreen(Screen):
 
     def okRun(self):
         idx = self['text'].getSelectionIndex()
-        if idx == -1 or None:
+        if idx < 0:
             return
         name = self.names[idx]
         url = self.urls[idx]
