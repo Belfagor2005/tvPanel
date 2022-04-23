@@ -3728,17 +3728,13 @@ class repository(Screen):
         pass
 
 def main(session, **kwargs):
-    try:
-        from Plugins.Extensions.tvaddon.Utils import checkInternet
-    except:
-        from . import Utils
-    checkInternet()
-    if checkInternet():
+    from . import Utils
+    
+    if Utils.checkInternet():
         try:
-            from Plugins.Extensions.tvaddon.Update import upd_done
-            upd_done()
-        except Exception as e:
-            print('error: ', str(e))
+            from . import Update
+            Update.upd_done()
+        except:
             pass
         session.open(Hometv)
     else:
@@ -3750,7 +3746,8 @@ def menu(menuid, **kwargs):
           main,
           'TiVuStream Panel',
           44)]
-    return []
+    else:
+        return []
 
 def cfgmain(menuid):
     if menuid == 'mainmenu':
