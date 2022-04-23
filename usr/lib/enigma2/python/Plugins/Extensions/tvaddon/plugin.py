@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     16/04/2022     #
+#     23/04/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -118,20 +118,26 @@ def isFHD():
     return desktopSize[0] == 1920
 
 def checkMyFile(url):
-    # FIXME urlopen will cause a full download of file and this != what you want //thank's @jbleyel
     return []
     try:
         dest = "/tmp/download.zip"
         req = Request(url)
+        # req.add_header('User-Agent', RequestAgent())
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
-        req.add_header('Referer', 'https://www.mediafire.com/')
+        req.add_header('Referer', 'https://www.mediafire.com')
         req.add_header('X-Requested-With', 'XMLHttpRequest')
         page = urlopen(req)
         r = page.read()
-        n1 = r.find('"Download file"', 0)
-        n2 = r.find('Repair your download', n1)
+        n1 = r.find('"download_link', 0)
+        n2 = r.find('downloadButton', n1)
         r2 = r[n1:n2]
-        myfile = re.findall('href="http://download(.*?)">', r2)
+        print("r2 =", r2)
+        regexcat =  'href="https://download(.*?)"'
+        match = re.compile(regexcat,re.DOTALL).findall(r2)
+        print("match =", match[0])
+       # if match:
+        myfile = match[0]
+        logdata("Myfile ", myfile)
         return myfile
     except:
         e = URLError
@@ -142,7 +148,6 @@ def checkMyFile(url):
             print('We failed to reach a server.')
             print('Reason: ', e.reason)
         return ''
-    return
 
 def make_request(url):
     try:
@@ -289,9 +294,6 @@ Panel_list3 = [
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        self.l.setItemHeight(50)
-        textfont = int(24)
-        self.l.setFont(0, gFont('Regular', textfont))
         if isFHD():
             self.l.setItemHeight(50)
             textfont = int(32)
@@ -315,8 +317,6 @@ def DailyListEntry(name, idx):
 def oneListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon')) #ico1_path
-    res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
-    res.append(MultiContentEntryText(pos=(60, 0), size =(1000, 50), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 12), size =(34, 25), png =loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(60, 0), size =(1900, 50), font =0, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -1931,7 +1931,7 @@ class tvInstall(Screen):
                         self.timer.start(1000, True)
                         # cmd = 'wget -q -O %s %s;dpkg --install --force-overwrite %s' % (self.dest, str(self.com), self.dest)
                         cmd = 'wget -q -O %s %s;apt-get install --reinstall %s -y' % (self.dest, str(self.com), self.dest)
-                        
+
                         self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                 elif extension == "ipk":
@@ -1942,8 +1942,8 @@ class tvInstall(Screen):
                         self.timer = eTimer()
                         self.timer.start(1000, True)
                         cmd = 'wget -q -O %s %s;opkg install --force-reinstall %s' % (self.dest, str(self.com), self.dest)
-                        # cmd = 'wget -q -O %s %s;opkg install %s' % (self.dest, str(self.com), self.dest)                        
-                        
+                        # cmd = 'wget -q -O %s %s;opkg install %s' % (self.dest, str(self.com), self.dest)
+
                         self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                 elif self.com.endswith('.zip'):
@@ -3065,19 +3065,50 @@ class MMarkPiconsScreen(Screen):
         if result:
             if self.downloading == True:
                 idx = self["text"].getSelectionIndex()
+                self.name = self.names[idx]
                 url = self.urls[idx]
-                self.dest = "/tmp/download.zip"
-                myfile = checkMyFile(url)
-                if os.path.exists(self.dest):
-                    os.remove(self.dest)
-                for url in myfile:
-                    img = no_cover
-                    url = 'http://download' + url
-                self.download = downloadWithProgress(url, self.dest)
-                self.download.addProgress(self.downloadProgress)
-                self.download.start().addCallback(self.install).addErrback(self.showError)
+                dest = "/tmp/download.zip"
+                print('url333: ', url)
+                if os.path.exists(dest):
+                    os.remove(dest)
+                try:
+                    myfile = ReadUrl2(url)
+                    print('response: ', myfile)
+                    regexcat =  'href="https://download(.*?)"'
+                    match = re.compile(regexcat,re.DOTALL).findall(myfile)
+                    print("match =", match[0])
+                    # myfile = checkMyFile(url)
+                    # print('myfile222:  ', myfile)
+                    url =  'https://download' + str(match[0])
+                    print("url final =", url)
+
+                    # myfile = checkMyFile(url)
+                    # print('myfile222:  ', myfile)
+                    # # url =  'https://download' + str(myfile)
+
+                    self.download = downloadWithProgress(url, dest)
+                    self.download.addProgress(self.downloadProgress)
+                    self.download.start().addCallback(self.install).addErrback(self.showError)
+                except Exception as e:
+                    print('error: ', str(e))
+                    print("Error: can't find file or read data")
+
             else:
                 self['info'].setText(_('Picons Not Installed ...'))
+
+    def install(self, fplug):
+        if os.path.exists('/tmp/download.zip'):
+            self['info'].setText(_('Install ...'))
+            myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
+            logdata("install2 ", myCmd)
+            subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
+            self.mbox = self.session.open(MessageBox, _('Successfully Picons Installed'), MessageBox.TYPE_INFO, timeout=5)
+        self['info'].setText(_('Please select ...'))
+        self['progresstext'].text = ''
+        self.progclear = 0
+        self['progress'].setValue(self.progclear)
+        self["progress"].hide()
+        # self.downloading = False
 
     def downloadProgress(self, recvbytes, totalbytes):
         self["progress"].show()
@@ -3085,17 +3116,7 @@ class MMarkPiconsScreen(Screen):
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
 
-    def install(self, fplug):
-        if os.path.exists(self.dest):
-            self['info'].setText(_('Install ...'))
-            myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
-            subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
-        self['info'].setText(_('Picons Installed ...'))
-        self['progresstext'].text = ''
-        self.progclear = 0
-        self['progress'].setValue(self.progclear)
-        self["progress"].hide()
-        # self.downloading = False
+
 
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))
