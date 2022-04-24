@@ -54,11 +54,9 @@ import glob
 import six
 import subprocess
 from sys import version_info
-try:
-    from Plugins.Extensions.tvaddon.Utils import *
-except:
-    from . import Utils
-from .Lcn import *
+
+from . import Utils
+from . import Lcn
 global skin_path, mmkpicon, set, regexC, category
 
 try:
@@ -228,11 +226,11 @@ data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
 regexC = '<plugins cont="(.*?)"'
 regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
 # regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
-host_trs = b64decoder(ptrs)
-host_blk = b64decoder(pblk)
-host_mov = b64decoder(ptmov)
-upd_path = b64decoder(data_upd)
-xml_path = b64decoder(data_xml)
+host_trs = Utils.b64decoder(ptrs)
+host_blk = Utils.b64decoder(pblk)
+host_mov = Utils.b64decoder(ptmov)
+upd_path = Utils.b64decoder(data_upd)
+xml_path = Utils.b64decoder(data_xml)
 plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvaddon'))
 ico_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/logo.png".format('tvaddon'))
 no_cover = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/no_coverArt.png".format('tvaddon'))
@@ -240,7 +238,7 @@ res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('tv
 skin_path = res_plugin_path + 'skins/hd/'
 if isFHD():
     skin_path = res_plugin_path + 'skins/fhd/'
-if DreamOS():
+if Utils.DreamOS():
     skin_path = skin_path + 'dreamOs/'
 os.system('rm -fr ' + plugin_path + '/temp/*')
 if mmkpicon.endswith('/'):
@@ -387,7 +385,7 @@ class Hometv(Screen):
         except Exception as e:
             print('error: ', str(e))
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
@@ -422,7 +420,7 @@ class Hometv(Screen):
 
     def closerm(self):
         ReloadBouquet()
-        deletetmp()
+        Utils.deletetmp()
         self.close()
 
     def goConfig(self):
@@ -525,7 +523,7 @@ class Hometv(Screen):
 
     def runupdate(self, result):
         if result:
-            if DreamOS():
+            if Utils.DreamOS():
                 com = self.dmlink
                 dom = 'New version ' + self.version
                 tvtemp='/tmp/tvaddon.tar'
@@ -582,7 +580,7 @@ class Categories(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -791,7 +789,7 @@ class SettingVhan(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -924,7 +922,7 @@ class SettingVhan2(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1067,7 +1065,7 @@ class Milenka61(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1170,7 +1168,7 @@ class SettingManutek(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1285,7 +1283,7 @@ class SettingMorpheus(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1408,7 +1406,7 @@ class SettingCiefp(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1529,7 +1527,7 @@ class SettingBi58(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1633,7 +1631,7 @@ class SettingPredrag(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1738,7 +1736,7 @@ class SettingCyrus(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
 
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
@@ -1935,7 +1933,7 @@ class tvInstall(Screen):
                         self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
                         self['info'].setText(_('Installation done !!!'))
                 elif extension == "ipk":
-                    if DreamOS():
+                    if Utils.DreamOS():
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Installation canceled!'))
                     else:
@@ -2036,7 +2034,7 @@ class tvInstall(Screen):
                         self['info'].setText(_('Download canceled!'))
                         return
                 elif self.com.endswith(".ipk"):
-                    if DreamOS():
+                    if Utils.DreamOS():
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                         return
@@ -2266,7 +2264,7 @@ class tvIPK(Screen):
             self.refreshlist()
 
     def getfreespace(self):
-        fspace = freespace()
+        fspace = Utils.freespace()
         self['pth'].setText(fspace)
 
     def goConfig(self):
@@ -2294,7 +2292,7 @@ class tvIPK(Screen):
                     cmd0 = 'tar -xzvf ' + self.dest + ' -C /'
                     self.session.open(tvConsole, title ='TAR GZ Local Installation', cmdlist =[cmd0, 'sleep 5'],closeOnSuccess =False)
                 elif self.sel.endswith('.deb'):
-                    if DreamOS():
+                    if Utils.DreamOS():
                         # self.sel = self.sel[0]
                         cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install --reinstall %s -y' %self.dest #+ ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
                         self.session.open(tvConsole, title ='DEB Local Installation', cmdlist =[cmd0], closeOnSuccess =False)
@@ -2437,7 +2435,7 @@ class tvUpdate(Screen):
             self['pth'].setText('No updates available!')
 
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
@@ -2465,7 +2463,7 @@ class tvUpdate(Screen):
 
     def runupdate(self, result):
         if result:
-            if DreamOS():
+            if Utils.DreamOS():
                 com = self.dmlink
                 dom = 'New version ' + self.version
                 tvtemp='/tmp/tvaddon.tar'
@@ -2558,7 +2556,7 @@ class tvRemove(Screen):
         del self.list[: ]
         self["text"].l.setList(self.list)
         path = ('/var/lib/opkg/info')
-        if DreamOS():
+        if Utils.DreamOS():
             path= ('/var/lib/dpkg/info')
         for root, dirs, files in os.walk(path):
             if files != None:
@@ -2568,7 +2566,7 @@ class tvRemove(Screen):
                         continue
                     if name.endswith('.md5sums') or name.endswith('.conffiles') or name.endswith('~') :
                         continue
-                    if DreamOS():
+                    if Utils.DreamOS():
                         if name.endswith('.list'):
                             name= name.replace('.list', '')
                     else:
@@ -2594,7 +2592,7 @@ class tvRemove(Screen):
             idx = self['text'].getSelectionIndex()
             dom = self.names[idx]
             com = dom
-            if DreamOS():
+            if Utils.DreamOS():
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com],closeOnSuccess =False)
             else:
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess =False)
@@ -2604,7 +2602,7 @@ class tvRemove(Screen):
         from Components.PluginComponent import plugins
         plugins.clearPluginList()
         plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
-        fspace = freespace()
+        fspace = Utils.freespace()
         self['info'].setText(fspace)
         self.openList()
 
@@ -2824,7 +2822,7 @@ class SelectPicons(Screen):
         self.onLayoutFinish.append(self.updateMenuList)
 
     def getfreespace(self):
-        fspace = freespace()
+        fspace = Utils.freespace()
         self['pform'].setText(fspace)
 
     def closerm(self):
@@ -2900,10 +2898,10 @@ class MMarkFolderScreen(Screen):
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self.url = url
-        self.getfreespace()
+        # self.getfreespace()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -2913,9 +2911,10 @@ class MMarkFolderScreen(Screen):
          'green': self.okRun,
          'red': self.close,
          'cancel': self.close}, -2)
+        self.onLayoutFinish.append(self.getfreespace)
 
     def getfreespace(self):
-        fspace = freespace()
+        fspace = Utils.freespace()
         self['pform'].setText(fspace)
 
     def downxmlpage(self):
@@ -2999,7 +2998,7 @@ class MMarkPiconsScreen(Screen):
         self.url = url
         self.name = name
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3009,9 +3008,11 @@ class MMarkPiconsScreen(Screen):
          'green': self.okRun,
          'red': self.close,
          'cancel': self.close}, -2)
+        self.onLayoutFinish.append(self.getfreespace)
+         
 
     def getfreespace(self):
-        fspace = freespace()
+        fspace = Utils.freespace()
         self['pform'].setText(fspace)
 
     def downxmlpage(self):
@@ -3115,8 +3116,6 @@ class MMarkPiconsScreen(Screen):
         self['info'].setText(_('Download ...'))
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-
-
 
     def showError(self, error):
         self['info'].setText(_('Download Error ...'))
@@ -3226,7 +3225,7 @@ class plugins(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3354,7 +3353,7 @@ class plugins_adult(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3503,7 +3502,7 @@ class script(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3629,7 +3628,7 @@ class repository(Screen):
         self['key_blue'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if DreamOS():
+        if Utils.DreamOS():
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3814,7 +3813,7 @@ def terrestrial_rest():
 def lcnstart():
     print(' lcnstart ')
     if os.path.exists('/etc/enigma2/lcndb'):
-        lcn = LCN()
+        lcn = Lcn.LCN()
         lcn.read()
         if len(lcn.lcnlist) > 0:
             lcn.writeBouquet()
