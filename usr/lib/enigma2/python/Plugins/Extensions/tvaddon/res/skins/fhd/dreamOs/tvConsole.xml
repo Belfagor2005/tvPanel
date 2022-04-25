@@ -1,11 +1,5 @@
 <!-- Skin tvIPK 11/5/2021 -->
 <screen name="tvConsole" position="0,0" size="1220,580" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#000000" flags="wfNoBorder">
-	<!-- 
-	<widget name="title" position="27,16" size="772,61" font="Console;24" backgroundColor="#000000" foregroundColor="#ffffff" transparent="1" />
-	<widget name="text" position="20,90" size="777,703" font="Console;24" backgroundColor="#000000" foregroundColor="#ffffff" transparent="1" />
-	 -->
-	<widget backgroundColor="#000000" font="Regular;36" position="12,22" size="1148,42" name="title" transparent="1" />
-	<!-- <widget backgroundColor="#000000" font="Console;28" name="text" position="40,240" size="1840,800" transparent="1" /> -->
-	<widget name="text" position="64,75" size="1030,445" font="Regular;30" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" backgroundColor="#20000000" />
-
+	<widget backgroundColor="#000000" font="Regular;36" position="12,22" size="1148,42" name="title" transparent="1"/>
+	<widget name="text" position="64,75" size="1030,445" font="Regular;30" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" backgroundColor="#20000000"/>
 </screen>
