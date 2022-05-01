@@ -224,8 +224,8 @@ ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5
 data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8='
 data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
 regexC = '<plugins cont="(.*?)"'
-regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
-# regexL = '<a href="(.*?)">(.*?)</a>.*?(.*?)-(.*?)-(.*?) '
+regexL = 'href="(.+?)">.+?alt=.+?">(.+?)</a>.+?data.+?">(.+?)</td>'
+# regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
 host_trs = Utils.b64decoder(ptrs)
 host_blk = Utils.b64decoder(pblk)
 host_mov = Utils.b64decoder(ptmov)
@@ -360,7 +360,7 @@ class Hometv(Screen):
             destr = plugin_path + '/update.txt'
             req = Request(upd_path + 'updatePanel.txt')
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-            fp = checkStr(urlopen(req))
+            fp = Utils.checkStr(urlopen(req))
             fp = fp.read()
             with open(destr, 'w') as f:
                 f.write(fp)
@@ -578,6 +578,7 @@ class Categories(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()        
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -621,6 +622,7 @@ class Categories(Screen):
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
             showlist(self.list, self['text'])
+            self['key_green'].show()
             self.downloading = True
         except Exception as e:
             print('error: ', str(e))
@@ -657,6 +659,7 @@ class tvDailySetting(Screen):
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button('')
         self['key_yellow'].hide()
+        self['key_green'].hide()
         self.LcnOn = False
         if os.path.exists('/etc/enigma2/lcndb'):
           self['key_yellow'].show()
@@ -690,6 +693,7 @@ class tvDailySetting(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
+        self['key_green'].show()
         self['info'].setText(_('Please select ...'))
 
     def okRun(self):
@@ -787,6 +791,7 @@ class SettingVhan(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -813,12 +818,10 @@ class SettingVhan(Screen):
             for url, name, date in match:
                 name = name + ' ' + date
                 url = "https://www.vhannibal.net/" + url
-                url = checkStr(url)
-                name = checkStr(name)
                 print('url : ', url)
                 print('name : ', name)
-                self.urls.append(url)
-                self.names.append(name)
+                self.urls.append(Utils.checkStr(url.strip()))
+                self.names.append(Utils.checkStr(name.strip()))
 
             urldtt = 'https://www.vhannibal.net/enigma2dtt.php'
             r2=make_request(urldtt)
@@ -829,14 +832,14 @@ class SettingVhan(Screen):
             for url, name, date in match2:
                 name = name + ' ' + date
                 url = "https://www.vhannibal.net/" + url
-                url = checkStr(url)
-                name = checkStr(name)
                 print('url : ', url)
                 print('name : ', name)
-                self.urls.append(url)
-                self.names.append(name)
+                self.urls.append(Utils.checkStr(url.strip()))
+                self.names.append(Utils.checkStr(name.strip()))
+                
             self.downloading = True
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show()
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -920,6 +923,7 @@ class SettingVhan2(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -950,12 +954,11 @@ class SettingVhan2(Screen):
                 name = "Vhannibal" + url
                 name = name.replace(".zip", "").replace("%20", " ")
                 url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
-                url = checkStr(url)
-                name = checkStr(name)
-                self.urls.append(url)
-                self.names.append(name)
+                self.urls.append(Utils.checkStr(url.strip()))
+                self.names.append(Utils.checkStr(name.strip()))
                 self.downloading = True
-                self['info'].setText(_('Please select ...'))
+            self['info'].setText(_('Please select ...'))
+            self['key_green'].show()
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1063,6 +1066,7 @@ class Milenka61(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -1084,20 +1088,21 @@ class Milenka61(Screen):
         self.names  = []
         self.urls   = []
         try:
-            regex   = '<a href="Satvenus(.*?)".*?align="right">(.*?)-(.*?)-(.*?) '
+            regex   = '<a href="Satvenus(.+?)".*?align="right">(.*?) </td>'                                  
+            # regex   = '<a href="Satvenus(.+?)".+?align="right">(.*?)-(.*?)-(.*?) .+?</td'
             match   = re.compile(regex).findall(r)
-            for url, date1, date2, date3 in match:
+            for url, txt in match:            
                 if url.find('.tar.gz') != -1 :
-                    name = url.replace('_EX-YU_Lista_za_milenka61_', '')
-                    name = name + ' ' + date1 + '-' + date2 + '-' + date3
+                    name = url.replace('_EX-YU_Lista_za_milenka61_', '')                
+                    date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
+                    name = name + ' ' + date
                     name = name.replace("_", " ").replace(".tar.gz", "")
                     url = "http://178.63.156.75/tarGz/Satvenus" + url
-                    url = checkStr(url)
-                    name = checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                     self.downloading = True
-                    self['info'].setText(_('Please select ...'))
+            self['info'].setText(_('Please select ...'))
+            self['key_green'].show()
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1166,6 +1171,7 @@ class SettingManutek(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -1187,19 +1193,17 @@ class SettingManutek(Screen):
         self.names  = []
         self.urls   = []
         try:
-            regex   = 'href=".*?file=(.+?).zip">'
+            regex   = 'href="/isetting/.*?file=(.+?).zip">'            
             match   = re.compile(regex).findall(r)
             for url in match:
-                # if 'zip' in url.lower():
                 name = url
-                name = name.replace(".zip", "").replace("%20", " ").replace("NemoxyzRLS_", "").replace("_", " ")
-                url = 'http://www.manutek.it/isetting/enigma2/' + url + '.zip'
-                url = checkStr(url)
-                name = checkStr(name)
-                self.urls.append(url)
-                self.names.append(name)
+                url = 'http://www.manutek.it/isetting/enigma2/' + url + '.zip'                
+                name = name.replace("NemoxyzRLS_Manutek_", "").replace("_", " ").replace("%20", " ")
+                self.urls.append(Utils.checkStr(url.strip()))
+                self.names.append(Utils.checkStr(name.strip()))
                 self.downloading = True
-                self['info'].setText(_('Please select ...'))
+            self['info'].setText(_('Please select ...'))
+            self['key_green'].show()
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1281,6 +1285,7 @@ class SettingMorpheus(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -1302,7 +1307,6 @@ class SettingMorpheus(Screen):
         self.names  = []
         self.urls   = []
         try:
-
             regex   = 'href="/download/.*?file=(.*?)">'
             match   = re.compile(regex).findall(r)
             for url in match:
@@ -1311,16 +1315,14 @@ class SettingMorpheus(Screen):
                     if 'settings' in url.lower():
                         continue
                     name = url
-                    name = name.replace(".zip", "").replace("%20", " ").replace("_", " ")
-                    name = name.replace("Morph883", "Morpheus883").replace("E2", "")
+                    name = name.replace(".zip", "").replace("%20", " ").replace("_", " ").replace("E2_Morph883", "")
                     url = "http://morpheus883.altervista.org/settings/" + url
-                    url = checkStr(url)
-                    name = checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                     print("url =", url)
                     print("name =", name)
-                    self['info'].setText(_('Please select ...'))
+            self['info'].setText(_('Please select ...'))
+            self['key_green'].show()        
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1404,6 +1406,7 @@ class SettingCiefp(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -1436,16 +1439,15 @@ class SettingCiefp(Screen):
                         continue
                     if 'Sat' in name.lower():
                         continue
-                    name = checkStr(name)
                     url = url.replace('blob', 'raw')
                     url = 'https://github.com' + url
-                    url = checkStr(url)
                     print('name ', name)
                     print('url ', url)
-                    self.urls.append(url)
-                    self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                     self.downloading = True
-                    self['info'].setText(_('Please select ...'))
+            self['key_green'].show()
+            self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1525,6 +1527,7 @@ class SettingBi58(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -1546,21 +1549,20 @@ class SettingBi58(Screen):
         self.names  = []
         self.urls   = []
         try:
-            regex   = '<a href="bi58-e2(.*?)".*?align="right">(.*?)-(.*?)-(.*?) '
+            regex   = '<a href="bi58-e2(.*?)".*?align="right">(.*?) </td>'
             match   = re.compile(regex).findall(r)
-            for url, date1, date2, date3 in match:
+            for url, txt in match:
                 if url.find('.tar.gz') != -1 :
                     name = url.replace('-settings-','bi58 ')
-                    name = name + ' ' + date1 + '-' + date2 + '-' + date3
-                    name = name.replace(".tar.gz", "")
-                    name = name.replace("%20", " ")
+                    date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
+                    name = name + ' ' + date
+                    name = name.replace(".tar.gz", "").replace("%20", " ")
                     url = "http://178.63.156.75/paneladdons/Bi58/bi58-e2" + url
-                    url = checkStr(url)
-                    name = checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                     self.downloading = True
-                    self['info'].setText(_('Please select ...'))
+            self['key_green'].show()        
+            self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1629,6 +1631,7 @@ class SettingPredrag(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -1650,21 +1653,20 @@ class SettingPredrag(Screen):
         self.names  = []
         self.urls   = []
         try:
-            regex   = '<a href="predrag(.*?)".*?align="right">(.*?)-(.*?)-(.*?) '
+            regex   = '<a href="predrag(.*?)".*?align="right">(.*?) </td>'
             match   = re.compile(regex).findall(r)
-            for url, date1, date2, date3 in match:
+            for url, txt in match:
                 if url.find('.tar.gz') != -1 :
-                    name = url
-                    name = name.replace('-settings-e2-','Predrag ')
-                    name = name + date1 + '-' + date2 + '-' + date3
-                    name = name.replace(".tar.gz", " ")
+                    name = url.replace('-settings-e2-','Predrag ')
+                    date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
+                    name = name + ' ' + date
+                    name = name.replace(".tar.gz", "").replace("%20", " ")  
                     url = "http://178.63.156.75/paneladdons/Predr@g/predrag" + url
-                    url = checkStr(url)
-                    name = checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                     self.downloading = True
-                    self['info'].setText(_('Please select ...'))
+            self['key_green'].show()  
+            self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1734,6 +1736,7 @@ class SettingCyrus(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -1768,12 +1771,11 @@ class SettingCyrus(Screen):
                     if 'Sat' in name.lower():
                         continue
                     name = name + ' ' + date
-                    name = checkStr(name)
-                    url = checkStr(url)
-                    self.urls.append(url)
-                    self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                     self.downloading = True
-                    self['info'].setText(_('Please select ...'))
+            self['key_green'].show()  
+            self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1841,6 +1843,7 @@ class tvInstall(Screen):
         self.selection = selection
         self['info'] = Label()
         self['pth'] = Label('')
+        self['key_green'] = Button(_('Install'))        
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
         self["progress"].hide()
@@ -1859,15 +1862,14 @@ class tvInstall(Screen):
         for name, url in match:
             self.names.append(name)
             self.urls.append(url)
-
         self['text'] = tvList([])
         self['info'].setText(_('Please install ...'))
         self['title'] = Label(_(title_plug))
-        self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Download'))
         self["key_blue"] = Button('')
         self['key_blue'].hide()
+        self['key_green'].hide()
         self['actions'] = ActionMap(['SetupActions',  'ColorActions'], {'ok': self.message,
          'green': self.message,
          'red': self.close,
@@ -1877,6 +1879,7 @@ class tvInstall(Screen):
 
     def start(self):
         showlist(self.names, self['text'])
+        self['key_green'].show()
 
     def message(self):
         i = len(self.names)
@@ -2206,6 +2209,7 @@ class tvIPK(Screen):
         self['key_yellow'] = Button(_('Restart'))
         self['key_red'] = Button(_('Back'))
         self["key_blue"] = Button('Remove')
+        self['key_green'].hide()
         self['pth'] = Label('')
         self['pform'] = Label(_('Path %s (Set folder from config path)\nPut .ipk .tar.gz .deb .zip and install') %self.ipkpth)
         self['progress'] = ProgressBar()
@@ -2238,6 +2242,7 @@ class tvIPK(Screen):
 
         print(self.list)
         self.getfreespace()
+        self['key_green'].show()
         self["text"].l.setList(self.list)
         showlist(self.names, self['text'])
 
@@ -2380,6 +2385,7 @@ class tvUpdate(Screen):
         self['key_green'] = Button(_('Restart'))
         self["key_blue"] = Button('')
         self['key_blue'].hide()
+        self['key_green'].hide()
         self['info'] = Label('')
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -2395,7 +2401,7 @@ class tvUpdate(Screen):
             destr = plugin_path + '/update.txt'
             req = Request(upd_path + 'updatePanel.txt')
             req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101 Firefox/52.0')
-            fp = checkStr(urlopen(req))
+            fp = Utils.checkStr(urlopen(req))
             fp = fp.read()
             with open(destr, 'w') as f:
                 f.write(fp)
@@ -2429,6 +2435,7 @@ class tvUpdate(Screen):
                     self['info'].setText(updatestr)
                     self['pth'].setText(cvrs)
                     self['pform'].setText(cvrt)
+                    self['key_green'].show()
         except:
             self.Update = False
             self['info'].setText(title_plug)
@@ -2517,6 +2524,7 @@ class tvRemove(Screen):
         self['key_red'] = Button(_('Back'))
         self["key_blue"] = Button('')
         self['key_blue'].hide()
+        self['key_green'].hide()
         self['pth'] = Label('')
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
@@ -2576,7 +2584,7 @@ class tvRemove(Screen):
                             continue
                     if name.startswith('enigma2-plugin-'):
                         self.names.append(name)
-
+        self['key_green'].show()
         showlist(self.names, self['text'])
 
 
@@ -2809,6 +2817,7 @@ class SelectPicons(Screen):
         self["key_blue"] = Button('')
         # self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
@@ -2839,6 +2848,7 @@ class SelectPicons(Screen):
             self.menu_list.append(x)
             idx += 1
         self['text'].setList(list)
+        self['key_green'].show()
         self['info'].setText(_('Please select'))
         self.getfreespace()
 
@@ -2897,6 +2907,7 @@ class MMarkFolderScreen(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.url = url
         # self.getfreespace()
         self.downloading = False
@@ -2944,8 +2955,11 @@ class MMarkFolderScreen(Screen):
                 url = url.replace('\\', '')
                 pic = no_cover
                 name = 'Picons-' + name
-                self.urls.append(url)
-                self.names.append(name)
+                self.urls.append(Utils.checkStr(url.strip()))
+                self.names.append(Utils.checkStr(name.strip()))
+                # self.urls.append(url)
+                # self.names.append(name)
+            self['key_green'].show()
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
             self.downloading = True
@@ -2992,6 +3006,7 @@ class MMarkPiconsScreen(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.getfreespace()
         self.downloading = False
         self.movie = movie
@@ -3046,9 +3061,12 @@ class MMarkPiconsScreen(Screen):
                     else:
                         name = name.replace('_', ' ').replace('mmk', 'MMark').replace('.zip', '')
                         name = name + ' ' + data[0:10] + ' ' + 'Down:' + download
-                    self.urls.append(url)
-                    self.names.append(name)
+                    # self.urls.append(url)
+                    # self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
             self['info'].setText(_('Please select ...'))
+            self['key_green'].show()
             showlist(self.names, self['text'])
             self.downloading = True
         except:
@@ -3156,6 +3174,7 @@ class mainkodilite(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
@@ -3180,6 +3199,7 @@ class mainkodilite(Screen):
             list.append(DailyListEntry(x, idx))
             self.menu_list.append(x)
             idx += 1
+        self['key_green'].show()
         self['text'].setList(list)
         self['info'].setText(_('Please select'))
 
@@ -3223,6 +3243,7 @@ class plugins(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -3236,6 +3257,7 @@ class plugins(Screen):
          'red': self.close,
          'cancel': self.close}, -2)
 
+
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/plugins"
         data = make_request(self.url)
@@ -3245,25 +3267,22 @@ class plugins(Screen):
         self.names = []
         self.urls = []
         try:
-         #regexL = 'href="(.*?)">.*?">(.*?)</a>.*?">(.*?)-(.*?)-(.*?) '
             match = re.compile(regexL,re.DOTALL).findall(data)
             print('match regex', match)
-            for url, name, date1, date2, date3 in match:
+            for url, name, txt in match:
                 if 'zip' in url:
                     url = 'http://patbuweb.com' + str(url)
-                    name = name.replace("%20", " ").replace("-", " ").replace("_", " ")
-                    date = date1 + '-' + date2 + '-' + date3
-                    date = date.replace(' ','')
+                    name = name.replace("%20", " ").replace("-", " ").replace("_", " ").replace(".zip", "")
+                    date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
                     name = name +' - '+ date
-                    url = checkStr(url)
-                    name= checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
             self['info'].setText(_('Please select'))
+            self['key_green'].show()
             self.downloading = True
         except Exception as e:
             print('error: ', str(e))
@@ -3351,6 +3370,7 @@ class plugins_adult(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -3373,21 +3393,19 @@ class plugins_adult(Screen):
         self.urls = []
         try:
             match = re.compile(regexL,re.DOTALL).findall(data)
-            for url, name, date1, date2, date3 in match:
+            for url, name, txt in match:
                 if 'zip' in url:
                     url ="http://patbuweb.com" + url
-                    name = name.replace("%20", " ").replace("-", " ").replace("_", " ")
-                    date = date1 + '-' + date2 + '-' + date3
-                    date = date.replace(' ','')
+                    name = name.replace("%20", " ").replace("-", " ").replace("_", " ").replace(".zip", "")
+                    date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
                     name = name +' - '+ date
-                    url = checkStr(url)
-                    name= checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['key_green'].show()
             self['info'].setText(_('Please select'))
             self.downloading = True
         except Exception as e:
@@ -3500,6 +3518,7 @@ class script(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -3522,23 +3541,19 @@ class script(Screen):
         self.urls = []
         try:
             match = re.compile(regexL,re.DOTALL).findall(data)
-            for url, name, date1, date2, date3 in match:
+            for url, name, txt in match:
                 if 'zip' in url:
-                    url = "http://patbuweb.com" + url
-                    name = name.replace("%20", " ").replace("-", " ").replace("_", " ")
-                    date = date1 + '-' + date2 + '-' + date3
-                    date = date.replace(' ','')
+                    url ="http://patbuweb.com" + url
+                    name = name.replace("%20", " ").replace("-", " ").replace("_", " ").replace(".zip", "")
+                    date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
                     name = name +' - '+ date
-                    url = checkStr(url)
-                    name= checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
-                    self.downloading = True
-                    self['info'].setText(_('Please select ...'))
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                 else:
-                    self['info'].setText(_('no data ...'))
+                    self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['key_green'].show()
             self['info'].setText(_('Please select'))
         except Exception as e:
             print('error: ', str(e))
@@ -3626,6 +3641,7 @@ class repository(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -3648,23 +3664,19 @@ class repository(Screen):
         self.urls = []
         try:
             match = re.compile(regexL,re.DOTALL).findall(data)
-            for url, name, date1, date2, date3 in match:
+            for url, name, txt in match:
                 if 'zip' in url:
-                    url = "http://patbuweb.com" + url
-                    name = name.replace("%20", " ").replace("-", " ").replace("_", " ")
-                    date = date1 + '-' + date2 + '-' + date3
-                    date = date.replace(' ','')
+                    url ="http://patbuweb.com" + url
+                    name = name.replace("%20", " ").replace("-", " ").replace("_", " ").replace(".zip", "")
+                    date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
                     name = name +' - '+ date
-                    url = checkStr(url)
-                    name= checkStr(name)
-                    self.urls.append(url)
-                    self.names.append(name)
-                    self.downloading = True
-                    self['info'].setText(_('Please select ...'))
+                    self.urls.append(Utils.checkStr(url.strip()))
+                    self.names.append(Utils.checkStr(name.strip()))
                 else:
-                    self['info'].setText(_('no data ...'))
+                    self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['text'])
+            self['key_green'].show()
             self['info'].setText(_('Please select'))
         except Exception as e:
             print('error: ', str(e))
