@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     23/04/2022     #
+#     01/05/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -1431,7 +1431,7 @@ class SettingCiefp(Screen):
             n1 = r.find('Details">', 0)
             n2 = r.find('href="#readme">', n1)
             r = r[n1:n2]
-            regex   = 'title="ciefp-E2-(.*?)".*?href="(.*?)"'
+            regex   = 'title="ciefp-E2-(.*?).zip".*?href="(.*?)"'
             match   = re.compile(regex).findall(r)
             for name, url in match:
                 if url.find('.zip') != -1 :
