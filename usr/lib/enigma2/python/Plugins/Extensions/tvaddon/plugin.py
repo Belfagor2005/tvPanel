@@ -59,17 +59,34 @@ from . import Utils
 from . import Lcn
 global skin_path, mmkpicon, set, regexC, category
 
-try:
-    from urlparse import urlparse
-    from urllib import urlencode
-    from urllib2 import urlopen
-    from urllib2 import Request
-    from urllib2 import HTTPError, URLError
-except ImportError:
-    from urllib.parse import urlparse, urlencode
-    from urllib.request import Request
-    from urllib.error import HTTPError, URLError
-    from urllib.request import urlopen
+# try:
+    # from urlparse import urlparse
+    # from urllib import urlencode
+    # from urllib2 import urlopen
+    # from urllib2 import Request
+    # from urllib2 import HTTPError, URLError
+# except ImportError:
+    # from urllib.parse import urlparse, urlencode
+    # from urllib.request import Request
+    # from urllib.error import HTTPError, URLError
+    # from urllib.request import urlopen
+PY3 = sys.version_info.major >= 3
+if PY3:
+        import http.client
+        from http.client import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
+        from urllib.error import URLError, HTTPError
+        from urllib.request import urlopen, Request
+        from urllib.parse import urlparse
+        from urllib.parse import parse_qs, urlencode, quote
+        unicode = str; unichr = chr; long = int
+        PY3 = True
+else:
+        from httplib import HTTPConnection, CannotSendRequest, BadStatusLine, HTTPException
+        from urllib2 import urlopen, Request, URLError, HTTPError
+        from urlparse import urlparse, parse_qs
+        from urllib import urlencode, quote
+        import httplib
+        import six
 
 try:
     import zipfile
@@ -282,7 +299,8 @@ Panel_list2 = [
  ('SETTINGS VHANNIBAL'),
  ('SETTINGS VHANNIBAL 2'),
  ('UPDATE SATELLITES.XML'),
- ('UPDATE TERRESTRIAL.XML'),]
+ ('UPDATE TERRESTRIAL.XML'),
+ ]
 
 Panel_list3 = [
  _('MMARK PICONS BLACK'),
@@ -578,7 +596,7 @@ class Categories(Screen):
         self["key_blue"] = Button('')
         self['key_yellow'].hide()
         self['key_blue'].hide()
-        self['key_green'].hide()        
+        self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
@@ -701,11 +719,8 @@ class tvDailySetting(Screen):
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
-        if sel == _('UPDATE SATELLITES.XML'):
-            self.okSATELLITE()
-        elif sel == _('UPDATE TERRESTRIAL.XML'):
-            self.okTERRESTRIAL()
-        elif sel == ('SETTINGS CIEFP'):
+
+        if sel == ('SETTINGS CIEFP'):
             self.session.open(SettingCiefp)
         elif sel == ('SETTINGS CYRUS'):
             self.session.open(SettingCyrus)
@@ -723,13 +738,17 @@ class tvDailySetting(Screen):
             self.session.open(SettingVhan)
         elif sel == ('SETTINGS VHANNIBAL 2'):
             self.session.open(SettingVhan2)
+        elif sel == _('UPDATE SATELLITES.XML'):
+            self.okSATELLITE()
+        elif sel == _('UPDATE TERRESTRIAL.XML'):
+            self.okTERRESTRIAL()
 
     def okSATELLITE(self):
         self.session.openWithCallback(self.okSatInstall, MessageBox,(_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
     def okSatInstall(self, result):
         if result:
-            if checkInternet():
+            if Utils.checkInternet():
                 try:
                     url_sat_oealliance = 'http://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/satellites.xml'
                     link_sat = ssl_urlopen(url_sat_oealliance)
@@ -751,7 +770,7 @@ class tvDailySetting(Screen):
 
     def okTerrInstall(self, result):
         if result:
-            if checkInternet():
+            if Utils.checkInternet():
                 try:
                     url_sat_oealliance = 'https://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/terrestrial.xml'
                     link_ter = ssl_urlopen(url_sat_oealliance)
@@ -822,7 +841,7 @@ class SettingVhan(Screen):
                 print('name : ', name)
                 self.urls.append(Utils.checkStr(url.strip()))
                 self.names.append(Utils.checkStr(name.strip()))
-            
+
             # urldtt = 'https://www.vhannibal.net/enigma2dtt.php'
             # r2=make_request(urldtt)
             # print('rrrrrrrr ', r2)
@@ -836,14 +855,14 @@ class SettingVhan(Screen):
                 # print('name : ', name)
                 # self.urls.append(Utils.checkStr(url.strip()))
                 # self.names.append(Utils.checkStr(name.strip()))
-                
+
             self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['text'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
-            self['info'].setText(_('Download page get failed ...'))    
+            self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         i = len(self.names)
@@ -1088,12 +1107,12 @@ class Milenka61(Screen):
         self.names  = []
         self.urls   = []
         try:
-            regex   = '<a href="Satvenus(.+?)".*?align="right">(.*?) </td>'                                  
+            regex   = '<a href="Satvenus(.+?)".*?align="right">(.*?) </td>'
             # regex   = '<a href="Satvenus(.+?)".+?align="right">(.*?)-(.*?)-(.*?) .+?</td'
             match   = re.compile(regex).findall(r)
-            for url, txt in match:            
+            for url, txt in match:
                 if url.find('.tar.gz') != -1 :
-                    name = url.replace('_EX-YU_Lista_za_milenka61_', '')                
+                    name = url.replace('_EX-YU_Lista_za_milenka61_', '')
                     date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
                     name = name + ' ' + date
                     name = name.replace("_", " ").replace(".tar.gz", "")
@@ -1193,11 +1212,11 @@ class SettingManutek(Screen):
         self.names  = []
         self.urls   = []
         try:
-            regex   = 'href="/isetting/.*?file=(.+?).zip">'            
+            regex   = 'href="/isetting/.*?file=(.+?).zip">'
             match   = re.compile(regex).findall(r)
             for url in match:
                 name = url
-                url = 'http://www.manutek.it/isetting/enigma2/' + url + '.zip'                
+                url = 'http://www.manutek.it/isetting/enigma2/' + url + '.zip'
                 name = name.replace("NemoxyzRLS_Manutek_", "").replace("_", " ").replace("%20", " ")
                 self.urls.append(Utils.checkStr(url.strip()))
                 self.names.append(Utils.checkStr(name.strip()))
@@ -1322,7 +1341,7 @@ class SettingMorpheus(Screen):
                     print("url =", url)
                     print("name =", name)
             self['info'].setText(_('Please select ...'))
-            self['key_green'].show()        
+            self['key_green'].show()
             showlist(self.names, self['text'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
@@ -1561,7 +1580,7 @@ class SettingBi58(Screen):
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
                     self.downloading = True
-            self['key_green'].show()        
+            self['key_green'].show()
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
@@ -1660,12 +1679,12 @@ class SettingPredrag(Screen):
                     name = url.replace('-settings-e2-','Predrag ')
                     date = re.search("(.+?)-(.+?)-(.+?) ",txt).group()
                     name = name + ' ' + date
-                    name = name.replace(".tar.gz", "").replace("%20", " ")  
+                    name = name.replace(".tar.gz", "").replace("%20", " ")
                     url = "http://178.63.156.75/paneladdons/Predr@g/predrag" + url
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
                     self.downloading = True
-            self['key_green'].show()  
+            self['key_green'].show()
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
@@ -1774,7 +1793,7 @@ class SettingCyrus(Screen):
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
                     self.downloading = True
-            self['key_green'].show()  
+            self['key_green'].show()
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['text'])
         except Exception as e:
@@ -1843,7 +1862,7 @@ class tvInstall(Screen):
         self.selection = selection
         self['info'] = Label()
         self['pth'] = Label('')
-        self['key_green'] = Button(_('Install'))        
+        self['key_green'] = Button(_('Install'))
         self['pform'] = Label('')
         self['progress'] = ProgressBar()
         self["progress"].hide()
@@ -3024,7 +3043,7 @@ class MMarkPiconsScreen(Screen):
          'red': self.close,
          'cancel': self.close}, -2)
         self.onLayoutFinish.append(self.getfreespace)
-         
+
 
     def getfreespace(self):
         fspace = Utils.freespace()
@@ -3740,7 +3759,7 @@ class repository(Screen):
 
 def main(session, **kwargs):
     from . import Utils
-    
+
     if Utils.checkInternet():
         try:
             from . import Update
