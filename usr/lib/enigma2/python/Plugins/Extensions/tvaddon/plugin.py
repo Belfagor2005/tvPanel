@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     01/05/2022     #
+#     11/06/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -278,6 +278,7 @@ Panel_list = [
  _('PLUGIN BACKUP'),
  _('PLUGIN EPG'),
  _('PLUGIN EMULATORS CAMS'),
+ _('PLUGIN GAME'), 
  _('PLUGIN MULTIBOOT'),
  _('PLUGIN MULTIMEDIA'),
  _('PLUGIN PICONS'),
@@ -476,60 +477,72 @@ class Hometv(Screen):
     def keyNumberGlobalCB(self, idx):
         global category
         sel = self.menu_list[idx]
-        if sel == _('DEBIAN DREAMOS'):
-            category = 'debian.xml'
-            self.session.open(Categories, category)
-        elif sel == _('DRIVERS'):
-            category = 'Drivers.xml'
-            self.session.open(Categories, category)
-        elif sel == _('DEPENDENCIES'):
-            category = 'Dependencies.xml'
-            self.session.open(Categories, category)
-        elif sel == _('DAILY PICONS'):
+        
+        if sel == _('DAILY PICONS'):
             self.session.open(SelectPicons)
         elif sel == _('DAILY SETTINGS'):
             self.session.open(tvDailySetting)
         elif sel == _('KODILITE BY PCD'):
-            self.session.open(mainkodilite)
-        elif sel == _('PLUGIN BACKUP'):
-            category = 'PluginBackup.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN EMULATORS CAMS'):
-            category = 'PluginEmulators.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN EPG'):
-            category = 'PluginEpg.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN MULTIBOOT'):
-            category = 'PluginMultiboot.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN MULTIMEDIA'):
-            category = 'PluginMultimedia.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN PICONS'):
-            category = 'Picons.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN PPANEL'):
-            category = 'PluginPpanel.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN SETTINGS PANEL'):
-            category = 'PluginSettings.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN SKINS'):
-            category = 'PluginSkins.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN SPORT'):
-            category = 'PluginSport.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN UTILITY'):
-            category = 'PluginUtility.xml'
-            self.session.open(Categories, category)
-        elif sel == _('PLUGIN WEATHER'):
-            category = 'PluginWeather.xml'
-            self.session.open(Categories, category)
-        elif sel == _('LULULLA CORNER'):
-            category = 'lululla.xml'
-            self.session.open(Categories, category)
+            self.session.open(mainkodilite)        
+        else: 
+            if sel == _('DEBIAN DREAMOS'):
+                category = 'debian.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('DRIVERS'):
+                category = 'Drivers.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('DEPENDENCIES'):
+                category = 'Dependencies.xml'
+                # self.session.open(Categories, category)
+            # elif sel == _('DAILY PICONS'):
+                # self.session.open(SelectPicons)
+            # elif sel == _('DAILY SETTINGS'):
+                # self.session.open(tvDailySetting)
+            # elif sel == _('KODILITE BY PCD'):
+                # self.session.open(mainkodilite)
+            elif sel == _('PLUGIN BACKUP'):
+                category = 'PluginBackup.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN EMULATORS CAMS'):
+                category = 'PluginEmulators.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN EPG'):
+                category = 'PluginEpg.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN GAME'):
+                category = 'PluginGame.xml'   
+                # self.session.open(Categories, category)            
+            elif sel == _('PLUGIN MULTIBOOT'):
+                category = 'PluginMultiboot.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN MULTIMEDIA'):
+                category = 'PluginMultimedia.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN PICONS'):
+                category = 'Picons.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN PPANEL'):
+                category = 'PluginPpanel.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN SETTINGS PANEL'):
+                category = 'PluginSettings.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN SKINS'):
+                category = 'PluginSkins.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN SPORT'):
+                category = 'PluginSport.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN UTILITY'):
+                category = 'PluginUtility.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('PLUGIN WEATHER'):
+                category = 'PluginWeather.xml'
+                # self.session.open(Categories, category)
+            elif sel == _('LULULLA CORNER'):
+                category = 'lululla.xml'
+                # self.session.open(Categories, category)
+            self.session.open(Categories, category)    
 
     def msgupdate1(self):
         if self.Update == False :
