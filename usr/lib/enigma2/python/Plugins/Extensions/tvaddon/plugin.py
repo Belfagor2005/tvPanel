@@ -8,6 +8,8 @@
 #Info http://t.me/tivustream
 from __future__ import print_function
 from . import _
+from . import Utils
+from . import Lcn
 # from Components.HTMLComponent import HTMLComponent
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -55,8 +57,7 @@ import six
 import subprocess
 from sys import version_info
 
-from . import Utils
-from . import Lcn
+
 global skin_path, mmkpicon, set, regexC, category
 
 # try:
@@ -424,7 +425,6 @@ class Hometv(Screen):
         dependencies = True
         try:
             import requests
-            from PIL import Image
         except:
             dependencies = False
         if dependencies is False:

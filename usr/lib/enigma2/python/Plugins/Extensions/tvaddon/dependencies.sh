@@ -1,5 +1,5 @@
 #!/bin/sh
-pyv="$(python -V >&1)"
+pyv="$(python -V 2>&1)"
 echo "$pyv"
 echo "Checking Dependencies"
 echo
@@ -9,49 +9,37 @@ if [ -d /etc/opkg ]; then
     opkg update
     echo
     if [[ $pyv =~ "Python 3" ]]; then
-        echo "checking python3-image"
-        opkg install python3-image
-        echo
-        echo "checking python3-imaging"
-        opkg install python3-imaging
-        echo
         echo "checking python3-requests"
-        opkg install python3-requests
+        if python -c "import requests" &> /dev/null; then
+            echo "Requests library already installed"
+        else
+            opkg install python3-requests
+        fi
     else
-        echo "checking python-image"
-        opkg install python-image
-        echo
-        echo "checking python-imaging"
-        opkg install python-imaging
-        echo
         echo "checking python-requests"
-        opkg install python-requests
-        echo
+        if python -c "import requests" &> /dev/null; then
+            echo "Requests library already installed"
+        else
+            opkg install python-requests
+        fi
     fi
-
 else
     echo "updating feeds"
-    apt-get -y update
-    echo
+    apt-get update
     if [[ $pyv =~ "Python 3" ]]; then
-        echo "checking python3-image"
-        apt-get -y install python3-image
-        echo
-        echo "checking python3-imaging"
-        apt-get -y install python3-imaging
-        echo
         echo "checking python3-requests"
-        apt-get -y install python3-requests
+        if python -c "import requests" &> /dev/null; then
+            echo "Requests library already installed"
+        else
+            apt-get -y install python3-requests
+        fi
     else
-        echo "checking python-image"
-        apt-get -y install python-image
-        echo
-        echo "checking python-imaging"
-        apt-get -y install python-imaging
-        echo
         echo "checking python-requests"
-        apt-get -y install python-requests
-        echo
+        if python -c "import requests" &> /dev/null; then
+            echo "Requests library already installed"
+        else
+            apt-get -y install python-requests
+        fi
     fi
 fi
 exit 0
