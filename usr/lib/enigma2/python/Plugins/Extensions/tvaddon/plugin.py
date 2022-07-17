@@ -3,7 +3,7 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     11/06/2022     #
+#     11/07/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
@@ -3769,11 +3769,20 @@ class repository(Screen):
 
     def rst1(self):
         pass
-
+        
+def intCheck():
+    import socket
+    try:
+        socket.setdefaulttimeout(1)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
+        return True
+    except:
+        return False
+        
 def main(session, **kwargs):
-    from . import Utils
+    # from . import Utils
 
-    if Utils.checkInternet():
+    if intCheck():
         try:
             from . import Update
             Update.upd_done()
