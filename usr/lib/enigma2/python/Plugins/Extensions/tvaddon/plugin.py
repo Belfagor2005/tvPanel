@@ -3781,14 +3781,13 @@ def intCheck():
         
 def main(session, **kwargs):
     # from . import Utils
-
     if intCheck():
         try:
             from . import Update
             Update.upd_done()
+            session.open(Hometv)
         except:
             pass
-        session.open(Hometv)
     else:
         session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
