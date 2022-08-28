@@ -3,11 +3,11 @@
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
-#     11/07/2022     #
+#     11/08/2022     #
 #--------------------#
 #Info http://t.me/tivustream
 from __future__ import print_function
-from . import _
+from .__init__ import _
 from . import Utils
 from . import Lcn
 # from Components.HTMLComponent import HTMLComponent
@@ -270,7 +270,7 @@ Panel_list = [
  _('PLUGIN SKINS'),
  _('PLUGIN SPORT'),
  _('PLUGIN UTILITY'),
- _('PLUGIN WEATHER'),]
+ _('PLUGIN WEATHER')]
 
 Panel_list2 = [
  ('SETTINGS BI58'),
@@ -467,64 +467,59 @@ class Hometv(Screen):
         elif sel == _('KODILITE BY PCD'):
             self.session.open(mainkodilite)
         else:
+            if sel == _('LULULLA CORNER'):
+                category = 'lululla.xml'  
+                self.session.open(Categories, category)
             if sel == _('DEBIAN DREAMOS'):
                 category = 'debian.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('DRIVERS'):
+                self.session.open(Categories, category)
+            if sel == _('DRIVERS'):
                 category = 'Drivers.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('DEPENDENCIES'):
+                self.session.open(Categories, category)
+            if sel == _('DEPENDENCIES'):
                 category = 'Dependencies.xml'
-                # self.session.open(Categories, category)
-            # elif sel == _('DAILY PICONS'):
-                # self.session.open(SelectPicons)
-            # elif sel == _('DAILY SETTINGS'):
-                # self.session.open(tvDailySetting)
-            # elif sel == _('KODILITE BY PCD'):
-                # self.session.open(mainkodilite)
-            elif sel == _('PLUGIN BACKUP'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN BACKUP'):
                 category = 'PluginBackup.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN EMULATORS CAMS'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN EMULATORS CAMS'):
                 category = 'PluginEmulators.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN EPG'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN EPG'):
                 category = 'PluginEpg.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN GAME'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN GAME'):
                 category = 'PluginGame.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN MULTIBOOT'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN MULTIBOOT'):
                 category = 'PluginMultiboot.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN MULTIMEDIA'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN MULTIMEDIA'):
                 category = 'PluginMultimedia.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN PICONS'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN PICONS'):
                 category = 'Picons.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN PPANEL'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN PPANEL'):
                 category = 'PluginPpanel.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN SETTINGS PANEL'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN SETTINGS PANEL'):
                 category = 'PluginSettings.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN SKINS'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN SKINS'):
                 category = 'PluginSkins.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN SPORT'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN SPORT'):
                 category = 'PluginSport.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN UTILITY'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN UTILITY'):
                 category = 'PluginUtility.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('PLUGIN WEATHER'):
+                self.session.open(Categories, category)
+            if sel == _('PLUGIN WEATHER'):
                 category = 'PluginWeather.xml'
-                # self.session.open(Categories, category)
-            elif sel == _('LULULLA CORNER'):
-                category = 'lululla.xml'
-                # self.session.open(Categories, category)
-            self.session.open(Categories, category)
+                self.session.open(Categories, category)
+            return
+            # self.session.open(Categories, category)
 
     def msgupdate1(self):
         if self.Update == False :
@@ -714,7 +709,6 @@ class tvDailySetting(Screen):
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
-
         if sel == ('SETTINGS CIEFP'):
             self.session.open(SettingCiefp)
         elif sel == ('SETTINGS CYRUS'):
@@ -3753,28 +3747,20 @@ class repository(Screen):
     def rst1(self):
         pass
 
-def intCheck():
-    import socket
-    try:
-        socket.setdefaulttimeout(1)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("8.8.8.8", 53))
-        return True
-    except:
-        return False
-
 def main(session, **kwargs):
-    if intCheck():
-        try:
-                if config.plugins.tvaddon.autoupd.value == True :
-                        from . import Update
-                        Update.upd_done()
-                session.open(Hometv)
-        except:
-            pass
-    else:
-        from Screens.MessageBox import MessageBox
-        from Tools.Notifications import AddPopup
-        AddPopup(_("Sorry but No Internet :("),MessageBox.TYPE_INFO, 10, 'Sorry')
+    try:
+        if Utils.zCheckInternet(0):
+            if config.plugins.tvaddon.autoupd.value == True :
+                from . import Update
+                Update.upd_done()
+            session.open(Hometv)
+        else:
+            from Screens.MessageBox import MessageBox
+            from Tools.Notifications import AddPopup
+            AddPopup(_("Sorry but No Internet :("),MessageBox.TYPE_INFO, 10, 'Sorry')                
+    except:
+        pass
+
 
 def menu(menuid, **kwargs):
     if menuid == 'mainmenu':
