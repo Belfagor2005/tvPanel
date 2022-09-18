@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/python
+
 #--------------------#
 #  coded by Lululla  #
 #   skin by MMark    #
 #     11/08/2022     #
 #--------------------#
-#Info http://t.me/tivustream
+# Info http://t.me/tivustream
 from __future__ import print_function
 from .__init__ import _
 from . import Utils
@@ -606,11 +607,11 @@ class Categories(Screen):
         print('py2------>')
         try:
             if six.PY3:
-                #url = str(xml_path) + six.binary_type(category, encoding="utf-8") #no work on wix image
+                # url = str(xml_path) + six.binary_type(category, encoding="utf-8") #no work on wix image
                 url = url.encode()
                 print('py3------>')
             getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-            #error : url must be bytes, not unicode
+            # error : url must be bytes, not unicode
         except Exception as e:
             print('error: ', str(e))
 
@@ -2867,11 +2868,11 @@ class SelectPicons(Screen):
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
         if sel == ('MMARK PICONS BLACK'):
-            self.session.open(MMarkFolderScreen, host_blk)
+            self.session.open(MMarkFolder, host_blk)
         elif sel == 'MMARK PICONS TRANSPARENT':
-            self.session.open(MMarkFolderScreen, host_trs)
+            self.session.open(MMarkFolder, host_trs)
         elif sel == ('MMARK PICONS MOVIE'):
-            self.session.open(MMarkPiconsScreen, 'MMark-Picons', host_mov, True)
+            self.session.open(MMarkPicons, 'MMark-Picons', host_mov, True)
         else:
             return
 
@@ -2891,7 +2892,7 @@ class SelectPicons(Screen):
         self.session.open(MessageBox, _('%s it has been cleaned'% mmkpicon), MessageBox.TYPE_INFO, timeout = 4)
         self['info'].setText(_('Please select ...'))
 
-class MMarkFolderScreen(Screen):
+class MMarkFolder(Screen):
     def __init__(self, session, url):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -2983,14 +2984,14 @@ class MMarkFolderScreen(Screen):
         idx = self['text'].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
-        self.session.open(MMarkPiconsScreen, name, url)
+        self.session.open(MMarkPicons, name, url)
 
     def cancel(self, result = None):
         self.downloading = False
         self.close(None)
         return
 
-class MMarkPiconsScreen(Screen):
+class MMarkPicons(Screen):
     def __init__(self, session, name, url, movie=False):
         self.session = session
         skin = skin_path + 'tvall.xml'
