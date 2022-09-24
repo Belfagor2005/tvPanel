@@ -4,30 +4,19 @@
 from __future__ import print_function
 from enigma import eDVBDB
 from enigma import eServiceReference, eServiceCenter
-from Screens.Screen import Screen
-from Screens.MessageBox import MessageBox
-from Components.ActionMap import ActionMap
-from Components.Button import Button
-from Components.ConfigList import ConfigListScreen
-from Components.config import getConfigListEntry, config, ConfigSubsection, ConfigYesNo, ConfigSelection, configfile
-from Tools.Directories import resolveFilename, SCOPE_CONFIG
-from enigma import *
 import os
 import sys
 import re
-import shutil
-
 
 try:
     from xml.etree.ElementTree import ElementTree as  ET
-    from xml.etree.ElementTree import fromstring
 except ImportError:
     from xml.etree.cElementTree import ElementTree as ET
-    from xml.etree.cElementTree import fromstring
 
 # NAME Digitale Terrestre
-plugin_path      = os.path.dirname(sys.modules[__name__].__file__)
-rules            = plugin_path + '/rules.xml'
+plugin_path = os.path.dirname(sys.modules[__name__].__file__)
+rules = plugin_path + '/rules.xml'
+
 
 def Bouquet():
     for file in os.listdir('/etc/enigma2/'):
@@ -48,7 +37,7 @@ class LCN:
         self.markers = []
         self.e2services = []
         # mdom = ET.parse('/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/rules.xml')
-        with open(rules,'rt') as f:
+        with open(rules, 'rt') as f:
             mdom = ET()
             mdom.parse(f)
         self.root = None
@@ -136,7 +125,7 @@ class LCN:
         max = int(tmp[1])
         for x in self.lcnlist:
             if x[0] >= min and x[0] <= max:
-                value = x[0]
+                # value = x[0]
                 cmd = 'x[0] = ' + rule
                 try:
                     exec(cmd)
@@ -225,7 +214,6 @@ class LCN:
         f.close()
         self.ClearDoubleMarker(self.bouquetfile)
 
-
     def ReloadBouquet(self):
         print('\n----Reloading bouquets----')
         try:
@@ -236,4 +224,3 @@ class LCN:
             eDVBDB = None
             os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
             print('bouquets reloaded...')
-
