@@ -3247,7 +3247,7 @@ class mainkodilite(Screen):
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
         if sel == _('VIDEO ADDONS') or sel == 0:
-            self.session.open(plugins)
+            self.session.open(pluginx)
         elif sel == _('ADULT ADDON') or sel == 1:
             self.session.open(plugins_adult)
         elif sel == _('SCRIPT') or sel == 2:
@@ -3256,7 +3256,7 @@ class mainkodilite(Screen):
             self.session.open(repository)
 
 
-class plugins(Screen):
+class pluginx(Screen):
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'

@@ -30,9 +30,9 @@ def upd_done():
 
 def upd_last(fplug):
     import time
+    import os
     time.sleep(5)
     if os.path.isfile('/tmp/tvaddon.tar') and os.stat('/tmp/tvaddon.tar').st_size > 10000:
-        import os
         cmd = "tar -xvf /tmp/tvaddon.tar -C /"
         print("cmd A =", cmd)
         os.system(cmd)
