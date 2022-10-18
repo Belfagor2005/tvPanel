@@ -15,17 +15,14 @@ from . import Lcn
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigDirectory, ConfigSelection, getConfigListEntry
+from Components.config import config, ConfigSubsection, ConfigYesNo
+from Components.config import ConfigDirectory, ConfigSelection, getConfigListEntry
 from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
-from Components.Pixmap import Pixmap
-from Components.PluginComponent import plugins
 from Components.ProgressBar import ProgressBar
 from Components.ScrollLabel import ScrollLabel
-from Components.Sources.List import List
 from Components.Sources.Progress import Progress
-from Components.Sources.Source import Source
 from Components.Sources.StaticText import StaticText
 from Plugins.Plugin import PluginDescriptor
 from Screens.Console import Console
@@ -37,9 +34,10 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import fileExists, resolveFilename
 from Tools.Downloader import downloadWithProgress
-from Tools.LoadPixmap import LoadPixmap
-from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER, getDesktop, loadPNG
-from enigma import eListbox, eTimer, eListboxPythonMultiContent, eConsoleAppContainer, gFont
+from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
+from enigma import loadPNG, gFont
+from enigma import eTimer
+from enigma import eListboxPythonMultiContent, eConsoleAppContainer
 from os import chmod
 from twisted.web.client import downloadPage, getPage
 import base64
@@ -128,7 +126,7 @@ def isFHD():
 def checkMyFile(url):
     return []
     try:
-        dest = "/tmp/download.zip"
+        # dest = "/tmp/download.zip"
         req = Request(url)
         # req.add_header('User-Agent', RequestAgent())
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
@@ -359,7 +357,7 @@ class Hometv(Screen):
             self.skin = f.read()
         self.setup_title = ('Main')
         Screen.__init__(self, session)
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self['key_red'] = Button(_('Exit'))
         self['key_green'] = Button(_('Extensions Installer'))
         self['key_yellow'] = Button(_('Uninstall'))
@@ -386,7 +384,7 @@ class Hometv(Screen):
                 f.seek(0)
                 f.close()
             with open(destr, 'r') as fp:
-                count = 0
+                # count = 0
                 self.labeltext = ''
                 s1 = fp.readline()
                 s2 = fp.readline()
@@ -454,10 +452,10 @@ class Hometv(Screen):
             list.append(DailyListEntry(x, idx))
             self.menu_list.append(x)
             idx += 1
-        self['text'].setList(list)
+        self['list'].setList(list)
 
     def okRun(self):
-        self.keyNumberGlobalCB(self['text'].getSelectedIndex())
+        self.keyNumberGlobalCB(self['list'].getSelectedIndex())
 
     def ipkDs(self):
         self.session.open(tvRemove)
@@ -589,7 +587,7 @@ class Categories(Screen):
         self.setup_title = (category)
         Screen.__init__(self, session)
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         category = category
         self['info'] = Label(_('Loading data... Please wait'))
@@ -646,7 +644,7 @@ class Categories(Screen):
             for name in match:
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
-            showlist(self.list, self['text'])
+            showlist(self.list, self['list'])
             self['key_green'].show()
             self.downloading = True
         except Exception as e:
@@ -673,7 +671,7 @@ class tvDailySetting(Screen):
         self.setup_title = ('Daily Setting')
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self['title'] = Label(_(title_plug))
         self['progress'] = ProgressBar()
         self["progress"].hide()
@@ -718,12 +716,12 @@ class tvDailySetting(Screen):
             list.append(DailyListEntry(x, idx))
             self.menu_list.append(x)
             idx += 1
-        self['text'].setList(list)
+        self['list'].setList(list)
         self['key_green'].show()
         self['info'].setText(_('Please select ...'))
 
     def okRun(self):
-        self.keyNumberGlobalCB(self['text'].getSelectedIndex())
+        self.keyNumberGlobalCB(self['list'].getSelectedIndex())
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
@@ -803,7 +801,7 @@ class SettingVhan(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -866,7 +864,7 @@ class SettingVhan(Screen):
             self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print(('downxmlpage get failed: ', str(e)))
             self['info'].setText(_('Download page get failed ...'))
@@ -936,7 +934,7 @@ class SettingVhan2(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -986,7 +984,7 @@ class SettingVhan2(Screen):
                 self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
@@ -1080,7 +1078,7 @@ class Milenka61(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -1131,7 +1129,7 @@ class Milenka61(Screen):
                     self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
@@ -1186,7 +1184,7 @@ class SettingManutek(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -1233,7 +1231,7 @@ class SettingManutek(Screen):
                 self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
@@ -1301,7 +1299,7 @@ class SettingMorpheus(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -1353,7 +1351,7 @@ class SettingMorpheus(Screen):
                     print("name =", name)
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
@@ -1386,7 +1384,7 @@ class SettingMorpheus(Screen):
                 with open(dest, 'wb') as f:
                     f.write(r.content)
                 if os.path.exists(dest):
-                    fdest1 = "/tmp/unzipped"
+                    # fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
@@ -1422,7 +1420,7 @@ class SettingCiefp(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -1479,7 +1477,7 @@ class SettingCiefp(Screen):
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
@@ -1510,7 +1508,7 @@ class SettingCiefp(Screen):
                 with open(dest, 'wb') as f:
                     f.write(r.content)
                 if os.path.exists(dest):
-                    fdest1 = "/tmp/unzipped"
+                    # fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
@@ -1545,7 +1543,7 @@ class SettingBi58(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -1595,7 +1593,7 @@ class SettingBi58(Screen):
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
@@ -1650,7 +1648,7 @@ class SettingPredrag(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -1700,7 +1698,7 @@ class SettingPredrag(Screen):
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
@@ -1756,7 +1754,7 @@ class SettingCyrus(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -1810,7 +1808,7 @@ class SettingCyrus(Screen):
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
@@ -1841,7 +1839,7 @@ class SettingCyrus(Screen):
                 with open(dest, 'wb') as f:
                     f.write(r.content)
                 if os.path.exists(dest):
-                    fdest1 = "/tmp/unzipped"
+                    # fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
@@ -1897,7 +1895,7 @@ class tvInstall(Screen):
         for name, url in match:
             self.names.append(name)
             self.urls.append(url)
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self['info'].setText(_('Please install ...'))
         self['title'] = Label(_(title_plug))
         self['key_red'] = Button(_('Back'))
@@ -1913,7 +1911,7 @@ class tvInstall(Screen):
         self.onLayoutFinish.append(self.start)
 
     def start(self):
-        showlist(self.names, self['text'])
+        showlist(self.names, self['list'])
         self['key_green'].show()
 
     def message(self):
@@ -2123,13 +2121,13 @@ class tvConsole(Screen):
         self.endstr = endstr
         self.errorOcurred = False
         self['title'] = Label(_(title_plug))
-        self['text'] = ScrollLabel('')
+        self['list'] = ScrollLabel('')
         self['actions'] = ActionMap(['WizardActions', 'DirectionActions', 'ColorActions'], {'ok': self.cancel,
                                                                                             'back': self.cancel,
                                                                                             'red': self.cancel,
                                                                                             "blue": self.restartenigma,
-                                                                                            'up': self['text'].pageUp,
-                                                                                            'down': self['text'].pageDown}, -1)
+                                                                                            'up': self['list'].pageUp,
+                                                                                            'down': self['list'].pageDown}, -1)
         self.cmdlist = cmdlist
         self.newtitle = _(title_plug)
         self.onShown.append(self.updateTitle)
@@ -2147,7 +2145,7 @@ class tvConsole(Screen):
         self.setTitle(self.newtitle)
 
     def startRun(self):
-        self['text'].setText(_('Execution Progress:') + '\n\n')
+        self['list'].setText(_('Execution Progress:') + '\n\n')
         print('Console: executing in run', self.run, ' the command:', self.cmdlist[self.run])
         if self.container.execute(self.cmdlist[self.run]):
             self.runFinished(-1)
@@ -2238,10 +2236,10 @@ class tvIPK(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.ipkpth = str(config.plugins.tvaddon.ipkpth.value)
-        count = 0
+        # count = 0
         self.list = []
         self.names = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self['key_green'] = Button(_('Install'))
         self['key_yellow'] = Button(_('Restart'))
         self['key_red'] = Button(_('Back'))
@@ -2281,14 +2279,14 @@ class tvIPK(Screen):
         self.getfreespace()
         self['key_green'].show()
         self["text"].l.setList(self.list)
-        showlist(self.names, self['text'])
+        showlist(self.names, self['list'])
 
     def msgipkrmv(self):
         i = len(self.names)
         print('iiiiii= ', i)
         if i < 1:
             return
-        idx = self['text'].getSelectionIndex()
+        idx = self['list'].getSelectionIndex()
         self.sel = self.names[idx]
         self.com = self.ipkpth + '/' + self.sel
         self.session.openWithCallback(self.msgipkrmv2, MessageBox, (_('Do you really want to remove selected?') + '\n' + self.sel), MessageBox.TYPE_YESNO)
@@ -2316,7 +2314,7 @@ class tvIPK(Screen):
         print('iiiiii= ', i)
         if i < 1:
             return
-        idx = self['text'].getSelectionIndex()
+        idx = self['list'].getSelectionIndex()
         self.sel = self.names[idx]
         self.session.openWithCallback(self.ipkinst2, MessageBox, (_('Do you really want to install the selected Addon?') + '\n' + self.sel), MessageBox.TYPE_YESNO)
 
@@ -2429,7 +2427,7 @@ class tvUpdate(Screen):
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.Update = False
         self.dmlink = ''
         self.tlink = ''
@@ -2445,7 +2443,7 @@ class tvUpdate(Screen):
                 f.seek(0)
                 f.close()
             with open(destr, 'r') as fp:
-                count = 0
+                # count = 0
                 self.labeltext = ''
                 s1 = fp.readline()
                 s2 = fp.readline()
@@ -2556,7 +2554,7 @@ class tvRemove(Screen):
             self.container.appClosed.append(self.runFinished)
         except:
             self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self['key_green'] = Button(_('Uninstall'))
         self['key_yellow'] = Button(_('Restart'))
         self['key_red'] = Button(_('Back'))
@@ -2623,7 +2621,7 @@ class tvRemove(Screen):
                     if name.startswith('enigma2-plugin-'):
                         self.names.append(name)
         self['key_green'].show()
-        showlist(self.names, self['text'])
+        showlist(self.names, self['list'])
 
     def message1(self):
         i = len(self.names)
@@ -2634,7 +2632,7 @@ class tvRemove(Screen):
 
     def callMyMsg1(self, result):
         if result:
-            idx = self['text'].getSelectionIndex()
+            idx = self['list'].getSelectionIndex()
             dom = self.names[idx]
             com = dom
             if Utils.DreamOS():
@@ -2842,7 +2840,7 @@ class SelectPicons(Screen):
         self.setup_title = ('Select Picons')
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
         self['pform'] = Label('')
@@ -2884,13 +2882,13 @@ class SelectPicons(Screen):
             list.append(DailyListEntry(x, idx))
             self.menu_list.append(x)
             idx += 1
-        self['text'].setList(list)
+        self['list'].setList(list)
         self['key_green'].show()
         self['info'].setText(_('Please select'))
         self.getfreespace()
 
     def okRun(self):
-        self.keyNumberGlobalCB(self['text'].getSelectedIndex())
+        self.keyNumberGlobalCB(self['list'].getSelectedIndex())
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
@@ -2930,7 +2928,7 @@ class MMarkFolder(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -2996,7 +2994,7 @@ class MMarkFolder(Screen):
                 self.names.append(name)
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
             self.downloading = True
         except:
             self.downloading = False
@@ -3007,7 +3005,7 @@ class MMarkFolder(Screen):
         print('iiiiii= ', i)
         if i < 1:
             return
-        idx = self['text'].getSelectionIndex()
+        idx = self['list'].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
         self.session.open(MMarkPicons, name, url)
@@ -3028,7 +3026,7 @@ class MMarkPicons(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -3101,7 +3099,7 @@ class MMarkPicons(Screen):
                     self.names.append(name)
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
             self.downloading = True
         except:
             self.downloading = False
@@ -3199,7 +3197,7 @@ class mainkodilite(Screen):
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
         self['pform'] = Label('')
@@ -3238,11 +3236,11 @@ class mainkodilite(Screen):
             self.menu_list.append(x)
             idx += 1
         self['key_green'].show()
-        self['text'].setList(list)
+        self['list'].setList(list)
         self['info'].setText(_('Please select'))
 
     def okRun(self):
-        self.keyNumberGlobalCB(self['text'].getSelectedIndex())
+        self.keyNumberGlobalCB(self['list'].getSelectedIndex())
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
@@ -3266,7 +3264,7 @@ class pluginx(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -3318,7 +3316,7 @@ class pluginx(Screen):
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
             self['info'].setText(_('Please select'))
             self['key_green'].show()
             self.downloading = True
@@ -3393,7 +3391,7 @@ class plugins_adult(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -3443,7 +3441,7 @@ class plugins_adult(Screen):
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
             self['key_green'].show()
             self['info'].setText(_('Please select'))
             self.downloading = True
@@ -3542,7 +3540,7 @@ class script(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -3592,7 +3590,7 @@ class script(Screen):
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
             self['key_green'].show()
             self['info'].setText(_('Please select'))
         except Exception as e:
@@ -3666,7 +3664,7 @@ class repository(Screen):
         Screen.__init__(self, session)
         self.setTitle(_(title_plug))
         self.list = []
-        self['text'] = tvList([])
+        self['list'] = tvList([])
         self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -3716,7 +3714,7 @@ class repository(Screen):
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
-            showlist(self.names, self['text'])
+            showlist(self.names, self['list'])
             self['key_green'].show()
             self['info'].setText(_('Please select'))
         except Exception as e:
