@@ -653,7 +653,7 @@ class Categories(Screen):
     def okRun(self):
         if self.downloading is True:
             try:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 name = self.list[idx]
                 self.session.open(tvInstall, self.xml, name)
             except Exception as e:
@@ -881,7 +881,7 @@ class SettingVhan(Screen):
         set = 0
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
@@ -1002,7 +1002,7 @@ class SettingVhan2(Screen):
         if result:
             if self.downloading is True:
                 try:
-                    idx = self["text"].getSelectionIndex()
+                    idx = self["list"].getSelectionIndex()
                     self.name = self.names[idx]
                     url = self.urls[idx]
                     self.dest = "/tmp/settings.zip"
@@ -1146,7 +1146,7 @@ class Milenka61(Screen):
         set = 0
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 print("url =", url)
@@ -1248,7 +1248,7 @@ class SettingManutek(Screen):
         set = 0
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
@@ -1369,7 +1369,7 @@ class SettingMorpheus(Screen):
         print("self.downloading is =", self.downloading)
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
@@ -1494,7 +1494,7 @@ class SettingCiefp(Screen):
         set = 0
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
@@ -1610,7 +1610,7 @@ class SettingBi58(Screen):
         set = 0
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 print("url =", url)
@@ -1715,7 +1715,7 @@ class SettingPredrag(Screen):
         set = 0
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
@@ -1825,7 +1825,7 @@ class SettingCyrus(Screen):
         set = 0
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
@@ -1923,7 +1923,7 @@ class tvInstall(Screen):
 
     def selclicked(self, result):
         if result:
-            idx = self["text"].getSelectionIndex()
+            idx = self["list"].getSelectionIndex()
             dom = self.names[idx]
             com = self.urls[idx]
             self.prombt(com, dom)
@@ -2050,7 +2050,7 @@ class tvInstall(Screen):
     def okDownload(self, result):
         self['info'].setText(_('... please wait'))
         if result:
-            idx = self["text"].getSelectionIndex()
+            idx = self["list"].getSelectionIndex()
             self.dom = self.names[idx]
             self.com = self.urls[idx]
             n2 = self.com.rfind("/", 0)
@@ -2158,13 +2158,13 @@ class tvConsole(Screen):
         else:
             self.show()
             self.finished = True
-            str = self["text"].getText()
+            str = self["list"].getText()
             if not retval and self.endstr.startswith("Swapping"):
                 str += _("\n\n" + self.endstr)
             else:
                 str += _("Execution finished!!\n")
-            self["text"].setText(str)
-            self["text"].lastPage()
+            self["list"].setText(str)
+            self["list"].lastPage()
             # if self.finishedCallback is not None:
                 # self.finishedCallback(retval)
             # if not retval and self.closeOnSuccess:
@@ -2193,11 +2193,11 @@ class tvConsole(Screen):
         if six.PY3:
             data = data.decode("utf-8")
         try:
-            self["text"].setText(self["text"].getText() + data)
+            self["list"].setText(self["list"].getText() + data)
         except:
             trace_error()
         return
-        if self["text"].getText().endswith("Do you want to continue? [Y/n] "):
+        if self["list"].getText().endswith("Do you want to continue? [Y/n] "):
             self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
 
     def processAnswer(self, retval):
@@ -2278,7 +2278,7 @@ class tvIPK(Screen):
         print(self.list)
         self.getfreespace()
         self['key_green'].show()
-        self["text"].l.setList(self.list)
+        self["list"].l.setList(self.list)
         showlist(self.names, self['list'])
 
     def msgipkrmv(self):
@@ -2598,7 +2598,7 @@ class tvRemove(Screen):
         self.lists = []
         del self.names[:]
         del self.list[:]
-        self["text"].l.setList(self.list)
+        self["list"].l.setList(self.list)
         path = ('/var/lib/opkg/info')
         if Utils.DreamOS():
             path = ('/var/lib/dpkg/info')
@@ -3115,7 +3115,7 @@ class MMarkPicons(Screen):
         self['info'].setText(_('... please wait'))
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
@@ -3335,7 +3335,7 @@ class pluginx(Screen):
         self['info'].setText(_('... please wait'))
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
                 self.source = self.com.replace(str(self.url), '')
@@ -3483,7 +3483,7 @@ class plugins_adult(Screen):
         self['info'].setText(_('... please wait'))
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
                 self.source = self.com.replace(str(self.url), '')
@@ -3608,7 +3608,7 @@ class script(Screen):
         self['info'].setText(_('... please wait'))
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
                 self.source = self.com.replace(str(self.url), '')
@@ -3732,7 +3732,7 @@ class repository(Screen):
         self['info'].setText(_('... please wait'))
         if result:
             if self.downloading is True:
-                idx = self["text"].getSelectionIndex()
+                idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
                 self.source = self.com.replace(str(self.url), '')
@@ -3780,10 +3780,13 @@ class repository(Screen):
 
 def main(session, **kwargs):
     try:
-        if Utils.zCheckInternet(0):
-            if config.plugins.tvaddon.autoupd.value is True:
+        if Utils.zCheckInternet(1):
+            # if config.plugins.tvaddon.autoupd.value is True:
+            try:
                 from . import Update
                 Update.upd_done()
+            except Exception as e:
+                print(str(e))
             session.open(Hometv)
         else:
             from Screens.MessageBox import MessageBox
