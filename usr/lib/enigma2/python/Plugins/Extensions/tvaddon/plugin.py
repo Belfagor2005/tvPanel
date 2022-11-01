@@ -3313,13 +3313,13 @@ class pluginx(Screen):
                     name = name + ' - ' + date
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
+                    self.downloading = True
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['list'])
             self['info'].setText(_('Please select'))
             self['key_green'].show()
-            self.downloading = True
         except Exception as e:
             print('error: ', str(e))
             pass
@@ -3438,13 +3438,13 @@ class plugins_adult(Screen):
                     name = name + ' - ' + date
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
+                    self.downloading = True
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['list'])
             self['key_green'].show()
             self['info'].setText(_('Please select'))
-            self.downloading = True
         except Exception as e:
             print('error: ', str(e))
             pass
@@ -3587,6 +3587,7 @@ class script(Screen):
                     name = name + ' - ' + date
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
+                    self.downloading = True
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
@@ -3711,6 +3712,7 @@ class repository(Screen):
                     name = name + ' - ' + date
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
+                    self.downloading = True
                 else:
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
