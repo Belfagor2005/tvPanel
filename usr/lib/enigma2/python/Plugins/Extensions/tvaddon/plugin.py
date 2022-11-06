@@ -245,7 +245,7 @@ ico_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/logo.png".format('tvadd
 no_cover = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/no_coverArt.png".format('tvaddon'))
 res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('tvaddon'))
 skin_path = res_plugin_path + 'skins/hd/'
-
+_firstStarttvspro = True
 
 if isFHD():
     skin_path = res_plugin_path + 'skins/fhd/'
@@ -3780,20 +3780,50 @@ class repository(Screen):
         pass
 
 
+class AutoStartTimertvadd:
+
+    def __init__(self, session):
+        self.session = session
+        global _firstStarttvsadd
+        print("*** running AutoStartTimertvadd ***")
+        if _firstStarttvsadd:
+            self.runUpdate()
+
+    def runUpdate(self):
+        print("*** running update ***")
+        try:
+            from . import Update
+            Update.upd_done()
+            _firstStarttvsadd = False
+        except Exception as e:
+            print('error Fxy', str(e))
+
+
+def autostart(reason, session=None, **kwargs):
+    print("*** running autostart ***")
+    global autoStartTimertvsadd
+    global _firstStarttvsadd
+    if reason == 0:
+        if session is not None:
+            _firstStarttvsadd = True
+            autoStartTimertvsadd = AutoStartTimertvadd(session)
+    return
+
+
 def main(session, **kwargs):
     try:
-        if Utils.zCheckInternet(1):
-            # if config.plugins.tvaddon.autoupd.value is True:
-            try:
-                from . import Update
-                Update.upd_done()
-            except Exception as e:
-                print(str(e))
-            session.open(Hometv)
-        else:
-            from Screens.MessageBox import MessageBox
-            from Tools.Notifications import AddPopup
-            AddPopup(_("Sorry but No Internet :("), MessageBox.TYPE_INFO, 10, 'Sorry')
+        # if Utils.zCheckInternet(1):
+            # # if config.plugins.tvaddon.autoupd.value is True:
+            # try:
+                # from . import Update
+                # Update.upd_done()
+            # except Exception as e:
+                # print(str(e))
+        session.open(Hometv)
+        # else:
+            # from Screens.MessageBox import MessageBox
+            # from Tools.Notifications import AddPopup
+            # AddPopup(_("Sorry but No Internet :("), MessageBox.TYPE_INFO, 10, 'Sorry')
     except:
         pass
 
@@ -3822,7 +3852,9 @@ def Plugins(**kwargs):
         ico_path = plugin_path + '/res/pics/logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=ico_path, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_MENU, icon=ico_path, fnc=cfgmain)
-    result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_PLUGINMENU], icon=ico_path, fnc=main)]
+    # result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_PLUGINMENU], icon=ico_path, fnc=main)]
+    result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
+              PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main)]
     if config.plugins.tvaddon.strtext.value:
         result.append(extDescriptor)
     if config.plugins.tvaddon.strtmain.value:
