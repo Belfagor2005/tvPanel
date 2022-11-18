@@ -1716,7 +1716,7 @@ class SettingPredrag(Screen):
         if result:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
-                self.name = self.names[idx]
+                # self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 print("url =", url)
