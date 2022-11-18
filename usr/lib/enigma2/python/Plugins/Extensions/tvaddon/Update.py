@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from twisted.web.client import downloadPage
 PY3 = sys.version_info.major >= 3
 print("Update.py")
 
@@ -20,6 +19,7 @@ def upd_done():
         # print(response.headers['content-length'])
         fdest = "/tmp/tvaddon.tar"
         print("Code 200 upd_done xfile =", xfile)
+        from twisted.web.client import downloadPage
         downloadPage(xfile, fdest).addCallback(upd_last)
     elif response.status_code == 404:
         print("Error 404")

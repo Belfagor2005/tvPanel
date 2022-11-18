@@ -19,7 +19,8 @@ from Components.config import config, ConfigSubsection, ConfigYesNo
 from Components.config import ConfigDirectory, ConfigSelection, getConfigListEntry
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaTest
+from Components.MultiContent import MultiContentEntryText
+from Components.MultiContent import MultiContentEntryPixmapAlphaTest
 from Components.ProgressBar import ProgressBar
 from Components.ScrollLabel import ScrollLabel
 from Components.Sources.Progress import Progress
@@ -3796,7 +3797,7 @@ class AutoStartTimertvadd:
             Update.upd_done()
             _firstStarttvsadd = False
         except Exception as e:
-            print('error Fxy', str(e))
+            print('error tvaddon', str(e))
 
 
 def autostart(reason, session=None, **kwargs):
@@ -3812,18 +3813,7 @@ def autostart(reason, session=None, **kwargs):
 
 def main(session, **kwargs):
     try:
-        # if Utils.zCheckInternet(1):
-            # # if config.plugins.tvaddon.autoupd.value is True:
-            # try:
-                # from . import Update
-                # Update.upd_done()
-            # except Exception as e:
-                # print(str(e))
         session.open(Hometv)
-        # else:
-            # from Screens.MessageBox import MessageBox
-            # from Tools.Notifications import AddPopup
-            # AddPopup(_("Sorry but No Internet :("), MessageBox.TYPE_INFO, 10, 'Sorry')
     except:
         pass
 
