@@ -409,14 +409,18 @@ class Hometv(Screen):
             self.timer.callback.append(self.msgupdate1)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions', "MenuActions"], {'ok': self.okRun,
-                                                                                      'green': self.tvIPK,
-                                                                                      'menu': self.goConfig,
-                                                                                      'blue': self.tvManager,
-                                                                                      'yellow': self.ipkDs,
-                                                                                      'red': self.closerm,
-                                                                                      'back': self.closerm,
-                                                                                      'cancel': self.closerm}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'EPGSelectActions',
+                                     'MenuActions',
+                                     'DirectionActions'], {'ok': self.okRun,
+                                                           'green': self.tvIPK,
+                                                           'menu': self.goConfig,
+                                                           'blue': self.tvManager,
+                                                           'yellow': self.ipkDs,
+                                                           'red': self.closerm,
+                                                           'back': self.closerm,
+                                                           'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
 
     def check_dependencies(self):
@@ -612,10 +616,11 @@ class Categories(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         # PY2
@@ -692,12 +697,13 @@ class tvDailySetting(Screen):
             self.LcnOn = True
         self["key_blue"] = Button('')
         self['key_blue'].hide()
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
-                                                                         'green': self.okRun,
-                                                                         'back': self.closerm,
-                                                                         'red': self.closerm,
-                                                                         'yellow': self.Lcn,
-                                                                         'cancel': self.closerm}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'back': self.closerm,
+                                                       'red': self.closerm,
+                                                       'yellow': self.Lcn,
+                                                       'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
 
     def Lcn(self):
@@ -825,10 +831,11 @@ class SettingVhan(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         self.names = []
@@ -958,10 +965,11 @@ class SettingVhan2(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         url = 'http://sat.alfa-tech.net/upload/settings/vhannibal/'
@@ -1102,10 +1110,11 @@ class Milenka61(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         url = 'http://178.63.156.75/tarGz/'
@@ -1208,10 +1217,11 @@ class SettingManutek(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         url = 'http://www.manutek.it/isetting/index.php'
@@ -1323,10 +1333,11 @@ class SettingMorpheus(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         url = r'http://morpheus883.altervista.org/download/index.php'
@@ -1444,10 +1455,11 @@ class SettingCiefp(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         url = 'https://github.com/ciefp/ciefpsettings-enigma2-zipped'
@@ -1567,10 +1579,11 @@ class SettingBi58(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         url = 'http://178.63.156.75/paneladdons/Bi58/'
@@ -1672,10 +1685,11 @@ class SettingPredrag(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         url = 'http://178.63.156.75/paneladdons/Predr@g/'
@@ -1779,10 +1793,11 @@ class SettingCyrus(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         url = 'http://www.cyrussettings.com/Set_29_11_2011/Dreambox-IpBox/Config.xml'
@@ -1904,11 +1919,12 @@ class tvInstall(Screen):
         self["key_blue"] = Button('')
         self['key_blue'].hide()
         self['key_green'].hide()
-        self['actions'] = ActionMap(['SetupActions',  'ColorActions'], {'ok': self.message,
-                                                                        'green': self.message,
-                                                                        'red': self.close,
-                                                                        'yellow': self.okDown,
-                                                                        'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.message,
+                                                       'green': self.message,
+                                                       'red': self.close,
+                                                       'yellow': self.okDown,
+                                                       'cancel': self.close}, -2)
         self.onLayoutFinish.append(self.start)
 
     def start(self):
@@ -2254,13 +2270,16 @@ class tvIPK(Screen):
         self['info'] = Label()
         self['info'].setText(_('Please install ...'))
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['OkCancelActions', 'WizardActions', 'ColorActions', "MenuActions"], {'ok': self.ipkinst,
-                                                                                                          'green': self.ipkinst,
-                                                                                                          'yellow': self.msgipkinst,
-                                                                                                          'blue': self.msgipkrmv,
-                                                                                                          'red': self.close,
-                                                                                                          'menu': self.goConfig,
-                                                                                                          'cancel': self.close}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'WizardActions',
+                                     'ColorActions',
+                                     'MenuActions'], {'ok': self.ipkinst,
+                                                      'green': self.ipkinst,
+                                                      'yellow': self.msgipkinst,
+                                                      'blue': self.msgipkrmv,
+                                                      'red': self.close,
+                                                      'menu': self.goConfig,
+                                                      'cancel': self.close}, -1)
         self.onLayoutFinish.append(self.refreshlist)
 
     def refreshlist(self):
@@ -2484,11 +2503,12 @@ class tvUpdate(Screen):
             self.timer.callback.append(self.msgupdate1)
         self.timer.start(1000, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'DirectionActions', 'ColorActions'], {'ok': self.close,
-                                                                                           'cancel': self.close,
-                                                                                           'green': self.msgipkrst1,
-                                                                                           'red': self.close,
-                                                                                           'yellow': self.msgupdate}, -1)
+        self['actions'] = ActionMap(['DirectionActions',
+                                     'ColorActions'], {'ok': self.close,
+                                                       'cancel': self.close,
+                                                       'green': self.msgipkrst1,
+                                                       'red': self.close,
+                                                       'yellow': self.msgupdate}, -1)
 
     def msgupdate1(self):
         if self.Update is False:
@@ -2569,11 +2589,12 @@ class tvRemove(Screen):
         self['progresstext'] = StaticText()
         self['info'] = Label()
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'green': self.message1,
-                                                                       'ok': self.message1,
-                                                                       'yellow': self.msgipkrst,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'green': self.message1,
+                                                       'ok': self.message1,
+                                                       'yellow': self.msgipkrst,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -1)
         self.getfreespace()
         self.onLayoutFinish.append(self.openList)
 
@@ -2686,15 +2707,19 @@ class tvConfig(Screen, ConfigListScreen):
         self["key_blue"] = Button('')
         self['key_blue'].hide()
         self['title'] = Label(_(title_plug))
-        self["setupActions"] = ActionMap(['OkCancelActions', 'DirectionActions', 'ColorActions', 'VirtualKeyboardActions', 'ActiveCodeActions'], {'cancel': self.extnok,
-                                                                                                                                                  'red': self.extnok,
-                                                                                                                                                  'back': self.close,
-                                                                                                                                                  # 'left': self.keyLeft,
-                                                                                                                                                  # 'right': self.keyRight,
-                                                                                                                                                  'yellow': self.tvUpdate,
-                                                                                                                                                  "showVirtualKeyboard": self.KeyText,
-                                                                                                                                                  'ok': self.Ok_edit,
-                                                                                                                                                  'green': self.msgok}, -1)
+        self["setupActions"] = ActionMap(['OkCancelActions',
+                                          'DirectionActions', 
+                                          'ColorActions',
+                                          'VirtualKeyboardActions',
+                                          'ActiveCodeActions'], {'cancel': self.extnok,
+                                                                 'red': self.extnok,
+                                                                 'back': self.close,
+                                                                 # 'left': self.keyLeft,
+                                                                 # 'right': self.keyRight,
+                                                                 'yellow': self.tvUpdate,
+                                                                 "showVirtualKeyboard": self.KeyText,
+                                                                 'ok': self.Ok_edit,
+                                                                 'green': self.msgok}, -1)
         self.list = []
         ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
         self.createSetup()
@@ -2858,12 +2883,11 @@ class SelectPicons(Screen):
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
-                                                                         'green': self.okRun,
-                                                                         'yellow': self.remove,
-                                                                         'back': self.closerm,
-                                                                         'red': self.closerm,
-                                                                         'cancel': self.closerm}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
         self.onLayoutFinish.append(self.updateMenuList)
 
     def getfreespace(self):
@@ -2955,10 +2979,11 @@ class MMarkFolder(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
         self.onLayoutFinish.append(self.getfreespace)
 
     def getfreespace(self):
@@ -3055,10 +3080,11 @@ class MMarkPicons(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
         self.onLayoutFinish.append(self.getfreespace)
 
     def getfreespace(self):
@@ -3216,11 +3242,11 @@ class mainkodilite(Screen):
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions', ], {'ok': self.okRun,
-                                                                         'green': self.okRun,
-                                                                         'back': self.closerm,
-                                                                         'red': self.closerm,
-                                                                         'cancel': self.closerm}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
         self.onLayoutFinish.append(self.updateMenuList)
 
     def closerm(self):
@@ -3290,10 +3316,11 @@ class pluginx(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/plugins"
@@ -3417,10 +3444,11 @@ class plugins_adult(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun1,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/pluginadult"
@@ -3566,10 +3594,11 @@ class script(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/script"
@@ -3691,10 +3720,11 @@ class repository(Screen):
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['SetupActions', 'ColorActions'], {'ok': self.okRun,
-                                                                       'green': self.okRun,
-                                                                       'red': self.close,
-                                                                       'cancel': self.close}, -2)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
 
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/Kodilite/repository"
