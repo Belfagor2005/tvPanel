@@ -2708,7 +2708,7 @@ class tvConfig(Screen, ConfigListScreen):
         self['key_blue'].hide()
         self['title'] = Label(_(title_plug))
         self["setupActions"] = ActionMap(['OkCancelActions',
-                                          'DirectionActions', 
+                                          'DirectionActions',
                                           'ColorActions',
                                           'VirtualKeyboardActions',
                                           'ActiveCodeActions'], {'cancel': self.extnok,
@@ -3872,7 +3872,6 @@ def Plugins(**kwargs):
         ico_path = plugin_path + '/res/pics/logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=ico_path, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_MENU, icon=ico_path, fnc=cfgmain)
-    # result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_PLUGINMENU], icon=ico_path, fnc=main)]
     result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
               PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main)]
     if config.plugins.tvaddon.strtext.value:
