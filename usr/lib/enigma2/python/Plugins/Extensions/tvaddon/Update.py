@@ -32,8 +32,9 @@ def upd_last(fplug):
     import os
     time.sleep(5)
     fdest = "/tmp/tvaddon.tar"
-    if os.path.isfile(fdest) and os.stat(fdest).st_size > 10000:
+    if os.path.isfile(fdest) and os.stat(fdest).st_size > 100:
         cmd = "tar -xvf /tmp/tvaddon.tar -C /"
         print("cmd A =", cmd)
         os.system(cmd)
+        os.remove('/tmp/tvaddon.tar')
     return

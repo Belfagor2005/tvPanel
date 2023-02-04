@@ -323,8 +323,8 @@ def DailyListEntry(name, idx):
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 3), size=(30, 30), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 30), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -335,8 +335,8 @@ def oneListEntry(name):
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 3), size=(30, 30), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 30), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -559,7 +559,6 @@ class Hometv(Screen):
                 r = requests.get(com)
                 with open(tvtemp, 'wb') as f:
                     f.write(r.content)
-                # os.system('wget %s -O /tmp/tvaddon.tar > /dev/null' % com)
                 os.system('sleep 3')
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], closeOnSuccess=False)
             else:
@@ -842,11 +841,11 @@ class SettingVhan(Screen):
         self.urls = []
         try:
             urlsat = 'https://www.vhannibal.net/asd.php'
-            r = make_request(urlsat)
-            print('rrrrrrrr ', r)
+            data = make_request(urlsat)
+            print('rrrrrrrr ', data)
             if PY3:
-                r = six.ensure_str(r)
-            match = re.compile('<td><a href="(.+?)">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(r)
+                data = six.ensure_str(data)
+            match = re.compile('<td><a href="(.+?)">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(data)
             for url, name, date in match:
                 name = name + ' ' + date
                 url = "https://www.vhannibal.net/" + url
@@ -854,21 +853,6 @@ class SettingVhan(Screen):
                 print('name : ', name)
                 self.urls.append(Utils.checkStr(url.strip()))
                 self.names.append(Utils.checkStr(name.strip()))
-
-            # urldtt = 'https://www.vhannibal.net/enigma2dtt.php'
-            # r2=make_request(urldtt)
-            # print('rrrrrrrr ', r2)
-            # if PY3:
-                # r2  = six.ensure_str(r2)
-            # match2   = re.compile('<td><a href="(.+?)" target="_blank">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(r2)
-            # for url, name, date in match2:
-                # name = name + ' ' + date
-                # url = "https://www.vhannibal.net/" + url
-                # print('url : ', url)
-                # print('name : ', name)
-                # self.urls.append(Utils.checkStr(url.strip()))
-                # self.names.append(Utils.checkStr(name.strip()))
-
             self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
@@ -973,15 +957,15 @@ class SettingVhan2(Screen):
 
     def downxmlpage(self):
         url = 'http://sat.alfa-tech.net/upload/settings/vhannibal/'
-        r = make_request(url)
-        print('rrrrrrrr ', r)
+        data = make_request(url)
+        print('rrrrrrrr ', data)
         if six.PY3:
-            r = six.ensure_str(r)
+            data = six.ensure_str(data)
         self.names = []
         self.urls = []
         try:
             regex = '<a href="Vhannibal(.*?).zip"'
-            match = re.compile(regex).findall(r)
+            match = re.compile(regex).findall(data)
             for url in match:
                 if '.php' in url.lower():
                     continue
@@ -1014,7 +998,7 @@ class SettingVhan2(Screen):
                     idx = self["list"].getSelectionIndex()
                     self.name = self.names[idx]
                     url = self.urls[idx]
-                    self.dest = "/tmp/settings.zip"
+                    dest = "/tmp/settings.zip"
                     print("url =", url)
                     if six.PY3:
                         url = six.ensure_binary(url)
@@ -1025,9 +1009,9 @@ class SettingVhan2(Screen):
                         # if six.PY3:
                             # url = url.encode()
                         print('uurrll: ', url)
-                        downloadPage(url, self.dest, sniFactory, timeout=5).addCallback(self.download, self.dest).addErrback(self.downloadError)
+                        downloadPage(url, dest, sniFactory, timeout=5).addCallback(self.download, dest).addErrback(self.downloadError)
                     else:
-                        downloadPage(url, self.dest).addCallback(self.download, self.dest).addErrback(self.downloadError)
+                        downloadPage(url, dest).addCallback(self.download, dest).addErrback(self.downloadError)
                 except Exception as e:
                     print('error: ', str(e))
                     print("Error: can't find file or read data")
