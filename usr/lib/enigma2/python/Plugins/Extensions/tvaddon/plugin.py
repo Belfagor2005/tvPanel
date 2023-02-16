@@ -481,7 +481,7 @@ class Hometv(Screen):
         sel = self.menu_list[idx]
 
         if sel == _('DAILY PICONS'):
-            self.session.open(SelectPicons)
+            self.session.open(SelectPiconz)
         elif sel == _('DAILY SETTINGS'):
             self.session.open(tvDailySetting)
         elif sel == _('KODILITE BY PCD'):
@@ -2841,7 +2841,7 @@ class tvConfig(Screen, ConfigListScreen):
             self.close()
 
 
-class SelectPicons(Screen):
+class SelectPiconz(Screen):
     def __init__(self, session):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -2902,11 +2902,11 @@ class SelectPicons(Screen):
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
         if sel == ('MMARK PICONS BLACK'):
-            self.session.open(MMarkFolder, host_blk)
+            self.session.open(MMarkFolderz, host_blk)
         elif sel == 'MMARK PICONS TRANSPARENT':
-            self.session.open(MMarkFolder, host_trs)
+            self.session.open(MMarkFolderz, host_trs)
         elif sel == ('MMARK PICONS MOVIE'):
-            self.session.open(MMarkPicons, 'MMark-Picons', host_mov, True)
+            self.session.open(MMarkPiconsf, 'MMark-Picons', host_mov, True)
         else:
             return
 
@@ -2927,7 +2927,7 @@ class SelectPicons(Screen):
         self['info'].setText(_('Please select ...'))
 
 
-class MMarkFolder(Screen):
+class MMarkFolderz(Screen):
     def __init__(self, session, url):
         self.session = session
         skin = skin_path + 'tvall.xml'
@@ -3018,7 +3018,7 @@ class MMarkFolder(Screen):
         idx = self['list'].getSelectionIndex()
         name = self.names[idx]
         url = self.urls[idx]
-        self.session.open(MMarkPicons, name, url)
+        self.session.open(MMarkPiconsf, name, url)
 
     def cancel(self, result=None):
         self.downloading = False
@@ -3026,7 +3026,7 @@ class MMarkFolder(Screen):
         return
 
 
-class MMarkPicons(Screen):
+class MMarkPiconsf(Screen):
     def __init__(self, session, name, url, movie=False):
         self.session = session
         skin = skin_path + 'tvall.xml'
