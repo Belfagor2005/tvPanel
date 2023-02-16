@@ -42,7 +42,7 @@ from enigma import eListboxPythonMultiContent, eConsoleAppContainer
 from os import chmod
 from twisted.web.client import downloadPage, getPage
 import base64
-import gettext
+# import gettext
 import os
 import re
 import sys
@@ -346,7 +346,7 @@ def showlist(data, list):
     for line in data:
         name = data[icount]
         plist.append(oneListEntry(name))
-        icount = icount+1
+        icount += 1
         list.setList(plist)
 
 
@@ -592,7 +592,7 @@ class Categories(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         category = category
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
@@ -808,7 +808,7 @@ class SettingVhan(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -864,7 +864,7 @@ class SettingVhan(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -927,7 +927,7 @@ class SettingVhan2(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -985,7 +985,7 @@ class SettingVhan2(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -1072,7 +1072,7 @@ class Milenka61(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -1131,7 +1131,7 @@ class Milenka61(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -1179,7 +1179,7 @@ class SettingManutek(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -1234,7 +1234,7 @@ class SettingManutek(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -1295,7 +1295,7 @@ class SettingMorpheus(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -1355,7 +1355,7 @@ class SettingMorpheus(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -1417,7 +1417,7 @@ class SettingCiefp(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -1482,7 +1482,7 @@ class SettingCiefp(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -1541,7 +1541,7 @@ class SettingBi58(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -1599,7 +1599,7 @@ class SettingBi58(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -1647,7 +1647,7 @@ class SettingPredrag(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -1705,7 +1705,7 @@ class SettingPredrag(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -1754,7 +1754,7 @@ class SettingCyrus(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -1816,7 +1816,7 @@ class SettingCyrus(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -1918,7 +1918,7 @@ class tvInstall(Screen):
     def message(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.selclicked, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
 
@@ -2044,7 +2044,7 @@ class tvInstall(Screen):
     def okDown(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okDownload, MessageBox, (_("Do you want to Download?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
@@ -2288,7 +2288,7 @@ class tvIPK(Screen):
     def msgipkrmv(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         idx = self['list'].getSelectionIndex()
         self.sel = self.names[idx]
@@ -2316,7 +2316,7 @@ class tvIPK(Screen):
     def ipkinst(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         idx = self['list'].getSelectionIndex()
         self.sel = self.names[idx]
@@ -2632,7 +2632,7 @@ class tvRemove(Screen):
     def message1(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.callMyMsg1, MessageBox, _("Do you want to remove?"), MessageBox.TYPE_YESNO)
 
@@ -2938,7 +2938,7 @@ class MMarkFolderz(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
@@ -2978,10 +2978,9 @@ class MMarkFolderz(Screen):
         url = six.ensure_binary(self.url)
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
-    def errorLoad(self, error):
-        print(str(error))
+    def errorLoad(self):
+        # print(str(error))
         self['info'].setText(_('Try again later ...'))
-        # logdata("errorLoad ", error)
         self.downloading = False
 
     def _gotPageLoad(self, data):
@@ -3008,12 +3007,11 @@ class MMarkFolderz(Screen):
             self.downloading = True
         except:
             self.downloading = False
-        self.load_poster()
 
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         idx = self['list'].getSelectionIndex()
         name = self.names[idx]
@@ -3037,7 +3035,7 @@ class MMarkPiconsf(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + mmkpicon)
@@ -3079,10 +3077,8 @@ class MMarkPiconsf(Screen):
         url = six.ensure_binary(self.url)
         getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
 
-    def errorLoad(self, error):
-        print(str(error))
+    def errorLoad(self):
         self['info'].setText(_('Try again later ...'))
-        # logdata("errorLoad ", error)
         self.downloading = False
 
     def _gotPageLoad(self, data):
@@ -3098,7 +3094,7 @@ class MMarkPiconsf(Screen):
             regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"downloads":"(.*?)".*?"normal_download":"(.*?)"'
             match = re.compile(regex, re.DOTALL).findall(data2)
             for name, data, download, url in match:
-                if 'zip' in url:
+                if '.zip' in url:
                     url = url.replace('\\', '')
                     if self.movie:
                         name = name.replace('_', ' ').replace('-', ' ').replace('mmk', '').replace('.zip', '')
@@ -3118,7 +3114,7 @@ class MMarkPiconsf(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
@@ -3134,7 +3130,7 @@ class MMarkPiconsf(Screen):
                 if os.path.exists(dest):
                     os.remove(dest)
                 try:
-                    myfile = Utils.ReadUrl2(url)
+                    myfile = Utils.ReadUrl(url)
                     print('response: ', myfile)
                     regexcat = 'href="https://download(.*?)"'
                     match = re.compile(regexcat, re.DOTALL).findall(myfile)
@@ -3276,7 +3272,7 @@ class pluginx(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
@@ -3339,7 +3335,7 @@ class pluginx(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
@@ -3404,7 +3400,7 @@ class plugins_adult(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
@@ -3488,7 +3484,7 @@ class plugins_adult(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
@@ -3520,7 +3516,6 @@ class plugins_adult(Screen):
             if fileExists(self.dest):
                 title = _("Installation")
                 cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
-                # print("debug: cmd:",type(cmd))
                 self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
             self['info'].setText(_('Please select ...'))
             self['progresstext'].text = ''
@@ -3554,7 +3549,7 @@ class script(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
@@ -3615,7 +3610,7 @@ class script(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
@@ -3680,7 +3675,7 @@ class repository(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self['list'] = tvList([])
-        self.icount = 0
+        # self.icount = 0
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
@@ -3741,7 +3736,7 @@ class repository(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 1:
+        if i < 0:
             return
         self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
 
