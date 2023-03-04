@@ -1323,34 +1323,72 @@ class SettingMorpheus(Screen):
                                                        'red': self.close,
                                                        'cancel': self.close}, -2)
 
+
+
     def downxmlpage(self):
-        url = r'http://morpheus883.altervista.org/download/index.php'
+        url = 'https://github.com/morpheus883/enigma2-zipped'
         data = make_request(url)
         r = data
         print('rrrrrrrr ', r)
         self.names = []
         self.urls = []
         try:
-            regex = 'href="/download/.*?file=(.*?)">'
+            # n1 = r.find('title="README.txt', 0)
+            # n2 = r.find('href="#readme">', n1)
+            # r = r[n1:n2]
+            regex = 'title="E2_Morph883_(.*?).zip".*?href="(.*?)"'
             match = re.compile(regex).findall(r)
-            for url in match:
-                if 'zip' in url.lower():
-                    self.downloading = True
-                    if 'settings' in url.lower():
-                        continue
-                    name = url
-                    name = name.replace(".zip", "").replace("%20", " ").replace("_", " ").replace("E2_Morph883", "")
-                    url = "http://morpheus883.altervista.org/settings/" + url
+            for name, url in match:
+                if url.find('.zip') != -1:
+                    # if 'ddt' in name.lower():
+                        # continue
+                    # if 'sat' in name.lower():
+                        # continue
+                    url = url.replace('blob', 'raw')
+                    # https://github.com/ciefp/ciefpsettings-enigma2-zipped/blob/master/
+                    url = 'https://github.com' + url
+                    name = 'Morph883 ' + name
+                    print('name ', name)
+                    print('url ', url)
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
-                    print("url =", url)
-                    print("name =", name)
-            self['info'].setText(_('Please select ...'))
+                    self.downloading = True
             self['key_green'].show()
+            self['info'].setText(_('Please select ...'))
             showlist(self.names, self['list'])
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
+
+
+    # def downxmlpage(self):
+        # url = r'http://morpheus883.altervista.org/download/index.php'
+        # data = make_request(url)
+        # r = data
+        # print('rrrrrrrr ', r)
+        # self.names = []
+        # self.urls = []
+        # try:
+            # regex = 'href="/download/.*?file=(.*?)">'
+            # match = re.compile(regex).findall(r)
+            # for url in match:
+                # if 'zip' in url.lower():
+                    # self.downloading = True
+                    # if 'settings' in url.lower():
+                        # continue
+                    # name = url
+                    # name = name.replace(".zip", "").replace("%20", " ").replace("_", " ").replace("E2_Morph883", "")
+                    # url = "http://morpheus883.altervista.org/settings/" + url
+                    # self.urls.append(Utils.checkStr(url.strip()))
+                    # self.names.append(Utils.checkStr(name.strip()))
+                    # print("url =", url)
+                    # print("name =", name)
+            # self['info'].setText(_('Please select ...'))
+            # self['key_green'].show()
+            # showlist(self.names, self['list'])
+        # except Exception as e:
+            # print('downxmlpage get failed: ', str(e))
+            # self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
         i = len(self.names)
@@ -3827,18 +3865,18 @@ def main(session, **kwargs):
         pass
 
 
-def menu(menuid, **kwargs):
+def cfgmain(menuid, **kwargs):
     if menuid == 'mainmenu':
-        return [(_('TiVuStream Addons'), main, 'TiVuStream Addons Panel', 44)]
+        return [(_('TiVuStream Addons'), main, 'TiVuStreamAddonPanel', 44)]
     else:
         return []
 
 
-def cfgmain(menuid):
-    if menuid == 'mainmenu':
-        return [('TiVuStream Addons', main, 'TiVuStream Addons Panel', 44)]
-    else:
-        return []
+# def menu(menuid):
+    # if menuid == 'mainmenu':
+        # return [('TiVuStream Addons', main, 'TiVuStreamAddonPanel', 44)]
+    # else:
+        # return []
 
 
 def mainmenu(session, **kwargs):
