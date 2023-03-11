@@ -42,7 +42,6 @@ from enigma import eListboxPythonMultiContent, eConsoleAppContainer
 from os import chmod
 from twisted.web.client import downloadPage, getPage
 import base64
-# import gettext
 import os
 import re
 import sys
@@ -52,6 +51,7 @@ import glob
 import six
 import subprocess
 global skin_path, mmkpicon, set, regexC, category
+
 
 PY3 = sys.version_info.major >= 3
 if PY3:
@@ -181,16 +181,16 @@ def make_request(url):
 
 
 def ReloadBouquets():
-    # global set
-    print('\n----Reloading bouquets----\n')
-    try:
-        from enigma import eDVBDB
+    from enigma import eDVBDB
+    print("\n----Reloading bouquets----")
+    if eDVBDB:
+        eDVBDB.getInstance().reloadServicelist()
         eDVBDB.getInstance().reloadBouquets()
-        print('bouquets reloaded...')
-    except ImportError:
-        eDVBDB = None
-        os.system('wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &')
-        print('bouquets reloaded...')
+        print("eDVBDB: bouquets reloaded...")
+    else:
+        os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &")
+        os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=4 > /dev/null 2>&1 &")
+        print("wGET: bouquets reloaded...")
 
 
 def ReloadBouquet():
@@ -242,10 +242,10 @@ host_mov = Utils.b64decoder(ptmov)
 upd_path = Utils.b64decoder(data_upd)
 xml_path = Utils.b64decoder(data_xml)
 plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvaddon'))
-ico_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/logo.png".format('tvaddon'))
-no_cover = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/no_coverArt.png".format('tvaddon'))
-res_plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/".format('tvaddon'))
-skin_path = res_plugin_path + 'skins/hd/'
+ico_path = os.path.join(plugin_path, 'logo.png')
+no_cover = os.path.join(plugin_path, 'no_coverArt.png')
+res_plugin_path = os.path.join(plugin_path, 'res/')
+skin_path = os.path.join(res_plugin_path, 'skins/hd/')
 _firstStarttvspro = True
 
 if isFHD():
@@ -297,6 +297,7 @@ Panel_list2 = [
  ('UPDATE SATELLITES.XML'),
  ('UPDATE TERRESTRIAL.XML')]
 
+
 Panel_list3 = [
  _('MMARK PICONS BLACK'),
  _('MMARK PICONS TRANSPARENT'),
@@ -322,6 +323,7 @@ def DailyListEntry(name, idx):
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -334,6 +336,7 @@ def oneListEntry(name):
     if isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -353,7 +356,7 @@ def showlist(data, list):
 class Hometv(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'Hometv.xml'
+        skin = os.path.join(skin_path, 'Hometv.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Main')
@@ -585,7 +588,7 @@ class Hometv(Screen):
 class Categories(Screen):
     def __init__(self, session, category):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = (category)
@@ -670,7 +673,7 @@ class Categories(Screen):
 class tvDailySetting(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Daily Setting')
@@ -800,7 +803,7 @@ class tvDailySetting(Screen):
 class SettingVhan(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
@@ -858,7 +861,7 @@ class SettingVhan(Screen):
             self['key_green'].show()
             showlist(self.names, self['list'])
         except Exception as e:
-            print(('downxmlpage get failed: ', str(e)))
+            print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
     def okRun(self):
@@ -919,7 +922,7 @@ class SettingVhan(Screen):
 class SettingVhan2(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
@@ -1064,7 +1067,7 @@ class SettingVhan2(Screen):
 class Milenka61(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Milenka61')
@@ -1148,7 +1151,6 @@ class Milenka61(Screen):
                     # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
-                # urlretrieve(url, dest)
                 import requests
                 r = requests.get(url)
                 with open(dest, 'wb') as f:
@@ -1171,7 +1173,7 @@ class Milenka61(Screen):
 class SettingManutek(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Manutek')
@@ -1252,7 +1254,6 @@ class SettingManutek(Screen):
                     # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
-                # urlretrieve(url, dest)
                 import requests
                 r = requests.get(url)
                 with open(dest, 'wb') as f:
@@ -1287,7 +1288,7 @@ class SettingManutek(Screen):
 class SettingMorpheus(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Morpheus')
@@ -1323,8 +1324,6 @@ class SettingMorpheus(Screen):
                                                        'red': self.close,
                                                        'cancel': self.close}, -2)
 
-
-
     def downxmlpage(self):
         url = 'https://github.com/morpheus883/enigma2-zipped'
         data = make_request(url)
@@ -1359,7 +1358,6 @@ class SettingMorpheus(Screen):
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
-
 
     # def downxmlpage(self):
         # url = r'http://morpheus883.altervista.org/download/index.php'
@@ -1412,7 +1410,6 @@ class SettingMorpheus(Screen):
                     # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
-                # urlretrieve(url, dest)
                 import requests
                 r = requests.get(url)
                 with open(dest, 'wb') as f:
@@ -1447,7 +1444,7 @@ class SettingMorpheus(Screen):
 class SettingCiefp(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Ciefp')
@@ -1478,6 +1475,7 @@ class SettingCiefp(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
+
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
@@ -1537,13 +1535,12 @@ class SettingCiefp(Screen):
                     # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
-                # urlretrieve(url, dest)
+
                 import requests
                 r = requests.get(url)
                 with open(dest, 'wb') as f:
                     f.write(r.content)
                 if os.path.exists(dest):
-                    # fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
@@ -1571,7 +1568,7 @@ class SettingCiefp(Screen):
 class SettingBi58(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Bi58')
@@ -1602,6 +1599,7 @@ class SettingBi58(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
+
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
@@ -1654,7 +1652,6 @@ class SettingBi58(Screen):
                     # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
-                # urlretrieve(url, dest)
                 import requests
                 r = requests.get(url)
                 with open(dest, 'wb') as f:
@@ -1677,7 +1674,7 @@ class SettingBi58(Screen):
 class SettingPredrag(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Predrag')
@@ -1708,6 +1705,7 @@ class SettingPredrag(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
+
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
@@ -1753,7 +1751,6 @@ class SettingPredrag(Screen):
         if result:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
-                # self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 print("url =", url)
@@ -1761,7 +1758,6 @@ class SettingPredrag(Screen):
                     # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
-                # urlretrieve(url, dest)
                 import requests
                 r = requests.get(url)
                 with open(dest, 'wb') as f:
@@ -1784,7 +1780,7 @@ class SettingPredrag(Screen):
 class SettingCyrus(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Setting Cyrus')
@@ -1816,6 +1812,7 @@ class SettingCyrus(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
+
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
@@ -1871,13 +1868,11 @@ class SettingCyrus(Screen):
                     # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
-                # urlretrieve(url, dest)
                 import requests
                 r = requests.get(url)
                 with open(dest, 'wb') as f:
                     f.write(r.content)
                 if os.path.exists(dest):
-                    # fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
@@ -1905,7 +1900,7 @@ class SettingCyrus(Screen):
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection=None):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Install')
@@ -2149,7 +2144,7 @@ class tvInstall(Screen):
 class tvConsole(Screen):
     def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False, endstr=''):
         self.session = session
-        skin = skin_path + 'tvConsole.xml'
+        skin = os.path.join(skin_path, 'tvConsole.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Console')
@@ -2162,6 +2157,8 @@ class tvConsole(Screen):
         self['title'] = Label(_(title_plug))
         self['list'] = ScrollLabel('')
         self['actions'] = ActionMap(['WizardActions', 'DirectionActions', 'ColorActions'], {'ok': self.cancel,
+
+
                                                                                             'back': self.cancel,
                                                                                             'red': self.cancel,
                                                                                             "blue": self.restartenigma,
@@ -2268,7 +2265,7 @@ class tvConsole(Screen):
 class tvIPK(Screen):
     def __init__(self, session, title=None, cmdlist=None, finishedCallback=None, closeOnSuccess=False):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('IPK')
@@ -2451,7 +2448,7 @@ class tvIPK(Screen):
 class tvUpdate(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Update')
@@ -2583,7 +2580,7 @@ class tvUpdate(Screen):
 class tvRemove(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Remove')
@@ -2711,7 +2708,7 @@ class tvRemove(Screen):
 
 class tvConfig(Screen, ConfigListScreen):
     def __init__(self, session):
-        skin = skin_path + 'tvConfig.xml'
+        skin = os.path.join(skin_path, 'tvConfig.xml')
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
@@ -2882,7 +2879,7 @@ class tvConfig(Screen, ConfigListScreen):
 class SelectPiconz(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Select Picons')
@@ -2968,7 +2965,7 @@ class SelectPiconz(Screen):
 class MMarkFolderz(Screen):
     def __init__(self, session, url):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('MMark')
@@ -3065,7 +3062,7 @@ class MMarkFolderz(Screen):
 class MMarkPiconsf(Screen):
     def __init__(self, session, name, url, movie=False):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('MMark')
@@ -3236,7 +3233,7 @@ KodilitePcd = "/usr/lib/enigma2/python/Plugins/Extensions/KodiLite"
 class mainkodilite(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
@@ -3302,7 +3299,7 @@ class mainkodilite(Screen):
 class pluginx(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
@@ -3430,7 +3427,7 @@ class pluginx(Screen):
 class plugins_adult(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
@@ -3579,7 +3576,7 @@ class plugins_adult(Screen):
 class script(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
@@ -3705,7 +3702,7 @@ class script(Screen):
 class repository(Screen):
     def __init__(self, session):
         self.session = session
-        skin = skin_path + 'tvall.xml'
+        skin = os.path.join(skin_path, 'tvall.xml')
         with open(skin, 'r') as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
@@ -3872,13 +3869,6 @@ def cfgmain(menuid, **kwargs):
         return []
 
 
-# def menu(menuid):
-    # if menuid == 'mainmenu':
-        # return [('TiVuStream Addons', main, 'TiVuStreamAddonPanel', 44)]
-    # else:
-        # return []
-
-
 def mainmenu(session, **kwargs):
     main(session, **kwargs)
 
@@ -3997,30 +3987,30 @@ def StartSavingTerrestrialChannels():
                         inTransponder = True
                     if line.find('services') == 0:
                         inService = True
-                    if line.find('end') == 0:
-                        inTransponder = False
-                        inService = False
-                    line = line.lower()
-                    if line.find('eeee0000') != -1:
-                        Trasponder = True
-                if inTransponder:
-                    TrasponderListOldLamedb.write(line)
-                    line = LamedbFile.readline()
-                    TrasponderListOldLamedb.write(line)
-                    line = LamedbFile.readline()
-                    TrasponderListOldLamedb.write(line)
-                if inService:
-                    tmp = line.split(':')
-                    ServiceListOldLamedb.write(tmp[0] + ":" + tmp[1] + ":" + tmp[2] + ":" + tmp[3] + ":" + tmp[4] + ":0\n")
-                    line = LamedbFile.readline()
-                    ServiceListOldLamedb.write(line)
-                    line = LamedbFile.readline()
-                    ServiceListOldLamedb.write(line)
-                TrasponderListOldLamedb.close()
-                ServiceListOldLamedb.close()
-                if not Trasponder:
-                    os.system('rm -fr ' + plugin_path + '/temp/TrasponderListOldLamedb')
-                    os.system('rm -fr ' + plugin_path + '/temp/ServiceListOldLamedb')
+                if line.find('end') == 0:
+                    inTransponder = False
+                    inService = False
+                line = line.lower()
+                if line.find('eeee0000') != -1:
+                    Trasponder = True
+                    if inTransponder:
+                        TrasponderListOldLamedb.write(line)
+                        line = LamedbFile.readline()
+                        TrasponderListOldLamedb.write(line)
+                        line = LamedbFile.readline()
+                        TrasponderListOldLamedb.write(line)
+                    if inService:
+                        tmp = line.split(':')
+                        ServiceListOldLamedb.write(tmp[0] + ":" + tmp[1] + ":" + tmp[2] + ":" + tmp[3] + ":" + tmp[4] + ":0\n")
+                        line = LamedbFile.readline()
+                        ServiceListOldLamedb.write(line)
+                        line = LamedbFile.readline()
+                        ServiceListOldLamedb.write(line)
+            TrasponderListOldLamedb.close()
+            ServiceListOldLamedb.close()
+            if not Trasponder:
+                os.system('rm -fr ' + plugin_path + '/temp/TrasponderListOldLamedb')
+                os.system('rm -fr ' + plugin_path + '/temp/ServiceListOldLamedb')
         except Exception as e:
             print('error: ', str(e))
             pass
@@ -4114,17 +4104,17 @@ def TransferBouquetTerrestrialFinal():
                 f = open("/etc/enigma2/" + file, "r")
                 x = f.read()
                 if re.search("#NAME Digitale Terrestre", x, flags=re.IGNORECASE):
-                    return "/etc/enigma2/"+file
+                    return "/etc/enigma2/" + file
     try:
         TerrestrialChannelListArchive = open(plugin_path + '/temp/TerrestrialChannelListArchive').readlines()
         DirectoryUserBouquetTerrestrial = RestoreTerrestrial()
         if DirectoryUserBouquetTerrestrial:
             TrasfBouq = open(DirectoryUserBouquetTerrestrial, 'w')
-        for Line in TerrestrialChannelListArchive:
-            if Line.lower().find('#name') != -1:
-                TrasfBouq.write('#NAME Digitale Terrestre\n')
-            else:
-                TrasfBouq.write(Line)
+            for Line in TerrestrialChannelListArchive:
+                if Line.lower().find('#name') != -1:
+                    TrasfBouq.write('#NAME Digitale Terrestre\n')
+                else:
+                    TrasfBouq.write(Line)
         TrasfBouq.close()
         return True
     except:
