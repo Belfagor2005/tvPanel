@@ -4,7 +4,7 @@
 # --------------------#
 #   coded by Lululla  #
 #    skin by MMark    #
-#      11/03/2023     #
+#      24/09/2022     #
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
@@ -2762,36 +2762,32 @@ class tvConfig(Screen, ConfigListScreen):
         conthelp += "scan the qr code and donate € 1.00"
         return conthelp
 
-    def setInfo(self):
-        entry = str(self.getCurrentEntry())
-        if entry == _('Auto Update Plugin'):
-            self['description'].setText(_("If Active: Automatic Update Plugin"))
-            return
-        if entry == _('Set the path to the Picons folder'):
-            self['description'].setText(_("Configure folder containing picons files"))
-            return
-        if entry == _('Path Manual IPK'):
-            self['description'].setText(_("Path to the addon installation folder"))
-            return
-        if entry == _('Link in Extensions Menu'):
-            self['description'].setText(_("Link in Extensions button"))
-        if entry == _('Link in Main Menu'):
-            self['description'].setText(_("Link in Main Menu"))
-        return
-
     def tvUpdate(self):
         self.session.open(tvUpdate)
 
     def createSetup(self):
         self.editListEntry = None
         self.list = []
-        self.list.append(getConfigListEntry(_('Auto Update Plugin'), config.plugins.tvaddon.autoupd))
-        self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), config.plugins.tvaddon.mmkpicon))
-        self.list.append(getConfigListEntry(_('Path Manual IPK'), config.plugins.tvaddon.ipkpth))
-        self.list.append(getConfigListEntry(_('Link in Extensions Menu'), config.plugins.tvaddon.strtext))
-        self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvaddon.strtmain))
+        self.list.append(getConfigListEntry(_('Auto Update Plugin'), config.plugins.tvaddon.autoupd, _("If Active: Automatic Update Plugin")))
+        self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), config.plugins.tvaddon.mmkpicon, _("Configure folder containing picons files")))
+        self.list.append(getConfigListEntry(_('Path Manual IPK'), config.plugins.tvaddon.ipkpth, _("Path to the addon installation folder")))
+        self.list.append(getConfigListEntry(_('Link in Extensions Menu'), config.plugins.tvaddon.strtext, _("Link in Extensions button")))
+        self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvaddon.strtmain,_("Link in Main Menu")))
         self["config"].list = self.list
         self["config"].setList(self.list)
+        self.setInfo()
+
+    def setInfo(self):
+        try:
+            sel = self['config'].getCurrent()[2]
+            if sel:
+                # print('sel =: ', sel)
+                self['description'].setText(str(sel))
+            else:
+                self['description'].setText(_('SELECT YOUR CHOICE'))
+            return
+        except Exception as e:
+            print("Error ", e)
 
     def changedEntry(self):
         for x in self.onChangedEntry:
