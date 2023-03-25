@@ -285,6 +285,8 @@ Panel_list = [
  _('PLUGIN WEATHER')]
 
 Panel_list2 = [
+ ('SAVE DTT BOUQUET'),
+ ('RESTORE DTT BOUQUET'),
  ('SETTINGS BI58'),
  ('SETTINGS CIEFP'),
  ('SETTINGS CYRUS'),
@@ -544,16 +546,14 @@ class Hometv(Screen):
             return
             # self.session.open(Categories, category)
 
-    def msgupdate1(self):
+    def msgupdate1(self, answer=None):
         if self.Update is False:
             return
         if config.plugins.tvaddon.autoupd.value is False:
             return
+        if answer is None:
+            self.session.openWithCallback(self.msgupdate1, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"))
         else:
-            self.session.openWithCallback(self.runupdate, MessageBox, (_('New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!')), MessageBox.TYPE_YESNO)
-
-    def runupdate(self, result):
-        if result:
             if Utils.DreamOS():
                 com = self.dmlink
                 dom = 'New version ' + self.version
@@ -569,11 +569,10 @@ class Hometv(Screen):
                 dom = 'New Version ' + self.version
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], closeOnSuccess=False)
 
-    def msgipkrst1(self):
-        self.session.openWithCallback(self.ipkrestrt, MessageBox, (_('Do you want restart enigma2 ?')), MessageBox.TYPE_YESNO)
-
-    def ipkrestrt(self, result):
-        if result:
+    def msgipkrst1(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.msgipkrst1, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"))
+        else:
             epgpath = '/media/hdd/epg.dat'
             epgbakpath = '/media/hdd/epg.dat.bak'
             if os.path.exists(epgbakpath):
@@ -581,8 +580,6 @@ class Hometv(Screen):
             if os.path.exists(epgpath):
                 shutil.copyfile(epgpath, epgbakpath)
             self.session.open(TryQuitMainloop, 3)
-        else:
-            self.close()
 
 
 class Categories(Screen):
@@ -734,7 +731,11 @@ class tvDailySetting(Screen):
 
     def keyNumberGlobalCB(self, idx):
         sel = self.menu_list[idx]
-        if sel == ('SETTINGS CIEFP'):
+        if sel == ('SAVE DTT BOUQUET'):
+            self.terrestrialsave()
+        elif sel == ('RESTORE DTT BOUQUET'):
+            self.terrestrial_restore()
+        elif sel == ('SETTINGS CIEFP'):
             self.session.open(SettingCiefp)
         elif sel == ('SETTINGS CYRUS'):
             self.session.open(SettingCyrus)
@@ -757,11 +758,22 @@ class tvDailySetting(Screen):
         elif sel == _('UPDATE TERRESTRIAL.XML'):
             self.okTERRESTRIAL()
 
-    def okSATELLITE(self):
-        self.session.openWithCallback(self.okSatInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
+    def terrestrial_restore(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.terrestrial_restore, MessageBox, _("This operation restore your Favorite channel Dtt\nfrom =>>THISPLUGIN/temp/TerrestrialChannelListArchive\nDo you really want to continue?"))
+        else:
+            terrestrial_rest()
 
-    def okSatInstall(self, result):
-        if result:
+    def terrestrialsave(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.terrestrialsave, MessageBox, _("This operation save your Favorite channel Dtt\nto =>>/tmp/*_enigma2settingsbackup.tar.gz\nDo you really want to continue?"))
+        else:
+            terrestrial()
+
+    def okSATELLITE(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okSATELLITE, MessageBox, _("Do you want to install?"))
+        else:
             if Utils.checkInternet():
                 try:
                     url_sat_oealliance = 'http://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/satellites.xml'
@@ -778,11 +790,10 @@ class tvDailySetting(Screen):
             else:
                 self.session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
-    def okTERRESTRIAL(self):
-        self.session.openWithCallback(self.okTerrInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okTerrInstall(self, result):
-        if result:
+    def okTERRESTRIAL(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okTERRESTRIAL, MessageBox, _("Do you want to install?"))
+        else:
             if Utils.checkInternet():
                 try:
                     url_sat_oealliance = 'https://raw.githubusercontent.com/oe-alliance/oe-alliance-tuxbox-common/master/src/terrestrial.xml'
@@ -864,17 +875,11 @@ class SettingVhan(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.name = self.names[idx]
@@ -985,17 +990,11 @@ class SettingVhan2(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 try:
                     idx = self["list"].getSelectionIndex()
@@ -1131,17 +1130,11 @@ class Milenka61(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
@@ -1233,17 +1226,11 @@ class SettingManutek(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
@@ -1388,18 +1375,11 @@ class SettingMorpheus(Screen):
             # print('downxmlpage get failed: ', str(e))
             # self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        print("self.downloading is =", self.downloading)
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
@@ -1515,17 +1495,11 @@ class SettingCiefp(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
@@ -1632,17 +1606,11 @@ class SettingBi58(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
@@ -1738,17 +1706,11 @@ class SettingPredrag(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
@@ -1848,17 +1810,11 @@ class SettingCyrus(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        global set
-        set = 0
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
+            set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
@@ -1948,15 +1904,10 @@ class tvInstall(Screen):
         showlist(self.names, self['list'])
         self['key_green'].show()
 
-    def message(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.selclicked, MessageBox, (_("Do you want to install?")), MessageBox.TYPE_YESNO)
-
-    def selclicked(self, result):
-        if result:
+    def message(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.message, MessageBox, _("Do you want to install?"))
+        else:
             idx = self["list"].getSelectionIndex()
             dom = self.names[idx]
             com = self.urls[idx]
@@ -2074,16 +2025,12 @@ class tvInstall(Screen):
     def cancel(self, result=None):
         self.close(None)
 
-    def okDown(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okDownload, MessageBox, (_("Do you want to Download?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
-
-    def okDownload(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
+    def okDown(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okDown, MessageBox, _("Do you want to Download?\nIt could take a few minutes, wait .."))
+        else:
+            self['info'].setText(_('... please wait'))
+            set = 0
             idx = self["list"].getSelectionIndex()
             self.dom = self.names[idx]
             self.com = self.urls[idx]
@@ -2318,20 +2265,17 @@ class tvIPK(Screen):
         self.getfreespace()
         self['key_green'].show()
         self["list"].l.setList(self.list)
+        self['info'].setText(_('Please install ...'))
         showlist(self.names, self['list'])
 
-    def msgipkrmv(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
+    def msgipkrmv(self, answer=None):
         idx = self['list'].getSelectionIndex()
         self.sel = self.names[idx]
-        self.com = self.ipkpth + '/' + self.sel
-        self.session.openWithCallback(self.msgipkrmv2, MessageBox, (_('Do you really want to remove selected?') + '\n' + self.sel), MessageBox.TYPE_YESNO)
-
-    def msgipkrmv2(self, result):
-        if result:
+        if answer is None:
+            self.session.openWithCallback(self.msgipkrmv, MessageBox, _('Do you really want to remove selected?') + '\n' + self.sel)
+        else:
+            self['info'].setText(_('... please wait'))
+            self.com = self.ipkpth + '/' + self.sel
             if fileExists(self.com):
                 os.remove(self.com)
                 self.session.open(MessageBox, (_("%s has been successfully deleted\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
@@ -2348,17 +2292,13 @@ class tvIPK(Screen):
     def goConfig(self):
         self.session.open(tvConfig)
 
-    def ipkinst(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
+    def ipkinst(self, answer=None):
         idx = self['list'].getSelectionIndex()
         self.sel = self.names[idx]
-        self.session.openWithCallback(self.ipkinst2, MessageBox, (_('Do you really want to install the selected Addon?') + '\n' + self.sel), MessageBox.TYPE_YESNO)
-
-    def ipkinst2(self, answer):
-        if answer is True:
+        if answer is None:
+            self.session.openWithCallback(self.ipkinst, MessageBox, _('Do you really want to install the selected Addon?') + '\n' + self.sel)
+        else:
+            self['info'].setText(_('... please wait'))
             self.dest = self.ipkpth + '/' + self.sel
             try:
                 if self.sel.endswith('.ipk'):
@@ -2422,6 +2362,7 @@ class tvIPK(Screen):
                         self.session.open(tvConsole, _('SETTING - install: %s') % self.dest, cmdlist=[cmd], closeOnSuccess=False)
                 else:
                     self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
+                self['info'].setText(_('Please install ...'))
             except Exception as e:
                 print('error: ', str(e))
                 self.delFile(self.dest)
@@ -2435,15 +2376,11 @@ class tvIPK(Screen):
     def finished(self, result):
         return
 
-    def msgipkinst(self):
-        self.session.openWithCallback(self.ipkrestart, MessageBox, (_('Restart Enigma to load the installed plugin?')), MessageBox.TYPE_YESNO)
-
-    def ipkrestart(self, result):
-        if result:
-            self.session.open(TryQuitMainloop, 3)
+    def msgipkinst(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.msgipkinst, MessageBox, _('Restart Enigma to load the installed plugin?'))
         else:
-            self.close()
-
+            self.session.open(TryQuitMainloop, 3)
 
 class tvUpdate(Screen):
     def __init__(self, session):
@@ -2534,17 +2471,17 @@ class tvUpdate(Screen):
             return
         if config.plugins.tvaddon.autoupd.value is False:
             return
+        if answer is None:
+            self.session.openWithCallback(self.msgupdate1, MessageBox, (_('New update available!!')), MessageBox.TYPE_YESNO)
         else:
-            self.session.openWithCallback(self.runupdate, MessageBox, (_('New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!')), MessageBox.TYPE_YESNO)
+            self.msgupdate(True)
 
-    def msgupdate(self):
+    def msgupdate(self, answer=None):
         if self.Update is False:
             return
+        if answer is None:
+            self.session.openWithCallback(self.msgupdate, MessageBox, _('Do you want update plugin ?\nPlease Reboot GUI after install!'))
         else:
-            self.session.openWithCallback(self.runupdate, MessageBox, (_('Do you want update plugin ?\nPlease Reboot GUI after install!')), MessageBox.TYPE_YESNO)
-
-    def runupdate(self, result):
-        if result:
             if Utils.DreamOS():
                 com = self.dmlink
                 dom = 'New version ' + self.version
@@ -2561,11 +2498,10 @@ class tvUpdate(Screen):
                 dom = 'New Version ' + self.version
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install --force-reinstall %s' % com], finishedCallback=self.msgipkrst1, closeOnSuccess=False)
 
-    def msgipkrst1(self):
-        self.session.openWithCallback(self.ipkrestrt, MessageBox, (_('Do you want restart enigma2 ?')), MessageBox.TYPE_YESNO)
-
-    def ipkrestrt(self, result):
-        if result:
+    def msgipkrst1(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.msgipkrst1, MessageBox, _('Do you want restart enigma2 ?'))
+        else:
             epgpath = '/media/hdd/epg.dat'
             epgbakpath = '/media/hdd/epg.dat.bak'
             if os.path.exists(epgbakpath):
@@ -2573,8 +2509,6 @@ class tvUpdate(Screen):
             if os.path.exists(epgpath):
                 shutil.copyfile(epgpath, epgbakpath)
             self.session.open(TryQuitMainloop, 3)
-        else:
-            self.close()
 
 
 class tvRemove(Screen):
@@ -2664,15 +2598,10 @@ class tvRemove(Screen):
         self['key_green'].show()
         showlist(self.names, self['list'])
 
-    def message1(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.callMyMsg1, MessageBox, _("Do you want to remove?"), MessageBox.TYPE_YESNO)
-
-    def callMyMsg1(self, result):
-        if result:
+    def message1(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.message1, MessageBox, _('Do you want to remove?'))
+        else:
             idx = self['list'].getSelectionIndex()
             dom = self.names[idx]
             com = dom
@@ -2690,11 +2619,10 @@ class tvRemove(Screen):
         self['info'].setText(fspace)
         self.openList()
 
-    def msgipkrst(self):
-        self.session.openWithCallback(self.ipkrestrt, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
-
-    def ipkrestrt(self, result):
-        if result:
+    def msgipkrst(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.msgipkrst, MessageBox, _('Do you want restart enigma2 ?'))
+        else:
             epgpath = '/media/hdd/epg.dat'
             epgbakpath = '/media/hdd/epg.dat.bak'
             if os.path.exists(epgbakpath):
@@ -2702,8 +2630,6 @@ class tvRemove(Screen):
             if os.path.exists(epgpath):
                 shutil.copyfile(epgpath, epgbakpath)
             self.session.open(TryQuitMainloop, 3)
-        else:
-            self.close()
 
 
 class tvConfig(Screen, ConfigListScreen):
@@ -2941,11 +2867,10 @@ class SelectPiconz(Screen):
         else:
             return
 
-    def remove(self):
-        self.session.openWithCallback(self.okRemove, MessageBox, (_("Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait .." % mmkpicon)), MessageBox.TYPE_YESNO)
-
-    def okRemove(self, result):
-        if result:
+    def remove(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.remove, MessageBox, _('Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait ..' % mmkpicon))
+        else:
             self['info'].setText(_('Erase %s... please wait' % mmkpicon))
             piconsx = glob.glob(str(mmkpicon) + '/*.png')
             for f in piconsx:
@@ -3142,16 +3067,10 @@ class MMarkPiconsf(Screen):
         except:
             self.downloading = False
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.name = self.names[idx]
@@ -3363,16 +3282,10 @@ class pluginx(Screen):
             print('error: ', str(e))
             pass
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
@@ -3512,16 +3425,10 @@ class plugins_adult(Screen):
             self.session.openWithCallback(self.close, MessageBox, _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR)
             self.close()
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
@@ -3638,16 +3545,10 @@ class script(Screen):
             print('error: ', str(e))
             pass
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
@@ -3764,16 +3665,10 @@ class repository(Screen):
             print('error: ', str(e))
             pass
 
-    def okRun(self):
-        i = len(self.names)
-        print('iiiiii= ', i)
-        if i < 0:
-            return
-        self.session.openWithCallback(self.okInstall, MessageBox, (_("Do you want to install?\nIt could take a few minutes, wait ..")), MessageBox.TYPE_YESNO)
-
-    def okInstall(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
+    def okRun(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+        else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
