@@ -1906,12 +1906,16 @@ class tvInstall(Screen):
 
     def message(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.message, MessageBox, _("Do you want to install?"))
-        else:
+            self.session.openWithCallback(self.message, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+        elif answer:
             idx = self["list"].getSelectionIndex()
             dom = self.names[idx]
             com = self.urls[idx]
-            self.prombt(com, dom)
+            self.prombt(com, dom)        
+        else:
+            return
+            # self.close()
+
 
     def prombt(self, com, dom):
         useragent = {'User-Agent': 'Enigma2 - tvaddon Plugin'}
