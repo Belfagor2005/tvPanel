@@ -1937,12 +1937,17 @@ class tvInstall(Screen):
             if extension in ["gz", "bz2"] and tar == "tar":
                 self.command = ['']
                 if extension == "gz":
-                    self.command = ["tar -xzvf " + self.dest + " -C /"]
+                    self.command = ["tar -xzvf " + self.dest + " -C / > /dev/null"]
                 elif extension == "bz2":
-                    self.command = ["tar -xjvf " + self.dest + " -C /"]
+                    self.command = ["tar -xjvf " + self.dest + " -C / > /dev/null"]
                 self.timer = eTimer()
                 self.timer.start(1000, True)
-                cmd = 'wget -q -O %s %s;' + self.command[0] % (self.dest, str(self.com))
+                # cmd = 'wget -q -O %s %s' + self.command[0] % (self.dest, str(self.com))
+                
+                cmd = "wget -U '%s' -c '%s' -O '%s';%s" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.command[0])
+                if "https" in str(self.com):
+                    cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.command[0])                
+                
                 self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                 self['info'].setText(_('Installation done !!!'))
             elif extension == "deb":
@@ -1952,9 +1957,10 @@ class tvInstall(Screen):
                 else:
                     self.timer = eTimer()
                     self.timer.start(1000, True)
-                    # cmd = 'wget -q -O %s %s;dpkg --install --force-overwrite %s' % (self.dest, str(self.com), self.dest)
-                    cmd = 'wget -q -O %s %s;apt-get install --reinstall %s -y' % (self.dest, str(self.com), self.dest)
-
+                    # cmd = 'wget -q -O %s %s;apt-get install --reinstall %s -y' % (self.dest, str(self.com), self.dest)
+                    cmd = "wget -U '%s' -c '%s' -O '%s';apt-get install --reinstall %s -y > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
+                    if "https" in str(self.com):
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';apt-get install --reinstall %s -y > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
             elif extension == "ipk":
@@ -1964,9 +1970,10 @@ class tvInstall(Screen):
                 else:
                     self.timer = eTimer()
                     self.timer.start(1000, True)
-                    cmd = 'wget -q -O %s %s;opkg install --force-reinstall %s' % (self.dest, str(self.com), self.dest)
-                    # cmd = 'wget -q -O %s %s;opkg install %s' % (self.dest, str(self.com), self.dest)
-
+                    # cmd = 'wget -q -O %s %s;opkg install --force-reinstall %s' % (self.dest, str(self.com), self.dest)                    
+                    cmd = "wget -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
+                    if "https" in str(self.com):
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
             elif self.com.endswith('.zip'):
@@ -2010,14 +2017,25 @@ class tvInstall(Screen):
                 elif 'picon' in self.dom.lower():
                     self.timer = eTimer()
                     self.timer.start(500, True)
-                    cmd = ['wget -q -O %s %s; unzip -o -q %s -d %s' % (str(self.dest), str(self.com), str(self.dest), mmkpicon)]
+                    # cmd = ['wget -q -O %s %s;unzip -o -q %s -d %s' % (str(self.dest), str(self.com), str(self.dest), mmkpicon)]
+                    
+                    cmd = ["wget -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest, mmkpicon)]
+                    if "https" in str(self.com):
+                        cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest, mmkpicon)]
+                    
+                    
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                 else:
                     self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
                     self.timer = eTimer()
                     self.timer.start(500, True)
-                    cmd = ["wget %s -c '%s' -O '%s' > /dev/null" % (useragent, self.com, self.dest)]
+                    # cmd = ["wget %s -c '%s' -O '%s' > /dev/null" % (useragent, self.com, self.dest)]
+                    
+                    cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest)]
+                    if "https" in str(self.com):
+                        cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s' > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest)] 
+                        
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2256,6 +2274,8 @@ class tvIPK(Screen):
         self.list = []
         del self.names[:]
         del self.list[:]
+        for x in self.list:
+            del self.list[0]
 
         path = self.ipkpth
         for root, dirs, files in os.walk(path):
