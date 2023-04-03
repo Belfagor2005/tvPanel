@@ -173,6 +173,11 @@ def make_request(url):
 def ReloadBouquets():
     from enigma import eDVBDB
     print("\n----Reloading bouquets----")
+    global set
+    if set == 1:
+        set = 0
+        print("\n----Reloading Terrestrial----")
+        terrestrial_rest()
     if eDVBDB:
         eDVBDB.getInstance().reloadServicelist()
         eDVBDB.getInstance().reloadBouquets()
@@ -181,15 +186,6 @@ def ReloadBouquets():
         os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &")
         os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=4 > /dev/null 2>&1 &")
         print("wGET: bouquets reloaded...")
-
-
-def ReloadBouquet():
-    global set
-    print('\n----Reloading bouquets----')
-    if set == 1:
-        set = 0
-        terrestrial_rest()
-    ReloadBouquets()
 
 
 def mountipkpth():
@@ -205,7 +201,7 @@ def mountipkpth():
 
 
 # ================config
-
+global set
 config.plugins.tvaddon = ConfigSubsection()
 config.plugins.tvaddon.strtext = ConfigYesNo(default=True)
 config.plugins.tvaddon.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
@@ -432,7 +428,7 @@ class Hometv(Screen):
         Utils.OnclearMem()
 
     def closerm(self):
-        ReloadBouquet()
+        ReloadBouquets()
         Utils.deletetmp()
         self.close()
 
@@ -857,6 +853,7 @@ class SettingVhan(Screen):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -897,7 +894,7 @@ class SettingVhan(Screen):
                 self['info'].setText(_('No Downloading ...'))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class SettingVhan2(Screen):
@@ -968,6 +965,7 @@ class SettingVhan2(Screen):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 try:
@@ -975,6 +973,12 @@ class SettingVhan2(Screen):
                     self.name = self.names[idx]
                     url = self.urls[idx]
                     dest = "/tmp/settings.zip"
+
+                    if 'dtt' not in url.lower():
+                        # if not os.path.exists('/var/lib/dpkg/status'):
+                        set = 1
+                        terrestrial()
+
                     if six.PY3:
                         url = six.ensure_binary(url)
                     if url.startswith(b"https") and sslverify:
@@ -989,9 +993,6 @@ class SettingVhan2(Screen):
 
     def download(self, data, dest):
         try:
-            if 'dtt' not in self.name.lower():
-                set = 1
-                terrestrial()
             if os.path.exists(dest):
                 self.namel = ''
                 fdest1 = "/tmp/unzipped"
@@ -1028,7 +1029,7 @@ class SettingVhan2(Screen):
             print('error: ', str(e))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class Milenka61(Screen):
@@ -1100,6 +1101,7 @@ class Milenka61(Screen):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -1125,7 +1127,7 @@ class Milenka61(Screen):
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class SettingManutek(Screen):
@@ -1193,6 +1195,7 @@ class SettingManutek(Screen):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -1231,7 +1234,7 @@ class SettingManutek(Screen):
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class SettingMorpheus(Screen):
@@ -1304,6 +1307,7 @@ class SettingMorpheus(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
+    '''
     # def downxmlpage(self):
         # url = r'http://morpheus883.altervista.org/download/index.php'
         # data = make_request(url)
@@ -1332,11 +1336,12 @@ class SettingMorpheus(Screen):
         # except Exception as e:
             # print('downxmlpage get failed: ', str(e))
             # self['info'].setText(_('Download page get failed ...'))
-
+    '''
     def okRun(self, answer=None):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -1375,7 +1380,7 @@ class SettingMorpheus(Screen):
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class SettingCiefp(Screen):
@@ -1448,6 +1453,7 @@ class SettingCiefp(Screen):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -1483,7 +1489,7 @@ class SettingCiefp(Screen):
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class SettingBi58(Screen):
@@ -1555,6 +1561,7 @@ class SettingBi58(Screen):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -1579,7 +1586,7 @@ class SettingBi58(Screen):
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class SettingPredrag(Screen):
@@ -1651,12 +1658,14 @@ class SettingPredrag(Screen):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
+
                     set = 1
                     terrestrial()
                 import requests
@@ -1675,7 +1684,7 @@ class SettingPredrag(Screen):
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class SettingCyrus(Screen):
@@ -1751,6 +1760,7 @@ class SettingCyrus(Screen):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
         else:
+            global set
             set = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -1758,6 +1768,7 @@ class SettingCyrus(Screen):
                 dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
+                    
                     # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
@@ -1787,7 +1798,7 @@ class SettingCyrus(Screen):
                 self['info'].setText(_('Settings Not Installed ...'))
 
     def yes(self):
-        ReloadBouquet()
+        ReloadBouquets()
 
 
 class tvInstall(Screen):
@@ -1852,7 +1863,8 @@ class tvInstall(Screen):
             return
 
     def prombt(self, com, dom):
-        useragent = {'User-Agent': 'Enigma2 - tvaddon Plugin'}
+        global set
+        # useragent = {'User-Agent': 'Enigma2 - tvaddon Plugin'}
         # useragent = "--header= 'User-Agent: QuickTime/7.6.2 (qtver=7.6.2;os=Windows NT 5.1Service Pack 3)'"
         self.com = com
         self.dom = dom
@@ -1972,7 +1984,6 @@ class tvInstall(Screen):
             self.session.openWithCallback(self.okDown, MessageBox, _("Do you want to Download?\nIt could take a few minutes, wait .."))
         else:
             self['info'].setText(_('... please wait'))
-            set = 0
             idx = self["list"].getSelectionIndex()
             self.dom = self.names[idx]
             self.com = self.urls[idx]
@@ -2258,6 +2269,7 @@ class tvIPK(Screen):
                         self.session.open(tvConsole, _('Installing: %s') % self.dest, cmdlist=[cmd], closeOnSuccess=False)
                     elif 'setting' in self.sel.lower():
                         if not os.path.exists('/var/lib/dpkg/status'):
+                            global set
                             set = 1
                             terrestrial()
                         if os.path.exists("/tmp/unzipped"):
@@ -2313,6 +2325,7 @@ class tvIPK(Screen):
             self.session.openWithCallback(self.msgipkinst, MessageBox, _('Restart Enigma to load the installed plugin?'))
         else:
             self.session.open(TryQuitMainloop, 3)
+
 
 class tvUpdate(Screen):
     def __init__(self, session):
@@ -2397,7 +2410,7 @@ class tvUpdate(Screen):
                                                        'red': self.close,
                                                        'yellow': self.msgupdate}, -1)
 
-    def msgupdate1(self):
+    def msgupdate1(self, answer=None):
         if self.Update is False:
             return
         if config.plugins.tvaddon.autoupd.value is False:
@@ -2625,7 +2638,7 @@ class tvConfig(Screen, ConfigListScreen):
         self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), config.plugins.tvaddon.mmkpicon, _("Configure folder containing picons files")))
         self.list.append(getConfigListEntry(_('Path Manual IPK'), config.plugins.tvaddon.ipkpth, _("Path to the addon installation folder")))
         self.list.append(getConfigListEntry(_('Link in Extensions Menu'), config.plugins.tvaddon.strtext, _("Link in Extensions button")))
-        self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvaddon.strtmain,_("Link in Main Menu")))
+        self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvaddon.strtmain, _("Link in Main Menu")))
         self["config"].list = self.list
         self["config"].setList(self.list)
         self.setInfo()
@@ -3706,7 +3719,7 @@ def lcnstart():
         lcn.read()
         if len(lcn.lcnlist) > 0:
             lcn.writeBouquet()
-            # lcn.reloadBouquet()
+            # lcn.ReloadBouquets()
             ReloadBouquets()
     return
 
