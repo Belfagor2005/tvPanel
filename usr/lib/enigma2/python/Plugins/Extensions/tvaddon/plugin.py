@@ -8,9 +8,9 @@
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
-from .__init__ import _
+from . import _
 from . import Utils
-from . import Lcn
+from .Lcn import LCN
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
@@ -230,11 +230,11 @@ plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvaddon'))
 ico_path = os.path.join(plugin_path, 'logo.png')
 no_cover = os.path.join(plugin_path, 'no_coverArt.png')
 res_plugin_path = os.path.join(plugin_path, 'res/')
-skin_path = os.path.join(res_plugin_path, 'skins/hd/')
+skin_path = os.path.join(plugin_path, 'res/skins/hd/')
 _firstStarttvspro = True
 
-if isFHD():
-    skin_path = res_plugin_path + 'skins/fhd/'
+if Utils.isFHD():
+    skin_path = os.path.join(plugin_path, 'res/skins/fhd/')
 if Utils.DreamOS():
     skin_path = skin_path + 'dreamOs/'
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -292,7 +292,7 @@ Panel_list3 = [
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        if isFHD():
+        if Utils.isFHD():
             self.l.setItemHeight(50)
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
@@ -305,7 +305,7 @@ class tvList(MenuList):
 def DailyListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon'))  # ico1_path
-    if isFHD():
+    if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
 
@@ -318,7 +318,7 @@ def DailyListEntry(name, idx):
 def oneListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon'))  # ico1_path
-    if isFHD():
+    if Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
 
@@ -606,7 +606,7 @@ class Categories(Screen):
     def downxmlpage(self):
         url = str(xml_path) + category
         try:
-            if six.PY3:
+            if PY3:
                 url = url.encode()
                 print('downxmlpage py3')
             getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
@@ -620,7 +620,7 @@ class Categories(Screen):
 
     def _gotPageLoad(self, data):
         self.xml = data
-        if six.PY3:
+        if PY3:
             self.xml = six.ensure_str(data)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
@@ -684,8 +684,15 @@ class tvDailySetting(Screen):
         self.onLayoutFinish.append(self.updateMenuList)
 
     def Lcn(self):
-        self.session.open(MessageBox, _('Reorder Terrestrial channels with Lcn rules'), MessageBox.TYPE_INFO, timeout=5)
-        lcnstart()
+        if self.LcnOn:
+            lcn = LCN()
+            lcn.read()
+            if len(lcn.lcnlist) > 0:
+                lcn.writeBouquet()
+                lcn.ReloadBouquets()
+                self.session.open(MessageBox, _('Sorting Terrestrial channels with Lcn rules Completed'), MessageBox.TYPE_INFO, timeout=5)
+        # self.session.open(MessageBox, _('Reorder Terrestrial channels with Lcn rules'), MessageBox.TYPE_INFO, timeout=5)
+        # lcnstart()
 
     def closerm(self):
         self.close()
@@ -938,7 +945,7 @@ class SettingVhan2(Screen):
     def downxmlpage(self):
         url = 'http://sat.alfa-tech.net/upload/settings/vhannibal/'
         data = make_request(url)
-        if six.PY3:
+        if PY3:
             data = six.ensure_str(data)
         self.names = []
         self.urls = []
@@ -979,7 +986,7 @@ class SettingVhan2(Screen):
                         set = 1
                         terrestrial()
 
-                    if six.PY3:
+                    if PY3:
                         url = six.ensure_binary(url)
                     if url.startswith(b"https") and sslverify:
                         parsed_uri = urlparse(url)
@@ -1023,7 +1030,7 @@ class SettingVhan2(Screen):
 
     def downloadError(self, png):
         try:
-            if fileExists(png):
+            if not fileExists(png):
                 self.poster_resize(no_cover)
         except Exception as e:
             print('error: ', str(e))
@@ -1108,7 +1115,6 @@ class Milenka61(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-                    # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
                 import requests
@@ -1203,7 +1209,6 @@ class SettingManutek(Screen):
                 dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
-                    # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
                 import requests
@@ -1282,19 +1287,11 @@ class SettingMorpheus(Screen):
         self.names = []
         self.urls = []
         try:
-            # n1 = r.find('title="README.txt', 0)
-            # n2 = r.find('href="#readme">', n1)
-            # r = r[n1:n2]
             regex = 'title="E2_Morph883_(.*?).zip".*?href="(.*?)"'
             match = re.compile(regex).findall(r)
             for name, url in match:
                 if url.find('.zip') != -1:
-                    # if 'ddt' in name.lower():
-                        # continue
-                    # if 'sat' in name.lower():
-                        # continue
                     url = url.replace('blob', 'raw')
-                    # https://github.com/ciefp/ciefpsettings-enigma2-zipped/blob/master/
                     url = 'https://github.com' + url
                     name = 'Morph883 ' + name
                     self.urls.append(Utils.checkStr(url.strip()))
@@ -1307,36 +1304,6 @@ class SettingMorpheus(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    '''
-    # def downxmlpage(self):
-        # url = r'http://morpheus883.altervista.org/download/index.php'
-        # data = make_request(url)
-        # r = data
-        # print('rrrrrrrr ', r)
-        # self.names = []
-        # self.urls = []
-        # try:
-            # regex = 'href="/download/.*?file=(.*?)">'
-            # match = re.compile(regex).findall(r)
-            # for url in match:
-                # if 'zip' in url.lower():
-                    # self.downloading = True
-                    # if 'settings' in url.lower():
-                        # continue
-                    # name = url
-                    # name = name.replace(".zip", "").replace("%20", " ").replace("_", " ").replace("E2_Morph883", "")
-                    # url = "http://morpheus883.altervista.org/settings/" + url
-                    # self.urls.append(Utils.checkStr(url.strip()))
-                    # self.names.append(Utils.checkStr(name.strip()))
-                    # print("url =", url)
-                    # print("name =", name)
-            # self['info'].setText(_('Please select ...'))
-            # self['key_green'].show()
-            # showlist(self.names, self['list'])
-        # except Exception as e:
-            # print('downxmlpage get failed: ', str(e))
-            # self['info'].setText(_('Download page get failed ...'))
-    '''
     def okRun(self, answer=None):
         if answer is None:
             self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
@@ -1416,7 +1383,6 @@ class SettingCiefp(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
-
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
@@ -1437,7 +1403,6 @@ class SettingCiefp(Screen):
             for name, url in match:
                 if url.find('.zip') != -1:
                     url = url.replace('blob', 'raw')
-                    # https://github.com/ciefp/ciefpsettings-enigma2-zipped/blob/master/
                     url = 'https://github.com' + url
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
@@ -1525,7 +1490,6 @@ class SettingBi58(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
-
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
@@ -1622,7 +1586,6 @@ class SettingPredrag(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
-
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
@@ -1665,7 +1628,6 @@ class SettingPredrag(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-
                     set = 1
                     terrestrial()
                 import requests
@@ -1721,7 +1683,6 @@ class SettingCyrus(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
-
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
@@ -1768,8 +1729,6 @@ class SettingCyrus(Screen):
                 dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
-                    
-                    # if not os.path.exists('/var/lib/dpkg/status'):
                     set = 1
                     terrestrial()
                 import requests
@@ -2052,14 +2011,13 @@ class tvConsole(Screen):
         self.errorOcurred = False
         self['title'] = Label(_(title_plug))
         self['list'] = ScrollLabel('')
-        self['actions'] = ActionMap(['WizardActions', 'DirectionActions', 'ColorActions'], {'ok': self.cancel,
-
-
-                                                                                            'back': self.cancel,
-                                                                                            'red': self.cancel,
-                                                                                            "blue": self.restartenigma,
-                                                                                            'up': self['list'].pageUp,
-                                                                                            'down': self['list'].pageDown}, -1)
+        self['actions'] = ActionMap(['DirectionActions',
+                                     'ColorActions'], {'ok': self.cancel,
+                                                       'back': self.cancel,
+                                                       'red': self.cancel,
+                                                       'blue': self.restartenigma,
+                                                       'up': self['list'].pageUp,
+                                                       'down': self['list'].pageDown}, -1)
         self.cmdlist = cmdlist
         self.newtitle = _(title_plug)
         self.onShown.append(self.updateTitle)
@@ -2122,7 +2080,7 @@ class tvConsole(Screen):
         return
 
     def dataAvail(self, data):
-        if six.PY3:
+        if PY3:
             data = data.decode("utf-8")
         try:
             self["list"].setText(self["list"].getText() + data)
@@ -2318,6 +2276,7 @@ class tvIPK(Screen):
         self.refreshlist()
 
     def finished(self, result):
+        self['info'].setText(_('Please select ...'))
         return
 
     def msgipkinst(self, answer=None):
@@ -2874,7 +2833,7 @@ class MMarkFolderz(Screen):
 
     def _gotPageLoad(self, data):
         r = data
-        if six.PY3:
+        if PY3:
             r = six.ensure_str(data)
         self.names = []
         self.urls = []
@@ -2970,7 +2929,7 @@ class MMarkPiconsf(Screen):
 
     def _gotPageLoad(self, data):
         r = data
-        if six.PY3:
+        if PY3:
             r = six.ensure_str(data)
         self.names = []
         self.urls = []
@@ -3049,6 +3008,7 @@ class MMarkPiconsf(Screen):
         self.close()
 
     def finished(self, result):
+        self['info'].setText(_('Please select ...'))
         return
 
 
@@ -3172,7 +3132,7 @@ class pluginx(Screen):
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/plugins"
         data = make_request(self.url)
-        if six.PY3:
+        if PY3:
             data = six.ensure_str(data)
         self.names = []
         self.urls = []
@@ -3239,6 +3199,7 @@ class pluginx(Screen):
         return
 
     def finished(self, result):
+        self['info'].setText(_('Please select ...'))
         return
 
     def rst1(self):
@@ -3288,7 +3249,7 @@ class plugins_adult(Screen):
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/pluginadult"
         data = make_request(self.url)
-        if six.PY3:
+        if PY3:
             data = six.ensure_str(data)
         self.names = []
         self.urls = []
@@ -3372,6 +3333,7 @@ class plugins_adult(Screen):
         return
 
     def finished(self, result):
+        self['info'].setText(_('Please select ...'))
         return
 
     def rst1(self):
@@ -3421,7 +3383,7 @@ class script(Screen):
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/script"
         data = make_request(self.url)
-        if six.PY3:
+        if PY3:
             data = six.ensure_str(data)
         self.names = []
         self.urls = []
@@ -3488,6 +3450,7 @@ class script(Screen):
         return
 
     def finished(self, result):
+        self['info'].setText(_('Please select ...'))
         return
 
     def rst1(self):
@@ -3537,7 +3500,7 @@ class repository(Screen):
     def downxmlpage(self):
         self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/Kodilite/repository"
         data = make_request(self.url)
-        if six.PY3:
+        if PY3:
             data = six.ensure_str(data)
         self.names = []
         self.urls = []
@@ -3604,6 +3567,7 @@ class repository(Screen):
         return
 
     def finished(self, result):
+        self['info'].setText(_('Please select ...'))
         return
 
     def rst1(self):
@@ -3689,8 +3653,7 @@ def terrestrial():
 def terrestrial_rest():
     if LamedbRestore():
         TransferBouquetTerrestrialFinal()
-        # icount = 0
-        terrr = plugin_path + '/temp/TerrestrialChannelListArchive'
+        terrr = os.path.join(plugin_path, 'temp/TerrestrialChannelListArchive')
         if os.path.exists(terrr):
             os.system("cp -rf " + plugin_path + "/temp/TerrestrialChannelListArchive /etc/enigma2/userbouquet.terrestrial.tv")
         os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
@@ -3715,11 +3678,10 @@ def terrestrial_rest():
 def lcnstart():
     print(' lcnstart ')
     if os.path.exists('/etc/enigma2/lcndb'):
-        lcn = Lcn.LCN()
+        lcn = LCN()
         lcn.read()
         if len(lcn.lcnlist) > 0:
             lcn.writeBouquet()
-            # lcn.ReloadBouquets()
             ReloadBouquets()
     return
 
