@@ -575,7 +575,7 @@ class Categories(Screen):
         Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
-        category = category
+        self.category = category
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('')
@@ -592,9 +592,9 @@ class Categories(Screen):
         self.downloading = False
         self.timer = eTimer()
         if Utils.DreamOS():
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+            self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
-            self.timer.callback.append(self.downxmlpage)
+            self.timer.callback.append(self._gotPageLoad)
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
@@ -604,11 +604,15 @@ class Categories(Screen):
                                                        'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        url = str(xml_path) + category
+        url = str(xml_path) + self.category
         try:
-            if PY3:
-                url = url.encode()
-                print('downxmlpage py3')
+            # url = make_request(url)
+            # if PY3:
+                # url = six.ensure_str(url)
+            # if PY3:
+                # url = url.encode()
+                # # url = six.ensure_str(url)
+            print('downxmlpage py3: ', url)
             getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
         except Exception as e:
             print('error: ', str(e))
@@ -618,13 +622,19 @@ class Categories(Screen):
         self['info'].setText(_('Try again later ...'))
         self.downloading = False
 
-    def _gotPageLoad(self, data):
-        self.xml = data
+    # def _gotPageLoad(self, data):
+    def _gotPageLoad(self):
+        self.xml = str(xml_path) + self.category
+        print('data: ', self.xml)
+        # if PY3:
+            # self.xml = six.ensure_str(data)
+        self.xml = make_request(self.xml)
         if PY3:
-            self.xml = six.ensure_str(data)
+            self.xml = six.ensure_str(self.xml)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
+                print('name: ', name)
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
             showlist(self.list, self['list'])
@@ -691,8 +701,6 @@ class tvDailySetting(Screen):
                 lcn.writeBouquet()
                 lcn.ReloadBouquets()
                 self.session.open(MessageBox, _('Sorting Terrestrial channels with Lcn rules Completed'), MessageBox.TYPE_INFO, timeout=5)
-        # self.session.open(MessageBox, _('Reorder Terrestrial channels with Lcn rules'), MessageBox.TYPE_INFO, timeout=5)
-        # lcnstart()
 
     def closerm(self):
         self.close()
@@ -1080,6 +1088,8 @@ class Milenka61(Screen):
     def downxmlpage(self):
         url = 'http://178.63.156.75/tarGz/'
         data = make_request(url)
+        if PY3:
+            data = six.ensure_str(data)
         r = data
         self.names = []
         self.urls = []
@@ -1177,6 +1187,8 @@ class SettingManutek(Screen):
     def downxmlpage(self):
         url = 'http://www.manutek.it/isetting/index.php'
         data = make_request(url)
+        if PY3:
+            data = six.ensure_str(data)
         r = data
         self.names = []
         self.urls = []
@@ -1283,6 +1295,8 @@ class SettingMorpheus(Screen):
     def downxmlpage(self):
         url = 'https://github.com/morpheus883/enigma2-zipped'
         data = make_request(url)
+        if PY3:
+            data = six.ensure_str(data)
         r = data
         self.names = []
         self.urls = []
@@ -1391,6 +1405,8 @@ class SettingCiefp(Screen):
     def downxmlpage(self):
         url = 'https://github.com/ciefp/ciefpsettings-enigma2-zipped'
         data = make_request(url)
+        if PY3:
+            data = six.ensure_str(data)
         r = data
         self.names = []
         self.urls = []
@@ -1498,6 +1514,8 @@ class SettingBi58(Screen):
     def downxmlpage(self):
         url = 'http://178.63.156.75/paneladdons/Bi58/'
         data = make_request(url)
+        if PY3:
+            data = six.ensure_str(data)
         r = data
         self.names = []
         self.urls = []
@@ -1594,6 +1612,8 @@ class SettingPredrag(Screen):
     def downxmlpage(self):
         url = 'http://178.63.156.75/paneladdons/Predr@g/'
         data = make_request(url)
+        if PY3:
+            data = six.ensure_str(data)
         r = data
         self.names = []
         self.urls = []
@@ -1691,6 +1711,8 @@ class SettingCyrus(Screen):
     def downxmlpage(self):
         url = 'http://www.cyrussettings.com/Set_29_11_2011/Dreambox-IpBox/Config.xml'
         data = make_request(url)
+        if PY3:
+            data = six.ensure_str(data)
         r = data
         self.names = []
         self.urls = []
