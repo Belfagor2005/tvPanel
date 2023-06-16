@@ -603,24 +603,24 @@ class Categories(Screen):
                                                        'red': self.close,
                                                        'cancel': self.close}, -2)
 
-    def downxmlpage(self):
-        url = str(xml_path) + self.category
-        try:
-            # url = make_request(url)
-            # if PY3:
-                # url = six.ensure_str(url)
-            # if PY3:
-                # url = url.encode()
+    # def downxmlpage(self):
+        # url = str(xml_path) + self.category
+        # try:
+            # # url = make_request(url)
+            # # if PY3:
                 # # url = six.ensure_str(url)
-            print('downxmlpage py3: ', url)
-            getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-        except Exception as e:
-            print('error: ', str(e))
+            # # if PY3:
+                # # url = url.encode()
+                # # # url = six.ensure_str(url)
+            # print('downxmlpage py3: ', url)
+            # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+        # except Exception as e:
+            # print('error: ', str(e))
 
-    def errorLoad(self, error):
-        print(error)
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
+    # def errorLoad(self, error):
+        # print(error)
+        # self['info'].setText(_('Try again later ...'))
+        # self.downloading = False
 
     # def _gotPageLoad(self, data):
     def _gotPageLoad(self):
@@ -629,8 +629,8 @@ class Categories(Screen):
         # if PY3:
             # self.xml = six.ensure_str(data)
         self.xml = make_request(self.xml)
-        if PY3:
-            self.xml = six.ensure_str(self.xml)
+        # if PY3:
+            # self.xml = six.ensure_str(self.xml)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
