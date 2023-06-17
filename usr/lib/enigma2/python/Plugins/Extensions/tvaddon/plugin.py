@@ -626,14 +626,13 @@ class Categories(Screen):
     def _gotPageLoad(self):
         self.xml = str(xml_path) + self.category
         print('data: ', self.xml)
+        self.xml = Utils.checkGZIP(self.xml)
         # if PY3:
-            # self.xml = six.ensure_str(data)
-        self.xml = make_request(self.xml)
-        # if PY3:
-            # self.xml = six.ensure_str(self.xml)
+            # self.xml = six.ensure_str(self.xml)        
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
+                name = Utils.ensure_str(name)
                 print('name: ', name)
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
