@@ -37,6 +37,7 @@ from Tools.Downloader import downloadWithProgress
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from enigma import loadPNG, gFont
 from enigma import eTimer
+from enigma import getDesktop
 from enigma import eListboxPythonMultiContent, eConsoleAppContainer
 from os import chmod
 from twisted.web.client import downloadPage, getPage
@@ -233,8 +234,13 @@ res_plugin_path = os.path.join(plugin_path, 'res/')
 skin_path = os.path.join(plugin_path, 'res/skins/hd/')
 _firstStarttvspro = True
 
-if Utils.isFHD():
-    skin_path = os.path.join(plugin_path, 'res/skins/fhd/')
+# if Utils.isFHD():
+    # skin_path = os.path.join(plugin_path, 'res/skins/fhd/')
+screenwidth = getDesktop(0).size()
+if screenwidth.width() == 1920:
+    skin_path = res_plugin_path + 'skins/fhd/'
+if screenwidth.width() == 2560:
+    skin_path = res_plugin_path + 'skins/uhd/'
 if Utils.DreamOS():
     skin_path = skin_path + 'dreamOs/'
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -292,10 +298,15 @@ Panel_list3 = [
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        if Utils.isFHD():
+        if Utils.isUHD():
+            self.l.setItemHeight(50)
+            textfont = int(42)
+            self.l.setFont(0, gFont('Regular', textfont))            
+        elif Utils.isFHD():
             self.l.setItemHeight(50)
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
+ 
         else:
             self.l.setItemHeight(50)
             textfont = int(24)
@@ -305,10 +316,12 @@ class tvList(MenuList):
 def DailyListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon'))  # ico1_path
-    if Utils.isFHD():
+    if Utils.isUHD():
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 15), size=(40,40), png =loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos=(65, 0), size=(2000, 66), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    elif Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -318,10 +331,12 @@ def DailyListEntry(name, idx):
 def oneListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon'))  # ico1_path
-    if Utils.isFHD():
+    if Utils.isUHD():
+        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 15), size =(40,40), png =loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(65, 0), size =(2000, 66), font =0, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
+    elif Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -628,7 +643,7 @@ class Categories(Screen):
         print('data: ', self.xml)
         self.xml = Utils.checkGZIP(self.xml)
         # if PY3:
-            # self.xml = six.ensure_str(self.xml)        
+            # self.xml = six.ensure_str(self.xml)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
