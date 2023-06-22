@@ -113,17 +113,6 @@ if sslverify:
             return ctx
 
 
-def getDesktopSize():
-    from enigma import getDesktop
-    s = getDesktop(0).size()
-    return (s.width(), s.height())
-
-
-def isFHD():
-    desktopSize = getDesktopSize()
-    return desktopSize[0] == 1920
-
-
 def checkMyFile(url):
     return []
     try:
@@ -169,6 +158,13 @@ def make_request(url):
             print('Reason: ', e.reason)
         return
     return
+
+
+def paypal():
+    conthelp = "If you like what I do you\n"
+    conthelp += "can contribute with a coffee\n"
+    conthelp += "scan the qr code and donate € 1.00"
+    return conthelp
 
 
 def ReloadBouquets():
@@ -2609,19 +2605,13 @@ class tvConfig(Screen, ConfigListScreen):
 
     def layoutFinished(self):
         self.setTitle(self.setup_title)
-        paypal = self.paypal2()
-        self["paypal"].setText(paypal)
+        payp = paypal()
+        self["paypal"].setText(payp)
         if not os.path.exists('/tmp/currentip'):
             os.system('wget -qO- http://ipecho.net/plain > /tmp/currentip')
         currentip1 = open('/tmp/currentip', 'r')
         currentip = currentip1.read()
         self['info'].setText(_('Config Panel Addon\nYour current IP is %s') % currentip)
-
-    def paypal2(self):
-        conthelp = "If you like what I do you\n"
-        conthelp += " can contribute with a coffee\n\n"
-        conthelp += "scan the qr code and donate € 1.00"
-        return conthelp
 
     def tvUpdate(self):
         self.session.open(tvUpdate)
