@@ -122,6 +122,14 @@ def checkMyFile(url):
         req.add_header('X-Requested-With', 'XMLHttpRequest')
         page = urlopen(req)
         r = page.read()
+
+        # if PY3:
+            # n1 = r.find('"download_link'.encode(), 0)
+            # n2 = r.find('downloadButton'.encode(), n1)
+        # else:
+            # n1 = r.find('"download_link', 0)
+            # n2 = r.find('downloadButton', n1)
+
         n1 = r.find('"download_link', 0)
         n2 = r.find('downloadButton', n1)
         r2 = r[n1:n2]
@@ -230,8 +238,6 @@ res_plugin_path = os.path.join(plugin_path, 'res/')
 skin_path = os.path.join(plugin_path, 'res/skins/hd/')
 _firstStarttvspro = True
 
-# if Utils.isFHD():
-    # skin_path = os.path.join(plugin_path, 'res/skins/fhd/')
 screenwidth = getDesktop(0).size()
 if screenwidth.width() == 1920:
     skin_path = res_plugin_path + 'skins/fhd/'
@@ -297,12 +303,12 @@ class tvList(MenuList):
         if Utils.isUHD():
             self.l.setItemHeight(50)
             textfont = int(42)
-            self.l.setFont(0, gFont('Regular', textfont))            
+            self.l.setFont(0, gFont('Regular', textfont))
         elif Utils.isFHD():
             self.l.setItemHeight(50)
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
- 
+
         else:
             self.l.setItemHeight(50)
             textfont = int(24)
@@ -313,8 +319,8 @@ def DailyListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon'))  # ico1_path
     if Utils.isUHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 15), size=(40,40), png =loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(65, 0), size=(2000, 66), font=0, text =name, color = 0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 15), size=(40,40), png=loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos=(65, 0), size=(2000, 66), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     elif Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -328,8 +334,8 @@ def oneListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon'))  # ico1_path
     if Utils.isUHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos =(10, 15), size =(40,40), png =loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(65, 0), size =(2000, 66), font =0, text =name, color = 0xa6d1fe, flags =RT_HALIGN_LEFT | RT_VALIGN_CENTER))    
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 15), size=(40,40), png=loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(65, 0), size=(2000, 66), font =0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     elif Utils.isFHD():
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -636,10 +642,13 @@ class Categories(Screen):
     # def _gotPageLoad(self, data):
     def _gotPageLoad(self):
         self.xml = str(xml_path) + self.category
-        print('data: ', self.xml)
-        self.xml = Utils.checkGZIP(self.xml)
+
         # if PY3:
-            # self.xml = six.ensure_str(self.xml)
+            # self.xml = self.xml.encode()
+        # else:
+            # self.xml = self.xml
+
+        self.xml = Utils.checkGZIP(self.xml)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1421,6 +1430,12 @@ class SettingCiefp(Screen):
         self.names = []
         self.urls = []
         try:
+            # if PY3:
+                # n1 = r.find('title="README.txt'.encode(), 0)
+                # n2 = r.find('href="#readme">'.encode(), n1)
+            # else:
+                # n1 = r.find('title="README.txt', 0)
+                # n2 = r.find('href="#readme">', n1)
             n1 = r.find('title="README.txt', 0)
             n2 = r.find('href="#readme">', n1)
             r = r[n1:n2]
@@ -1727,6 +1742,12 @@ class SettingCyrus(Screen):
         self.names = []
         self.urls = []
         try:
+            # if PY3:
+                # n1 = r.find('name="Sat">'.encode(), 0)
+                # n2 = r.find('/ruleset>'.encode(), n1)
+            # else:
+                # n1 = r.find('name="Sat">', 0)
+                # n2 = r.find('/ruleset>', n1)
             n1 = r.find('name="Sat">', 0)
             n2 = r.find("/ruleset>", n1)
             r = r[n1:n2]
@@ -2864,6 +2885,12 @@ class MMarkFolderz(Screen):
         self.names = []
         self.urls = []
         try:
+            # if PY3:
+                # n1 = r.find('"folderkey"'.encode(), 0)
+                # n2 = r.find('more_chunks'.encode(), n1)
+            # else:
+                # n1 = r.find('"folderkey"', 0)
+                # n2 = r.find('more_chunks', n1)
             n1 = r.find('"folderkey"', 0)
             n2 = r.find('more_chunks', n1)
             data2 = r[n1:n2]
@@ -2960,6 +2987,12 @@ class MMarkPiconsf(Screen):
         self.names = []
         self.urls = []
         try:
+            # if PY3:
+                # n1 = r.find('"quickkey":'.encode(), 0)
+                # n2 = r.find('more_chunks'.encode(), n1)
+            # else:
+                # n1 = r.find('"quickkey":', 0)
+                # n2 = r.find('more_chunks', n1)
             n1 = r.find('"quickkey":', 0)
             n2 = r.find('more_chunks', n1)
             data2 = r[n1:n2]
