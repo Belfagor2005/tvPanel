@@ -4,7 +4,7 @@
 # --------------------#
 #   coded by Lululla  #
 #    skin by MMark    #
-#      24/09/2022     #
+#      29/06/2023    #
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
@@ -308,7 +308,6 @@ class tvList(MenuList):
             self.l.setItemHeight(50)
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
-
         else:
             self.l.setItemHeight(50)
             textfont = int(24)
@@ -3189,7 +3188,7 @@ class pluginx(Screen):
                                                        'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/plugins"
+        self.url = "http://patbuweb.com/uppy/EnigmaOE2.0/kodilite/plugins"
         data = make_request(self.url)
         if PY3:
             data = six.ensure_str(data)
@@ -3210,8 +3209,8 @@ class pluginx(Screen):
                     self['info'].setText(_('No File!!'))
                     self.downloading = False
             showlist(self.names, self['list'])
-            self['info'].setText(_('Please select'))
             self['key_green'].show()
+            self['info'].setText(_('Please select'))
         except Exception as e:
             print('error: ', str(e))
 
@@ -3306,7 +3305,7 @@ class plugins_adult(Screen):
                                                        'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/pluginadult"
+        self.url = "http://patbuweb.com/uppy/EnigmaOE2.0/kodilite/pluginadult"
         data = make_request(self.url)
         if PY3:
             data = six.ensure_str(data)
@@ -3440,7 +3439,7 @@ class script(Screen):
                                                        'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/kodilite/script"
+        self.url = "http://patbuweb.com/uppy/EnigmaOE2.0/kodilite/script"
         data = make_request(self.url)
         if PY3:
             data = six.ensure_str(data)
@@ -3557,7 +3556,7 @@ class repository(Screen):
                                                        'cancel': self.close}, -2)
 
     def downxmlpage(self):
-        self.url = "http://patbuweb.com/panel-addons/EnigmaOE2.0/Kodilite/repository"
+        self.url = "http://patbuweb.com/uppy/EnigmaOE2.0/Kodilite/repository"
         data = make_request(self.url)
         if PY3:
             data = six.ensure_str(data)
