@@ -4,7 +4,7 @@
 # --------------------#
 #   coded by Lululla  #
 #    skin by MMark    #
-#      29/06/2023    #
+#      29/06/2023     #
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
@@ -122,14 +122,12 @@ def checkMyFile(url):
         req.add_header('X-Requested-With', 'XMLHttpRequest')
         page = urlopen(req)
         r = page.read()
-
         # if PY3:
             # n1 = r.find('"download_link'.encode(), 0)
             # n2 = r.find('downloadButton'.encode(), n1)
         # else:
             # n1 = r.find('"download_link', 0)
             # n2 = r.find('downloadButton', n1)
-
         n1 = r.find('"download_link', 0)
         n2 = r.find('downloadButton', n1)
         r2 = r[n1:n2]
@@ -166,6 +164,33 @@ def make_request(url):
             print('Reason: ', e.reason)
         return
     return
+
+
+def checkGZIP(url):
+    from io import StringIO
+    import gzip
+    hdr = {"User-Agent": "Enigma2 - Plugin"}
+    response = None
+    request = Request(url, headers=hdr)
+
+    try:
+        response = urlopen(request, timeout=20)
+
+        if response.info().get('Content-Encoding') == 'gzip':
+            buffer = StringIO(response.read())
+            deflatedContent = gzip.GzipFile(fileobj=buffer)
+            if PY3:
+                return deflatedContent.read().decode('utf-8')
+            else:
+                return deflatedContent.read()
+        else:
+            if PY3:
+                return response.read().decode('utf-8')
+            else:
+                return response.read()
+    except Exception as e:
+        print(e)
+        return None
 
 
 def paypal():
@@ -239,10 +264,11 @@ skin_path = os.path.join(plugin_path, 'res/skins/hd/')
 _firstStarttvspro = True
 
 screenwidth = getDesktop(0).size()
-if screenwidth.width() == 1920:
-    skin_path = res_plugin_path + 'skins/fhd/'
 if screenwidth.width() == 2560:
     skin_path = res_plugin_path + 'skins/uhd/'
+if screenwidth.width() == 1920:
+    skin_path = res_plugin_path + 'skins/fhd/'
+
 if Utils.DreamOS():
     skin_path = skin_path + 'dreamOs/'
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -300,11 +326,11 @@ Panel_list3 = [
 class tvList(MenuList):
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
-        if Utils.isUHD():
-            self.l.setItemHeight(50)
-            textfont = int(42)
+        if screenwidth.width() == 2560:
+            self.l.setItemHeight(60)
+            textfont = int(46)
             self.l.setFont(0, gFont('Regular', textfont))
-        elif Utils.isFHD():
+        elif screenwidth.width() == 1920:
             self.l.setItemHeight(50)
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
@@ -317,10 +343,10 @@ class tvList(MenuList):
 def DailyListEntry(name, idx):
     res = [name]
     pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/setting.png".format('tvaddon'))  # ico1_path
-    if Utils.isUHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 15), size=(40,40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(65, 0), size=(2000, 66), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    elif Utils.isFHD():
+    if screenwidth.width() == 2560:
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 15), size=(40, 40), png=loadPNG(pngs)))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(2000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    elif screenwidth.width() == 1920:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -332,10 +358,10 @@ def DailyListEntry(name, idx):
 def oneListEntry(name):
     res = [name]
     pngx = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/plugins.png".format('tvaddon'))  # ico1_path
-    if Utils.isUHD():
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 15), size=(40,40), png=loadPNG(pngx)))
-        res.append(MultiContentEntryText(pos=(65, 0), size=(2000, 66), font =0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
-    elif Utils.isFHD():
+    if screenwidth.width() == 2560:
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 15), size=(40, 40), png=loadPNG(pngx)))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(2000, 60), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+    elif screenwidth.width() == 1920:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngx)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
@@ -647,11 +673,11 @@ class Categories(Screen):
         # else:
             # self.xml = self.xml
 
-        self.xml = Utils.checkGZIP(self.xml)
+        self.xml = checkGZIP(self.xml)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
-                name = Utils.ensure_str(name)
+                name = six.ensure_str(name)
                 print('name: ', name)
                 self.list.append(name)
                 self['info'].setText(_('Please select ...'))
@@ -1885,6 +1911,7 @@ class tvInstall(Screen):
         self.dest = '/tmp/' + self.downplug
         self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
         if self.com is not None:
+            self.timer = eTimer()
             extensionlist = self.com.split('.')
             extension = extensionlist[-1].lower()
             if len(extensionlist) > 1:
@@ -1895,8 +1922,7 @@ class tvInstall(Screen):
                     self.command = ["tar -xzvf " + self.dest + " -C / > /dev/null"]
                 elif extension == "bz2":
                     self.command = ["tar -xjvf " + self.dest + " -C / > /dev/null"]
-                self.timer = eTimer()
-                self.timer.start(1000, True)
+                
                 cmd = "wget -U '%s' -c '%s' -O '%s';%s" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.command[0])
                 if "https" in str(self.com):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.command[0])
@@ -1907,8 +1933,11 @@ class tvInstall(Screen):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
-                    self.timer = eTimer()
-                    self.timer.start(1000, True)
+                    cmd22 = 'find /usr/bin -name "wget"'
+                    res = os.popen(cmd22).read()
+                    if 'wget' not in res.lower():
+                        cmd23 = 'apt-get update && apt-get install wget'
+                        os.popen(cmd23)
                     cmd = "wget -U '%s' -c '%s' -O '%s';apt-get install --reinstall %s -y > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
                     if "https" in str(self.com):
                         cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';apt-get install --reinstall %s -y > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
@@ -1919,8 +1948,6 @@ class tvInstall(Screen):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
-                    self.timer = eTimer()
-                    self.timer.start(1000, True)
                     cmd = "wget -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
                     if "https" in str(self.com):
                         cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
@@ -1960,13 +1987,9 @@ class tvInstall(Screen):
                     cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
                     cmd.append(cmd11)
                     terrestrial_rest()
-                    self.timer = eTimer()
-                    self.timer.start(500, True)
                     self.session.open(tvConsole, _('SETTING - install: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                 elif 'picon' in self.dom.lower():
-                    self.timer = eTimer()
-                    self.timer.start(500, True)
                     cmd = ["wget -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest, str(mmkpicon))]
                     if "https" in str(self.com):
                         cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest, str(mmkpicon))]
@@ -1974,14 +1997,13 @@ class tvInstall(Screen):
                     self['info'].setText(_('Installation done !!!'))
                 else:
                     self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
-                    self.timer = eTimer()
-                    self.timer.start(500, True)
                     cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest)]
                     if "https" in str(self.com):
                         cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s' > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest)]
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
+                    self.timer.start(1000, True)
                     self['info'].setText(_('Download file in /tmp successful!!'))
             else:
                 self['info'].setText(_('Download failed!') + self.dom + _('... Not supported'))
@@ -2627,11 +2649,13 @@ class tvConfig(Screen, ConfigListScreen):
         self.setTitle(self.setup_title)
         payp = paypal()
         self["paypal"].setText(payp)
-        if not os.path.exists('/tmp/currentip'):
-            os.system('wget -qO- http://ipecho.net/plain > /tmp/currentip')
-        currentip1 = open('/tmp/currentip', 'r')
-        currentip = currentip1.read()
-        self['info'].setText(_('Config Panel Addon\nYour current IP is %s') % currentip)
+        # if not os.path.exists('/tmp/currentip'):
+            # os.system('wget -qO- http://ipecho.net/plain > /tmp/currentip')
+        file = os.popen('wget -qO - ifconfig.me')
+        public = file.read()
+        # currentip1 = open('/tmp/currentip', 'r')
+        # currentip = currentip1.read()
+        self['info'].setText(_('Config Panel Addon\nYour current IP is %s') % str(public))
 
     def tvUpdate(self):
         self.session.open(tvUpdate)
