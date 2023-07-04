@@ -1,0 +1,25 @@
+<!-- Skin tvIPK 11/05/2021 -->
+<screen name="tvIPK" position="0,0" size="2560,1440" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#10101010" flags="wfNoBorder">
+	<widget name="title" position="292,120" size="1366,78" font="Regular;40" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
+	<ePixmap position="0,0" size="2560,1440" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main2.png" zPosition="1" />
+	<ePixmap position="292,37" size="372,81" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" alphatest="blend" zPosition="5" />
+	<ePixmap position="292,202" size="1366,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" zPosition="5" />
+    
+	<!-- Menu List -->
+	<widget source="ipkglisttmp" render="Listbox" position="292,269" size="1370,717" itemHeight="60" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png">
+		<convert type="StringList" />
+	</widget>
+	<widget name="select" position="291,196" size="1367,68" font="Regular;40" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
+	<widget name="info" position="292,1000" size="1372,64" font="Regular;40" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="info1" position="292,1072" size="1372,124" font="Regular;40" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<!-- Colors 1220 -->
+	<ePixmap position="292,1212" size="1372,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_red.png" position="292,1260" size="40,40" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_green.png" position="292,1340" size="40,40" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_yellow.png" position="1626,1260" size="40,40" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_blue.png" position="1626,1340" size="40,40" alphatest="on" zPosition="5" />
+	<widget name="key_red" position="360,1252" size="400,60" font="Regular;40" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_green" position="360,1332" size="400,60" font="Regular;40" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_yellow" position="1206,1252" size="400,60" font="Regular;40" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_blue" position="1206,1332" size="400,60" font="Regular;40" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+</screen>
