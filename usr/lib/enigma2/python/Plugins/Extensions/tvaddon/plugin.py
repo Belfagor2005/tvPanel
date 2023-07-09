@@ -2192,25 +2192,6 @@ class tvConsole(Screen):
                 self.show()
 
 
-
-        Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
-        self.selection = selection
-        self['info'] = Label('')
-        self['pth'] = Label('')
-        self['key_green'] = Button(_('Install'))
-        self['pform'] = Label('')
-
-        list = []
-        list.sort()
-        self['info'].setText(_('... please wait'))
-        n1 = data.find(name, 0)
-        n2 = data.find("</plugins>", n1)
-        data1 = data[n1:n2]
-        self.names = []
-        self.urls = []
-
-
 class tvIPK(Screen):
     def __init__(self, session, title=None, cmdlist=None, finishedCallback=None, closeOnSuccess=False):
         self.session = session
@@ -2543,14 +2524,14 @@ class tvRemove(Screen):
         self["progress"].hide()
         self['progresstext'] = StaticText()
 
-
+        # self.getfreespace()
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'green': self.message1,
                                                        'ok': self.message1,
                                                        'yellow': self.msgipkrst,
                                                        'red': self.close,
                                                        'cancel': self.close}, -1)
-        self.onLayoutFinish.append(self.openList)
+        self.onLayoutFinish.append(self.getfreespace)
 
     def PluginDownloadBrowserClosed(self):
         self.openList()
@@ -2572,6 +2553,8 @@ class tvRemove(Screen):
         self.list = []
         del self.names[:]
         del self.list[:]
+        for x in self.list:
+            del self.list[0]
         self["list"].l.setList(self.list)
         path = ('/var/lib/opkg/info')
         if os.path.exists('/var/lib/dpkg/info'):
@@ -2597,7 +2580,7 @@ class tvRemove(Screen):
                             self.names.append(name)
             self['key_green'].show()
             showlist(self.names, self['list'])
-            self.getfreespace()
+            # self.getfreespace()
         except Exception as e:
             print(e)
 
@@ -2611,8 +2594,11 @@ class tvRemove(Screen):
             if os.path.exists('/var/lib/dpkg/info'):
                 self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com], closeOnSuccess=False)
             else:
-                self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess=False)
-            self.getfreespace()
+                try:
+                    self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove %s' % com], closeOnSuccess=False)
+                except:
+                    self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess=False)
+        self.getfreespace()
 
     def getfreespace(self):
         try:
@@ -2621,6 +2607,7 @@ class tvRemove(Screen):
             plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
             fspace = Utils.freespace()
             self['pform'].setText(str(fspace))
+            self.openList()
         except Exception as e:
             print(e)
 

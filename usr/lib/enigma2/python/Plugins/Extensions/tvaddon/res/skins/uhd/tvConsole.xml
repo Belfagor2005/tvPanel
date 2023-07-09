@@ -1,5 +1,9 @@
 <!-- Skin tvAll 11/05/2021 -->
-<screen name="tvConsole" position="center,center" size="1200,800" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#ff000000" flags="wfNoBorder">
-	<widget name="title" position="44,10" size="1102,64" font="Console;40" backgroundColor="#000000" foregroundColor="#00a0a0a0" transparent="1" />
-	<widget name="list" position="44,96" size="1122,674" font="Console;32" backgroundColor="#000000" foregroundColor="#00a0a0a0" zPosition="5" transparent="1" />
+<screen name="tvConsole" position="center,center" size="2260,1440" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#ff000000" flags="wfNoBorder">
+	<widget name="title" position="299,130" size="1317,64" font="Console;40" backgroundColor="#000000" foregroundColor="#00a0a0a0" transparent="1" zPosition="4" />
+	<widget name="list" position="289,223" size="1319,974" font="Console;32" backgroundColor="#000000" foregroundColor="#00a0a0a0" zPosition="5" transparent="1" />
+	<ePixmap position="0,0" size="2560,1440" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main2.png" zPosition="1" />
+	<ePixmap position="292,37" size="372,81" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" alphatest="blend" zPosition="5" />
+	<ePixmap position="292,202" size="1366,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" zPosition="5" />
+	<ePixmap position="292,1232" size="1372,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" zPosition="5" />  
 </screen>
