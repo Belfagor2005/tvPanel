@@ -9,7 +9,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,130" size="1030,8" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,910" size="1030,8" zPosition="5" />
 	<!-- Menu List -->
-	<widget source="ipkglisttmp" render="Listbox" position="220,218" size="1030,478" itemHeight="50" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png">
+	<widget source="list" render="Listbox" position="220,218" size="1030,478" itemHeight="50" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png">
 		<convert type="StringList" />
 	</widget>
 	<!-- Colors 1220 -->

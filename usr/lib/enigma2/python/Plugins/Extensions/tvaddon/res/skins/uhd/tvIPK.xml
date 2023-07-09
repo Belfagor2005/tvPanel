@@ -6,7 +6,7 @@
 	<ePixmap position="292,202" size="1366,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" zPosition="5" />
     
 	<!-- Menu List -->
-	<widget source="ipkglisttmp" render="Listbox" position="292,269" size="1370,717" font="Regular;40" itemHeight="60" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png">
+	<widget source="list" render="Listbox" position="292,269" size="1370,717" font="Regular;40" itemHeight="60" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png">
 		<convert type="StringList" />
 	</widget>
 	<widget name="select" position="291,196" size="1367,68" font="Regular;40" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
@@ -23,3 +23,5 @@
 	<widget name="key_yellow" position="1206,1252" size="400,60" font="Regular;40" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_blue" position="1206,1332" size="400,60" font="Regular;40" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 </screen>
+
+

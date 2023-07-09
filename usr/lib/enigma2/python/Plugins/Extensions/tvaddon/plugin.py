@@ -1924,7 +1924,7 @@ class tvInstall(Screen):
                     self.command = ["tar -xzvf " + self.dest + " -C / > /dev/null"]
                 elif extension == "bz2":
                     self.command = ["tar -xjvf " + self.dest + " -C / > /dev/null"]
-                
+
                 cmd = "wget -U '%s' -c '%s' -O '%s';%s" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.command[0])
                 if "https" in str(self.com):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.command[0])
@@ -2192,6 +2192,25 @@ class tvConsole(Screen):
                 self.show()
 
 
+
+        Screen.__init__(self, session)
+        self.setTitle(_(title_plug))
+        self.selection = selection
+        self['info'] = Label('')
+        self['pth'] = Label('')
+        self['key_green'] = Button(_('Install'))
+        self['pform'] = Label('')
+
+        list = []
+        list.sort()
+        self['info'].setText(_('... please wait'))
+        n1 = data.find(name, 0)
+        n2 = data.find("</plugins>", n1)
+        data1 = data[n1:n2]
+        self.names = []
+        self.urls = []
+
+
 class tvIPK(Screen):
     def __init__(self, session, title=None, cmdlist=None, finishedCallback=None, closeOnSuccess=False):
         self.session = session
@@ -2210,14 +2229,13 @@ class tvIPK(Screen):
         self['key_red'] = Button(_('Back'))
         self["key_blue"] = Button('Remove')
         self['key_green'].hide()
-        self['pth'] = Label('')
-        self['pform'] = Label(_('Path %s (Set folder from config path)\nPut .ipk .tar.gz .deb .zip and install') % self.ipkpth)
+        self['title'] = Label(_(title_plug))
+        self['pform'] = Label('')
+        self['info'] = Label('...')
+        self['pth'] = Label(_('Path %s (Set folder from config path)\nPut .ipk .tar.gz .deb .zip and install') % self.ipkpth)
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-        self['info'] = Label('')
-        self['info'].setText(_('Please install ...'))
-        self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
                                      'WizardActions',
                                      'ColorActions',
@@ -2270,7 +2288,7 @@ class tvIPK(Screen):
     def getfreespace(self):
         try:
             fspace = Utils.freespace()
-            self['pth'].setText(str(fspace))
+            self['info'].setText(str(fspace))
         except Exception as e:
             print(e)
 
@@ -2503,11 +2521,12 @@ class tvRemove(Screen):
         self.setTitle(_(title_plug))
         self.list = []
         self.names = []
-        # self.container = eConsoleAppContainer()
-        # try:
-            # self.container.appClosed.append(self.runFinished)
-        # except:
-            # self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
+        self.container = eConsoleAppContainer()
+        try:
+            self.container.appClosed.append(self.runFinished)
+        except:
+            self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
+
         self['list'] = tvList([])
         self['key_green'] = Button(_('Uninstall'))
         self['key_yellow'] = Button(_('Restart'))
@@ -2515,45 +2534,46 @@ class tvRemove(Screen):
         self["key_blue"] = Button('')
         self['key_blue'].hide()
         self['key_green'].hide()
-        self['pth'] = Label('')
+        self['title'] = Label(_(title_plug))
         self['pform'] = Label('')
+        self['info'] = Label('Select')
+        self['pth'] = Label('Remove not necessary addon')
+
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-        self['info'] = Label('')
-        self['title'] = Label(_(title_plug))
+
+
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'green': self.message1,
                                                        'ok': self.message1,
                                                        'yellow': self.msgipkrst,
                                                        'red': self.close,
                                                        'cancel': self.close}, -1)
-        # self.getfreespace()
         self.onLayoutFinish.append(self.openList)
 
-    # def PluginDownloadBrowserClosed(self):
-        # self.openList()
+    def PluginDownloadBrowserClosed(self):
+        self.openList()
 
-    # def runFinished(self, retval):
-        # self['pth'].setText(_('Addons Packege removed successfully.'))
-        # self.getfreespace()
+    def runFinished(self, retval):
+        self['pth'].setText(_('Addons Packege removed successfully.'))
+        self.getfreespace()
 
-    # def cancel(self):
-        # if not self.container.running():
-            # del self.container.appClosed[:]
-            # del self.container
-            # self.close()
-        # else:
-            # self.container.kill()
-            # self['pth'].setText(_('Process Killed by user.Addon not removed completly!'))
+    def cancel(self):
+        if not self.container.running():
+            del self.container.appClosed[:]
+            del self.container
+            self.close()
+        else:
+            self.container.kill()
+            self['pth'].setText(_('Process Killed by user.Addon not removed completly!'))
 
     def openList(self):
-        self.lists = []
+        self.list = []
         del self.names[:]
         del self.list[:]
         self["list"].l.setList(self.list)
         path = ('/var/lib/opkg/info')
-        # if os.path.exists('/var/lib/dpkg/info'):
         if os.path.exists('/var/lib/dpkg/info'):
             path = ('/var/lib/dpkg/info')
         try:
@@ -2600,8 +2620,7 @@ class tvRemove(Screen):
             plugins.clearPluginList()
             plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
             fspace = Utils.freespace()
-            self['info'].setText(str(fspace))
-            self.openList()
+            self['pform'].setText(str(fspace))
         except Exception as e:
             print(e)
 
