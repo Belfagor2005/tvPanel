@@ -2209,11 +2209,12 @@ class tvIPK(Screen):
         self['key_yellow'] = Button(_('Restart'))
         self['key_red'] = Button(_('Back'))
         self["key_blue"] = Button('Remove')
+        self['key_blue'].hide()
         self['key_green'].hide()
         self['title'] = Label(_(title_plug))
         self['pform'] = Label('')
         self['info'] = Label('...')
-        self['pth'] = Label(_('Path %s (Set folder from config path)\nPut .ipk .tar.gz .deb .zip and install') % self.ipkpth)
+        self['pth'] = Label(_('Path %s (Set path folder from config)\nPut .ipk .tar.gz .deb .zip and install') % self.ipkpth)
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
@@ -2242,12 +2243,13 @@ class tvIPK(Screen):
                 for name in files:
                     if name.endswith('.ipk') or name.endswith('.deb') or name.endswith('.zip') or name.endswith('.tar.gz') or name.endswith('.tar'):
                         self.names.append(name)
-
-        self.getfreespace()
-        self['key_green'].show()
         self["list"].l.setList(self.list)
-        self['info'].setText(_('Please install ...'))
+        if len(self.list) > -1:
+            self['info'].setText(_('Please install ...'))
+            self['key_green'].show()
+            self['key_blue'].show()
         showlist(self.names, self['list'])
+        self.getfreespace()
 
     def msgipkrmv(self, answer=None):
         idx = self['list'].getSelectionIndex()
@@ -2519,11 +2521,9 @@ class tvRemove(Screen):
         self['pform'] = Label('')
         self['info'] = Label('Select')
         self['pth'] = Label('Remove not necessary addon')
-
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-
         # self.getfreespace()
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'green': self.message1,
