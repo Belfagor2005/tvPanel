@@ -7,7 +7,7 @@ print("Update.py")
 
 
 def upd_done():
-    from os import popen, remove
+    from os import popen, system
     cmd01 = "wget http://patbuweb.com/tvPanel/tvaddon.tar -O /tmp/tvaddon.tar ; tar -xvf /tmp/tvaddon.tar -C /"
     cmd02 = "wget --no-check-certificate -U 'Enigma2 - TvAddon Plugin' -c 'http://patbuweb.com/tvPanel/tvaddon.tar' -O '/tmp/tvaddon.tar'; tar -xvf /tmp/tvaddon.tar -C /"
     cmd22 = 'find /usr/bin -name "wget"'
@@ -19,8 +19,9 @@ def upd_done():
         popen(cmd02)
     except:
         popen(cmd01)
+    system('rm -rf /var/volatile/tmp/tvaddon.tar')
     return
-    remove('/tmp/tvaddon.tar')
+
 
 
 '''

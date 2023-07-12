@@ -2205,12 +2205,12 @@ class tvIPK(Screen):
         self.list = []
         self.names = []
         self['list'] = tvList([])
-        self['key_green'] = Button(_('Install'))
-        self['key_yellow'] = Button(_('Restart'))
         self['key_red'] = Button(_('Back'))
+        self['key_green'] = Button(_('Install'))
+        self['key_green'].hide()
+        self['key_yellow'] = Button(_('Restart'))
         self["key_blue"] = Button('Remove')
         self['key_blue'].hide()
-        self['key_green'].hide()
         self['title'] = Label(_(title_plug))
         self['pform'] = Label('')
         self['info'] = Label('...')
@@ -2266,7 +2266,7 @@ class tvIPK(Screen):
                 del self.list[0:i]
             else:
                 self.session.open(MessageBox, (_("%s not exist!\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
-            self.refreshlist()
+        self.refreshlist()
 
     def getfreespace(self):
         try:
