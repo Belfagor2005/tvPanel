@@ -2244,7 +2244,7 @@ class tvIPK(Screen):
                     if name.endswith('.ipk') or name.endswith('.deb') or name.endswith('.zip') or name.endswith('.tar.gz') or name.endswith('.tar'):
                         self.names.append(name)
         self["list"].l.setList(self.list)
-        if len(self.list) > -1:
+        if len(self.names) > -1:
             self['info'].setText(_('Please install ...'))
             self['key_green'].show()
             self['key_blue'].show()
@@ -2578,7 +2578,11 @@ class tvRemove(Screen):
                                 continue
                         if name.startswith('enigma2-plugin-'):
                             self.names.append(name)
-            self['key_green'].show()
+
+            if len(self.names) > -1:
+                self['info'].setText(_('Please install ...'))
+                self['key_green'].show()
+            # self['key_green'].show()
             showlist(self.names, self['list'])
             # self.getfreespace()
         except Exception as e:
