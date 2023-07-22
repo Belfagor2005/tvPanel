@@ -1911,6 +1911,8 @@ class tvInstall(Screen):
         dom = self.com[:n2]
         self.downplug = self.com.replace(dom, '').replace('/', '').lower()
         self.dest = '/tmp/' + self.downplug
+        if os.path.exists(self.dest):
+            os.remove(self.dest)
         self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
         if self.com is not None:
             self.timer = eTimer()
@@ -1940,9 +1942,9 @@ class tvInstall(Screen):
                     if 'wget' not in res.lower():
                         cmd23 = 'apt-get update && apt-get install wget'
                         os.popen(cmd23)
-                    cmd = "wget -U '%s' -c '%s' -O '%s';apt-get install --reinstall %s -y > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
+                    cmd = "wget -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
                     if "https" in str(self.com):
-                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';apt-get install --reinstall %s -y > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest, self.dest)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
             elif extension == "ipk":
@@ -2001,9 +2003,9 @@ class tvInstall(Screen):
                     self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
                     cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest)]
                     if "https" in str(self.com):
-                        cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s' > /dev/null" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest)]
-                    self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
-                    self['info'].setText(_('Installation done !!!'))
+                        cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s'" % ('Enigma2 - tvAddon Plugin', str(self.com), self.dest)]
+                    self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                    self['info'].setText(_('Download done !!!'))
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     self.timer.start(1000, True)
                     self['info'].setText(_('Download file in /tmp successful!!'))
@@ -2026,6 +2028,8 @@ class tvInstall(Screen):
             dom = self.com[:n2]
             self.downplug = self.com.replace(dom, '').replace('/', '').lower()
             self.dest = '/tmp/' + self.downplug
+            if os.path.exists(self.dest):
+                os.remove(self.dest)
             if self.com is not None:
                 extensionlist = self.com.split('.')
                 extension = extensionlist[-1].lower()
@@ -2295,7 +2299,8 @@ class tvIPK(Screen):
                     self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[cmd0, 'sleep 5'], closeOnSuccess=False)
                 elif self.sel.endswith('.deb'):
                     if os.path.exists('/var/lib/dpkg/info'):
-                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install --reinstall %s -y' % self.dest  # + ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
+                        # apt-get install -f -y
+                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install -f -y %s' % self.dest  # + ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
                         self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0], closeOnSuccess=False)
                     else:
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2580,7 +2585,7 @@ class tvRemove(Screen):
                             self.names.append(name)
 
             if len(self.names) > -1:
-                self['info'].setText(_('Please install ...'))
+                self['info'].setText(_('Please Remove ...'))
                 self['key_green'].show()
             # self['key_green'].show()
             showlist(self.names, self['list'])
@@ -2596,7 +2601,7 @@ class tvRemove(Screen):
             dom = self.names[idx]
             com = dom
             if os.path.exists('/var/lib/dpkg/info'):
-                self.session.open(tvConsole, _('Removing: %s') % dom, ['dpkg -r %s' % com], closeOnSuccess=False)
+                self.session.open(tvConsole, _('Removing: %s') % dom, ['apt-get purge --auto-remove %s' % com], closeOnSuccess=False)
             else:
                 try:
                     self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove %s' % com], closeOnSuccess=False)
