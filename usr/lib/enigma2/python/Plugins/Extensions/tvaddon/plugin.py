@@ -4,7 +4,7 @@
 # --------------------#
 #   coded by Lululla  #
 #    skin by MMark    #
-#      29/06/2023     #
+#      22/07/2023     #
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
@@ -239,7 +239,7 @@ config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
-currversion = '2.0.8'
+currversion = '2.1.0'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
