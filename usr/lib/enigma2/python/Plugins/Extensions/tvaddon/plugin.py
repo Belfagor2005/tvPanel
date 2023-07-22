@@ -579,7 +579,7 @@ class Hometv(Screen):
         if config.plugins.tvaddon.autoupd.value is False:
             return
         if answer is None:
-            self.session.openWithCallback(self.msgupdate1, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"))
+            self.session.openWithCallback(self.msgupdate1, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"), MessageBox.TYPE_YESNO)
         else:
             if os.path.exists('/var/lib/dpkg/info'):
                 com = self.dmlink
@@ -598,7 +598,7 @@ class Hometv(Screen):
 
     def msgipkrst1(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.msgipkrst1, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"))
+            self.session.openWithCallback(self.msgipkrst1, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"), MessageBox.TYPE_YESNO)
         else:
             epgpath = '/media/hdd/epg.dat'
             epgbakpath = '/media/hdd/epg.dat.bak'
@@ -799,19 +799,19 @@ class tvDailySetting(Screen):
 
     def terrestrial_restore(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.terrestrial_restore, MessageBox, _("This operation restore your Favorite channel Dtt\nfrom =>>THISPLUGIN/temp/TerrestrialChannelListArchive\nDo you really want to continue?"))
+            self.session.openWithCallback(self.terrestrial_restore, MessageBox, _("This operation restore your Favorite channel Dtt\nfrom =>>THISPLUGIN/temp/TerrestrialChannelListArchive\nDo you really want to continue?"), MessageBox.TYPE_YESNO)
         else:
             terrestrial_rest()
 
     def terrestrialsave(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.terrestrialsave, MessageBox, _("This operation save your Favorite channel Dtt\nto =>>/tmp/*_enigma2settingsbackup.tar.gz\nDo you really want to continue?"))
+            self.session.openWithCallback(self.terrestrialsave, MessageBox, _("This operation save your Favorite channel Dtt\nto =>>/tmp/*_enigma2settingsbackup.tar.gz\nDo you really want to continue?"), MessageBox.TYPE_YESNO)
         else:
             terrestrial()
 
     def okSATELLITE(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okSATELLITE, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okSATELLITE, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             if Utils.checkInternet():
                 try:
@@ -831,7 +831,7 @@ class tvDailySetting(Screen):
 
     def okTERRESTRIAL(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okTERRESTRIAL, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okTERRESTRIAL, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             if Utils.checkInternet():
                 try:
@@ -912,7 +912,7 @@ class SettingVhan(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -1024,7 +1024,7 @@ class SettingVhan2(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -1162,7 +1162,7 @@ class Milenka61(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -1257,7 +1257,7 @@ class SettingManutek(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -1366,7 +1366,7 @@ class SettingMorpheus(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -1484,7 +1484,7 @@ class SettingCiefp(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -1593,7 +1593,7 @@ class SettingBi58(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -1691,7 +1691,7 @@ class SettingPredrag(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -1799,7 +1799,7 @@ class SettingCyrus(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             global set
             set = 0
@@ -2018,7 +2018,7 @@ class tvInstall(Screen):
 
     def okDown(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okDown, MessageBox, _("Do you want to Download?\nIt could take a few minutes, wait .."))
+            self.session.openWithCallback(self.okDown, MessageBox, _("Do you want to Download?\nIt could take a few minutes, wait .."), MessageBox.TYPE_YESNO)
         else:
             self['info'].setText(_('... please wait'))
             idx = self["list"].getSelectionIndex()
@@ -2142,13 +2142,13 @@ class tvConsole(Screen):
 
     def cancel(self):
         if self.run == len(self.cmdlist):
-            self.close()
             try:
                 self.appClosed_conn = None
                 self.dataAvail_conn = None
             except:
                 self.container.appClosed.remove(self.runFinished)
                 self.container.dataAvail.remove(self.dataAvail)
+            self.close()
 
     def cancelCallback(self, ret=None):
         self.cancel_msg = None
@@ -2166,9 +2166,9 @@ class tvConsole(Screen):
             self["list"].setText(self["list"].getText() + data)
         except:
             trace_error()
-        return
         if self["list"].getText().endswith("Do you want to continue? [Y/n] "):
             self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
+        return
 
     def processAnswer(self, retval):
         if retval:
@@ -2259,7 +2259,7 @@ class tvIPK(Screen):
         idx = self['list'].getSelectionIndex()
         self.sel = self.names[idx]
         if answer is None:
-            self.session.openWithCallback(self.msgipkrmv, MessageBox, _('Do you really want to remove selected?') + '\n' + self.sel)
+            self.session.openWithCallback(self.msgipkrmv, MessageBox, (_('Do you really want to remove selected?\n') + self.sel), MessageBox.TYPE_YESNO)
         else:
             self['info'].setText(_('... please wait'))
             self.com = self.ipkpth + '/' + self.sel
@@ -2286,7 +2286,7 @@ class tvIPK(Screen):
         idx = self['list'].getSelectionIndex()
         self.sel = self.names[idx]
         if answer is None:
-            self.session.openWithCallback(self.ipkinst, MessageBox, _('Do you really want to install the selected Addon?') + '\n' + self.sel)
+            self.session.openWithCallback(self.ipkinst, MessageBox, (_('Do you really want to install the selected Addon?\n') + self.sel), MessageBox.TYPE_YESNO)
         else:
             self['info'].setText(_('... please wait'))
             self.dest = self.ipkpth + '/' + self.sel
@@ -2300,7 +2300,7 @@ class tvIPK(Screen):
                 elif self.sel.endswith('.deb'):
                     if os.path.exists('/var/lib/dpkg/info'):
                         # apt-get install -f -y
-                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install -f -y %s' % self.dest  # + ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
+                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install -f -y %s > /dev/null' % self.dest  # + ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
                         self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0], closeOnSuccess=False)
                     else:
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2366,7 +2366,7 @@ class tvIPK(Screen):
 
     def msgipkinst(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.msgipkinst, MessageBox, _('Restart Enigma to load the installed plugin?'))
+            self.session.openWithCallback(self.msgipkinst, MessageBox, _('Restart Enigma to load the installed plugin?'), MessageBox.TYPE_YESNO)
         else:
             self.session.open(TryQuitMainloop, 3)
 
@@ -2468,7 +2468,7 @@ class tvUpdate(Screen):
         if self.Update is False:
             return
         if answer is None:
-            self.session.openWithCallback(self.msgupdate, MessageBox, _('Do you want update plugin ?\nPlease Reboot GUI after install!'))
+            self.session.openWithCallback(self.msgupdate, MessageBox, _('Do you want update plugin ?\nPlease Reboot GUI after install!'), MessageBox.TYPE_YESNO)
         else:
             if os.path.exists('/var/lib/dpkg/info'):
                 com = self.dmlink
@@ -2487,7 +2487,7 @@ class tvUpdate(Screen):
 
     def msgipkrst1(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.msgipkrst1, MessageBox, _('Do you want restart enigma2 ?'))
+            self.session.openWithCallback(self.msgipkrst1, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
         else:
             epgpath = '/media/hdd/epg.dat'
             epgbakpath = '/media/hdd/epg.dat.bak'
@@ -2567,7 +2567,7 @@ class tvRemove(Screen):
         try:
             for root, dirs, files in os.walk(path):
                 if files is not None:
-                    files.sort()
+                    # files.sort()
                     for name in files:
                         if name.endswith('.postinst') or name.endswith('.preinst') or name.endswith('.prerm') or name.endswith('.postrm'):
                             continue
@@ -2583,6 +2583,9 @@ class tvRemove(Screen):
                                 continue
                         if name.startswith('enigma2-plugin-'):
                             self.names.append(name)
+                self.names.sort(key=lambda x:x, reverse=False)
+                # self.names.reverse()
+        
 
             if len(self.names) > -1:
                 self['info'].setText(_('Please Remove ...'))
@@ -2593,27 +2596,42 @@ class tvRemove(Screen):
         except Exception as e:
             print(e)
 
-    def message1(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.message1, MessageBox, _('Do you want to remove?'))
-        else:
+
+    def message1(self):
+        idx = self['list'].getSelectionIndex()
+        dom = self.names[idx]
+        com = dom
+        print('dom: ', dom)
+        print('com: ', com)
+        self.session.openWithCallback(self.message11, MessageBox, _('Do you want to remove?'), MessageBox.TYPE_YESNO)
+
+    def message11(self, answer):
+        # if answer is None:
+            # self.session.openWithCallback(self.message1, MessageBox, _('Do you want to remove?'))
+        # else:
+        if answer:
             idx = self['list'].getSelectionIndex()
             dom = self.names[idx]
             com = dom
+            print('dom: ', dom)
+            print('com: ', com)
             if os.path.exists('/var/lib/dpkg/info'):
-                self.session.open(tvConsole, _('Removing: %s') % dom, ['apt-get purge --auto-remove %s' % com], closeOnSuccess=False)
+                # self.session.open(tvConsole, _('Removing: %s') % dom, ['apt-get purge --auto-remove %s' % com], closeOnSuccess=False)
+                # self.session.open(tvConsole, _('Removing: %s') % dom, ['apt-get remove --auto-remove %s' % com], closeOnSuccess=True)
+                cmd = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Remove %s";apt-get remove --auto-remove %s' % (com, com)
+                self.session.open(tvConsole, title='DEB Local Remove', cmdlist=[cmd], closeOnSuccess=False)
             else:
                 try:
-                    self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove %s' % com], closeOnSuccess=False)
+                    self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove %s' % com], closeOnSuccess=True)
                 except:
-                    self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess=False)
+                    self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess=True)
         self.getfreespace()
 
     def getfreespace(self):
         try:
-            from Components.PluginComponent import plugins
-            plugins.clearPluginList()
-            plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
+            # from Components.PluginComponent import plugins
+            # plugins.clearPluginList()
+            # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
             fspace = Utils.freespace()
             self['pform'].setText(str(fspace))
             self.openList()
@@ -2622,7 +2640,7 @@ class tvRemove(Screen):
 
     def msgipkrst(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.msgipkrst, MessageBox, _('Do you want restart enigma2 ?'))
+            self.session.openWithCallback(self.msgipkrst, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
         else:
             epgpath = '/media/hdd/epg.dat'
             epgbakpath = '/media/hdd/epg.dat.bak'
@@ -2787,7 +2805,7 @@ class tvConfig(Screen, ConfigListScreen):
 
     def extnok(self):
         if self['config'].isChanged():
-            self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving the settings?'))
+            self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving the settings?'), MessageBox.TYPE_YESNO)
         else:
             self.close()
 
@@ -2869,7 +2887,7 @@ class SelectPiconz(Screen):
 
     def remove(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.remove, MessageBox, _('Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait ..' % str(mmkpicon)))
+            self.session.openWithCallback(self.remove, MessageBox, _('Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait ..' % str(mmkpicon)), MessageBox.TYPE_YESNO)
         else:
             self['info'].setText(_('Erase %s... please wait' % str(mmkpicon)))
             piconsx = glob.glob(str(mmkpicon) + '/*.png')
@@ -3087,7 +3105,7 @@ class MMarkPiconsf(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -3286,7 +3304,7 @@ class pluginx(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -3420,7 +3438,7 @@ class plugins_adult(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -3537,7 +3555,7 @@ class script(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -3654,7 +3672,7 @@ class repository(Screen):
 
     def okRun(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"))
+            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
         else:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
