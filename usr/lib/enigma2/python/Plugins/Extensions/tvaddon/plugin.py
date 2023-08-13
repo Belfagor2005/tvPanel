@@ -8,7 +8,7 @@
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
-from . import _
+from . import _, paypal
 from . import Utils
 from .Lcn import LCN
 from Components.ActionMap import ActionMap
@@ -80,16 +80,6 @@ def ssl_urlopen(url):
         return urlopen(url, context=sslContext)
     else:
         return urlopen(url)
-
-
-def trace_error():
-    import sys
-    import traceback
-    try:
-        traceback.print_exc(file=sys.stdout)
-        traceback.print_exc(file=open('/tmp/errorpanel.log', 'a'))
-    except:
-        pass
 
 
 try:
@@ -193,11 +183,11 @@ def checkGZIP(url):
         return None
 
 
-def paypal():
-    conthelp = "If you like what I do you\n"
-    conthelp += "can contribute with a coffee\n"
-    conthelp += "scan the qr code and donate € 1.00"
-    return conthelp
+# def paypal():
+    # conthelp = "If you like what I do you\n"
+    # conthelp += "can contribute with a coffee\n"
+    # conthelp += "scan the qr code and donate € 1.00"
+    # return conthelp
 
 
 def ReloadBouquets():

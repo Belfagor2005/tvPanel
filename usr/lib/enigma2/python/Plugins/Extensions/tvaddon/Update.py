@@ -22,7 +22,7 @@ def upd_done():
         popen(cmd02)
     except:
         popen(cmd01)
-    system('rm -rf /var/volatile/tmp/tvaddon.tar')
+    system('rm -rf /tmp/tvaddon.tar')
     return
 
 
