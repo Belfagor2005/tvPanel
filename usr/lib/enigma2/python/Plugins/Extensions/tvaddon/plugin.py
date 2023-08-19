@@ -637,34 +637,13 @@ class Categories(Screen):
                                                        'red': self.close,
                                                        'cancel': self.close}, -2)
 
-    # def downxmlpage(self):
-        # url = str(xml_path) + self.category
-        # try:
-            # # url = make_request(url)
-            # # if PY3:
-                # # url = six.ensure_str(url)
-            # # if PY3:
-                # # url = url.encode()
-                # # # url = six.ensure_str(url)
-            # print('downxmlpage py3: ', url)
-            # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-        # except Exception as e:
-            # print('error: ', str(e))
 
-    # def errorLoad(self, error):
-        # print(error)
-        # self['info'].setText(_('Try again later ...'))
-        # self.downloading = False
-
-    # def _gotPageLoad(self, data):
     def _gotPageLoad(self):
         self.xml = str(xml_path) + self.category
-
         # if PY3:
             # self.xml = self.xml.encode()
         # else:
             # self.xml = self.xml
-
         self.xml = checkGZIP(self.xml)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
@@ -2575,7 +2554,7 @@ class tvRemove(Screen):
                             self.names.append(name)
                 self.names.sort(key=lambda x:x, reverse=False)
                 # self.names.reverse()
-        
+
 
             if len(self.names) > -1:
                 self['info'].setText(_('Please Remove ...'))
@@ -2685,13 +2664,20 @@ class tvConfig(Screen, ConfigListScreen):
         self.setTitle(self.setup_title)
         payp = paypal()
         self["paypal"].setText(payp)
-        # if not os.path.exists('/tmp/currentip'):
-            # os.system('wget -qO- http://ipecho.net/plain > /tmp/currentip')
-        file = os.popen('wget -qO - ifconfig.me')
-        public = file.read()
-        # currentip1 = open('/tmp/currentip', 'r')
-        # currentip = currentip1.read()
-        self['info'].setText(_('Config Panel Addon\nYour current IP is %s') % str(public))
+        try:
+            img = os.popen('cat /etc/issue').read().strip('\n\r')
+            # pyt = os.popen('python -V').read()
+            arc = os.popen('uname -m').read().strip('\n\r')
+            ifg = os.popen('wget -qO - ifconfig.me').read().strip('\n\r')
+            img = img.replace('\l', '')
+            # print(img)
+            # print(pyt)
+            # print(arc)
+            # print(ifg)
+            self['info'].setText(_('Image: %s\nCpu: %s\nCurrent Wan IP: %s') % (img, arc, ifg))
+        except Exception as e:
+            print("Error ", e)
+            self['info'].setText(_(':) by Lululla '))
 
     def tvUpdate(self):
         self.session.open(tvUpdate)
