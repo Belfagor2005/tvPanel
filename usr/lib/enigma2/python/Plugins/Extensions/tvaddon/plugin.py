@@ -1831,7 +1831,7 @@ class tvInstall(Screen):
         self.error_message = None
         self.download = None
         self.aborted = False
-        # self.downloading = False
+        self.downloading = False
         regex = '<plugin name="(.*?)".*?url>"(.*?)"</url'
         match = re.compile(regex, re.DOTALL).findall(data1)
         for name, url in match:
@@ -2030,7 +2030,7 @@ class tvInstall(Screen):
         self.progclear = 0
         self['info'].setText(_('Please select ...'))
         if os.path.exists(self.dest):
-            # self.downloading = False
+            self.downloading = False
             self['progresstext'].text = ''
             self['progress'].setValue(self.progclear)
             self["progress"].hide()
@@ -2041,7 +2041,7 @@ class tvInstall(Screen):
         self.error_message = error_message
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
-        # self.downloading = False
+        self.downloading = False
         self.session.open(MessageBox, _('Download Failed!!!'), MessageBox.TYPE_INFO, timeout=5)
 
     def abort(self):
@@ -3112,7 +3112,7 @@ class MMarkPiconsf(Screen):
                     url = 'https://download' + str(match[0])
                     self.download = downloadWithProgress(url, dest)
                     self.download.addProgress(self.downloadProgress)
-                    self.download.start().addCallback(self.install).addErrback(self.showError)
+                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
                 except Exception as e:
                     print('error: ', str(e))
             else:
