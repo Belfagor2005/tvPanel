@@ -223,7 +223,7 @@ config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
-currversion = '2.1.0'
+currversion = '2.1.1'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
@@ -2587,7 +2587,6 @@ class tvRemove(Screen):
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-        # self.getfreespace()
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'green': self.message1,
                                                        'ok': self.message1,
@@ -2625,7 +2624,6 @@ class tvRemove(Screen):
         try:
             for root, dirs, files in os.walk(path):
                 if files is not None:
-                    # files.sort()
                     for name in files:
                         if name.endswith('.postinst') or name.endswith('.preinst') or name.endswith('.prerm') or name.endswith('.postrm'):
                             continue
@@ -2642,14 +2640,10 @@ class tvRemove(Screen):
                         if name.startswith('enigma2-plugin-'):
                             self.names.append(name)
                 self.names.sort(key=lambda x: x, reverse=False)
-                # self.names.reverse()
-
             if len(self.names) > -1:
                 self['info'].setText(_('Please Remove ...'))
                 self['key_green'].show()
-            # self['key_green'].show()
             showlist(self.names, self['list'])
-            # self.getfreespace()
         except Exception as e:
             print(e)
 
@@ -2669,10 +2663,12 @@ class tvRemove(Screen):
             print('dom: ', dom)
             print('com: ', com)
             if os.path.exists('/var/lib/dpkg/info'):
-                # self.session.open(tvConsole, _('Removing: %s') % dom, ['apt-get purge --auto-remove %s' % com], closeOnSuccess=False)
-                # self.session.open(tvConsole, _('Removing: %s') % dom, ['apt-get remove --auto-remove %s' % com], closeOnSuccess=True)
-                cmd = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Remove %s";apt-get remove --auto-remove %s' % (com, com)
-                self.session.open(tvConsole, title='DEB Local Remove', cmdlist=[cmd], closeOnSuccess=False)
+                try:
+                    cmd = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Remove %s";dpkg -P %s' % (com, com)                
+                    self.session.open(tvConsole, title='DEB Local Remove', cmdlist=[cmd], closeOnSuccess=False)
+                except:    
+                    cmd = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Remove %s";apt-get purge %s' % (com, com)                
+                    self.session.open(tvConsole, title='DEB Local Remove', cmdlist=[cmd], closeOnSuccess=False)                    
             else:
                 try:
                     self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove %s' % com], closeOnSuccess=True)
