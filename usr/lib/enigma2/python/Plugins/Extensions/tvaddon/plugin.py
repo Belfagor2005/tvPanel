@@ -1994,7 +1994,7 @@ class tvInstall(Screen):
                         # cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s'" % (RequestAgent(), str(self.com), self.dest)]
                     # self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
 
-                    self.session.open(tvConsole, _('Downloading: %s') % self.dom, self.dest, closeOnSuccess=False)
+                    self.session.open(tvConsole, _('Downloading: %s') % self.dom, cmd, closeOnSuccess=False)
                     self['info'].setText(_('Download done !!!'))
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     self.timer.start(1000, True)
