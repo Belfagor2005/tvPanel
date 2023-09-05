@@ -26,7 +26,7 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Sources.Progress import Progress
 from Components.Sources.StaticText import StaticText
 from Plugins.Plugin import PluginDescriptor
-from Screens.Console import Console
+from Screens.Console import Console as tvConsole
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -268,7 +268,7 @@ if not os.path.exists(mmkpicon):
 
 Panel_list = [
  _('LULULLA CORNER'),
- _('DEBIAN DREAMOS'),
+ # _('DEBIAN DREAMOS'),
  _('DAILY PICONS'),
  _('DAILY SETTINGS'),
  _('KODILITE BY PCD'),
@@ -291,6 +291,8 @@ Panel_list = [
 Panel_list2 = [
  ('SAVE DTT BOUQUET'),
  ('RESTORE DTT BOUQUET'),
+ ('UPDATE SATELLITES.XML'),
+ ('UPDATE TERRESTRIAL.XML'),
  ('SETTINGS BI58'),
  ('SETTINGS CIEFP'),
  ('SETTINGS CYRUS'),
@@ -299,9 +301,8 @@ Panel_list2 = [
  ('SETTINGS MORPHEUS'),
  ('SETTINGS PREDRAG'),
  ('SETTINGS VHANNIBAL'),
- ('SETTINGS VHANNIBAL 2'),
- ('UPDATE SATELLITES.XML'),
- ('UPDATE TERRESTRIAL.XML')]
+ ('SETTINGS VHANNIBAL 2')
+]
 
 Panel_list3 = [
  _('MMARK PICONS BLACK'),
@@ -469,11 +470,18 @@ class Hometv(Screen):
             del self.menu_list[0]
         list = []
         idx = 0
-        for x in Panel_list:
-            list.append(DailyListEntry(x, idx))
-            self.menu_list.append(x)
-            idx += 1
-        self['list'].setList(list)
+        if os.path.exists('/var/lib/dpkg/info'):
+        # if sel == _('DEBIAN DREAMOS'):
+                category = 'debian.xml'
+                self.session.open(Categories, category)
+                self.close()
+        else:
+            for x in Panel_list:
+                list.append(DailyListEntry(x, idx))
+                self.menu_list.append(x)
+                idx += 1
+                            
+            self['list'].setList(list)
 
     def okRun(self):
         self.keyNumberGlobalCB(self['list'].getSelectedIndex())
@@ -610,12 +618,18 @@ class Categories(Screen):
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
+        self['key_green'] = Button(_('Extensions Installer'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
-        self['key_yellow'].hide()
+        self['key_yellow'] = Button(_('Uninstall'))
+        self["key_blue"] = Button(_("tvManager"))
         self['key_blue'].hide()
+        self.Update = False
+        if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
+            self["key_blue"].show()
+            self['key_blue'] = Label(_('tvManager'))
+        elif os.path.exists('/usr/lib/enigma2/python/Plugins/PLi/tvManager'):
+            self["key_blue"].show()
+            self['key_blue'] = Label(_('tvManager'))
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
@@ -626,10 +640,16 @@ class Categories(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions'], {'ok': self.okRun,
-                                                       'green': self.okRun,
-                                                       'red': self.close,
-                                                       'cancel': self.close}, -2)
+                                     'ColorActions',
+                                     'EPGSelectActions',
+                                     'MenuActions',
+                                     'DirectionActions'], {'ok': self.okRun,
+                                                           'green': self.tvIPK,
+                                                           'menu': self.goConfig,
+                                                           'blue': self.tvManager,
+                                                           'yellow': self.ipkDs,
+                                                           'red': self.close,
+                                                           'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
         self.xml = str(xml_path) + self.category
@@ -650,6 +670,23 @@ class Categories(Screen):
             self.downloading = True
         except Exception as e:
             print('error: ', str(e))
+
+    def tvIPK(self):
+        self.session.open(tvIPK)
+
+    def ipkDs(self):
+        self.session.open(tvRemove)
+
+    def tvManager(self):
+        tvman = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvManager'))
+        if os.path.exists(tvman):
+            from Plugins.Extensions.tvManager.plugin import tvManager
+            self.session.openWithCallback(self.close, tvManager)
+        else:
+            self.session.open(MessageBox, ("tvManager Not Installed!!\nInstall First"), type=MessageBox.TYPE_INFO, timeout=3)
+
+    def goConfig(self):
+        self.session.open(tvConfig)
 
     def okRun(self):
         if self.downloading is True:
@@ -1975,7 +2012,6 @@ class tvInstall(Screen):
                     self.session.open(tvConsole, _('SETTING - install: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                 elif 'picon' in self.dom.lower():
-
                     self.dest = self.dowfil()
                     cmd = ["unzip -o -q %s -d %s > /dev/null" % (self.dest, str(mmkpicon))]
                     # cmd = ["wget -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest, str(mmkpicon))]
@@ -1985,15 +2021,12 @@ class tvInstall(Screen):
                     self['info'].setText(_('Installation done !!!'))
                 else:
                     self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
-
                     self.dest = self.dowfil()
                     cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % (RequestAgent(), str(self.com), self.dest)]
-
                     # cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % (RequestAgent(), str(self.com), self.dest)]
                     # if "https" in str(self.com):
                         # cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s'" % (RequestAgent(), str(self.com), self.dest)]
                     # self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
-
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, cmd, closeOnSuccess=False)
                     self['info'].setText(_('Download done !!!'))
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2010,7 +2043,6 @@ class tvInstall(Screen):
         else:
             import urllib2
             import cookielib
-
         headers = {'User-Agent': RequestAgent()}
         cookie_jar = cookielib.CookieJar()
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar))
@@ -2050,9 +2082,7 @@ class tvInstall(Screen):
                 extension = extensionlist[-1]  # .lower()
                 if len(extensionlist) > 1:
                     tar = extensionlist[-2]  # .lower()
-
                 print('extension= ', extension)
-
                 if extension == "deb":
                     if not os.path.exists('/var/lib/dpkg/status'):
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2063,7 +2093,6 @@ class tvInstall(Screen):
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                         return
-
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
                 if os.path.exists('/var/lib/dpkg/info'):
@@ -2132,126 +2161,6 @@ class tvInstall(Screen):
 
     def tvIPK(self):
         self.session.openWithCallback(self.close, tvIPK)
-
-
-class tvConsole(Screen):
-    def __init__(self, session, title="Console", cmdlist=None, finishedCallback=None, closeOnSuccess=False, endstr=''):
-        self.session = session
-        skin = os.path.join(skin_path, 'tvConsole.xml')
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-        self.setup_title = ('Console')
-        Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
-        self.finishedCallback = finishedCallback
-        self.closeOnSuccess = closeOnSuccess
-        self.endstr = endstr
-        self.errorOcurred = False
-        self['title'] = Label(_(title_plug))
-        self['list'] = ScrollLabel('')
-        self['actions'] = ActionMap(['DirectionActions',
-                                     'ColorActions'], {'ok': self.cancel,
-                                                       'back': self.cancel,
-                                                       'red': self.cancel,
-                                                       'blue': self.restartenigma,
-                                                       'up': self['list'].pageUp,
-                                                       'down': self['list'].pageDown}, -1)
-        self.cmdlist = cmdlist
-        self.newtitle = _(title_plug)
-        self.onShown.append(self.updateTitle)
-        self.container = eConsoleAppContainer()
-        self.run = 0
-        try:
-            self.container.appClosed.append(self.runFinished)
-            self.container.dataAvail.append(self.dataAvail)
-        except:
-            self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
-            self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
-        self.onLayoutFinish.append(self.startRun)
-
-    def updateTitle(self):
-        self.setTitle(self.newtitle)
-
-    def startRun(self):
-        self['list'].setText(_('Execution Progress:') + '\n\n')
-        print('Console: executing in run', self.run, ' the command:', self.cmdlist[self.run])
-        if self.container.execute(self.cmdlist[self.run]):
-            self.runFinished(-1)
-
-    def runFinished(self, retval):
-        self.run += 1
-        if self.run != len(self.cmdlist):
-            if self.container.execute(self.cmdlist[self.run]):
-                self.runFinished(-1)
-        else:
-            self.show()
-            self.finished = True
-            str = self["list"].getText()
-            if not retval and self.endstr.startswith("Swapping"):
-                str += _("\n\n" + self.endstr)
-            else:
-                str += _("Execution finished!!\n")
-            self["list"].setText(str)
-            self["list"].lastPage()
-            # if self.finishedCallback is not None:
-                # self.finishedCallback(retval)
-            # if not retval and self.closeOnSuccess:
-            self.cancel()
-
-    def cancel(self):
-        if self.run == len(self.cmdlist):
-            try:
-                self.appClosed_conn = None
-                self.dataAvail_conn = None
-            except:
-                self.container.appClosed.remove(self.runFinished)
-                self.container.dataAvail.remove(self.dataAvail)
-            self.close()
-
-    def cancelCallback(self, ret=None):
-        self.cancel_msg = None
-        if ret:
-            self.container.appClosed.remove(self.runFinished)
-            self.container.dataAvail.remove(self.dataAvail)
-            self.container.kill()
-            self.close()
-        return
-
-    def dataAvail(self, data):
-        if PY3:
-            data = data.decode("utf-8")
-        try:
-            self["list"].setText(self["list"].getText() + data)
-        except Exception as e:
-            print(e)
-        if self["list"].getText().endswith("Do you want to continue? [Y/n] "):
-            self.session.openWithCallback(self.processAnswer, MessageBox, _("Additional packages must be installed. Do you want to continue?"), MessageBox.TYPE_YESNO)
-        return
-
-    def processAnswer(self, retval):
-        if retval:
-            self.container.write("Y", 1)
-        else:
-            self.container.write("n", 1)
-        self.dataSent_conn = self.container.dataSent.connect(self.processInput)
-
-    def processInput(self, retval):
-        self.container.sendEOF()
-
-    def restartenigma(self):
-        self.session.open(TryQuitMainloop, 3)
-
-    def closeConsole(self):
-        if self.finished:
-            try:
-                self.container.appClosed.append(self.runFinished)
-                self.container.dataAvail.append(self.dataAvail)
-            except:
-                self.appClosed_conn = self.container.appClosed.connect(self.runFinished)
-                self.dataAvail_conn = self.container.dataAvail.connect(self.dataAvail)
-                self.close()
-            else:
-                self.show()
 
 
 class tvIPK(Screen):
@@ -2505,12 +2414,15 @@ class tvUpdate(Screen):
             self.timer.callback.append(self.msgupdate1)
         self.timer.start(1000, 1)
         self['title'] = Label(_(title_plug))
-        self['actions'] = ActionMap(['DirectionActions',
-                                     'ColorActions'], {'ok': self.close,
-                                                       'cancel': self.close,
-                                                       'green': self.msgipkrst1,
-                                                       'red': self.close,
-                                                       'yellow': self.msgupdate}, -1)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions'], {'ok': self.close,
+                                                           'cancel': self.close,
+                                                           'green': self.msgipkrst1,
+                                                           'red': self.close,
+                                                           'cancel': self.close,
+                                                           'back': self.close,
+                                                           'yellow': self.msgupdate}, -1)
 
     def msgupdate1(self, answer=None):
         if self.Update is False:
@@ -2613,10 +2525,19 @@ class tvRemove(Screen):
 
     def openList(self):
         self.list = []
+        # not refreshing list !!!
         del self.names[:]
         del self.list[:]
         for x in self.list:
-            del self.list[0]
+            print('xxxx= ', x)
+            del self.list[0:x]
+        i = len(self.list)
+        del self.list[0:i]
+        o = len(self.names)
+        del self.names[0:o]
+        self.list = self.names
+        # oh my head
+
         self["list"].l.setList(self.list)
         path = ('/var/lib/opkg/info')
         if os.path.exists('/var/lib/dpkg/info'):
@@ -2638,7 +2559,7 @@ class tvRemove(Screen):
                             if name.endswith('.list'):
                                 continue
                         if name.startswith('enigma2-plugin-'):
-                            self.names.append(name)
+                            self.names.append(str(name))
                 self.names.sort(key=lambda x: x, reverse=False)
             if len(self.names) > -1:
                 self['info'].setText(_('Please Remove ...'))
@@ -2651,8 +2572,8 @@ class tvRemove(Screen):
         idx = self['list'].getSelectionIndex()
         dom = self.names[idx]
         com = dom
-        print('dom: ', dom)
-        print('com: ', com)
+        # print('dom: ', dom)
+        # print('com: ', com)
         self.session.openWithCallback(self.message11, MessageBox, _('Do you want to remove?'), MessageBox.TYPE_YESNO)
 
     def message11(self, answer):
@@ -2674,13 +2595,22 @@ class tvRemove(Screen):
                     self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove %s' % com], closeOnSuccess=True)
                 except:
                     self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove --force-removal-of-dependent-packages %s' % com], closeOnSuccess=True)
-        self.getfreespace()
+            # i = len(self.list)
+            # del self.list[0:i]
+            self.close()
+        # self.getfreespace()
 
     def getfreespace(self):
         try:
             # from Components.PluginComponent import plugins
             # plugins.clearPluginList()
             # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
+            # i = len(self.list)
+            # print('print list i: ', i)
+            # del self.list[i]
+            # a = len(self.names)
+            # print('print names a: ', a)
+            # del self.names[a]
             fspace = Utils.freespace()
             self['pform'].setText(str(fspace))
             self.openList()
@@ -2714,6 +2644,7 @@ class tvConfig(Screen, ConfigListScreen):
         self['description'] = Label('')
         self["paypal"] = Label('')
         self['info'] = Label(_('Config Panel Addon'))
+        # self['info'] = ScrollLabel('')
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Save'))
         self['key_red'] = Button(_('Back'))
@@ -2740,24 +2671,53 @@ class tvConfig(Screen, ConfigListScreen):
         if self.setInfo not in self['config'].onSelectionChanged:
             self['config'].onSelectionChanged.append(self.setInfo)
 
+
+    def arckget(self):
+        zarcffll = ''
+        try:
+            if os.path.exists('/var/lib/dpkg/info'):
+                zarcffll = os.popen('dpkg --print-architecture | grep -iE "arm|aarch64|mips|cortex|sh4|sh_4"').read().strip('\n\r')
+            else:
+                zarcffll = os.popen('opkg print-architecture | grep -iE "arm|aarch64|mips|cortex|h4|sh_4"').read().strip('\n\r')
+        except Exception as e:
+            print("Error ", e)   
+        return str(zarcffll)
+
     def layoutFinished(self):
         self.setTitle(self.setup_title)
         payp = paypal()
         self["paypal"].setText(payp)
         try:
+            arkFull = ''
+            if self.arckget():
+                arkFull = self.arckget()
+                print('arkget= ', arkFull)
             img = os.popen('cat /etc/issue').read().strip('\n\r')
-            # pyt = os.popen('python -V').read()
             arc = os.popen('uname -m').read().strip('\n\r')
             ifg = os.popen('wget -qO - ifconfig.me').read().strip('\n\r')
             img = img.replace('\l', '')
-            # print(img)
-            # print(pyt)
-            # print(arc)
-            # print(ifg)
-            self['info'].setText(_('Image: %s\nCpu: %s\nCurrent Wan IP: %s') % (img, arc, ifg))
+            libs = os.popen('ls -l /usr/lib/libss*.*').read().strip('\n\r')
+            if libs:
+                libsssl = libs
+            info = 'Current IP Wan: %s\nImage Mounted: %s Cpu: %s\nArchitecture information: %s\nLibssl(oscam):\n%s' % (ifg, img, arc, arkFull, libsssl)            
+            self['info'].setText(info)
         except Exception as e:
             print("Error ", e)
             self['info'].setText(_(':) by Lululla '))
+
+    # def layoutFinished(self):
+        # self.setTitle(self.setup_title)
+        # payp = paypal()
+        # self["paypal"].setText(payp)
+        # try:
+            # img = os.popen('cat /etc/issue').read().strip('\n\r')
+            # arc = os.popen('uname -m').read().strip('\n\r')
+            # ifg = os.popen('wget -qO - ifconfig.me').read().strip('\n\r')
+            # img = img.replace('\l', '')
+            # self['info'].setText(_('Image: %s\nCpu: %s\nCurrent Wan IP: %s') % (img, arc, ifg))
+        # except Exception as e:
+            # print("Error ", e)
+            # self['info'].setText(_(':) by Lululla '))
 
     def tvUpdate(self):
         self.session.open(tvUpdate)
