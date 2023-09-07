@@ -266,6 +266,13 @@ if not os.path.exists(mmkpicon):
     except OSError as e:
         print(('Error creating directory %s:\n%s') % (mmkpicon, str(e)))
 
+
+Panel_deb = [
+ _('DEBIAN DREAMOS'),
+ _('DAILY PICONS'),
+ _('DAILY SETTINGS'),
+ ]
+
 Panel_list = [
  _('LULULLA CORNER'),
  # _('DEBIAN DREAMOS'),
@@ -470,18 +477,23 @@ class Hometv(Screen):
             del self.menu_list[0]
         list = []
         idx = 0
-        if os.path.exists('/var/lib/dpkg/info'):
         # if sel == _('DEBIAN DREAMOS'):
-                category = 'debian.xml'
-                self.session.open(Categories, category)
-                self.close()
+        if os.path.exists('/var/lib/dpkg/info'): 
+            for x in Panel_deb:
+                list.append(DailyListEntry(x, idx))
+                self.menu_list.append(x)
+                idx += 1        
+        
+                # category = 'debian.xml'
+                # self.session.open(Categories, category)
+                # self.close()
         else:
             for x in Panel_list:
                 list.append(DailyListEntry(x, idx))
                 self.menu_list.append(x)
                 idx += 1
                             
-            self['list'].setList(list)
+        self['list'].setList(list)
 
     def okRun(self):
         self.keyNumberGlobalCB(self['list'].getSelectedIndex())
@@ -2704,20 +2716,6 @@ class tvConfig(Screen, ConfigListScreen):
         except Exception as e:
             print("Error ", e)
             self['info'].setText(_(':) by Lululla '))
-
-    # def layoutFinished(self):
-        # self.setTitle(self.setup_title)
-        # payp = paypal()
-        # self["paypal"].setText(payp)
-        # try:
-            # img = os.popen('cat /etc/issue').read().strip('\n\r')
-            # arc = os.popen('uname -m').read().strip('\n\r')
-            # ifg = os.popen('wget -qO - ifconfig.me').read().strip('\n\r')
-            # img = img.replace('\l', '')
-            # self['info'].setText(_('Image: %s\nCpu: %s\nCurrent Wan IP: %s') % (img, arc, ifg))
-        # except Exception as e:
-            # print("Error ", e)
-            # self['info'].setText(_(':) by Lululla '))
 
     def tvUpdate(self):
         self.session.open(tvUpdate)
