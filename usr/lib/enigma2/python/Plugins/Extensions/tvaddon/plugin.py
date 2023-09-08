@@ -22,7 +22,7 @@ from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText
 from Components.MultiContent import MultiContentEntryPixmapAlphaTest
 from Components.ProgressBar import ProgressBar
-from Components.ScrollLabel import ScrollLabel
+# from Components.ScrollLabel import ScrollLabel
 from Components.Sources.Progress import Progress
 from Components.Sources.StaticText import StaticText
 from Plugins.Plugin import PluginDescriptor
@@ -42,7 +42,7 @@ from enigma import getDesktop
 from enigma import eListboxPythonMultiContent, eConsoleAppContainer
 from os import chmod
 from twisted.web.client import downloadPage, getPage
-import base64
+# import base64
 import os
 import re
 import sys
@@ -456,7 +456,7 @@ class Hometv(Screen):
         if dependencies is False:
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh", 0o0755)
             cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh"
-            self.session.openWithCallback(self.starts, Console, title="Checking Python Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
+            self.session.openWithCallback(self.starts, tvConsole, title="Checking Python Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
         else:
             self.starts()
 
@@ -478,12 +478,11 @@ class Hometv(Screen):
         list = []
         idx = 0
         # if sel == _('DEBIAN DREAMOS'):
-        if os.path.exists('/var/lib/dpkg/info'): 
+        if os.path.exists('/var/lib/dpkg/info'):
             for x in Panel_deb:
                 list.append(DailyListEntry(x, idx))
                 self.menu_list.append(x)
-                idx += 1        
-        
+                idx += 1
                 # category = 'debian.xml'
                 # self.session.open(Categories, category)
                 # self.close()
@@ -492,7 +491,6 @@ class Hometv(Screen):
                 list.append(DailyListEntry(x, idx))
                 self.menu_list.append(x)
                 idx += 1
-                            
         self['list'].setList(list)
 
     def okRun(self):
@@ -1927,7 +1925,7 @@ class tvInstall(Screen):
         global set
         self.com = com
         self.dom = dom
-        n2 = self.com.rfind("/", 0)
+        # n2 = self.com.rfind("/", 0)
         # dom = self.com[:n2]
         # self.downplug = self.com.replace(dom, '').replace('/', '').lower()
         self.downplug = self.com.split("/")[-1]
@@ -2081,12 +2079,12 @@ class tvInstall(Screen):
             self.dom = self.names[idx]
             self.com = self.urls[idx]
             n2 = self.com.rfind("/", 0)
-            dom = self.com[:n2]
+            # dom = self.com[:n2]
             # self.downplug = self.com.replace(dom, '').replace('/', '').lower()
             self.downplug = self.com.split("/")[-1]
             self.dest = '/tmp/' + self.downplug
-            print('self.downplug= ', self.downplug)
-            print('self.dest= ', self.dest)
+            # print('self.downplug= ', self.downplug)
+            # print('self.dest= ', self.dest)
             if os.path.exists(self.dest):
                 os.remove(self.dest)
             if self.com is not None:
@@ -2432,7 +2430,6 @@ class tvUpdate(Screen):
                                                            'cancel': self.close,
                                                            'green': self.msgipkrst1,
                                                            'red': self.close,
-                                                           'cancel': self.close,
                                                            'back': self.close,
                                                            'yellow': self.msgupdate}, -1)
 
@@ -2581,9 +2578,9 @@ class tvRemove(Screen):
             print(e)
 
     def message1(self):
-        idx = self['list'].getSelectionIndex()
-        dom = self.names[idx]
-        com = dom
+        # idx = self['list'].getSelectionIndex()
+        # dom = self.names[idx]
+        # com = dom
         # print('dom: ', dom)
         # print('com: ', com)
         self.session.openWithCallback(self.message11, MessageBox, _('Do you want to remove?'), MessageBox.TYPE_YESNO)
@@ -2593,15 +2590,15 @@ class tvRemove(Screen):
             idx = self['list'].getSelectionIndex()
             dom = self.names[idx]
             com = dom
-            print('dom: ', dom)
-            print('com: ', com)
+            # print('dom: ', dom)
+            # print('com: ', com)
             if os.path.exists('/var/lib/dpkg/info'):
                 try:
-                    cmd = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Remove %s";dpkg -P %s' % (com, com)                
+                    cmd = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Remove %s";dpkg -P %s' % (com, com)
                     self.session.open(tvConsole, title='DEB Local Remove', cmdlist=[cmd], closeOnSuccess=False)
-                except:    
-                    cmd = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Remove %s";apt-get purge %s' % (com, com)                
-                    self.session.open(tvConsole, title='DEB Local Remove', cmdlist=[cmd], closeOnSuccess=False)                    
+                except:
+                    cmd = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Remove %s";apt-get purge %s' % (com, com)
+                    self.session.open(tvConsole, title='DEB Local Remove', cmdlist=[cmd], closeOnSuccess=False)
             else:
                 try:
                     self.session.open(tvConsole, _('Removing: %s') % dom, ['opkg remove %s' % com], closeOnSuccess=True)
@@ -2683,7 +2680,6 @@ class tvConfig(Screen, ConfigListScreen):
         if self.setInfo not in self['config'].onSelectionChanged:
             self['config'].onSelectionChanged.append(self.setInfo)
 
-
     def arckget(self):
         zarcffll = ''
         try:
@@ -2692,7 +2688,7 @@ class tvConfig(Screen, ConfigListScreen):
             else:
                 zarcffll = os.popen('opkg print-architecture | grep -iE "arm|aarch64|mips|cortex|h4|sh_4"').read().strip('\n\r')
         except Exception as e:
-            print("Error ", e)   
+            print("Error ", e)
         return str(zarcffll)
 
     def layoutFinished(self):
@@ -2711,7 +2707,7 @@ class tvConfig(Screen, ConfigListScreen):
             libs = os.popen('ls -l /usr/lib/libss*.*').read().strip('\n\r')
             if libs:
                 libsssl = libs
-            info = 'Current IP Wan: %s\nImage Mounted: %s Cpu: %s\nArchitecture information: %s\nLibssl(oscam):\n%s' % (ifg, img, arc, arkFull, libsssl)            
+            info = 'Current IP Wan: %s\nImage Mounted: %s Cpu: %s\nArchitecture information: %s\nLibssl(oscam):\n%s\n' % (ifg, img, arc, arkFull, libsssl)
             self['info'].setText(info)
         except Exception as e:
             print("Error ", e)
