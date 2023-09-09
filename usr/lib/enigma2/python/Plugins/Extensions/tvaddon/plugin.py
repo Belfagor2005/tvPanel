@@ -21,6 +21,7 @@ from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText
 from Components.MultiContent import MultiContentEntryPixmapAlphaTest
+from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 # from Components.ScrollLabel import ScrollLabel
 from Components.Sources.Progress import Progress
@@ -102,6 +103,25 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+
+
+def status_site():
+    global status
+    import requests
+    try:
+        Host = 'http://patbuweb.com/uppy/'
+        # response = requests.get(Host, headers={'User-Agent': RequestAgent()}, verify=False)
+        response = requests.get(Host, verify=False)
+        if response.status_code == 200:
+            status = True
+            print('Web site exists')
+        else:
+            status = False
+            print('Web site does not exist')
+    except Exception as e:
+        print(e)
+        status = False
+    return status
 
 
 def checkMyFile(url):
@@ -244,7 +264,6 @@ plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvaddon'))
 ico_path = os.path.join(plugin_path, 'logo.png')
 no_cover = os.path.join(plugin_path, 'no_coverArt.png')
 res_plugin_path = os.path.join(plugin_path, '/res/')
-
 _firstStarttvspro = True
 
 screenwidth = getDesktop(0).size()
@@ -388,6 +407,11 @@ class Hometv(Screen):
         self['key_yellow'] = Button(_('Uninstall'))
         self["key_blue"] = Button(_("tvManager"))
         self['key_blue'].hide()
+        self['statusgreen'] = Pixmap()
+        self['statusgreen'].hide()
+        self['statusred'] = Pixmap()
+        self['statusred'].hide()
+        self['status'] = Label('Please wait..')
         self.Update = False
         if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
             self["key_blue"].show()
@@ -426,12 +450,18 @@ class Hometv(Screen):
                     self.Update = True
         except Exception as e:
             print('error: ', str(e))
-        self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
-        else:
-            self.timer.callback.append(self.msgupdate1)
-        self.timer.start(500, 1)
+        # self.timer = eTimer()
+        # if os.path.exists('/var/lib/dpkg/info'):
+            # self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
+        # else:
+            # self.timer.callback.append(self.msgupdate1)
+        # self.timer.start(500, 1)
+        # self.timer2 = eTimer()
+        # if os.path.exists('/var/lib/dpkg/info'):
+            # self.timer2_conn = self.timer2.timeout.connect(self.__layoutFinished)
+        # else:
+            # self.timer2.callback.append(self.__layoutFinished)
+        # self.timer2.start(150, 1)        
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -446,6 +476,20 @@ class Hometv(Screen):
                                                            'back': self.closerm,
                                                            'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
+
+
+    def __layoutFinished(self):
+        # status = status_site()
+        # if status is True:
+        if status_site():
+            self['statusgreen'].show()
+            self['statusred'].hide()
+            self['status'].setText('SERVER ON')
+        else:
+            self['statusgreen'].hide()
+            self['statusred'].show()
+            self['status'].setText('SERVER OFF')
+        self.setTitle(self.setup_title)
 
     def check_dependencies(self):
         dependencies = True
@@ -492,6 +536,19 @@ class Hometv(Screen):
                 self.menu_list.append(x)
                 idx += 1
         self['list'].setList(list)
+        self.timer = eTimer()
+        if os.path.exists('/var/lib/dpkg/info'):
+            self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
+        else:
+            self.timer.callback.append(self.msgupdate1)
+        self.timer.start(150, 1)
+        self.timer2 = eTimer()
+        if os.path.exists('/var/lib/dpkg/info'):
+            self.timer2_conn = self.timer2.timeout.connect(self.__layoutFinished)
+        else:
+            self.timer2.callback.append(self.__layoutFinished)
+        self.timer2.start(200, 1)       
+
 
     def okRun(self):
         self.keyNumberGlobalCB(self['list'].getSelectedIndex())

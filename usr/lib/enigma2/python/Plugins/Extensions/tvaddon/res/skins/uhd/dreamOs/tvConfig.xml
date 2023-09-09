@@ -5,9 +5,9 @@
 	<ePixmap position="292,37" size="372,81" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" alphatest="blend" zPosition="5" />
 	<ePixmap position="292,202" size="1366,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" zPosition="5" />
 	<!-- Menu List -->
-	<widget name="config" position="292,256" size="1372,415" itemHeight="60" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png" />
-	<widget name="info" position="289,775" size="1372,427" font="Regular;40" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
-	<widget name="description" position="292,687" size="1372,84" font="Regular;40" halign="left" foregroundColor="green" backgroundColor="#20000000" transparent="1" zPosition="5" />	
+	<widget name="config" position="292,221" size="1372,352" itemHeight="60" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png" />
+	<widget name="info" position="287,669" size="1372,533" font="Regular;40" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="description" position="292,582" size="1372,84" font="Regular;40" halign="left" foregroundColor="green" backgroundColor="#20000000" transparent="1" zPosition="5" />	
 	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/PayPal.png" position="2066,157" size="156,75" zPosition="2" alphatest="on" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/qr-code.png" position="1989,251" size="320,320" zPosition="2" alphatest="on" />
