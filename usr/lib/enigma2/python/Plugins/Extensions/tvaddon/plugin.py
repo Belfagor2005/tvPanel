@@ -1995,22 +1995,40 @@ class tvInstall(Screen):
             self.timer = eTimer()
             extensionlist = self.com.split('.')
             extension = extensionlist[-1]  # .lower()
+            
             if len(extensionlist) > 1:
-                tar = extensionlist[-2]  # .lower()
+                tar = extensionlist[-2]
             if extension in ["gz", "bz2"] and tar == "tar":
                 self.command = ['']
                 if extension == "gz":
-                    self.command = ["tar -xzvf " + self.dest + " -C / > /dev/null"]
+                    self.command = ["tar -xzvf " + self.dest + " -C /"]
                 elif extension == "bz2":
-                    self.command = ["tar -xjvf " + self.dest + " -C / > /dev/null"]
+                    self.command = ["tar -xjvf " + self.dest + " -C /"]
 
-                self.dest = self.dowfil()
-                cmd = "%s" % self.command[0]
-                # cmd = "wget -U '%s' -c '%s' -O '%s';%s" % (RequestAgent(), str(self.com), self.dest, self.command[0])
-                # if "https" in str(self.com):
-                    # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s" % (RequestAgent(), str(self.com), self.dest, self.command[0])
-                self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
+                cmd = "wget -U '%s' -c '%s' -O '%s';%s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.command[0])
+                if "https" in str(self.com):
+                    cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.command[0])
+
+                self.session.open(tvConsole, title='Installation %s' % self.dom, cmdlist=[cmd, 'sleep 5'])  # , finishedCallback=self.msgipkinst)
                 self['info'].setText(_('Installation done !!!'))
+                return
+
+            # if len(extensionlist) > 1:
+                # tar = extensionlist[-2]  # .lower()
+            # if extension in ["gz", "bz2"] and tar == "tar":
+                # self.command = ['']
+                # if extension == "gz":
+                    # self.command = ["tar -xzvf " + self.dest + " -C / > /dev/null"]
+                # elif extension == "bz2":
+                    # self.command = ["tar -xjvf " + self.dest + " -C / > /dev/null"]
+
+                # self.dest = self.dowfil()
+                # cmd = "%s" % self.command[0]
+                # # cmd = "wget -U '%s' -c '%s' -O '%s';%s" % (RequestAgent(), str(self.com), self.dest, self.command[0])
+                # # if "https" in str(self.com):
+                    # # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s" % (RequestAgent(), str(self.com), self.dest, self.command[0])
+                # self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
+                # self['info'].setText(_('Installation done !!!'))
             elif extension == "deb":
                 if not os.path.exists('/var/lib/dpkg/status'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2030,6 +2048,7 @@ class tvInstall(Screen):
                         # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % (RequestAgent(), str(self.com), self.dest, self.dest)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
+                    return
             elif extension == "ipk":
                 if os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2042,6 +2061,7 @@ class tvInstall(Screen):
                         # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
+                    return
             elif self.com.endswith('.zip'):
                 if 'setting' in self.dom.lower():
                     if not os.path.exists('/var/lib/dpkg/status'):
@@ -2078,6 +2098,7 @@ class tvInstall(Screen):
                     terrestrial_rest()
                     self.session.open(tvConsole, _('SETTING - install: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
+                    return
                 elif 'picon' in self.dom.lower():
                     self.dest = self.dowfil()
                     cmd = ["unzip -o -q %s -d %s > /dev/null" % (self.dest, str(mmkpicon))]
@@ -2086,6 +2107,7 @@ class tvInstall(Screen):
                         # cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest, str(mmkpicon))]
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
+                    return
                 else:
                     self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
                     self.dest = self.dowfil()
@@ -2099,9 +2121,11 @@ class tvInstall(Screen):
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     self.timer.start(1000, True)
                     self['info'].setText(_('Download file in /tmp successful!!'))
+                    return
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
-            return
+            self.timer.start(3000, 1)
+            self.addondel()
 
     def dowfil(self):
         if PY3:
@@ -2145,11 +2169,24 @@ class tvInstall(Screen):
             if os.path.exists(self.dest):
                 os.remove(self.dest)
             if self.com is not None:
+            
                 extensionlist = self.com.split('.')
-                extension = extensionlist[-1]  # .lower()
+                extension = extensionlist[-1].lower()
                 if len(extensionlist) > 1:
-                    tar = extensionlist[-2]  # .lower()
-                print('extension= ', extension)
+                    tar = extensionlist[-2].lower()
+                if extension in ["gz","bz2"] and tar == "tar":
+                    self.command = ['']
+                    if extension == "gz":
+                        self.command = [ "tar -xzvf " + self.dest + " -C /" ]
+                    elif extension == "bz2":
+                        self.command = [ "tar -xjvf " + self.dest + " -C /" ]
+                    self.timer = eTimer()
+                    self.timer.start(1000, True)
+                    cmd = 'wget -q -O %s %s;' +  self.command[0] % (self.dest, str(self.com))
+                    self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
+                    self['info'].setText(_('Installation done !!!'))
+                    return
+
                 if extension == "deb":
                     if not os.path.exists('/var/lib/dpkg/status'):
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2206,6 +2243,18 @@ class tvInstall(Screen):
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
         return
+
+    def addondel(self):
+        try:
+            AA = ['.ipk, .deb, .tar']
+            for root, dirs, files in os.walk('/tmp'):
+                for name in files:
+                    for x in AA:
+                        if x in name:
+                            os.remove(x)
+            print(_('All file Downloaded in /tmp are removed!'))
+        except OSError as e:
+            print('Error: %s' % (e.strerror))
 
     def cancel(self):
         if self.downloader is not None:

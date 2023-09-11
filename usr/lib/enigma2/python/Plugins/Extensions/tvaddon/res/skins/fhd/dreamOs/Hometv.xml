@@ -11,7 +11,7 @@
     -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,130" size="830,8" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,910" size="830,8" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_menu.png" position="1140,30" size="80,35" zPosition="10" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_menu.png" position="1140,80" size="80,35" zPosition="10" />
 	<!-- Menu List -->
 	<widget name="list" position="220,220" size="1030,520" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png" />
 	<!-- Colors -->
@@ -23,7 +23,7 @@
 	<widget name="key_green" position="270,1000" size="300,40" font="Regular;30" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_yellow" position="905,940" size="300,40" font="Regular;30" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_blue" position="905,1000" size="300,40" font="Regular;30" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="statusgreen" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/status-on.png" alphatest="blend" position="648,25" size="40,40" zPosition="5" />
-	<widget name="statusred" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/status-off.png" alphatest="blend" position="648,25" size="40,40" zPosition="5" />	
-	<widget name="status" position="694,24" size="420,50" font="Regular; 40" foregroundColor="#ffb75b" backgroundColor="#101010" halign="left" transparent="1" zPosition="2" />
+	<widget name="statusgreen" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/status-on.png" alphatest="blend" position="1177,25" size="40,40" zPosition="5" />
+	<widget name="statusred" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/status-off.png" alphatest="blend" position="1177,25" size="40,40" zPosition="5" />	
+	<widget name="status" position="749,22" size="420,50" font="Regular; 40" foregroundColor="#ffb75b" backgroundColor="#101010" halign="right" transparent="1" zPosition="2" />
 </screen>
