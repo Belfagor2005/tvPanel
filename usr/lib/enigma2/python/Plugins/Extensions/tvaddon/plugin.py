@@ -44,6 +44,7 @@ from enigma import eListboxPythonMultiContent, eConsoleAppContainer
 from os import chmod
 from twisted.web.client import downloadPage, getPage
 # import base64
+import codecs
 import os
 import re
 import sys
@@ -397,7 +398,7 @@ class Hometv(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'Hometv.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Main')
         Screen.__init__(self, session)
@@ -672,7 +673,7 @@ class Categories(Screen):
     def __init__(self, session, category):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = (category)
         Screen.__init__(self, session)
@@ -771,7 +772,7 @@ class tvDailySetting(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Daily Setting')
         Screen.__init__(self, session)
@@ -920,7 +921,7 @@ class SettingVhan(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
         Screen.__init__(self, session)
@@ -1028,7 +1029,7 @@ class SettingVhan2(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
         Screen.__init__(self, session)
@@ -1163,7 +1164,7 @@ class Milenka61(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Milenka61')
         Screen.__init__(self, session)
@@ -1262,7 +1263,7 @@ class SettingManutek(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Manutek')
         Screen.__init__(self, session)
@@ -1370,7 +1371,7 @@ class SettingMorpheus(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Morpheus')
         Screen.__init__(self, session)
@@ -1480,7 +1481,7 @@ class SettingCiefp(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Ciefp')
         Screen.__init__(self, session)
@@ -1595,7 +1596,7 @@ class SettingBi58(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Bi58')
         Screen.__init__(self, session)
@@ -1693,7 +1694,7 @@ class SettingPredrag(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Predrag')
         Screen.__init__(self, session)
@@ -1791,7 +1792,7 @@ class SettingCyrus(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Cyrus')
         Screen.__init__(self, session)
@@ -1910,7 +1911,7 @@ class tvInstall(Screen):
     def __init__(self, session, data, name, selection=None):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Install')
         Screen.__init__(self, session)
@@ -2283,7 +2284,7 @@ class tvIPK(Screen):
     def __init__(self, session, title=None, cmdlist=None, finishedCallback=None, closeOnSuccess=False):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('IPK')
         Screen.__init__(self, session)
@@ -2458,7 +2459,7 @@ class tvUpdate(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Update')
         Screen.__init__(self, session)
@@ -2587,7 +2588,7 @@ class tvRemove(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Remove')
         Screen.__init__(self, session)
@@ -2930,7 +2931,7 @@ class SelectPiconz(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Select Picons')
         Screen.__init__(self, session)
@@ -3020,7 +3021,7 @@ class MMarkFolderz(Screen):
     def __init__(self, session, url):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
@@ -3125,7 +3126,7 @@ class MMarkPiconsf(Screen):
     def __init__(self, session, name, url, movie=False):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
@@ -3312,7 +3313,7 @@ class mainkodilite(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
@@ -3378,7 +3379,7 @@ class pluginx(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
@@ -3530,7 +3531,7 @@ class plugins_adult(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
@@ -3699,7 +3700,7 @@ class script(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
@@ -3851,7 +3852,7 @@ class repository(Screen):
     def __init__(self, session):
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
-        with open(skin, 'r') as f:
+        with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
