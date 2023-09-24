@@ -4,7 +4,7 @@
 # --------------------#
 #   coded by Lululla  #
 #    skin by MMark    #
-#      22/08/2023     #
+#      22/09/2023     #
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
@@ -408,6 +408,7 @@ class Hometv(Screen):
         self['key_yellow'] = Button(_('Uninstall'))
         self["key_blue"] = Button(_("tvManager"))
         self['key_blue'].hide()
+        self['info'] = Label(_('Loading data... Please wait'))
         self['statusgreen'] = Pixmap()
         self['statusgreen'].hide()
         self['statusred'] = Pixmap()
@@ -491,6 +492,7 @@ class Hometv(Screen):
             self['statusred'].show()
             self['status'].setText('SERVER OFF')
         self.setTitle(self.setup_title)
+        self['info'].setText(_('Please select ...'))
 
     def check_dependencies(self):
         dependencies = True
@@ -548,8 +550,7 @@ class Hometv(Screen):
             self.timer2_conn = self.timer2.timeout.connect(self.__layoutFinished)
         else:
             self.timer2.callback.append(self.__layoutFinished)
-        self.timer2.start(200, 1)       
-
+        self.timer2.start(200, 1)
 
     def okRun(self):
         self.keyNumberGlobalCB(self['list'].getSelectedIndex())
