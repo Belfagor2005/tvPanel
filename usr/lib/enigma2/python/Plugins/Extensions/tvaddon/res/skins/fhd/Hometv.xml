@@ -2,7 +2,7 @@
 <screen name="Hometv" position="0,0" size="1920,1080" title="..::TiVuStream Addon Manager::.." backgroundColor="#ff000000" flags="wfNoBorder">
 	<widget name="title" position="220,75" size="900,50" font="Regular;30" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main2.png" position="0,0" size="1920,1080" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" position="220,20" size="279,50" alphatest="blend" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" position="220,20" size="279,50" scale="stretch" alphatest="blend" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,130" size="1030,8" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,910" size="1030,8" zPosition="5" />
 	<widget name="info" position="220,155" size="1030,50" font="Regular;30" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
@@ -13,7 +13,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,910" size="830,8" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_menu.png" position="1140,80" size="80,35" zPosition="10" />
 	<!-- Menu List -->
-	<widget name="list" position="220,220" size="1030,530" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png" />
+	<widget name="list" position="220,220" size="1030,655" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png" />
 	<!-- Colors -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_red.png" position="220,945" size="30,30" alphatest="on" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_green.png" position="220,1005" size="30,30" alphatest="on" zPosition="5" />

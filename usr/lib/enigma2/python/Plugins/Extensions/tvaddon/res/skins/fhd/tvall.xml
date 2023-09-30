@@ -6,12 +6,12 @@
 	<widget name="pform" position="220,826" size="1030,74" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<widget name="progress" position="585,965" size="300,50" foregroundColor="#2a70a4" backgroundColor="#10000000" transparent="1" zPosition="5" />
 	<widget source="progresstext" render="Label" font="Regular;20" position="585,965" size="300,50" backgroundColor="#202020" transparent="1" halign="center" zPosition="6" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main2.png" position="0,0" size="1920,1080" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" position="220,20" size="279,50" alphatest="blend" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main2.png" position="0,0" size="1920,1080" scale="stretch" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" position="220,20" size="279,50" scale="stretch" alphatest="blend" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,130" size="1030,8" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="220,910" size="1030,8" zPosition="5" />
 	<!-- Menu List -->
-	<widget name="list" position="220,220" size="1030,520" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png" />
+    <widget name="list" position="220,210" size="1030,555" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png" />
 	<!-- Colors 1220 -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_red.png" position="220,945" size="30,30" alphatest="on" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/key_green.png" position="220,1005" size="30,30" alphatest="on" zPosition="5" />
