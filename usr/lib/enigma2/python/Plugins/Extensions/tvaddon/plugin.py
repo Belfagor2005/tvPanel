@@ -295,7 +295,6 @@ Panel_deb = [
 
 Panel_list = [
  _('LULULLA CORNER'),
- # _('DEBIAN DREAMOS'),
  _('DAILY PICONS'),
  _('DAILY SETTINGS'),
  _('KODILITE BY PCD'),
@@ -463,7 +462,7 @@ class Hometv(Screen):
             # self.timer2_conn = self.timer2.timeout.connect(self.__layoutFinished)
         # else:
             # self.timer2.callback.append(self.__layoutFinished)
-        # self.timer2.start(150, 1)        
+        # self.timer2.start(150, 1)
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -1920,7 +1919,6 @@ class tvInstall(Screen):
         self.selection = selection
         self['info'] = Label('')
         self['pth'] = Label('')
-        self['key_green'] = Button(_('Install'))
         self['pform'] = Label('')
 
         self['progress'] = ProgressBar()
@@ -1953,6 +1951,7 @@ class tvInstall(Screen):
         self['info'].setText(_('Please install ...'))
         self['title'] = Label(_(title_plug))
         self['key_red'] = Button(_('Back'))
+        self['key_green'] = Button(_('Install'))
         self['key_yellow'] = Button(_('Download'))
         self["key_blue"] = Button('')
         self['key_blue'].hide()
@@ -1997,7 +1996,7 @@ class tvInstall(Screen):
             self.timer = eTimer()
             extensionlist = self.com.split('.')
             extension = extensionlist[-1]  # .lower()
-            
+
             if len(extensionlist) > 1:
                 tar = extensionlist[-2]
             if extension in ["gz", "bz2"] and tar == "tar":
@@ -2171,7 +2170,7 @@ class tvInstall(Screen):
             if os.path.exists(self.dest):
                 os.remove(self.dest)
             if self.com is not None:
-            
+
                 extensionlist = self.com.split('.')
                 extension = extensionlist[-1].lower()
                 if len(extensionlist) > 1:
@@ -2385,7 +2384,7 @@ class tvIPK(Screen):
                 elif self.sel.endswith('.deb'):
                     if os.path.exists('/var/lib/dpkg/info'):
                         # apt-get install -f -y
-                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install -f -y %s > /dev/null' % self.dest  # + ' > /dev/null 2>&1' #+ self.dest + ' > /dev/null' #; apt-get -f --force-yes --assume-yes install'
+                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install -f -y %s > /dev/null' % self.dest
                         self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0], closeOnSuccess=False)
                     else:
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)

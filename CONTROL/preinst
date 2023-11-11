@@ -1,18 +1,8 @@
 #!/bin/sh
 echo "Checking for an older version of TiVustream Panel in the system..."
-if [ -d /usr/lib/enigma2/python/Plugins/Extensions/tvaddon ]
-then
-rm -rf /usr/lib/enigma2/python/Plugins/Extensions/tvaddon > /dev/null 2>&1
-echo "An older version of TiVustream Addon Panel was found and removed"
-else
-echo "TiVustream Panel was not found in the system"
+EXTDIR="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon"
+if [ -d "$EXTDIR" ]; then
+   rm -rf "$EXTDIR" > /dev/null 2>&1
 fi
-if [ -d /usr/lib/enigma2/python/Plugins/Extensions/tvPanel ]
-then
-rm -rf /usr/lib/enigma2/python/Plugins/Extensions/tvPanel > /dev/null 2>&1
-echo "An older version of TiVustream Panel was found and removed"
-echo "Proceeding to installation..."
-else
-echo "TiVustream Panel was not found in the system"
-fi
+
 exit 0
