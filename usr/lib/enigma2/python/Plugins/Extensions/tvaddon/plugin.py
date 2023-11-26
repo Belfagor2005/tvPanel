@@ -235,6 +235,7 @@ def mountipkpth():
     return ipkpth
 
 
+AgentRequest = RequestAgent()
 # ================config
 global set
 config.plugins.tvaddon = ConfigSubsection()
@@ -2175,15 +2176,15 @@ class tvInstall(Screen):
                 extension = extensionlist[-1].lower()
                 if len(extensionlist) > 1:
                     tar = extensionlist[-2].lower()
-                if extension in ["gz","bz2"] and tar == "tar":
+                if extension in ["gz", "bz2"] and tar == "tar":
                     self.command = ['']
                     if extension == "gz":
-                        self.command = [ "tar -xzvf " + self.dest + " -C /" ]
+                        self.command = ["tar -xzvf " + self.dest + " -C /"]
                     elif extension == "bz2":
-                        self.command = [ "tar -xjvf " + self.dest + " -C /" ]
+                        self.command = ["tar -xjvf " + self.dest + " -C /"]
                     self.timer = eTimer()
                     self.timer.start(1000, True)
-                    cmd = 'wget -q -O %s %s;' +  self.command[0] % (self.dest, str(self.com))
+                    cmd = 'wget -q -O %s %s;' + self.command[0] % (self.dest, str(self.com))
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
                     self['info'].setText(_('Installation done !!!'))
                     return
