@@ -334,7 +334,8 @@ Panel_list2 = [
 Panel_list3 = [
  _('MMARK PICONS BLACK'),
  _('MMARK PICONS TRANSPARENT'),
- _('MMARK PICONS MOVIE')]
+ _('MMARK PICONS MOVIE'),
+ _('OPEN PICONS')]
 
 
 class tvList(MenuList):
@@ -502,7 +503,7 @@ class Hometv(Screen):
             dependencies = False
         if dependencies is False:
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh", 0o0755)
-            cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh"
+            cmd1 = "/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh"
             self.session.openWithCallback(self.starts, tvConsole, title="Checking Python Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
         else:
             self.starts()
@@ -634,14 +635,15 @@ class Hometv(Screen):
             return
             # self.session.open(Categories, category)
 
-    def msgupdate1(self, answer=None):
+    def msgupdate1(self):
+        self.session.openWithCallback(self.msgupdate2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+    
+    def msgupdate(self, answer):
         if self.Update is False:
             return
         if config.plugins.tvaddon.autoupd.value is False:
             return
-        if answer is None:
-            self.session.openWithCallback(self.msgupdate1, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"), MessageBox.TYPE_YESNO)
-        else:
+        if answer:
             if os.path.exists('/var/lib/dpkg/info'):
                 com = self.dmlink
                 dom = 'New version ' + self.version
@@ -657,10 +659,11 @@ class Hometv(Screen):
                 dom = 'New Version ' + self.version
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], closeOnSuccess=False)
 
-    def msgipkrst1(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.msgipkrst1, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"), MessageBox.TYPE_YESNO)
-        else:
+    def msgipkrst1(self):
+        self.session.openWithCallback(self.msgipkrst2, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"), MessageBox.TYPE_YESNO)
+
+    def msgipkrst2(self, answer):
+        if answer:
             epgpath = '/media/hdd/epg.dat'
             epgbakpath = '/media/hdd/epg.dat.bak'
             if os.path.exists(epgbakpath):
@@ -864,6 +867,8 @@ class tvDailySetting(Screen):
             self.okSATELLITE()
         elif sel == _('UPDATE TERRESTRIAL.XML'):
             self.okTERRESTRIAL()
+        else:
+            return
 
     def terrestrial_restore(self, answer=None):
         if answer is None:
@@ -978,10 +983,11 @@ class SettingVhan(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1090,10 +1096,11 @@ class SettingVhan2(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1228,10 +1235,11 @@ class Milenka61(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1323,10 +1331,11 @@ class SettingManutek(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1432,10 +1441,11 @@ class SettingMorpheus(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1550,10 +1560,11 @@ class SettingCiefp(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1659,10 +1670,11 @@ class SettingBi58(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1757,10 +1769,11 @@ class SettingPredrag(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1865,10 +1878,11 @@ class SettingCyrus(Screen):
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def okRun1(self, answer):
+        if answer:
             global set
             set = 0
             if self.downloading is True:
@@ -1984,53 +1998,30 @@ class tvInstall(Screen):
         global set
         self.com = com
         self.dom = dom
-        # n2 = self.com.rfind("/", 0)
-        # dom = self.com[:n2]
-        # self.downplug = self.com.replace(dom, '').replace('/', '').lower()
         self.downplug = self.com.split("/")[-1]
-        print('self.downplug= ', self.downplug)
-        self.dest = '/tmp/' + self.downplug
-        if os.path.exists(self.dest):
-            os.remove(self.dest)
+        down = self.dowfil()
         self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
         if self.com is not None:
             self.timer = eTimer()
             extensionlist = self.com.split('.')
             extension = extensionlist[-1]  # .lower()
-
             if len(extensionlist) > 1:
                 tar = extensionlist[-2]
             if extension in ["gz", "bz2"] and tar == "tar":
                 self.command = ['']
                 if extension == "gz":
-                    self.command = ["tar -xzvf " + self.dest + " -C /"]
+                    self.command = ["tar -xzvf " + down + " -C /"]
                 elif extension == "bz2":
-                    self.command = ["tar -xjvf " + self.dest + " -C /"]
+                    self.command = ["tar -xjvf " + down + " -C /"]
 
-                cmd = "wget -U '%s' -c '%s' -O '%s';%s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.command[0])
+                cmd = "wget -U '%s' -c '%s' -O '%s';%s > /dev/null" % (AgentRequest, str(self.com), down, self.command[0])
                 if "https" in str(self.com):
-                    cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.command[0])
+                    cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s > /dev/null" % (AgentRequest, str(self.com), down, self.command[0])
 
                 self.session.open(tvConsole, title='Installation %s' % self.dom, cmdlist=[cmd, 'sleep 5'])  # , finishedCallback=self.msgipkinst)
                 self['info'].setText(_('Installation done !!!'))
                 return
 
-            # if len(extensionlist) > 1:
-                # tar = extensionlist[-2]  # .lower()
-            # if extension in ["gz", "bz2"] and tar == "tar":
-                # self.command = ['']
-                # if extension == "gz":
-                    # self.command = ["tar -xzvf " + self.dest + " -C / > /dev/null"]
-                # elif extension == "bz2":
-                    # self.command = ["tar -xjvf " + self.dest + " -C / > /dev/null"]
-
-                # self.dest = self.dowfil()
-                # cmd = "%s" % self.command[0]
-                # # cmd = "wget -U '%s' -c '%s' -O '%s';%s" % (RequestAgent(), str(self.com), self.dest, self.command[0])
-                # # if "https" in str(self.com):
-                    # # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';%s" % (RequestAgent(), str(self.com), self.dest, self.command[0])
-                # self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
-                # self['info'].setText(_('Installation done !!!'))
             elif extension == "deb":
                 if not os.path.exists('/var/lib/dpkg/status'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2041,9 +2032,7 @@ class tvInstall(Screen):
                     if 'wget' not in res.lower():
                         cmd23 = 'apt-get update && apt-get install wget'
                         os.popen(cmd23)
-
-                    self.dest = self.dowfil()
-                    cmd = 'dpkg -i %s' % self.dest
+                    cmd = 'dpkg -i %s' % down
                     # cmd = 'dpkg --install --force-overwrite %s' % self.dest
                     # cmd = "wget -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % (RequestAgent(), str(self.com), self.dest, self.dest)
                     # if "https" in str(self.com):
@@ -2056,8 +2045,7 @@ class tvInstall(Screen):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
-                    self.dest = self.dowfil()
-                    cmd = "opkg install --force-reinstall %s > /dev/null" % self.dest
+                    cmd = "opkg install --force-reinstall %s > /dev/null" % down
                     # cmd = "wget -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest)
                     # if "https" in str(self.com):
                         # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest)
@@ -2102,8 +2090,7 @@ class tvInstall(Screen):
                     self['info'].setText(_('Installation done !!!'))
                     return
                 elif 'picon' in self.dom.lower():
-                    self.dest = self.dowfil()
-                    cmd = ["unzip -o -q %s -d %s > /dev/null" % (self.dest, str(mmkpicon))]
+                    cmd = ["unzip -o -q %s -d %s > /dev/null" % (down, str(mmkpicon))]
                     # cmd = ["wget -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest, str(mmkpicon))]
                     # if "https" in str(self.com):
                         # cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest, str(mmkpicon))]
@@ -2112,8 +2099,7 @@ class tvInstall(Screen):
                     return
                 else:
                     self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
-                    self.dest = self.dowfil()
-                    cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % (RequestAgent(), str(self.com), self.dest)]
+                    cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % (RequestAgent(), str(self.com), down)]
                     # cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % (RequestAgent(), str(self.com), self.dest)]
                     # if "https" in str(self.com):
                         # cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s'" % (RequestAgent(), str(self.com), self.dest)]
@@ -2130,6 +2116,9 @@ class tvInstall(Screen):
             self.addondel()
 
     def dowfil(self):
+        self.dest = '/tmp/' + self.downplug
+        if os.path.exists(self.dest):
+            os.remove(self.dest)
         if PY3:
             import urllib.request as urllib2
             import http.cookiejar as cookielib
@@ -2161,7 +2150,7 @@ class tvInstall(Screen):
             idx = self["list"].getSelectionIndex()
             self.dom = self.names[idx]
             self.com = self.urls[idx]
-            n2 = self.com.rfind("/", 0)
+            # n2 = self.com.rfind("/", 0)
             # dom = self.com[:n2]
             # self.downplug = self.com.replace(dom, '').replace('/', '').lower()
             self.downplug = self.com.split("/")[-1]
@@ -2185,7 +2174,7 @@ class tvInstall(Screen):
                     self.timer = eTimer()
                     self.timer.start(1000, True)
                     cmd = 'wget -q -O %s %s;' + self.command[0] % (self.dest, str(self.com))
-                    self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd],closeOnSuccess =False)
+                    self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                     return
 
@@ -2333,7 +2322,7 @@ class tvIPK(Screen):
                     if name.endswith('.ipk') or name.endswith('.deb') or name.endswith('.zip') or name.endswith('.tar.gz') or name.endswith('.tar'):
                         self.names.append(name)
         self["list"].l.setList(self.list)
-        if len(self.names) > -1:
+        if len(self.names) >= 0:
             self['info'].setText(_('Please install ...'))
             self['key_green'].show()
             self['key_blue'].show()
@@ -2341,21 +2330,22 @@ class tvIPK(Screen):
         self.getfreespace()
 
     def msgipkrmv(self, answer=None):
-        idx = self['list'].getSelectionIndex()
-        self.sel = self.names[idx]
-        if answer is None:
-            self.session.openWithCallback(self.msgipkrmv, MessageBox, (_('Do you really want to remove selected?\n') + self.sel), MessageBox.TYPE_YESNO)
-        else:
-            self['info'].setText(_('... please wait'))
-            self.com = self.ipkpth + '/' + self.sel
-            if fileExists(self.com):
-                os.remove(self.com)
-                self.session.open(MessageBox, (_("%s has been successfully deleted\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
-                i = len(self.list)
-                del self.list[0:i]
+        if len(self.names) >= 0:
+            idx = self['list'].getSelectionIndex()
+            self.sel = self.names[idx]
+            if answer is None:
+                self.session.openWithCallback(self.msgipkrmv, MessageBox, (_('Do you really want to remove selected?\n') + self.sel), MessageBox.TYPE_YESNO)
             else:
-                self.session.open(MessageBox, (_("%s not exist!\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
-        self.refreshlist()
+                self['info'].setText(_('... please wait'))
+                self.com = self.ipkpth + '/' + self.sel
+                if fileExists(self.com):
+                    os.remove(self.com)
+                    self.session.open(MessageBox, (_("%s has been successfully deleted\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
+                    i = len(self.list)
+                    del self.list[0:i]
+                else:
+                    self.session.open(MessageBox, (_("%s not exist!\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
+            self.refreshlist()
 
     def getfreespace(self):
         try:
@@ -2368,77 +2358,78 @@ class tvIPK(Screen):
         self.session.open(tvConfig)
 
     def ipkinst(self, answer=None):
-        idx = self['list'].getSelectionIndex()
-        self.sel = self.names[idx]
-        if answer is None:
-            self.session.openWithCallback(self.ipkinst, MessageBox, (_('Do you really want to install the selected Addon?\n') + self.sel), MessageBox.TYPE_YESNO)
-        else:
-            self['info'].setText(_('... please wait'))
-            self.dest = self.ipkpth + '/' + self.sel
-            try:
-                if self.sel.endswith('.ipk'):
-                    cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";opkg install --force-reinstall ' + self.dest + ' > /dev/null'
-                    self.session.open(tvConsole, title='IPK Local Installation', cmdlist=[cmd0, 'sleep 5'], closeOnSuccess=False)
-                elif self.sel.endswith('.tar.gz'):
-                    cmd0 = 'tar -xzvf ' + self.dest + ' -C /'
-                    self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[cmd0, 'sleep 5'], closeOnSuccess=False)
-                elif self.sel.endswith('.deb'):
-                    if os.path.exists('/var/lib/dpkg/info'):
-                        # apt-get install -f -y
-                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install -f -y %s > /dev/null' % self.dest
-                        self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0], closeOnSuccess=False)
+        if len(self.names) >= 0:
+            idx = self['list'].getSelectionIndex()
+            self.sel = self.names[idx]
+            if answer is None:
+                self.session.openWithCallback(self.ipkinst, MessageBox, (_('Do you really want to install the selected Addon?\n') + self.sel), MessageBox.TYPE_YESNO)
+            else:
+                self['info'].setText(_('... please wait'))
+                self.dest = self.ipkpth + '/' + self.sel
+                try:
+                    if self.sel.endswith('.ipk'):
+                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";opkg install --force-reinstall ' + self.dest + ' > /dev/null'
+                        self.session.open(tvConsole, title='IPK Local Installation', cmdlist=[cmd0, 'sleep 5'], closeOnSuccess=False)
+                    elif self.sel.endswith('.tar.gz'):
+                        cmd0 = 'tar -xzvf ' + self.dest + ' -C /'
+                        self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[cmd0, 'sleep 5'], closeOnSuccess=False)
+                    elif self.sel.endswith('.deb'):
+                        if os.path.exists('/var/lib/dpkg/info'):
+                            # apt-get install -f -y
+                            cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install -f -y %s > /dev/null' % self.dest
+                            self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0], closeOnSuccess=False)
+                        else:
+                            self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
+                    elif self.sel.endswith('.zip'):
+                        if 'picon' in self.sel.lower():
+                            self.timer = eTimer()
+                            self.timer.start(500, True)
+                            cmd = ['unzip -o -q %s -d %s' % (self.dest, str(mmkpicon))]
+                            self.session.open(tvConsole, _('Installing: %s') % self.dest, cmdlist=[cmd], closeOnSuccess=False)
+                        elif 'setting' in self.sel.lower():
+                            if not os.path.exists('/var/lib/dpkg/status'):
+                                global set
+                                set = 1
+                                terrestrial()
+                            if os.path.exists("/tmp/unzipped"):
+                                os.system('rm -rf /tmp/unzipped')
+                            os.makedirs('/tmp/unzipped')
+                            cmd = []
+                            cmd1 = 'unzip -o -q %s -d /tmp/unzipped' % self.dest
+                            cmd.append(cmd1)
+                            cmd2 = 'rm -rf /etc/enigma2/lamedb'
+                            cmd.append(cmd2)
+                            cmd3 = 'rm -rf /etc/enigma2/*.radio'
+                            cmd.append(cmd3)
+                            cmd4 = 'rm -rf /etc/enigma2/*.tv'
+                            cmd.append(cmd4)
+                            cmd5 = 'cp -rf /tmp/unzipped/*.tv /etc/enigma2'
+                            cmd.append(cmd5)
+                            cmd6 = 'cp -rf /tmp/unzipped/*.radio /etc/enigma2'
+                            cmd.append(cmd6)
+                            cmd7 = 'cp -rf /tmp/unzipped/lamedb /etc/enigma2'
+                            cmd.append(cmd7)
+                            if not os.path.exists("/etc/enigma2/blacklist"):
+                                cmd8 = 'cp -rf /tmp/unzipped/blacklist /etc/tuxbox/'
+                                cmd.append(cmd8)
+                            if not os.path.exists("/etc/enigma2/whitelist"):
+                                cmd9 = 'cp -rf /tmp/unzipped/whitelist /etc/tuxbox/'
+                                cmd.append(cmd9)
+                            cmd10 = 'cp -rf /tmp/unzipped/satellites.xml /etc/tuxbox/'
+                            cmd.append(cmd10)
+                            cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
+                            cmd.append(cmd11)
+                            self.timer = eTimer()
+                            terrestrial_rest()
+                            self.timer.start(500, True)
+                            self.session.open(tvConsole, _('SETTING - install: %s') % self.dest, cmdlist=[cmd], closeOnSuccess=False)
                     else:
-                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
-                elif self.sel.endswith('.zip'):
-                    if 'picon' in self.sel.lower():
-                        self.timer = eTimer()
-                        self.timer.start(500, True)
-                        cmd = ['unzip -o -q %s -d %s' % (self.dest, str(mmkpicon))]
-                        self.session.open(tvConsole, _('Installing: %s') % self.dest, cmdlist=[cmd], closeOnSuccess=False)
-                    elif 'setting' in self.sel.lower():
-                        if not os.path.exists('/var/lib/dpkg/status'):
-                            global set
-                            set = 1
-                            terrestrial()
-                        if os.path.exists("/tmp/unzipped"):
-                            os.system('rm -rf /tmp/unzipped')
-                        os.makedirs('/tmp/unzipped')
-                        cmd = []
-                        cmd1 = 'unzip -o -q %s -d /tmp/unzipped' % self.dest
-                        cmd.append(cmd1)
-                        cmd2 = 'rm -rf /etc/enigma2/lamedb'
-                        cmd.append(cmd2)
-                        cmd3 = 'rm -rf /etc/enigma2/*.radio'
-                        cmd.append(cmd3)
-                        cmd4 = 'rm -rf /etc/enigma2/*.tv'
-                        cmd.append(cmd4)
-                        cmd5 = 'cp -rf /tmp/unzipped/*.tv /etc/enigma2'
-                        cmd.append(cmd5)
-                        cmd6 = 'cp -rf /tmp/unzipped/*.radio /etc/enigma2'
-                        cmd.append(cmd6)
-                        cmd7 = 'cp -rf /tmp/unzipped/lamedb /etc/enigma2'
-                        cmd.append(cmd7)
-                        if not os.path.exists("/etc/enigma2/blacklist"):
-                            cmd8 = 'cp -rf /tmp/unzipped/blacklist /etc/tuxbox/'
-                            cmd.append(cmd8)
-                        if not os.path.exists("/etc/enigma2/whitelist"):
-                            cmd9 = 'cp -rf /tmp/unzipped/whitelist /etc/tuxbox/'
-                            cmd.append(cmd9)
-                        cmd10 = 'cp -rf /tmp/unzipped/satellites.xml /etc/tuxbox/'
-                        cmd.append(cmd10)
-                        cmd11 = 'cp -rf /tmp/unzipped/terrestrial.xml /etc/tuxbox/'
-                        cmd.append(cmd11)
-                        self.timer = eTimer()
-                        terrestrial_rest()
-                        self.timer.start(500, True)
-                        self.session.open(tvConsole, _('SETTING - install: %s') % self.dest, cmdlist=[cmd], closeOnSuccess=False)
-                else:
-                    self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
-                self['info'].setText(_('Please install ...'))
-            except Exception as e:
-                print('error: ', str(e))
-                self.delFile(self.dest)
-                self['info1'].text = _('File: %s\nInstallation failed!') % self.dest
+                        self.session.open(MessageBox, _('Unknow Error!'), MessageBox.TYPE_ERROR, timeout=10)
+                    self['info'].setText(_('Please install ...'))
+                except Exception as e:
+                    print('error: ', str(e))
+                    self.delFile(self.dest)
+                    self['info1'].text = _('File: %s\nInstallation failed!') % self.dest
 
     def delFile(self, dest):
         if fileExists(self.dest):
@@ -3000,13 +2991,18 @@ class SelectPiconz(Screen):
             self.session.open(MMarkFolderz, host_trs)
         elif sel == ('MMARK PICONS MOVIE'):
             self.session.open(MMarkPiconsf, 'MMark-Picons', host_mov, True)
+        elif sel == ('OPEN PICONS'):  # https://openpicons.com/picons/full-motor-srp/hardlink/ # https://openpicons.com/picons/?dir=full-motor-srp/ipk
+            # return
+            host_open = 'https://openpicons.com/picons/full-motor-srp/hardlink/'
+            self.session.open(OpenPicons, 'OpenPicons', host_open)
         else:
             return
 
-    def remove(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.remove, MessageBox, _('Do you want to remove all picons in folder?\n%s\nIt could take a few minutes, wait ..' % str(mmkpicon)), MessageBox.TYPE_YESNO)
-        else:
+    def remove(self):
+        self.session.openWithCallback(self.remove1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def remove1(self, answer):
+        if answer:
             self['info'].setText(_('Erase %s... please wait' % str(mmkpicon)))
             piconsx = glob.glob(str(mmkpicon) + '/*.png')
             for f in piconsx:
@@ -3226,10 +3222,11 @@ class MMarkPiconsf(Screen):
         except:
             self.downloading = False
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+    
+    def okRun1(self, answer):
+        if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.name = self.names[idx]
@@ -3275,6 +3272,178 @@ class MMarkPiconsf(Screen):
                 self['info'].setText(_('Please select ...'))
                 myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
                 subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
+                info = 'Successfully Picons Installed'
+                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+
+    def download_failed(self, failure_instance=None, error_message=""):
+        self.error_message = error_message
+        if error_message == "" and failure_instance is not None:
+            self.error_message = failure_instance.getErrorMessage()
+        self.downloading = False
+        info = 'Download Failed!!! ' + self.error_message
+        self['info2'].setText(info)
+        self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+
+    def abort(self):
+        print("aborting", self.url)
+        if self.download:
+            self.download.stop()
+        self.downloading = False
+        self.aborted = True
+
+    def download_finished(self, string=""):
+        if self.aborted:
+            self.finish(aborted=True)
+
+class OpenPicons(Screen):
+    def __init__(self, session, name, url):
+        self.session = session
+        skin = os.path.join(skin_path, 'tvall.xml')
+        with codecs.open(skin, "r", encoding="utf-8") as f:
+            self.skin = f.read()
+        self.setup_title = ('OpenPicons')
+        Screen.__init__(self, session)
+        self.setTitle(_(title_plug))
+        self.list = []
+        self['list'] = tvList([])
+        self['info'] = Label(_('Loading data... Please wait'))
+        self['pth'] = Label('')
+        self['pth'].setText(_('Folder picons ') + str(mmkpicon))
+        self['pform'] = Label('')
+        self['progress'] = ProgressBar()
+        self["progress"].hide()
+        self['progresstext'] = StaticText()
+        self['key_green'] = Button(_('Install'))
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button('')
+        self["key_blue"] = Button('')
+        self['key_yellow'].hide()
+        self['key_blue'].hide()
+        self['key_green'].hide()
+        self.getfreespace()
+        self.downloading = False
+        self.url = url
+        self.name = name
+        self.error_message = ""
+        self.last_recvbytes = 0
+        self.error_message = None
+        self.download = None
+        self.aborted = False
+        self.timer = eTimer()
+        if os.path.exists('/var/lib/dpkg/info'):
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
+        self['title'] = Label(_(title_plug))
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions'], {'ok': self.okRun,
+                                                       'green': self.okRun,
+                                                       'red': self.close,
+                                                       'cancel': self.close}, -2)
+        self.onLayoutFinish.append(self.getfreespace)
+
+    def getfreespace(self):
+        try:
+            # from Components.PluginComponent import plugins
+            # plugins.clearPluginList()
+            # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
+            fspace = Utils.freespace()
+            self['pform'].setText(str(fspace))
+        except Exception as e:
+            print(e)
+
+    def downxmlpage(self):
+        url = six.ensure_binary(self.url)
+        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    def errorLoad(self):
+        self['info'].setText(_('Try again later ...'))
+        self.downloading = False
+
+    def _gotPageLoad(self, data):
+        r = data
+        if PY3:
+            r = six.ensure_str(data)
+        self.names = []
+        self.urls = []
+        try:
+            # if PY3:
+                # n1 = r.find('"quickkey":'.encode(), 0)
+                # n2 = r.find('more_chunks'.encode(), n1)
+            # else:
+                # n1 = r.find('"quickkey":', 0)
+                # n2 = r.find('more_chunks', n1)
+            # n1 = r.find('"quickkey":', 0)
+            # n2 = r.find('more_chunks', n1)
+            # data2 = r[n1:n2]
+            regex = 'full-motor-srp/hardlink/(.*?).tar.xz"'
+            match = re.compile(regex, re.DOTALL).findall(r)
+            for url in match:
+                name = url.replace('enigma2-plugin-picons-srp-', '').replace('.', '-')
+                url = 'https://openpicons.com/picons/full-motor-srp/hardlink/' + url + '.tar.xz'
+                self.urls.append(url)
+                self.names.append(name)
+            self['info'].setText(_('Please select ...'))
+            self['key_green'].show()
+            showlist(self.names, self['list'])
+            self.downloading = True
+        except:
+            self.downloading = False
+
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+    
+    def okRun1(self, answer):
+        if answer:
+            if self.downloading is True:
+                idx = self["list"].getSelectionIndex()
+                self.name = self.names[idx]
+                url = self.urls[idx]
+                self.dest = "/tmp/download.tar.xz"
+                if os.path.exists(self.dest):
+                    os.remove(self.dest)
+                self.download = downloadWithProgress(url, self.dest)
+                self.download.addProgress(self.downloadProgress)
+                self.download.start().addCallback(self.install).addErrback(self.download_failed)
+            else:
+                self['info'].setText(_('Picons Not Installed ...'))
+
+    def downloadProgress(self, recvbytes, totalbytes):
+        self['info'].setText(_('Download in progress...'))
+        self["progress"].show()
+        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        self.last_recvbytes = recvbytes
+
+    def install(self, string=''):
+        if self.aborted:
+            self.finish(aborted=True)
+        else:
+            self.progclear = 0
+            self['info'].setText(_('File Downloaded ...'))
+            if os.path.exists(self.dest):
+                self.namel = ''
+                self['info'].setText(_('Install ...'))
+                self.downloading = False
+                self['progresstext'].text = ''
+                self['progress'].setValue(self.progclear)
+                self["progress"].hide()
+                self['info'].setText(_('Please select ...'))
+                if os.path.exists("/tmp/unzipped"):
+                    os.system('rm -rf /tmp/unzipped')
+                os.makedirs('/tmp/unzipped')
+                os.system('tar -xzvf ' + self.dest + ' -C /tmp/unzipped/')
+                path = '/tmp/unzipped'
+                for root, dirs, files in os.walk(path):
+                    for name in dirs:
+                        self.namel = name
+                # os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + str(mmkpicon))
+                myCmd = "cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + str(mmkpicon)
+
+                self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[myCmd, 'sleep 5'], closeOnSuccess=False)
+                # subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
+
                 info = 'Successfully Picons Installed'
                 self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
@@ -3448,10 +3617,11 @@ class pluginx(Screen):
         except Exception as e:
             print('error: ', str(e))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+    
+    def okRun1(self, answer):
+        if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
@@ -3617,10 +3787,11 @@ class plugins_adult(Screen):
             self.session.openWithCallback(self.close, MessageBox, _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR)
             self.close()
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+    
+    def okRun1(self, answer):
+        if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
@@ -3769,10 +3940,11 @@ class script(Screen):
         except Exception as e:
             print('error: ', str(e))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+    
+    def okRun1(self, answer):
+        if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
@@ -3921,10 +4093,11 @@ class repository(Screen):
         except Exception as e:
             print('error: ', str(e))
 
-    def okRun(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.okRun, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        else:
+    def okRun(self):
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+    
+    def okRun1(self, answer):
+        if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
@@ -4291,4 +4464,4 @@ def TransferBouquetTerrestrialFinal():
         return True
     except:
         return False
-# =====
+# ===== by lululla
