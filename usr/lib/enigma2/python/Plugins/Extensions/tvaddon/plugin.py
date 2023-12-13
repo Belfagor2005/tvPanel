@@ -155,28 +155,22 @@ def checkMyFile(url):
             print('Reason: ', e.reason)
     return myfile
 
-
 def make_request(url):
     try:
         import requests
-        link = requests.get(url, headers={'User-Agent': RequestAgent()}).text
+        response = requests.get(url, verify=False)
+        if response.status_code == 200:
+            link = requests.get(url, headers={'User-Agent': RequestAgent()}, timeout=15, verify=False, stream=True ).text
         return link
     except ImportError:
         req = Request(url)
-        req.add_header('User-Agent', 'TVS')
-        response = urlopen(req, None, 7)
+        req.add_header('User-Agent', 'E2 Plugin TVaddon Panel')
+        response = urlopen(req, None, 10)
         link = response.read().decode('utf-8')
         response.close()
         return link
-    except:
-        e = URLError
-        if hasattr(e, 'code'):
-            print('We failed with error code - %s.' % e.code)
-        if hasattr(e, 'reason'):
-            print('Reason: ', e.reason)
-        return
     return
-
+    
 
 def checkGZIP(url):
     from io import StringIO
@@ -446,9 +440,9 @@ class Hometv(Screen):
                 self.info = s3.strip()
                 self.dmlink = s4.strip()
                 fp.close()
-                if s1 <= currversion:
-                    self.Update = False
-                else:
+                # if self.version <= currversion:
+                    # self.Update = False
+                if self.version > currversion:
                     self.Update = True
         except Exception as e:
             print('error: ', str(e))
@@ -539,12 +533,13 @@ class Hometv(Screen):
                 self.menu_list.append(x)
                 idx += 1
         self['list'].setList(list)
-        self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
-        else:
-            self.timer.callback.append(self.msgupdate1)
-        self.timer.start(150, 1)
+        if self.Update is True:
+            self.timer = eTimer()
+            if os.path.exists('/var/lib/dpkg/info'):
+                self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
+            else:
+                self.timer.callback.append(self.msgupdate1)
+            self.timer.start(300, 1)
         self.timer2 = eTimer()
         if os.path.exists('/var/lib/dpkg/info'):
             self.timer2_conn = self.timer2.timeout.connect(self.__layoutFinished)
@@ -637,7 +632,7 @@ class Hometv(Screen):
     def msgupdate1(self):
         self.session.openWithCallback(self.msgupdate2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def msgupdate(self, answer):
+    def msgupdate2(self, answer):
         if self.Update is False:
             return
         if config.plugins.tvaddon.autoupd.value is False:
@@ -974,7 +969,7 @@ class SettingVhan(Screen):
                 data = six.ensure_str(data)
             match = re.compile('<td><a href="(.+?)">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(data)
             for url, name, date in match:
-                name = name + ' ' + date
+                name = name.replace('&#127381;', '') + ' ' + date
                 url = "https://www.vhannibal.net/" + url
                 self.urls.append(Utils.checkStr(url.strip()))
                 self.names.append(Utils.checkStr(name.strip()))
@@ -1087,7 +1082,7 @@ class SettingVhan2(Screen):
                 if '.php' in url.lower():
                     continue
                 name = "Vhannibal" + url
-                name = name.replace(".zip", "").replace("%20", " ")
+                name = name.replace('&#127381;', '').replace("%20", " ")
                 url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
                 self.urls.append(Utils.checkStr(url.strip()))
                 self.names.append(Utils.checkStr(name.strip()))
@@ -2501,9 +2496,9 @@ class tvUpdate(Screen):
                 self.info = s3
                 self.dmlink = s4
                 fp.close()
-                if s1 <= currversion:
+                if self.version <= currversion:
                     self['info'].setText(title_plug)
-                    self['pth'].setText('No updates available!')
+                    self['pth'].setText('No updates available!\n')  + self.info
                     self.Update = False
                 else:
                     updatestr = title_plug
@@ -2996,7 +2991,7 @@ class SelectPiconz(Screen):
             self.session.open(MMarkPiconsf, 'MMark-Picons', host_mov, True)
         elif sel == ('OPEN PICONS'):  # https://openpicons.com/picons/full-motor-srp/hardlink/ # https://openpicons.com/picons/?dir=full-motor-srp/ipk
             # return
-            host_open = 'https://openpicons.com/picons/full-motor-srp/hardlink/'
+            host_open = 'https://openpicons.com/picons/?dir=full-motor-srp/hardlink'
             self.session.open(OpenPicons, 'OpenPicons', host_open)
         else:
             return
@@ -3357,9 +3352,18 @@ class OpenPicons(Screen):
             print(e)
 
     def downxmlpage(self):
-        url = six.ensure_binary(self.url)
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
+        # url = six.ensure_binary(self.url)
+        # url = make_request(self.url)
+        try:
+            data = make_request(self.url)
+            if PY3:
+                data = six.ensure_str(data)
+            self._gotPageLoad(data)
+        except Exception as e:
+            print('no link valid: ', e)
+        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+        # https://openpicons.com/picons/?dir=full-motor-srp
+        
     def errorLoad(self):
         self['info'].setText(_('Try again later ...'))
         self.downloading = False
@@ -3368,25 +3372,20 @@ class OpenPicons(Screen):
         r = data
         if PY3:
             r = six.ensure_str(data)
+        print('rrrrrrrrrrrrrrr=:', r)
         self.names = []
         self.urls = []
         try:
-            # if PY3:
-                # n1 = r.find('"quickkey":'.encode(), 0)
-                # n2 = r.find('more_chunks'.encode(), n1)
-            # else:
-                # n1 = r.find('"quickkey":', 0)
-                # n2 = r.find('more_chunks', n1)
-            # n1 = r.find('"quickkey":', 0)
-            # n2 = r.find('more_chunks', n1)
-            # data2 = r[n1:n2]
             regex = 'full-motor-srp/hardlink/(.*?).tar.xz"'
             match = re.compile(regex, re.DOTALL).findall(r)
             for url in match:
-                name = url.replace('enigma2-plugin-picons-srp-', '').replace('.', '-')
+                # full-motor-srp/hardlink/srp-full.100x60-86x46.dark.on.blue_2023-12-12--23-58-23.hardlink.tar.xz"
+                name = url.replace('.hardlink', '').replace('.', '-').replace('_', '-')
                 url = 'https://openpicons.com/picons/full-motor-srp/hardlink/' + url + '.tar.xz'
+                print('name=', name)
+                print('url:', url)
                 self.urls.append(url)
-                self.names.append(name)
+                self.names.append(Utils.checkStr(name))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['list'])
@@ -3443,10 +3442,8 @@ class OpenPicons(Screen):
                         self.namel = name
                 # os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + str(mmkpicon))
                 myCmd = "cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + str(mmkpicon)
-
                 self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[myCmd, 'sleep 5'], closeOnSuccess=False)
                 # subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
-
                 info = 'Successfully Picons Installed'
                 self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
@@ -4299,8 +4296,8 @@ def StartSavingTerrestrialChannels():
             x = x.lower()
             if x.find('http'):
                 continue
-            if x.find('eeee0000') != -1:
-                if x.find('82000') == -1 and x.find('c0000') == -1:
+            if x.find('eeee') != -1:
+                # if x.find('82000') == -1 and x.find('c0000') == -1:
                     return file
                     break
 
@@ -4316,7 +4313,7 @@ def StartSavingTerrestrialChannels():
                 if x.lower().find((search.lower())) != -1:
                     if x.find('http'):
                         continue
-                    if x.find('eeee0000') != -1:
+                    if x.find('eeee') != -1:
                         return file
                         break
 
@@ -4341,7 +4338,7 @@ def StartSavingTerrestrialChannels():
                     inTransponder = False
                     inService = False
                 line = line.lower()
-                if line.find('eeee0000') != -1:
+                if line.find('eeee') != -1:
                     Trasponder = True
                     if inTransponder:
                         TrasponderListOldLamedb.write(line)
