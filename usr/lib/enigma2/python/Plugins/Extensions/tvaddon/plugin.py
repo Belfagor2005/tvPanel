@@ -261,6 +261,13 @@ ico_path = os.path.join(plugin_path, 'logo.png')
 no_cover = os.path.join(plugin_path, 'no_coverArt.png')
 res_plugin_path = os.path.join(plugin_path, 'res/')
 _firstStarttvspro = True
+ee2ldb = '/etc/enigma2/lamedb'
+ServOldLamedb = plugin_path + '/temp/ServiceListOldLamedb'
+TransOldLamedb = plugin_path + '/temp/TrasponderListOldLamedb'
+TerChArch = plugin_path + '/temp/TerrestrialChannelListArchive'
+# SelBack = plugin_path + '/SelectBack'
+# SSelect = plugin_path + '/Select'
+DIGTV = 'eeee0000'
 
 screenwidth = getDesktop(0).size()
 if screenwidth.width() == 2560:
@@ -1214,7 +1221,6 @@ class Milenka61(Screen):
         self.urls = []
         try:
             regex = '<a href="Satvenus(.+?)".*?align="right">(.*?) </td>'
-            # regex = '<a href="Satvenus(.+?)".+?align="right">(.*?)-(.*?)-(.*?) .+?</td'
             match = re.compile(regex).findall(r)
             for url, txt in match:
                 if url.find('.tar.gz') != -1:
@@ -4246,7 +4252,6 @@ def terrestrial():
     ttime = time.localtime(now)
     tt = str('{0:02d}'.format(ttime[2])) + str('{0:02d}'.format(ttime[1])) + str(ttime[0])[2:] + '_' + str('{0:02d}'.format(ttime[3])) + str('{0:02d}'.format(ttime[4])) + str('{0:02d}'.format(ttime[5]))
     os.system('tar -czvf /tmp/' + tt + '_enigma2settingsbackup.tar.gz' + ' -C / /etc/enigma2/*.tv /etc/enigma2/*.radio /etc/enigma2/lamedb')
-
     if SavingProcessTerrestrialChannels:
         print('SavingProcessTerrestrialChannels')
     return
@@ -4255,7 +4260,8 @@ def terrestrial():
 def terrestrial_rest():
     if LamedbRestore():
         TransferBouquetTerrestrialFinal()
-        terrr = os.path.join(plugin_path, 'temp/TerrestrialChannelListArchive')
+        # terrr = os.path.join(plugin_path, 'temp/TerrestrialChannelListArchive')
+        terrr = plugin_path + '/temp/TerrestrialChannelListArchive')
         if os.path.exists(terrr):
             os.system("cp -rf " + plugin_path + "/temp/TerrestrialChannelListArchive /etc/enigma2/userbouquet.terrestrial.tv")
         os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
@@ -4289,44 +4295,40 @@ def lcnstart():
 
 
 def StartSavingTerrestrialChannels():
+
     def ForceSearchBouquetTerrestrial():
         for file in sorted(glob.glob("/etc/enigma2/*.tv")):
-            if 'tivustream' in file:
-                continue
             f = open(file, "r").read()
-            x = f.strip()
-            x = x.lower()
-            if x.find('http'):
-                continue
-            if x.find('eeee') != -1:
-                # if x.find('82000') == -1 and x.find('c0000') == -1:
+            x = f.strip().lower()
+            if x.find(DIGTV[:4]) != -1:
                 return file
                 break
+            # if x.find('eeee0000') != -1:
+                # if x.find('82000') == -1 or x.find('c0000') == -1:
+                    # return file
+                    # break
+        return
 
     def ResearchBouquetTerrestrial(search):
         for file in sorted(glob.glob("/etc/enigma2/*.tv")):
-            if 'tivustream' in file:
-                continue
             f = open(file, "r").read()
-            x = f.strip()
-            x = x.lower()
+            x = f.strip().lower()
             x1 = f.strip()
             if x1.find("#NAME") != -1:
-                if x.lower().find((search.lower())) != -1:
-                    if x.find('http'):
-                        continue
-                    if x.find('eeee') != -1:
+                if x.lower().find(search.lower()) != -1:
+                    if x.find(DIGTV[:4]) != -1:
                         return file
                         break
+        return
 
     def SaveTrasponderService():
-        TrasponderListOldLamedb = open(plugin_path + '/temp/TrasponderListOldLamedb', 'w')
-        ServiceListOldLamedb = open(plugin_path + '/temp/ServiceListOldLamedb', 'w')
+        TrasponderListOldLamedb = open(TransOldLamedb, 'w')
+        ServiceListOldLamedb = open(ServOldLamedb, 'w')
         Trasponder = False
         inTransponder = False
         inService = False
         try:
-            LamedbFile = open('/etc/enigma2/lamedb')
+            LamedbFile = open(ee2ldb, 'r')
             while 1:
                 line = LamedbFile.readline()
                 if not line:
@@ -4340,7 +4342,7 @@ def StartSavingTerrestrialChannels():
                     inTransponder = False
                     inService = False
                 line = line.lower()
-                if line.find('eeee') != -1:
+                if line.find(DIGTV[:4]) != -1:
                     Trasponder = True
                     if inTransponder:
                         TrasponderListOldLamedb.write(line)
@@ -4358,18 +4360,18 @@ def StartSavingTerrestrialChannels():
             TrasponderListOldLamedb.close()
             ServiceListOldLamedb.close()
             if not Trasponder:
-                os.system('rm -fr ' + plugin_path + '/temp/TrasponderListOldLamedb')
-                os.system('rm -fr ' + plugin_path + '/temp/ServiceListOldLamedb')
-        except Exception as e:
-            print('error: ', str(e))
+                os.system('rm -fr ' + TransOldLamedb)
+                os.system('rm -fr ' + ServOldLamedb)
+        except:
+            pass
         return Trasponder
 
     def CreateBouquetForce():
-        WritingBouquetTemporary = open(plugin_path + '/temp/TerrestrialChannelListArchive', 'w')
-        WritingBouquetTemporary.write('#NAME Digitale Terrestre\n')
-        ReadingTempServicelist = open(plugin_path + '/temp/ServiceListOldLamedb').readlines()
+        WritingBouquetTemporary = open(TerChArch, 'w')
+        WritingBouquetTemporary.write('#NAME terrestre\n')
+        ReadingTempServicelist = open(ServOldLamedb, 'r').readlines()
         for jx in ReadingTempServicelist:
-            if jx.find('eeee') != -1:
+            if jx.find(DIGTV[:4]) != -1:
                 String = jx.split(':')
                 WritingBouquetTemporary.write('#SERVICE 1:0:%s:%s:%s:%s:%s:0:0:0:\n' % (hex(int(String[4]))[2:], String[0], String[2], String[3], String[1]))
         WritingBouquetTemporary.close()
@@ -4379,16 +4381,17 @@ def StartSavingTerrestrialChannels():
         if not NameDirectory:
             NameDirectory = ForceSearchBouquetTerrestrial()
         try:
-            shutil.copyfile(NameDirectory, plugin_path + '/temp/TerrestrialChannelListArchive')
+            shutil.copyfile(NameDirectory, TerChArch)
             return True
-        except Exception as e:
-            print('error: ', str(e))
+        except:
+            pass
         return
     Service = SaveTrasponderService()
     if Service:
         if not SaveBouquetTerrestrial():
             CreateBouquetForce()
         return True
+    return
 
 
 def LamedbRestore():
@@ -4397,7 +4400,7 @@ def LamedbRestore():
         ServiceListNewLamedb = open(plugin_path + '/temp/ServiceListNewLamedb', 'w')
         inTransponder = False
         inService = False
-        infile = open("/etc/enigma2/lamedb")
+        infile = open(ee2ldb, 'r')
         while 1:
             line = infile.readline()
             if not line:
@@ -4416,23 +4419,23 @@ def LamedbRestore():
                 ServiceListNewLamedb.write(line)
         TrasponderListNewLamedb.close()
         ServiceListNewLamedb.close()
-        WritingLamedbFinal = open("/etc/enigma2/lamedb", "w")
+        WritingLamedbFinal = open(ee2ldb, "w")
         WritingLamedbFinal.write("eDVB services /4/\n")
-        TrasponderListNewLamedb = open(plugin_path + '/temp/TrasponderListNewLamedb').readlines()
+        TrasponderListNewLamedb = open(plugin_path + '/temp/TrasponderListNewLamedb', 'r').readlines()
         for x in TrasponderListNewLamedb:
             WritingLamedbFinal.write(x)
         try:
-            TrasponderListOldLamedb = open(plugin_path + '/temp/TrasponderListOldLamedb').readlines()
+            TrasponderListOldLamedb = open(TransOldLamedb, 'r').readlines()
             for x in TrasponderListOldLamedb:
                 WritingLamedbFinal.write(x)
         except:
             pass
         WritingLamedbFinal.write("end\n")
-        ServiceListNewLamedb = open(plugin_path + '/temp/ServiceListNewLamedb').readlines()
+        ServiceListNewLamedb = open(plugin_path + '/temp/ServiceListNewLamedb', 'r').readlines()
         for x in ServiceListNewLamedb:
             WritingLamedbFinal.write(x)
         try:
-            ServiceListOldLamedb = open(plugin_path + '/temp/ServiceListOldLamedb').readlines()
+            ServiceListOldLamedb = open(ServOldLamedb, 'r').readlines()
             for x in ServiceListOldLamedb:
                 WritingLamedbFinal.write(x)
         except:
@@ -4445,15 +4448,18 @@ def LamedbRestore():
 
 
 def TransferBouquetTerrestrialFinal():
+
     def RestoreTerrestrial():
         for file in os.listdir("/etc/enigma2/"):
             if re.search('^userbouquet.*.tv', file):
                 f = open("/etc/enigma2/" + file, "r")
                 x = f.read()
-                if re.search("#NAME Digitale Terrestre", x, flags=re.IGNORECASE):
+                if re.search('#NAME Digitale Terrestre', x, flags=re.IGNORECASE) or re.search('#NAME DTT', x, flags=re.IGNORECASE):  # for disa51
                     return "/etc/enigma2/" + file
+        return
+
     try:
-        TerrestrialChannelListArchive = open(plugin_path + '/temp/TerrestrialChannelListArchive').readlines()
+        TerrestrialChannelListArchive = open(TerChArch, 'r').readlines()
         DirectoryUserBouquetTerrestrial = RestoreTerrestrial()
         if DirectoryUserBouquetTerrestrial:
             TrasfBouq = open(DirectoryUserBouquetTerrestrial, 'w')
@@ -4462,8 +4468,9 @@ def TransferBouquetTerrestrialFinal():
                     TrasfBouq.write('#NAME Digitale Terrestre\n')
                 else:
                     TrasfBouq.write(Line)
-        TrasfBouq.close()
-        return True
+            TrasfBouq.close()
+            return True
     except:
         return False
+    return
 # ===== by lululla
