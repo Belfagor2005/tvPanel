@@ -4261,7 +4261,7 @@ def terrestrial_rest():
     if LamedbRestore():
         TransferBouquetTerrestrialFinal()
         # terrr = os.path.join(plugin_path, 'temp/TerrestrialChannelListArchive')
-        terrr = plugin_path + '/temp/TerrestrialChannelListArchive')
+        terrr = plugin_path + '/temp/TerrestrialChannelListArchive'
         if os.path.exists(terrr):
             os.system("cp -rf " + plugin_path + "/temp/TerrestrialChannelListArchive /etc/enigma2/userbouquet.terrestrial.tv")
         os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
