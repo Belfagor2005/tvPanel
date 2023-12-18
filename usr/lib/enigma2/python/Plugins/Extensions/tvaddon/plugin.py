@@ -155,22 +155,23 @@ def checkMyFile(url):
             print('Reason: ', e.reason)
     return myfile
 
+
 def make_request(url):
     try:
         import requests
         response = requests.get(url, verify=False)
         if response.status_code == 200:
-            link = requests.get(url, headers={'User-Agent': RequestAgent()}, timeout=15, verify=False, stream=True ).text
+            link = requests.get(url, headers={'User-Agent': RequestAgent()}, timeout=15, verify=False, stream=True).text
         return link
     except ImportError:
         req = Request(url)
-        req.add_header('User-Agent', 'E2 Plugin TVaddon Panel')
+        req.add_header('User-Agent', 'E2 Plugin Lululla')
         response = urlopen(req, None, 10)
         link = response.read().decode('utf-8')
         response.close()
         return link
     return
-    
+
 
 def checkGZIP(url):
     from io import StringIO
@@ -472,7 +473,6 @@ class Hometv(Screen):
                                                            'back': self.closerm,
                                                            'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
-
 
     def __layoutFinished(self):
         # status = status_site()
@@ -2030,7 +2030,8 @@ class tvInstall(Screen):
                     if 'wget' not in res.lower():
                         cmd23 = 'apt-get update && apt-get install wget'
                         os.popen(cmd23)
-                    cmd = 'dpkg -i %s' % down
+                    # cmd = 'dpkg -i %s' % down
+                    cmd = 'apt-get -f -y --force-yes install %s' % down
                     # cmd = 'dpkg --install --force-overwrite %s' % self.dest
                     # cmd = "wget -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % (RequestAgent(), str(self.com), self.dest, self.dest)
                     # if "https" in str(self.com):
@@ -2189,10 +2190,10 @@ class tvInstall(Screen):
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
                 if os.path.exists('/var/lib/dpkg/info'):
-                    self.session.open(MessageBox, _('There is currently a problem with this image.\nBetter not to download.\nTry installing directly with the OK button!'), MessageBox.TYPE_INFO, timeout=5)
-                    self['info'].setText(_('Download canceled!'))
-                    return
-                else:
+                    # self.session.open(MessageBox, _('There is currently a problem with this image.\nBetter not to download.\nTry installing directly with the OK button!'), MessageBox.TYPE_INFO, timeout=5)
+                    # self['info'].setText(_('Download canceled!'))
+                    # return
+                # else:
                     self.download = downloadWithProgress(self.com, self.dest)
                     self.download.addProgress(self.downloadProgress)
                     self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -2374,7 +2375,7 @@ class tvIPK(Screen):
                     elif self.sel.endswith('.deb'):
                         if os.path.exists('/var/lib/dpkg/info'):
                             # apt-get install -f -y
-                            cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get install -f -y %s > /dev/null' % self.dest
+                            cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get -f -y --force-yes install %s > /dev/null' % self.dest
                             self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0], closeOnSuccess=False)
                         else:
                             self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2498,7 +2499,7 @@ class tvUpdate(Screen):
                 fp.close()
                 if self.version <= currversion:
                     self['info'].setText(title_plug)
-                    self['pth'].setText('No updates available!\n')  + self.info
+                    self['pth'].setText('No updates available!\n') + self.info
                     self.Update = False
                 else:
                     updatestr = title_plug
@@ -3293,6 +3294,7 @@ class MMarkPiconsf(Screen):
         if self.aborted:
             self.finish(aborted=True)
 
+
 class OpenPicons(Screen):
     def __init__(self, session, name, url):
         self.session = session
@@ -3363,7 +3365,7 @@ class OpenPicons(Screen):
             print('no link valid: ', e)
         # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
         # https://openpicons.com/picons/?dir=full-motor-srp
-        
+
     def errorLoad(self):
         self['info'].setText(_('Try again later ...'))
         self.downloading = False
@@ -3788,9 +3790,9 @@ class plugins_adult(Screen):
             self.close()
 
     def okRun(self):
-        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okRun2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun2(self, answer):
         if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -4298,8 +4300,8 @@ def StartSavingTerrestrialChannels():
                 continue
             if x.find('eeee') != -1:
                 # if x.find('82000') == -1 and x.find('c0000') == -1:
-                    return file
-                    break
+                return file
+                break
 
     def ResearchBouquetTerrestrial(search):
         for file in sorted(glob.glob("/etc/enigma2/*.tv")):
