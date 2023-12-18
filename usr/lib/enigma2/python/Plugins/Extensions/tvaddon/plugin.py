@@ -36,6 +36,7 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import fileExists, resolveFilename
 from Tools.Downloader import downloadWithProgress
+# from .downloadWithProgress import downloadWithProgress
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from enigma import loadPNG, gFont
 from enigma import eTimer
@@ -2165,7 +2166,6 @@ class tvInstall(Screen):
             if os.path.exists(self.dest):
                 os.remove(self.dest)
             if self.com is not None:
-
                 extensionlist = self.com.split('.')
                 extension = extensionlist[-1].lower()
                 if len(extensionlist) > 1:
@@ -2193,13 +2193,15 @@ class tvInstall(Screen):
                         self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                         self['info'].setText(_('Download canceled!'))
                         return
-                # from . import Downloader
-                # self.download = Downloader.downloadWithProgress(self.com, self.dest)
                 if os.path.exists('/var/lib/dpkg/info'):
-                    # self.session.open(MessageBox, _('There is currently a problem with this image.\nBetter not to download.\nTry installing directly with the OK button!'), MessageBox.TYPE_INFO, timeout=5)
-                    # self['info'].setText(_('Download canceled!'))
-                    # return
-                # else:
+                    self.session.open(MessageBox, _('There is currently a problem with this image.\nBetter not to download.\nTry installing directly with the OK button!'), MessageBox.TYPE_INFO, timeout=5)
+                    self['info'].setText(_('Download canceled!'))
+                    return
+                    # print('self.com:', self.com)
+                    # print('self.dest:', self.dest)
+                    # Utils.downloadFilest(self.com, self.dest)
+                    # self.install()
+                else:
                     self.download = downloadWithProgress(self.com, self.dest)
                     self.download.addProgress(self.downloadProgress)
                     self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -3248,7 +3250,8 @@ class MMarkPiconsf(Screen):
 
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(url, dest)
-
+                print('url:', url)
+                print('dest:', dest)
                 self.download = downloadWithProgress(url, dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -3413,6 +3416,8 @@ class OpenPicons(Screen):
                 self.dest = "/tmp/download.tar.xz"
                 if os.path.exists(self.dest):
                     os.remove(self.dest)
+                print('url:', url)
+                print('self.dest:', self.dest)
                 self.download = downloadWithProgress(url, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -3639,7 +3644,8 @@ class pluginx(Screen):
 
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
-
+                print('self.com:', self.com)
+                print('self.dest:', self.dest)
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -3809,7 +3815,8 @@ class plugins_adult(Screen):
 
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
-
+                print('self.com:', self.com)
+                print('self.dest:', self.dest)
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -3962,7 +3969,8 @@ class script(Screen):
 
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
-
+                print('self.com:', self.com)
+                print('self.dest:', self.dest)
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -4115,7 +4123,8 @@ class repository(Screen):
 
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
-
+                print('self.com:', self.com)
+                print('self.dest:', self.dest)
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
