@@ -268,7 +268,7 @@ TransOldLamedb = plugin_path + '/temp/TrasponderListOldLamedb'
 TerChArch = plugin_path + '/temp/TerrestrialChannelListArchive'
 # SelBack = plugin_path + '/SelectBack'
 # SSelect = plugin_path + '/Select'
-DIGTV = 'eeee0000'
+# DIGTV = 'eeee0000'
 
 screenwidth = getDesktop(0).size()
 if screenwidth.width() == 2560:
@@ -3372,7 +3372,7 @@ class OpenPicons(Screen):
             self.downloading = False
 
     def okRun(self):
-        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?\nATTENTION: MAKE SURE YOU HAVE ENOUGH SPACE\nTHERE ARE A LOT OF PICONS AND IT TAKES TIME!!!"), MessageBox.TYPE_YESNO)
 
     def okRun1(self, answer):
         if answer:
@@ -3388,8 +3388,8 @@ class OpenPicons(Screen):
                 self.dest = "/tmp/download.tar.xz"
                 if os.path.exists(self.dest):
                     os.remove(self.dest)
-                print('url:', url)
-                print('self.dest:', self.dest)
+                # print('url:', url)
+                # print('self.dest:', self.dest)
                 self.download = downloadWithProgress(url, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -3424,12 +3424,15 @@ class OpenPicons(Screen):
                 path = '/tmp/unzipped'
                 for root, dirs, files in os.walk(path):
                     for name in dirs:
+                        if not os.path.isdir(os.path.join(path, name)):
+                            continue                         
                         self.namel = name
-                # os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + str(mmkpicon))
-                # cp -rf  '/tmp/unzipped/name/'*  /media/hdd/picon
-                myCmd = "cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + str(mmkpicon)
-                self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[myCmd, 'sleep 5'], closeOnSuccess=False)
-                # subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
+                # folder is long name.. truk for this 
+                path2 = '/tmp/unzipped/' + str(self.namel)
+                for root, dirs, files in os.walk(path2):
+                    for name in files:
+                        Cmd = "cp -rf  '" + path2 + "/" + name + "' " + str(mmkpicon)
+                        os.system(Cmd)
                 info = 'Successfully Picons Installed'
                 self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
@@ -4308,7 +4311,7 @@ def StartSavingTerrestrialChannels():
         for file in sorted(glob.glob("/etc/enigma2/*.tv")):
             f = open(file, "r").read()
             x = f.strip().lower()
-            if x.find(DIGTV[:4]) != -1:
+            if x.find('eeee') != -1:
                 return file
                 break
             # if x.find('eeee0000') != -1:
@@ -4324,7 +4327,7 @@ def StartSavingTerrestrialChannels():
             x1 = f.strip()
             if x1.find("#NAME") != -1:
                 if x.lower().find(search.lower()) != -1:
-                    if x.find(DIGTV[:4]) != -1:
+                    if x.find('eeee') != -1:
                         return file
                         break
         return
@@ -4350,7 +4353,7 @@ def StartSavingTerrestrialChannels():
                     inTransponder = False
                     inService = False
                 line = line.lower()
-                if line.find(DIGTV[:4]) != -1:
+                if line.find('eeee') != -1:
                     Trasponder = True
                     if inTransponder:
                         TrasponderListOldLamedb.write(line)
@@ -4379,7 +4382,7 @@ def StartSavingTerrestrialChannels():
         WritingBouquetTemporary.write('#NAME terrestre\n')
         ReadingTempServicelist = open(ServOldLamedb, 'r').readlines()
         for jx in ReadingTempServicelist:
-            if jx.find(DIGTV[:4]) != -1:
+            if jx.find('eeee') != -1:
                 String = jx.split(':')
                 WritingBouquetTemporary.write('#SERVICE 1:0:%s:%s:%s:%s:%s:0:0:0:\n' % (hex(int(String[4]))[2:], String[0], String[2], String[3], String[1]))
         WritingBouquetTemporary.close()
