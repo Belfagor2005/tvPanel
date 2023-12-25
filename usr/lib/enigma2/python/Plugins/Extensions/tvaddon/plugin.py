@@ -73,7 +73,6 @@ else:
 
 if sys.version_info >= (2, 7, 9):
     try:
-        import ssl
         sslContext = ssl._create_unverified_context()
     except:
         sslContext = None
@@ -355,7 +354,6 @@ class tvList(MenuList):
             self.l.setItemHeight(50)
             textfont = int(24)
             self.l.setFont(0, gFont('Regular', textfont))
-
 
 
 pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/status-off.png".format('tvaddon'))  # ico1_path
@@ -3425,9 +3423,9 @@ class OpenPicons(Screen):
                 for root, dirs, files in os.walk(path):
                     for name in dirs:
                         if not os.path.isdir(os.path.join(path, name)):
-                            continue                         
+                            continue
                         self.namel = name
-                # folder is long name.. truk for this 
+                # folder is long name.. truk for this
                 path2 = '/tmp/unzipped/' + str(self.namel)
                 for root, dirs, files in os.walk(path2):
                     for name in files:
@@ -4227,12 +4225,14 @@ def main(session, **kwargs):
     try:
         session.open(Hometv)
     except:
+        import traceback
+        traceback.print_exc()
         pass
 
 
 def cfgmain(menuid, **kwargs):
     if menuid == 'mainmenu':
-        return [(_('TiVuStream Addons'), main, 'TiVuStreamAddonPanel', 44)]
+        return [(_('TiVuStream Addons'), main, 'AddonPanel', 44)]
     else:
         return []
 
