@@ -2142,8 +2142,8 @@ class tvInstall(Screen):
             print('1 self.com type=', type(self.com))
             self.com = six.ensure_binary(self.com)
             print('2 self.com type=', type(self.com))
-            if PY3:
-                self.com = self.com.encode()
+            # if PY3:
+                # self.com = self.com.encode()
             self.downplug = self.com.split("/")[-1]
             self.dest = '/tmp/' + self.downplug
             if os.path.exists(self.dest):
@@ -3199,8 +3199,8 @@ class MMarkPiconsf(Screen):
                 print('1 self.com type=', type(url))
                 url = six.ensure_binary(url)
                 print('2 self.com type=', type(url))
-                if PY3:
-                    url = url.encode()
+                # if PY3:
+                    # url = url.encode()
 
                 dest = "/tmp/download.zip"
                 if os.path.exists(dest):
@@ -3381,8 +3381,8 @@ class OpenPicons(Screen):
                 print('1 url type=', type(url))
                 url = six.ensure_binary(url)
                 print('2 url type=', type(url))
-                if PY3:
-                    url = url.encode()
+                # if PY3:
+                    # url = url.encode()
                 self.dest = "/tmp/download.tar.xz"
                 if os.path.exists(self.dest):
                     os.remove(self.dest)
@@ -3616,8 +3616,8 @@ class pluginx(Screen):
                 print('1 self.com type=', type(self.com))
                 self.com = six.ensure_binary(self.com)
                 print('2 self.com type=', type(self.com))
-                if PY3:
-                    self.com = self.com.encode()
+                # if PY3:
+                    # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
 
@@ -3793,8 +3793,8 @@ class plugins_adult(Screen):
                 print('1 self.com type=', type(self.com))
                 self.com = six.ensure_binary(self.com)
                 print('2 self.com type=', type(self.com))
-                if PY3:
-                    self.com = self.com.encode()
+                # if PY3:
+                    # self.com = self.com.encode()
 
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
@@ -3954,8 +3954,8 @@ class script(Screen):
                 print('1 self.com type=', type(self.com))
                 self.com = six.ensure_binary(self.com)
                 print('2 self.com type=', type(self.com))
-                if PY3:
-                    self.com = self.com.encode()
+                # if PY3:
+                    # self.com = self.com.encode()
 
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
@@ -4115,8 +4115,8 @@ class repository(Screen):
                 print('1 self.com type=', type(self.com))
                 self.com = six.ensure_binary(self.com)
                 print('2 self.com type=', type(self.com))
-                if PY3:
-                    self.com = self.com.encode()
+                # if PY3:
+                    # self.com = self.com.encode()
 
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
