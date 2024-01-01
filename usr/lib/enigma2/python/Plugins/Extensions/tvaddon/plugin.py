@@ -37,6 +37,7 @@ from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import fileExists, resolveFilename
 from Tools.Downloader import downloadWithProgress
 # from .downloadWithProgress import downloadWithProgress
+# from Screens.Processing import Processing
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from enigma import loadPNG, gFont
 from enigma import eTimer
@@ -44,7 +45,6 @@ from enigma import getDesktop
 from enigma import eListboxPythonMultiContent, eConsoleAppContainer
 from os import chmod
 from twisted.web.client import downloadPage, getPage
-# import base64
 import codecs
 import os
 import re
@@ -181,7 +181,6 @@ def checkGZIP(url):
     request = Request(url, headers=hdr)
     try:
         response = urlopen(request, timeout=20)
-
         if response.info().get('Content-Encoding') == 'gzip':
             buffer = StringIO(response.read())
             deflatedContent = gzip.GzipFile(fileobj=buffer)
@@ -356,9 +355,9 @@ class tvList(MenuList):
             self.l.setFont(0, gFont('Regular', textfont))
 
 
-pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/status-off.png".format('tvaddon'))  # ico1_path
+pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/lock_off.png".format('tvaddon'))  # ico1_path
 if status_site():
-    pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/status-on.png".format('tvaddon'))  # ico1_path
+    pngs = resolveFilename(SCOPE_PLUGINS, "Extensions/{}/res/pics/lock_on.png".format('tvaddon'))  # ico1_path
 
 
 def DailyListEntry(name, idx):
@@ -1105,8 +1104,8 @@ class SettingVhan2(Screen):
                         set = 1
                         terrestrial()
 
-                    if PY3:
-                        url = six.ensure_binary(url)
+                    # if PY3:
+                        # url = six.ensure_binary(url)
                     if url.startswith(b"https") and sslverify:
                         parsed_uri = urlparse(url)
                         domain = parsed_uri.hostname
@@ -1982,15 +1981,24 @@ class tvInstall(Screen):
         else:
             return
 
+    # def showProgress(self, text=""):
+        # Processing.instance.setDescription(text or _("Please wait..."))
+        # Processing.instance.showProgress(endless=True)
+
     def prombt(self, com, dom):
+        self.timer = eTimer()
         global set
+        # def configureCallback(result=None, retval=None, extra_args=None):
+            # self.timer.start(10000, True)
+            # Processing.instance.hideProgress()
+
+        # self.showProgress(_("Install Prepare..."))
         self.com = com
         self.dom = dom
         self.downplug = self.com.split("/")[-1]
         down = self.dowfil()
         self['info'].setText(_('Installing ') + self.dom + _('... please wait'))
         if self.com is not None:
-            self.timer = eTimer()
             extensionlist = self.com.split('.')
             extension = extensionlist[-1]  # .lower()
             if len(extensionlist) > 1:
@@ -2008,7 +2016,7 @@ class tvInstall(Screen):
 
                 self.session.open(tvConsole, title='Installation %s' % self.dom, cmdlist=[cmd, 'sleep 5'])  # , finishedCallback=self.msgipkinst)
                 self['info'].setText(_('Installation done !!!'))
-                return
+                # return
 
             elif extension == "deb":
                 if not os.path.exists('/var/lib/dpkg/status'):
@@ -2028,7 +2036,7 @@ class tvInstall(Screen):
                         # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % (RequestAgent(), str(self.com), self.dest, self.dest)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
-                    return
+                    # return
             elif extension == "ipk":
                 if os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2040,7 +2048,6 @@ class tvInstall(Screen):
                         # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
-                    return
             elif self.com.endswith('.zip'):
                 if 'setting' in self.dom.lower():
                     if not os.path.exists('/var/lib/dpkg/status'):
@@ -2077,7 +2084,7 @@ class tvInstall(Screen):
                     terrestrial_rest()
                     self.session.open(tvConsole, _('SETTING - install: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
-                    return
+                    # return
                 elif 'picon' in self.dom.lower():
                     cmd = ["unzip -o -q %s -d %s > /dev/null" % (down, str(mmkpicon))]
                     # cmd = ["wget -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest, str(mmkpicon))]
@@ -2085,7 +2092,7 @@ class tvInstall(Screen):
                         # cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest, str(mmkpicon))]
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
-                    return
+                    # return
                 else:
                     self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
                     cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % (RequestAgent(), str(self.com), down)]
@@ -2096,12 +2103,13 @@ class tvInstall(Screen):
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, cmd, closeOnSuccess=False)
                     self['info'].setText(_('Download done !!!'))
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                    self.timer.start(1000, True)
+                    # self.timer.start(1000, True)
                     self['info'].setText(_('Download file in /tmp successful!!'))
-                    return
+                    # return
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
             self.timer.start(3000, 1)
+            # configureCallback()
             self.addondel()
 
     def dowfil(self):
@@ -2140,12 +2148,12 @@ class tvInstall(Screen):
             self.dom = self.names[idx]
             self.com = self.urls[idx]
             print('1 self.com type=', type(self.com))
-            self.com = six.ensure_binary(self.com)
-            print('2 self.com type=', type(self.com))
+            # self.com = six.ensure_binary(self.com)
+            # print('2 self.com type=', type(self.com))
             # if PY3:
                 # self.com = self.com.encode()
             self.downplug = self.com.split("/")[-1]
-            self.dest = '/tmp/' + self.downplug
+            self.dest = '/tmp/' + str(self.downplug)
             if os.path.exists(self.dest):
                 os.remove(self.dest)
             if self.com is not None:
@@ -3189,36 +3197,36 @@ class MMarkPiconsf(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
-        if answer:
+    def okRun1(self, result):
+        self['info'].setText(_('... please wait'))
+        if result:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.name = self.names[idx]
                 url = self.urls[idx]
-
-                print('1 self.com type=', type(url))
-                url = six.ensure_binary(url)
-                print('2 self.com type=', type(url))
-                # if PY3:
-                    # url = url.encode()
-
                 dest = "/tmp/download.zip"
+                print('url333: ', url)
                 if os.path.exists(dest):
                     os.remove(dest)
-                myfile = Utils.ReadUrl(url)
-                regexcat = 'href="https://download(.*?)"'
-                match = re.compile(regexcat, re.DOTALL).findall(myfile)
-                # myfile = checkMyFile(url)
-                # print('myfile222:  ', myfile)
-                url = 'https://download' + str(match[0])
-
-                # from . import Downloader
-                # self.download = Downloader.downloadWithProgress(url, dest)
-                print('url:', url)
-                print('dest:', dest)
-                self.download = downloadWithProgress(url, dest)
-                self.download.addProgress(self.downloadProgress)
-                self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                try:
+                    myfile = Utils.ReadUrl(url)
+                    print('response: ', myfile)
+                    regexcat = 'href="https://download(.*?)"'
+                    match = re.compile(regexcat, re.DOTALL).findall(myfile)
+                    print("match =", match[0])
+                    # myfile = checkMyFile(url)
+                    # print('myfile222:  ', myfile)
+                    url = 'https://download' + str(match[0])
+                    print("url final =", url)
+                    # myfile = checkMyFile(url)
+                    # print('myfile222:  ', myfile)
+                    # # url =  'https://download' + str(myfile)
+                    self.download = downloadWithProgress(url, dest)
+                    self.download.addProgress(self.downloadProgress)
+                    self.download.start().addCallback(self.install).addErrback(self.showError)
+                except Exception as e:
+                    print('error: ', str(e))
+                    print("Error: can't find file or read data")
             else:
                 self['info'].setText(_('Picons Not Installed ...'))
 
@@ -3379,8 +3387,8 @@ class OpenPicons(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 print('1 url type=', type(url))
-                url = six.ensure_binary(url)
-                print('2 url type=', type(url))
+                # url = six.ensure_binary(url)
+                # print('2 url type=', type(url))
                 # if PY3:
                     # url = url.encode()
                 self.dest = "/tmp/download.tar.xz"
