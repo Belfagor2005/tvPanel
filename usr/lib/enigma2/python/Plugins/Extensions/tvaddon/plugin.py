@@ -12,6 +12,7 @@ from . import _, paypal
 from . import Utils
 from .Utils import RequestAgent
 from .Lcn import LCN
+from .Downloader import downloadWithProgress
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
@@ -35,7 +36,7 @@ from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import fileExists, resolveFilename
-from Tools.Downloader import downloadWithProgress
+# from Tools.Downloader import downloadWithProgress
 # from .downloadWithProgress import downloadWithProgress
 # from Screens.Processing import Processing
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
@@ -560,12 +561,60 @@ class Hometv(Screen):
         global category
         sel = self.menu_list[idx]
 
+                                                   
         if sel == _('DAILY PICONS'):
             self.session.open(SelectPiconz)
+                                      
+                                    
+                                                   
+                               
+                                    
+                                                   
+                                    
+                                         
+                                                   
+                                     
+                                         
+                                                   
+                                             
+                                            
+                                                   
+                                  
+                                      
+                                                   
+                                   
+                                       
+                                                   
+                                        
+                                            
+                                                   
+                                         
+                                             
+                                                   
+                                     
+                                   
+                                                   
+                                     
+                                         
+                                                   
+                                     
+                                        
+                                                   
         elif sel == _('DAILY SETTINGS'):
+                                           
             self.session.open(tvDailySetting)
         elif sel == _('KODILITE BY PCD'):
+                                        
+                                                   
+                                    
+                                        
             self.session.open(mainkodilite)
+                                      
+                                          
+                                                   
+                                      
+                                          
+                                                   
         else:
             if sel == _('LULULLA CORNER'):
                 category = 'lululla.xml'
@@ -1988,11 +2037,6 @@ class tvInstall(Screen):
     def prombt(self, com, dom):
         self.timer = eTimer()
         global set
-        # def configureCallback(result=None, retval=None, extra_args=None):
-            # self.timer.start(10000, True)
-            # Processing.instance.hideProgress()
-
-        # self.showProgress(_("Install Prepare..."))
         self.com = com
         self.dom = dom
         self.downplug = self.com.split("/")[-1]
@@ -2016,7 +2060,6 @@ class tvInstall(Screen):
 
                 self.session.open(tvConsole, title='Installation %s' % self.dom, cmdlist=[cmd, 'sleep 5'])  # , finishedCallback=self.msgipkinst)
                 self['info'].setText(_('Installation done !!!'))
-                # return
 
             elif extension == "deb":
                 if not os.path.exists('/var/lib/dpkg/status'):
@@ -2036,7 +2079,6 @@ class tvInstall(Screen):
                         # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % (RequestAgent(), str(self.com), self.dest, self.dest)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
-                    # return
             elif extension == "ipk":
                 if os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
@@ -2202,19 +2244,17 @@ class tvInstall(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    def install(self, string=''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            self.progclear = 0
-            self['info'].setText(_('Please select ...'))
-            if os.path.exists(self.dest):
-                self.downloading = False
-                self['progresstext'].text = ''
-                self['progress'].setValue(self.progclear)
-                self["progress"].hide()
-                self['info'].setText(_('File Downloaded ...'))
-                self.tvIPK()
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show()
+        # self['info'].setText(_('Download...'))
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # print('progress = ok')
+
+    def showError(self):
+        print("download error ")
+        self.downloading = False
+        self.close()
 
     def download_failed(self, failure_instance=None, error_message=""):
         self.error_message = error_message
@@ -2259,6 +2299,20 @@ class tvInstall(Screen):
 
     def tvIPK(self):
         self.session.openWithCallback(self.close, tvIPK)
+
+    def install(self, string=''):
+        if self.aborted:
+            self.finish(aborted=True)
+        else:
+            self.progclear = 0
+            self['info'].setText(_('Please select ...'))
+            if os.path.exists(self.dest):
+                self.downloading = False
+                self['progresstext'].text = ''
+                self['progress'].setValue(self.progclear)
+                self["progress"].hide()
+                self['info'].setText(_('File Downloaded ...'))
+                self.tvIPK()
 
 
 class tvIPK(Screen):
@@ -2926,9 +2980,6 @@ class SelectPiconz(Screen):
 
     def getfreespace(self):
         try:
-            # from Components.PluginComponent import plugins
-            # plugins.clearPluginList()
-            # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
             fspace = Utils.freespace()
             self['pform'].setText(str(fspace))
         except Exception as e:
@@ -3029,9 +3080,6 @@ class MMarkFolderz(Screen):
 
     def getfreespace(self):
         try:
-            # from Components.PluginComponent import plugins
-            # plugins.clearPluginList()
-            # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
             fspace = Utils.freespace()
             self['pform'].setText(str(fspace))
         except Exception as e:
@@ -3142,9 +3190,6 @@ class MMarkPiconsf(Screen):
 
     def getfreespace(self):
         try:
-            # from Components.PluginComponent import plugins
-            # plugins.clearPluginList()
-            # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
             fspace = Utils.freespace()
             self['pform'].setText(str(fspace))
         except Exception as e:
@@ -3237,23 +3282,17 @@ class MMarkPiconsf(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    def install(self, string=''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            self.progclear = 0
-            self['info'].setText(_('File Downloaded ...'))
-            if os.path.exists('/tmp/download.zip'):
-                self['info'].setText(_('Install ...'))
-                self.downloading = False
-                self['progresstext'].text = ''
-                self['progress'].setValue(self.progclear)
-                self["progress"].hide()
-                self['info'].setText(_('Please select ...'))
-                myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
-                subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
-                info = 'Successfully Picons Installed'
-                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show()
+        # self['info'].setText(_('Download...'))
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # print('progress = ok')
+
+    def showError(self):
+        print("download error ")
+        self.downloading = False
+        self.close()
 
     def download_failed(self, failure_instance=None, error_message=""):
         self.error_message = error_message
@@ -3274,6 +3313,24 @@ class MMarkPiconsf(Screen):
     def download_finished(self, string=""):
         if self.aborted:
             self.finish(aborted=True)
+
+    def install(self, string=''):
+        if self.aborted:
+            self.finish(aborted=True)
+        else:
+            self.progclear = 0
+            self['info'].setText(_('File Downloaded ...'))
+            if os.path.exists('/tmp/download.zip'):
+                self['info'].setText(_('Install ...'))
+                self.downloading = False
+                self['progresstext'].text = ''
+                self['progress'].setValue(self.progclear)
+                self["progress"].hide()
+                self['info'].setText(_('Please select ...'))
+                myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
+                subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
+                info = 'Successfully Picons Installed'
+                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 
 class OpenPicons(Screen):
@@ -3394,8 +3451,6 @@ class OpenPicons(Screen):
                 self.dest = "/tmp/download.tar.xz"
                 if os.path.exists(self.dest):
                     os.remove(self.dest)
-                # print('url:', url)
-                # print('self.dest:', self.dest)
                 self.download = downloadWithProgress(url, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
@@ -3408,6 +3463,38 @@ class OpenPicons(Screen):
         self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
+
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show()
+        # self['info'].setText(_('Download...'))
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # print('progress = ok')
+
+    def showError(self):
+        print("download error ")
+        self.downloading = False
+        self.close()
+
+    def download_failed(self, failure_instance=None, error_message=""):
+        self.error_message = error_message
+        if error_message == "" and failure_instance is not None:
+            self.error_message = failure_instance.getErrorMessage()
+        self.downloading = False
+        info = 'Download Failed!!! ' + self.error_message
+        self['info2'].setText(info)
+        self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+
+    def abort(self):
+        print("aborting", self.url)
+        if self.download:
+            self.download.stop()
+        self.downloading = False
+        self.aborted = True
+
+    def download_finished(self, string=""):
+        if self.aborted:
+            self.finish(aborted=True)
 
     def install(self, string=''):
         if self.aborted:
@@ -3441,26 +3528,6 @@ class OpenPicons(Screen):
                         os.system(Cmd)
                 info = 'Successfully Picons Installed'
                 self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
-
-    def download_failed(self, failure_instance=None, error_message=""):
-        self.error_message = error_message
-        if error_message == "" and failure_instance is not None:
-            self.error_message = failure_instance.getErrorMessage()
-        self.downloading = False
-        info = 'Download Failed!!! ' + self.error_message
-        self['info2'].setText(info)
-        self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
-
-    def abort(self):
-        print("aborting", self.url)
-        if self.download:
-            self.download.stop()
-        self.downloading = False
-        self.aborted = True
-
-    def download_finished(self, string=""):
-        if self.aborted:
-            self.finish(aborted=True)
 
 
 Panel_list4 = [
@@ -3646,25 +3713,17 @@ class pluginx(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    def install(self, string=''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            self.progclear = 0
-            self['info'].setText(_('File Downloaded ...'))
-            if os.path.exists(KodilitePcd):
-                self.fdest = KodilitePcd + "/plugins"
-                if fileExists(self.dest):
-                    title = _("Installation")
-                    cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
-                    self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
-                self['info'].setText(_('Please select ...'))
-                self.downloading = False
-                self['progresstext'].text = ''
-                self['progress'].setValue(self.progclear)
-                self["progress"].hide()
-                info = 'Successfully Addons Installed'
-                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show()
+        # self['info'].setText(_('Download...'))
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # print('progress = ok')
+
+    def showError(self):
+        print("download error ")
+        self.downloading = False
+        self.close()
 
     def cancel(self, result=None):
         self.close(None)
@@ -3698,6 +3757,25 @@ class pluginx(Screen):
     def rst1(self):
         pass
 
+    def install(self, string=''):
+        if self.aborted:
+            self.finish(aborted=True)
+        else:
+            self.progclear = 0
+            self['info'].setText(_('File Downloaded ...'))
+            if os.path.exists(KodilitePcd):
+                self.fdest = KodilitePcd + "/plugins"
+                if fileExists(self.dest):
+                    title = _("Installation")
+                    cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
+                    self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
+                self['info'].setText(_('Please select ...'))
+                self.downloading = False
+                self['progresstext'].text = ''
+                self['progress'].setValue(self.progclear)
+                self["progress"].hide()
+                info = 'Successfully Addons Installed'
+                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 class plugins_adult(Screen):
     def __init__(self, session):
@@ -3824,25 +3902,17 @@ class plugins_adult(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    def install(self, string=''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            self.progclear = 0
-            self['info'].setText(_('File Downloaded ...'))
-            if os.path.exists(KodilitePcd):
-                self.fdest = KodilitePcd + "/plugins"
-                if fileExists(self.dest):
-                    title = _("Installation")
-                    cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
-                    self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
-                self['info'].setText(_('Please select ...'))
-                self.downloading = False
-                self['progresstext'].text = ''
-                self['progress'].setValue(self.progclear)
-                self["progress"].hide()
-                info = 'Successfully Addons Installed'
-                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show()
+        # self['info'].setText(_('Download...'))
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # print('progress = ok')
+
+    def showError(self):
+        print("download error ")
+        self.downloading = False
+        self.close()
 
     def cancel(self, result=None):
         self.close(None)
@@ -3875,6 +3945,26 @@ class plugins_adult(Screen):
 
     def rst1(self):
         pass
+
+    def install(self, string=''):
+        if self.aborted:
+            self.finish(aborted=True)
+        else:
+            self.progclear = 0
+            self['info'].setText(_('File Downloaded ...'))
+            if os.path.exists(KodilitePcd):
+                self.fdest = KodilitePcd + "/plugins"
+                if fileExists(self.dest):
+                    title = _("Installation")
+                    cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
+                    self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
+                self['info'].setText(_('Please select ...'))
+                self.downloading = False
+                self['progresstext'].text = ''
+                self['progress'].setValue(self.progclear)
+                self["progress"].hide()
+                info = 'Successfully Addons Installed'
+                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 
 class script(Screen):
@@ -3985,25 +4075,17 @@ class script(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    def install(self, string=''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            self.progclear = 0
-            self['info'].setText(_('File Downloaded ...'))
-            if os.path.exists(KodilitePcd):
-                self.fdest = KodilitePcd + "/scripts"
-                if fileExists(self.dest):
-                    title = _("Installation")
-                    cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
-                    self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
-                self['info'].setText(_('Please select ...'))
-                self.downloading = False
-                self['progresstext'].text = ''
-                self['progress'].setValue(self.progclear)
-                self["progress"].hide()
-                info = 'Successfully Script Installed'
-                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show()
+        # self['info'].setText(_('Download...'))
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # print('progress = ok')
+
+    def showError(self):
+        print("download error ")
+        self.downloading = False
+        self.close()
 
     def cancel(self, result=None):
         self.close(None)
@@ -4036,6 +4118,26 @@ class script(Screen):
 
     def rst1(self):
         pass
+
+    def install(self, string=''):
+        if self.aborted:
+            self.finish(aborted=True)
+        else:
+            self.progclear = 0
+            self['info'].setText(_('File Downloaded ...'))
+            if os.path.exists(KodilitePcd):
+                self.fdest = KodilitePcd + "/scripts"
+                if fileExists(self.dest):
+                    title = _("Installation")
+                    cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
+                    self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
+                self['info'].setText(_('Please select ...'))
+                self.downloading = False
+                self['progresstext'].text = ''
+                self['progress'].setValue(self.progclear)
+                self["progress"].hide()
+                info = 'Successfully Script Installed'
+                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 
 class repository(Screen):
@@ -4146,25 +4248,17 @@ class repository(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    def install(self, string=''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            self.progclear = 0
-            self['info'].setText(_('File Downloaded ...'))
-            if os.path.exists(KodilitePcd):
-                self.fdest = KodilitePcd + "/repos"
-                if fileExists(self.dest):
-                    title = _("Installation")
-                    cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
-                    self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
-                self['info'].setText(_('Please select ...'))
-                self.downloading = False
-                self['progresstext'].text = ''
-                self['progress'].setValue(self.progclear)
-                self["progress"].hide()
-                info = 'Successfully Repository Installed'
-                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show()
+        # self['info'].setText(_('Download...'))
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # print('progress = ok')
+
+    def showError(self):
+        print("download error ")
+        self.downloading = False
+        self.close()
 
     def cancel(self, result=None):
         self.close(None)
@@ -4197,6 +4291,26 @@ class repository(Screen):
 
     def rst1(self):
         pass
+
+    def install(self, string=''):
+        if self.aborted:
+            self.finish(aborted=True)
+        else:
+            self.progclear = 0
+            self['info'].setText(_('File Downloaded ...'))
+            if os.path.exists(KodilitePcd):
+                self.fdest = KodilitePcd + "/repos"
+                if fileExists(self.dest):
+                    title = _("Installation")
+                    cmd = "unzip -o -q '%s' -d '%s'" % (self.dest, self.fdest)
+                    self.session.open(tvConsole, _(title), cmdlist=[str(cmd)], closeOnSuccess=False)
+                self['info'].setText(_('Please select ...'))
+                self.downloading = False
+                self['progresstext'].text = ''
+                self['progress'].setValue(self.progclear)
+                self["progress"].hide()
+                info = 'Successfully Repository Installed'
+                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 
 class AutoStartTimertvadd:
