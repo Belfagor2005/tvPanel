@@ -562,6 +562,7 @@ class Hometv(Screen):
         sel = self.menu_list[idx]
 
                                                    
+                                                   
         if sel == _('DAILY PICONS'):
             self.session.open(SelectPiconz)
                                       
@@ -602,6 +603,12 @@ class Hometv(Screen):
                                                    
         elif sel == _('DAILY SETTINGS'):
                                            
+                                                   
+                                    
+                                        
+                                                   
+                                    
+                                        
             self.session.open(tvDailySetting)
         elif sel == _('KODILITE BY PCD'):
                                         
@@ -1461,12 +1468,13 @@ class SettingMorpheus(Screen):
         self.names = []
         self.urls = []
         try:
-            regex = 'title="E2_Morph883_(.*?).zip".*?href="(.*?)"'
+            regex = 'name":"E2_Morph883_(.*?).zip".*?path":"(.*?)"'
+            # regex = 'title="E2_Morph883_(.*?).zip".*?href="(.*?)"'
             match = re.compile(regex).findall(r)
             for name, url in match:
                 if url.find('.zip') != -1:
                     url = url.replace('blob', 'raw')
-                    url = 'https://github.com' + url
+                    url = 'https://github.com/morpheus883/enigma2-zipped/raw/master/' + url
                     name = 'Morph883 ' + name
                     self.urls.append(Utils.checkStr(url.strip()))
                     self.names.append(Utils.checkStr(name.strip()))
@@ -2199,8 +2207,10 @@ class tvInstall(Screen):
             if os.path.exists(self.dest):
                 os.remove(self.dest)
             if self.com is not None:
+                # print('self.com not none', self.com)
                 extensionlist = self.com.split('.')
                 extension = extensionlist[-1].lower()
+                # print('extension', extension)
                 if len(extensionlist) > 1:
                     tar = extensionlist[-2].lower()
                 if extension in ["gz", "bz2"] and tar == "tar":
@@ -2215,25 +2225,26 @@ class tvInstall(Screen):
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                     return
-
-                if extension == "deb":
-                    if not os.path.exists('/var/lib/dpkg/status'):
-                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
-                        self['info'].setText(_('Download canceled!'))
-                        return
-                elif self.com.endswith(".ipk"):
-                    if os.path.exists('/var/lib/dpkg/info'):
-                        self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
-                        self['info'].setText(_('Download canceled!'))
-                        return
-                if os.path.exists('/var/lib/dpkg/info'):
-                    self.session.open(MessageBox, _('There is currently a problem with this image.\nBetter not to download.\nTry installing directly with the OK button!'), MessageBox.TYPE_INFO, timeout=5)
+                if extension == "deb" and not os.path.exists('/var/lib/dpkg/status'):
+                    # if not os.path.exists('/var/lib/dpkg/status'):
+                    self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Download canceled!'))
                     return
-                else:
-                    self.download = downloadWithProgress(self.com, self.dest)
-                    self.download.addProgress(self.downloadProgress)
-                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                # elif self.com.endswith(".ipk"):
+                elif extension == ".ipk" and os.path.exists('/var/lib/dpkg/info'):
+                    # if os.path.exists('/var/lib/dpkg/info'):
+                    self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
+                    self['info'].setText(_('Download canceled!'))
+                    return
+                # if os.path.exists('/var/lib/dpkg/info'):
+                    # print('/var/lib/dpkg/info')
+                    # self.session.open(MessageBox, _('There is currently a problem with this image.\nBetter not to download.\nTry installing directly with the OK button!'), MessageBox.TYPE_INFO, timeout=5)
+                    # self['info'].setText(_('Download canceled!'))
+                    # return
+                # else:
+                self.download = downloadWithProgress(self.com, self.dest)
+                self.download.addProgress(self.downloadProgress)
+                self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
 
@@ -2262,7 +2273,7 @@ class tvInstall(Screen):
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
         info = 'Download Failed!!! ' + self.error_message
-        self['info2'].setText(info)
+        self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         return
 
@@ -3268,7 +3279,7 @@ class MMarkPiconsf(Screen):
                     # # url =  'https://download' + str(myfile)
                     self.download = downloadWithProgress(url, dest)
                     self.download.addProgress(self.downloadProgress)
-                    self.download.start().addCallback(self.install).addErrback(self.showError)
+                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
                 except Exception as e:
                     print('error: ', str(e))
                     print("Error: can't find file or read data")
@@ -3300,7 +3311,7 @@ class MMarkPiconsf(Screen):
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
         info = 'Download Failed!!! ' + self.error_message
-        self['info2'].setText(info)
+        self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
     def abort(self):
@@ -3482,7 +3493,7 @@ class OpenPicons(Screen):
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
         info = 'Download Failed!!! ' + self.error_message
-        self['info2'].setText(info)
+        self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
     def abort(self):
@@ -3739,7 +3750,7 @@ class pluginx(Screen):
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
         info = 'Download Failed!!! ' + self.error_message
-        self['info2'].setText(info)
+        self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
 
@@ -3928,7 +3939,7 @@ class plugins_adult(Screen):
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
         info = 'Download Failed!!! ' + self.error_message
-        self['info2'].setText(info)
+        self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
 
@@ -4101,7 +4112,7 @@ class script(Screen):
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
         info = 'Download Failed!!! ' + self.error_message
-        self['info2'].setText(info)
+        self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
 
@@ -4274,7 +4285,7 @@ class repository(Screen):
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
         info = 'Download Failed!!! ' + self.error_message
-        self['info2'].setText(info)
+        self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
 
