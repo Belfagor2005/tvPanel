@@ -37,7 +37,6 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import fileExists, resolveFilename
 # from Tools.Downloader import downloadWithProgress
-# from .downloadWithProgress import downloadWithProgress
 # from Screens.Processing import Processing
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from enigma import loadPNG, gFont
@@ -377,7 +376,6 @@ def DailyListEntry(name, idx):
 
 def oneListEntry(name):
     res = [name]
-
     if screenwidth.width() == 2560:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(80, 0), size=(2000, 60), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -434,7 +432,7 @@ class Hometv(Screen):
             destr = plugin_path + '/update.txt'
             req = Request(upd_path + 'updatePanel.txt')
             req.add_header('User-Agent', RequestAgent())
-            fp = Utils.checkStr(urlopen(req))
+            fp = Utils.str_encode(urlopen(req))
             fp = fp.read()
             with open(destr, 'w') as f:
                 f.write(fp)
@@ -1019,8 +1017,8 @@ class SettingVhan(Screen):
             for url, name, date in match:
                 name = name.replace('&#127381;', '') + ' ' + date
                 url = "https://www.vhannibal.net/" + url
-                self.urls.append(Utils.checkStr(url.strip()))
-                self.names.append(Utils.checkStr(name.strip()))
+                self.urls.append(Utils.str_encode(url.strip()))
+                self.names.append(Utils.str_encode(name.strip()))
             self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
@@ -1132,8 +1130,8 @@ class SettingVhan2(Screen):
                 name = "Vhannibal" + url
                 name = name.replace('&#127381;', '').replace("%20", " ")
                 url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
-                self.urls.append(Utils.checkStr(url.strip()))
-                self.names.append(Utils.checkStr(name.strip()))
+                self.urls.append(Utils.str_encode(url.strip()))
+                self.names.append(Utils.str_encode(name.strip()))
                 self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
@@ -1269,8 +1267,8 @@ class Milenka61(Screen):
                     name = name + ' ' + date
                     name = name.replace("_", " ").replace(".tar.gz", "")
                     url = "http://178.63.156.75/tarGz/Satvenus" + url
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                 self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
@@ -1365,8 +1363,8 @@ class SettingManutek(Screen):
                 name = url
                 url = 'http://www.manutek.it/isetting/enigma2/' + url + '.zip'
                 name = name.replace("NemoxyzRLS_Manutek_", "").replace("_", " ").replace("%20", " ")
-                self.urls.append(Utils.checkStr(url.strip()))
-                self.names.append(Utils.checkStr(name.strip()))
+                self.urls.append(Utils.str_encode(url.strip()))
+                self.names.append(Utils.str_encode(name.strip()))
                 self.downloading = True
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
@@ -1476,8 +1474,8 @@ class SettingMorpheus(Screen):
                     url = url.replace('blob', 'raw')
                     url = 'https://github.com/morpheus883/enigma2-zipped/raw/master/' + url
                     name = 'Morph883 ' + name
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
@@ -1594,8 +1592,8 @@ class SettingCiefp(Screen):
                 if url.find('.zip') != -1:
                     url = url.replace('blob', 'raw')
                     url = 'https://github.com' + url
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
@@ -1704,8 +1702,8 @@ class SettingBi58(Screen):
                     name = name + ' ' + date
                     name = name.replace(".tar.gz", "").replace("%20", " ")
                     url = "http://178.63.156.75/paneladdons/Bi58/bi58-e2" + url
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
@@ -1803,8 +1801,8 @@ class SettingPredrag(Screen):
                     name = name + ' ' + date
                     name = name.replace(".tar.gz", "").replace("%20", " ")
                     url = "http://178.63.156.75/paneladdons/Predr@g/predrag" + url
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
@@ -1912,8 +1910,8 @@ class SettingCyrus(Screen):
                     if 'Sat' in name.lower():
                         continue
                     name = name + ' ' + date
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
@@ -2038,10 +2036,6 @@ class tvInstall(Screen):
         else:
             return
 
-    # def showProgress(self, text=""):
-        # Processing.instance.setDescription(text or _("Please wait..."))
-        # Processing.instance.showProgress(endless=True)
-
     def prombt(self, com, dom):
         self.timer = eTimer()
         global set
@@ -2159,7 +2153,6 @@ class tvInstall(Screen):
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
             self.timer.start(3000, 1)
-            # configureCallback()
             self.addondel()
 
     def dowfil(self):
@@ -2177,8 +2170,8 @@ class tvInstall(Screen):
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar))
         urllib2.install_opener(opener)
         try:
-            req = urllib2.Request(self.com, data=None, headers=headers)
-            handler = urllib2.urlopen(req, timeout=15)
+            req = Request(self.com, data=None, headers=headers)
+            handler = urlopen(req, timeout=15)
             data = handler.read()
             with open(self.dest, 'wb') as f:
                 f.write(data)
@@ -2533,7 +2526,7 @@ class tvUpdate(Screen):
             destr = plugin_path + '/update.txt'
             req = Request(upd_path + 'updatePanel.txt')
             req.add_header('User-Agent', RequestAgent())
-            fp = Utils.checkStr(urlopen(req))
+            fp = Utils.str_encode(urlopen(req))
             fp = fp.read()
             with open(destr, 'w') as f:
                 f.write(fp)
@@ -3403,8 +3396,6 @@ class OpenPicons(Screen):
             print(e)
 
     def downxmlpage(self):
-        # url = six.ensure_binary(self.url)
-        # url = make_request(self.url)
         try:
             data = make_request(self.url)
             if PY3:
@@ -3423,7 +3414,6 @@ class OpenPicons(Screen):
         r = data
         if PY3:
             r = six.ensure_str(data)
-            # r = six.ensure_binary(data)
         print('rrrrrrrrrrrrrrr=:', r)
         self.names = []
         self.urls = []
@@ -3437,7 +3427,7 @@ class OpenPicons(Screen):
                 print('name=', name)
                 print('url:', url)
                 self.urls.append(url)
-                self.names.append(Utils.checkStr(name))
+                self.names.append(Utils.str_encode(name))
             self['info'].setText(_('Please select ...'))
             self['key_green'].show()
             showlist(self.names, self['list'])
@@ -3678,8 +3668,8 @@ class pluginx(Screen):
                     name = name.replace("%20", " ").replace("-", " ").replace("_", " ").replace(".zip", "")
                     date = re.search("(.+?)-(.+?)-(.+?) ", txt).group()
                     name = name + ' - ' + date
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
                 else:
                     self['info'].setText(_('No File!!'))
@@ -3848,8 +3838,8 @@ class plugins_adult(Screen):
                     name = name.replace("%20", " ").replace("-", " ").replace("_", " ").replace(".zip", "")
                     date = re.search("(.+?)-(.+?)-(.+?) ", txt).group()
                     name = name + ' - ' + date
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
                 else:
                     self['info'].setText(_('No File!!'))
@@ -4038,8 +4028,8 @@ class script(Screen):
                     name = name.replace("%20", " ").replace("-", " ").replace("_", " ").replace(".zip", "")
                     date = re.search("(.+?)-(.+?)-(.+?) ", txt).group()
                     name = name + ' - ' + date
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
                 else:
                     self['info'].setText(_('No File!!'))
@@ -4211,8 +4201,8 @@ class repository(Screen):
                     name = name.replace("%20", " ").replace("-", " ").replace("_", " ").replace(".zip", "")
                     date = re.search("(.+?)-(.+?)-(.+?) ", txt).group()
                     name = name + ' - ' + date
-                    self.urls.append(Utils.checkStr(url.strip()))
-                    self.names.append(Utils.checkStr(name.strip()))
+                    self.urls.append(Utils.str_encode(url.strip()))
+                    self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
                 else:
                     self['info'].setText(_('No File!!'))
