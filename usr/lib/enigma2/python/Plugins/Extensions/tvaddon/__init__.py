@@ -6,6 +6,8 @@ from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 import gettext
 import os
 
+# os.system('. /usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh')
+
 PluginLanguageDomain = 'tvaddon'
 PluginLanguagePath = 'Extensions/tvaddon/res/locale'
 

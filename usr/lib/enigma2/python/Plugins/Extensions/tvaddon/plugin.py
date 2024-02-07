@@ -238,7 +238,7 @@ config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
-currversion = '2.1.1'
+currversion = '2.1.2'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
@@ -246,7 +246,7 @@ set = 0
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24= '
-data_upd = 'aHR0cDovL2NvcnZvbmUuYWx0ZXJ2aXN0YS5vcmcvdHZQYW5lbC8= '
+data_upd = 'aHR0cDovL3BhdGJ1d2ViLmNvbS90dlBhbmVsLw=='
 data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
 regexC = '<plugins cont="(.*?)"'
 regexL = 'href="(.+?)">.+?alt=.+?">(.+?)</a>.+?data.+?">(.+?)</td>'
@@ -289,47 +289,45 @@ if not os.path.exists(mmkpicon):
 
 
 Panel_deb = [
- _('DEBIAN DREAMOS'),
- _('DAILY PICONS'),
- _('DAILY SETTINGS'),
- ]
+    _('DEBIAN DREAMOS'),
+    _('DAILY PICONS'),
+    _('DAILY SETTINGS')]
 
 Panel_list = [
- _('LULULLA CORNER'),
- _('DAILY PICONS'),
- _('DAILY SETTINGS'),
- _('KODILITE BY PCD'),
- _('DEPENDENCIES'),
- _('DRIVERS'),
- _('PLUGIN BACKUP'),
- _('PLUGIN EPG'),
- _('PLUGIN EMULATORS CAMS'),
- _('PLUGIN GAME'),
- _('PLUGIN MULTIBOOT'),
- _('PLUGIN MULTIMEDIA'),
- _('PLUGIN PICONS'),
- _('PLUGIN PPANEL'),
- _('PLUGIN SETTINGS PANEL'),
- _('PLUGIN SKINS'),
- _('PLUGIN SPORT'),
- _('PLUGIN UTILITY'),
- _('PLUGIN WEATHER')]
+    _('LULULLA CORNER'),
+    _('DAILY PICONS'),
+    _('DAILY SETTINGS'),
+    _('KODILITE BY PCD'),
+    _('DEPENDENCIES'),
+    _('DRIVERS'),
+    _('PLUGIN BACKUP'),
+    _('PLUGIN EPG'),
+    _('PLUGIN EMULATORS CAMS'),
+    _('PLUGIN GAME'),
+    _('PLUGIN MULTIBOOT'),
+    _('PLUGIN MULTIMEDIA'),
+    _('PLUGIN PICONS'),
+    _('PLUGIN PPANEL'),
+    _('PLUGIN SETTINGS PANEL'),
+    _('PLUGIN SKINS'),
+    _('PLUGIN SPORT'),
+    _('PLUGIN UTILITY'),
+    _('PLUGIN WEATHER')]
 
 Panel_list2 = [
- ('SAVE DTT BOUQUET'),
- ('RESTORE DTT BOUQUET'),
- ('UPDATE SATELLITES.XML'),
- ('UPDATE TERRESTRIAL.XML'),
- ('SETTINGS BI58'),
- ('SETTINGS CIEFP'),
- ('SETTINGS CYRUS'),
- ('SETTINGS MANUTEK'),
- ('SETTINGS MILENKA61'),
- ('SETTINGS MORPHEUS'),
- ('SETTINGS PREDRAG'),
- ('SETTINGS VHANNIBAL'),
- ('SETTINGS VHANNIBAL 2')
-]
+    ('SAVE DTT BOUQUET'),
+    ('RESTORE DTT BOUQUET'),
+    ('UPDATE SATELLITES.XML'),
+    ('UPDATE TERRESTRIAL.XML'),
+    ('SETTINGS BI58'),
+    ('SETTINGS CIEFP'),
+    ('SETTINGS CYRUS'),
+    ('SETTINGS MANUTEK'),
+    # ('SETTINGS MILENKA61'),
+    ('SETTINGS MORPHEUS'),
+    ('SETTINGS PREDRAG'),
+    ('SETTINGS VHANNIBAL'),
+    ('SETTINGS VHANNIBAL 2')]
 
 Panel_list3 = [
  _('MMARK PICONS BLACK'),
@@ -364,7 +362,7 @@ def DailyListEntry(name, idx):
     res = [name]
     if screenwidth.width() == 2560:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(80, 0), size=(2000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1950, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     elif screenwidth.width() == 1920:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -378,7 +376,7 @@ def oneListEntry(name):
     res = [name]
     if screenwidth.width() == 2560:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(80, 0), size=(2000, 60), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1950, 60), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     elif screenwidth.width() == 1920:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -404,7 +402,7 @@ class Hometv(Screen):
         skin = os.path.join(skin_path, 'Hometv.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
-        self.setup_title = ('Main')
+        self.setup_title = (title_plug)
         Screen.__init__(self, session)
         self['list'] = tvList([])
         self['key_red'] = Button(_('Exit'))
@@ -469,6 +467,7 @@ class Hometv(Screen):
                                                            'red': self.closerm,
                                                            'back': self.closerm,
                                                            'cancel': self.closerm}, -1)
+        self.onFirstExecBegin.append(self.check_dependencies)
         self.onLayoutFinish.append(self.updateMenuList)
 
     def __layoutFinished(self):
@@ -558,68 +557,12 @@ class Hometv(Screen):
     def keyNumberGlobalCB(self, idx):
         global category
         sel = self.menu_list[idx]
-
-                                                   
-                                                   
         if sel == _('DAILY PICONS'):
             self.session.open(SelectPiconz)
-                                      
-                                    
-                                                   
-                               
-                                    
-                                                   
-                                    
-                                         
-                                                   
-                                     
-                                         
-                                                   
-                                             
-                                            
-                                                   
-                                  
-                                      
-                                                   
-                                   
-                                       
-                                                   
-                                        
-                                            
-                                                   
-                                         
-                                             
-                                                   
-                                     
-                                   
-                                                   
-                                     
-                                         
-                                                   
-                                     
-                                        
-                                                   
         elif sel == _('DAILY SETTINGS'):
-                                           
-                                                   
-                                    
-                                        
-                                                   
-                                    
-                                        
             self.session.open(tvDailySetting)
         elif sel == _('KODILITE BY PCD'):
-                                        
-                                                   
-                                    
-                                        
             self.session.open(mainkodilite)
-                                      
-                                          
-                                                   
-                                      
-                                          
-                                                   
         else:
             if sel == _('LULULLA CORNER'):
                 category = 'lululla.xml'
@@ -820,7 +763,7 @@ class tvDailySetting(Screen):
             self.skin = f.read()
         self.setup_title = ('Daily Setting')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self['list'] = tvList([])
         self['title'] = Label(_(title_plug))
         self['progress'] = ProgressBar()
@@ -975,7 +918,7 @@ class SettingVhan(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(_(self.setup_title))
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -998,7 +941,7 @@ class SettingVhan(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1084,7 +1027,7 @@ class SettingVhan2(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1107,7 +1050,7 @@ class SettingVhan2(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1219,7 +1162,7 @@ class Milenka61(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Milenka61')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1242,7 +1185,7 @@ class Milenka61(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1318,7 +1261,7 @@ class SettingManutek(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Manutek')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1341,7 +1284,7 @@ class SettingManutek(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1427,7 +1370,7 @@ class SettingMorpheus(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Morpheus')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1450,7 +1393,7 @@ class SettingMorpheus(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1538,7 +1481,7 @@ class SettingCiefp(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Ciefp')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1561,7 +1504,7 @@ class SettingCiefp(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1654,7 +1597,7 @@ class SettingBi58(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Bi58')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1677,7 +1620,7 @@ class SettingBi58(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1753,7 +1696,7 @@ class SettingPredrag(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Predrag')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1776,7 +1719,7 @@ class SettingPredrag(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1852,7 +1795,7 @@ class SettingCyrus(Screen):
             self.skin = f.read()
         self.setup_title = ('Setting Cyrus')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1876,7 +1819,7 @@ class SettingCyrus(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -1972,7 +1915,7 @@ class tvInstall(Screen):
             self.skin = f.read()
         self.setup_title = ('Install')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.selection = selection
         self['info'] = Label('')
         self['pth'] = Label('')
@@ -2006,7 +1949,7 @@ class tvInstall(Screen):
             self.urls.append(url)
         self['list'] = tvList([])
         self['info'].setText(_('Please install ...'))
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['key_red'] = Button(_('Back'))
         self['key_green'] = Button(_('Install'))
         self['key_yellow'] = Button(_('Download'))
@@ -2327,7 +2270,7 @@ class tvIPK(Screen):
             self.skin = f.read()
         self.setup_title = ('IPK')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.ipkpth = str(config.plugins.tvaddon.ipkpth.value)
         self.list = []
         self.names = []
@@ -2338,7 +2281,7 @@ class tvIPK(Screen):
         self['key_yellow'] = Button(_('Restart'))
         self["key_blue"] = Button('Remove')
         self['key_blue'].hide()
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['pform'] = Label('')
         self['info'] = Label('...')
         self['pth'] = Label(_('Path %s (Set path folder from config)\nPut .ipk .tar.gz .deb .zip and install') % self.ipkpth)
@@ -2504,7 +2447,7 @@ class tvUpdate(Screen):
             self.skin = f.read()
         self.setup_title = ('Update')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Restart'))
@@ -2571,7 +2514,7 @@ class tvUpdate(Screen):
         else:
             self.timer.callback.append(self.msgupdate1)
         self.timer.start(1000, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
                                      'DirectionActions'], {'ok': self.close,
@@ -2631,9 +2574,9 @@ class tvRemove(Screen):
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
-        self.setup_title = ('Remove')
+        self.setup_title = ('Remove Addon')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self.names = []
         self.container = eConsoleAppContainer()
@@ -2649,7 +2592,7 @@ class tvRemove(Screen):
         self["key_blue"] = Button('')
         self['key_blue'].hide()
         self['key_green'].hide()
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['pform'] = Label('')
         self['info'] = Label('Select')
         self['pth'] = Label('Remove not necessary addon')
@@ -2778,7 +2721,7 @@ class tvConfig(Screen, ConfigListScreen):
         self.setup_title = _("Config")
         self.onChangedEntry = []
         self.session = session
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self['description'] = Label('')
         self["paypal"] = Label('')
         self['info'] = Label(_('Config Panel Addon'))
@@ -2788,7 +2731,7 @@ class tvConfig(Screen, ConfigListScreen):
         self['key_red'] = Button(_('Back'))
         self["key_blue"] = Button('')
         self['key_blue'].hide()
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self["setupActions"] = ActionMap(['OkCancelActions',
                                           'DirectionActions',
                                           'ColorActions',
@@ -2821,7 +2764,6 @@ class tvConfig(Screen, ConfigListScreen):
         return str(zarcffll)
 
     def layoutFinished(self):
-        self.setTitle(self.setup_title)
         payp = paypal()
         self["paypal"].setText(payp)
         try:
@@ -2832,7 +2774,7 @@ class tvConfig(Screen, ConfigListScreen):
             img = os.popen('cat /etc/issue').read().strip('\n\r')
             arc = os.popen('uname -m').read().strip('\n\r')
             ifg = os.popen('wget -qO - ifconfig.me').read().strip('\n\r')
-            img = img.replace('\l', '')
+            # img = img.replace('\l', '')
             libs = os.popen('ls -l /usr/lib/libss*.*').read().strip('\n\r')
             if libs:
                 libsssl = libs
@@ -2957,7 +2899,7 @@ class SelectPiconz(Screen):
             self.skin = f.read()
         self.setup_title = ('Select Picons')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self['list'] = tvList([])
         self['pth'] = Label('')
         self['pth'].setText(_('Folder picons ') + str(mmkpicon))
@@ -2974,7 +2916,7 @@ class SelectPiconz(Screen):
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -3049,7 +2991,7 @@ class MMarkFolderz(Screen):
             self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -3074,7 +3016,7 @@ class MMarkFolderz(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -3151,7 +3093,7 @@ class MMarkPiconsf(Screen):
             self.skin = f.read()
         self.setup_title = ('MMark')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -3184,7 +3126,7 @@ class MMarkPiconsf(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -3345,7 +3287,7 @@ class OpenPicons(Screen):
             self.skin = f.read()
         self.setup_title = ('OpenPicons')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -3377,7 +3319,7 @@ class OpenPicons(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -3532,10 +3474,10 @@ class OpenPicons(Screen):
 
 
 Panel_list4 = [
- _('VIDEO ADDONS'),
- _('ADULT ADDON'),
- _('SCRIPT'),
- _('REPOSITORY')]
+    _('VIDEO ADDONS'),
+    _('ADULT ADDON'),
+    _('SCRIPT'),
+    _('REPOSITORY')]
 
 
 global KodilitePcd
@@ -3543,14 +3485,16 @@ KodilitePcd = "/usr/lib/enigma2/python/Plugins/Extensions/KodiLite"
 
 
 class mainkodilite(Screen):
+
     def __init__(self, session):
+
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self['list'] = tvList([])
         self['pth'] = Label('')
         self['pth'].setText(_('Support on'))
@@ -3568,7 +3512,7 @@ class mainkodilite(Screen):
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -3616,7 +3560,7 @@ class pluginx(Screen):
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -3646,7 +3590,7 @@ class pluginx(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -3778,6 +3722,7 @@ class pluginx(Screen):
                 info = 'Successfully Addons Installed'
                 self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
+
 class plugins_adult(Screen):
     def __init__(self, session):
         self.session = session
@@ -3786,7 +3731,7 @@ class plugins_adult(Screen):
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -3816,7 +3761,7 @@ class plugins_adult(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -3976,7 +3921,7 @@ class script(Screen):
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -4006,7 +3951,7 @@ class script(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
@@ -4149,7 +4094,7 @@ class repository(Screen):
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
         Screen.__init__(self, session)
-        self.setTitle(_(title_plug))
+        self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -4179,7 +4124,7 @@ class repository(Screen):
         else:
             self.timer.callback.append(self.downxmlpage)
         self.timer.start(500, 1)
-        self['title'] = Label(_(title_plug))
+        self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
