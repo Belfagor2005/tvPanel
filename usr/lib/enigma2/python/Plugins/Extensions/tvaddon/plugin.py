@@ -238,7 +238,7 @@ config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
 config.plugins.tvaddon.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpth())
 config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
 mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
-currversion = '2.1.2'
+currversion = '2.1.3'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
