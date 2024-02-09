@@ -1,0 +1,11 @@
+<!-- Skin mmConfig 09/07/2022 -->
+<screen name="mmConfig" position="center,center" size="1310,300" title="mMark Picons Manager" backgroundColor="#20000000">
+		<widget name="config" position="10,160" size="1295,50" scrollbarMode="showOnDemand" itemHeight="50" transparent="1" zPosition="2" />
+		<eLabel  position="10,225" size="1295,3" backgroundColor="#303030" zPosition="3" />
+		<ePixmap position="20,245" pixmap="skin_default/buttons/key_red.png" size="80,40" alphatest="blend" zPosition="2" />
+		<widget name="key_red" font="Regular;30" position="110,245" size="150,40" halign="left" valign="center" backgroundColor="black" zPosition="3" transparent="1" />
+		<ePixmap position="280,245" pixmap="skin_default/buttons/key_green.png" size="80,40" alphatest="blend" zPosition="2" />
+		<widget name="key_green" font="Regular;30" position="370,245" size="150,40" halign="left" valign="center" backgroundColor="black" zPosition="3" transparent="1" />
+		<ePixmap position="540,245" pixmap="skin_default/buttons/key_yellow.png" size="80,40" alphatest="blend" zPosition="2" />
+		<widget name="key_yellow" font="Regular;30" position="630,245" size="150,40" halign="left" valign="center" backgroundColor="black" zPosition="1" transparent="1" />
+</screen>

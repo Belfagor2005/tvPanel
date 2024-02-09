@@ -1,0 +1,27 @@
+<!-- Skin tvAll 09/07/2022 -->
+<screen name="SelectPicons" position="0,0" size="1920,1080" title="mMark Picons Manager" backgroundColor="#FF000000" flags="wfNoBorder">
+	<ePixmap position="220,32" size="160,81" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sLogo.png" alphatest="blend" transparent="1" zPosition="1" />
+	<widget source="title" render="Label" position="385,7" size="1090,110" font="Regular; 38" foregroundColor="#b0b0b0" backgroundColor="#000000" transparent="1" zPosition="5" />
+	<eLabel position="230,120" size="1250,3" backgroundColor="#303030" zPosition="4" />
+	<ePixmap position="0,0" size="1550,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main23.png" scale="stretch" zPosition="-2" />
+	<ePixmap position="1550,0" size="125,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/pC.png" zPosition="-1" />
+	<eLabel position="230,960" size="1,3" backgroundColor="#303030" zPosition="4" />
+	<ePixmap pixmap="skin_default/buttons/key_red.png" position="230,1008" size="30,30" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="skin_default/buttons/key_green.png" position="530,1008" size="30,30" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="skin_default/buttons/key_yellow.png" position="830,1008" size="30,30" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="skin_default/buttons/key_blue.png" position="1181,1008" size="30,30" alphatest="on" zPosition="5" />
+	<widget name="key_red" position="270,1006" size="300,40" font="Regular;30" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_green" position="570,1006" size="300,40" font="Regular;30" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_yellow" position="871,1006" size="300,40" font="Regular;30" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_blue" position="1170,1006" size="300,40" font="Regular;30" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="text" position="231,192" scrollbarMode="showOnDemand" size="1250,600" font="Regular;28" zPosition="4" backgroundColor="#000000" transparent="1" scrollbarWidth="10" backgroundColorSelected="barColor" />
+	<widget name="info" position="232,131" size="1249,50" font="Regular;30" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
+	<widget name="progress" position="1072,847" size="403,50" foregroundColor="#2a70a4" backgroundColor="#202020" transparent="0" zPosition="5" />
+	<widget source="progresstext" render="Label" position="1066,847" size="410,50" font="Regular;28" backgroundColor="#202020" transparent="1" halign="center" valign="center" zPosition="6" />
+	<eLabel position="230,820" size="1250,3" backgroundColor="#404040" zPosition="10" />
+	<widget name="pform" position="232,835" size="824,70" font="Regular;28" halign="left" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="1" zPosition="5" />
+	<widget name="pth" position="234,915" size="1037,50" font="Regular;30" halign="left" foregroundColor="#808080" backgroundColor="#000000" transparent="1" zPosition="5" />
+	<widget name="poster" position="1315,20" size="150,90" backgroundColor="#30000000" transparent="1" borderWidth="3" borderColor="#00ffffff" alphatest="blend" zPosition="4" />
+	<ePixmap pixmap="skin_default/buttons/key_menu.png" position="1398,922" size="80,35" alphatest="blend" scale="1" zPosition="10" />
+	<ePixmap pixmap="skin_default/buttons/key_info.png" position="1307,922" size="80,35" alphatest="blend" scale="1" zPosition="10" />
+</screen>
