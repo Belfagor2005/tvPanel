@@ -124,38 +124,6 @@ def status_site():
     return status
 
 
-def checkMyFile(url):
-    return []
-    myfile = None
-    try:
-        req = Request(url)
-        req.add_header('User-Agent', RequestAgent())
-        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
-        req.add_header('Referer', 'https://www.mediafire.com')
-        req.add_header('X-Requested-With', 'XMLHttpRequest')
-        page = urlopen(req)
-        r = page.read()
-        # if PY3:
-            # n1 = r.find('"download_link'.encode(), 0)
-            # n2 = r.find('downloadButton'.encode(), n1)
-        # else:
-            # n1 = r.find('"download_link', 0)
-            # n2 = r.find('downloadButton', n1)
-        n1 = r.find('"download_link', 0)
-        n2 = r.find('downloadButton', n1)
-        r2 = r[n1:n2]
-        regexcat = 'href="https://download(.*?)"'
-        match = re.compile(regexcat, re.DOTALL).findall(r2)
-        myfile = match[0]
-    except:
-        e = URLError
-        if hasattr(e, 'code'):
-            print('We failed with error code - %s.' % e.code)
-        if hasattr(e, 'reason'):
-            print('Reason: ', e.reason)
-    return myfile
-
-
 def make_request(url):
     try:
         import requests
@@ -232,12 +200,14 @@ AgentRequest = RequestAgent()
 # ================config
 global set
 config.plugins.tvaddon = ConfigSubsection()
-config.plugins.tvaddon.strtext = ConfigYesNo(default=True)
-config.plugins.tvaddon.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
-config.plugins.tvaddon.strtmain = ConfigYesNo(default=True)
-config.plugins.tvaddon.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpth())
-config.plugins.tvaddon.autoupd = ConfigYesNo(default=False)
-mmkpicon = config.plugins.tvaddon.mmkpicon.value.strip()
+cfg = config.plugins.tvaddon
+
+cfg.strtext = ConfigYesNo(default=True)
+cfg.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
+cfg.strtmain = ConfigYesNo(default=True)
+cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpth())
+cfg.autoupd = ConfigYesNo(default=False)
+mmkpicon = cfg.mmkpicon.value.strip()
 currversion = '2.1.3'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
@@ -246,7 +216,7 @@ set = 0
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24= '
-data_upd = 'aHR0cDovL3BhdGJ1d2ViLmNvbS90dlBhbmVsLw=='
+data_upd = 'aHR0cDovL3BhdGJ1d2ViLmNvbS90dlBhbmVseHh4Lw=='
 data_xml = 'aHR0cDovL3BhdGJ1d2ViLmNvbS94bWwv'
 regexC = '<plugins cont="(.*?)"'
 regexL = 'href="(.+?)">.+?alt=.+?">(.+?)</a>.+?data.+?">(.+?)</td>'
@@ -427,31 +397,32 @@ class Hometv(Screen):
         self.tlink = ''
         try:
             fp = ''
-            destr = plugin_path + '/update.txt'
+            destr = plugin_path + '/updatePanel.txt'
             req = Request(upd_path + 'updatePanel.txt')
             req.add_header('User-Agent', RequestAgent())
             fp = Utils.str_encode(urlopen(req))
             fp = fp.read()
-            with open(destr, 'w') as f:
-                f.write(fp)
-                f.seek(0)
-                f.close()
-            with open(destr, 'r') as fp:
-                # count = 0
-                self.labeltext = ''
-                s1 = fp.readline()
-                s2 = fp.readline()
-                s3 = fp.readline()
-                s4 = fp.readline()
-                self.version = s1.strip()
-                self.tlink = s2.strip()
-                self.info = s3.strip()
-                self.dmlink = s4.strip()
-                fp.close()
-                # if self.version <= currversion:
-                    # self.Update = False
-                if self.version > currversion:
-                    self.Update = True
+            if os.path.exists(destr):
+                with open(destr, 'w') as f:
+                    f.write(fp)
+                    f.seek(0)
+                    f.close()
+                with open(destr, 'r') as fp:
+                    # count = 0
+                    self.labeltext = ''
+                    s1 = fp.readline()
+                    s2 = fp.readline()
+                    s3 = fp.readline()
+                    s4 = fp.readline()
+                    self.version = s1.strip()
+                    self.tlink = s2.strip()
+                    self.info = s3.strip()
+                    self.dmlink = s4.strip()
+                    fp.close()
+                    # if self.version <= currversion:
+                        # self.Update = False
+                    if self.version > currversion:
+                        self.Update = True
         except Exception as e:
             print('error: ', str(e))
         self['title'] = Label(_(title_plug))
@@ -558,7 +529,9 @@ class Hometv(Screen):
         global category
         sel = self.menu_list[idx]
         if sel == _('DAILY PICONS'):
-            self.session.open(SelectPiconz)
+            from .mmpicon import SelectPicons
+            self.session.open(SelectPicons)
+            # self.session.open(SelectPiconz)
         elif sel == _('DAILY SETTINGS'):
             self.session.open(tvDailySetting)
         elif sel == _('KODILITE BY PCD'):
@@ -624,7 +597,7 @@ class Hometv(Screen):
     def msgupdate2(self, answer):
         if self.Update is False:
             return
-        if config.plugins.tvaddon.autoupd.value is False:
+        if cfg.autoupd.value is False:
             return
         if answer:
             if os.path.exists('/var/lib/dpkg/info'):
@@ -707,12 +680,8 @@ class Categories(Screen):
                                                            'cancel': self.close}, -2)
 
     def _gotPageLoad(self):
-        self.xml = str(xml_path) + self.category
-        # if PY3:
-            # self.xml = self.xml.encode()
-        # else:
-            # self.xml = self.xml
-        self.xml = checkGZIP(self.xml)
+        xml = str(xml_path) + self.category
+        self.xml = checkGZIP(xml)
         try:
             match = re.compile(regexC, re.DOTALL).findall(self.xml)
             for name in match:
@@ -1138,7 +1107,6 @@ class SettingVhan2(Screen):
                 self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
-
         except Exception as e:
             print('error: ', str(e))
             self['info'].setText(_('Not Installed ...'))
@@ -1163,6 +1131,7 @@ class Milenka61(Screen):
         self.setup_title = ('Setting Milenka61')
         Screen.__init__(self, session)
         self.setTitle(self.setup_title)
+
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1520,12 +1489,6 @@ class SettingCiefp(Screen):
         self.names = []
         self.urls = []
         try:
-            # if PY3:
-                # n1 = r.find('title="README.txt'.encode(), 0)
-                # n2 = r.find('href="#readme">'.encode(), n1)
-            # else:
-                # n1 = r.find('title="README.txt', 0)
-                # n2 = r.find('href="#readme">', n1)
             n1 = r.find('title="README.txt', 0)
             n2 = r.find('href="#readme">', n1)
             r = r[n1:n2]
@@ -1835,12 +1798,6 @@ class SettingCyrus(Screen):
         self.names = []
         self.urls = []
         try:
-            # if PY3:
-                # n1 = r.find('name="Sat">'.encode(), 0)
-                # n2 = r.find('/ruleset>'.encode(), n1)
-            # else:
-                # n1 = r.find('name="Sat">', 0)
-                # n2 = r.find('/ruleset>', n1)
             n1 = r.find('name="Sat">', 0)
             n2 = r.find("/ruleset>", n1)
             r = r[n1:n2]
@@ -2191,13 +2148,6 @@ class tvInstall(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # self["progress"].show()
-        # self['info'].setText(_('Download...'))
-        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # print('progress = ok')
-
     def showError(self):
         print("download error ")
         self.downloading = False
@@ -2271,7 +2221,7 @@ class tvIPK(Screen):
         self.setup_title = ('IPK')
         Screen.__init__(self, session)
         self.setTitle(self.setup_title)
-        self.ipkpth = str(config.plugins.tvaddon.ipkpth.value)
+        self.ipkpth = str(cfg.ipkpth.value)
         self.list = []
         self.names = []
         self['list'] = tvList([])
@@ -2527,7 +2477,7 @@ class tvUpdate(Screen):
     def msgupdate1(self, answer=None):
         if self.Update is False:
             return
-        if config.plugins.tvaddon.autoupd.value is False:
+        if cfg.autoupd.value is False:
             return
         if answer is None:
             self.session.openWithCallback(self.msgupdate1, MessageBox, (_('New update available!!')), MessageBox.TYPE_YESNO)
@@ -2790,11 +2740,11 @@ class tvConfig(Screen, ConfigListScreen):
     def createSetup(self):
         self.editListEntry = None
         self.list = []
-        self.list.append(getConfigListEntry(_('Auto Update Plugin'), config.plugins.tvaddon.autoupd, _("If Active: Automatic Update Plugin")))
-        self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), config.plugins.tvaddon.mmkpicon, _("Configure folder containing picons files")))
-        self.list.append(getConfigListEntry(_('Path Manual IPK'), config.plugins.tvaddon.ipkpth, _("Path to the addon installation folder")))
-        self.list.append(getConfigListEntry(_('Link in Extensions Menu'), config.plugins.tvaddon.strtext, _("Link in Extensions button")))
-        self.list.append(getConfigListEntry(_('Link in Main Menu'), config.plugins.tvaddon.strtmain, _("Link in Main Menu")))
+        self.list.append(getConfigListEntry(_('Auto Update Plugin'), cfg.autoupd, _("If Active: Automatic Update Plugin")))
+        self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), cfg.mmkpicon, _("Configure folder containing picons files")))
+        self.list.append(getConfigListEntry(_('Path Manual IPK'), cfg.ipkpth, _("Path to the addon installation folder")))
+        self.list.append(getConfigListEntry(_('Link in Extensions Menu'), cfg.strtext, _("Link in Extensions button")))
+        self.list.append(getConfigListEntry(_('Link in Main Menu'), cfg.strtmain, _("Link in Main Menu")))
         self["config"].list = self.list
         self["config"].setList(self.list)
         self.setInfo()
@@ -2825,7 +2775,7 @@ class tvConfig(Screen, ConfigListScreen):
         return SetupSummary
 
     def msgok(self):
-        if os.path.exists(config.plugins.tvaddon.ipkpth.value) is False:
+        if os.path.exists(cfg.ipkpth.value) is False:
             self.session.open(MessageBox, _('Device not detected!'), MessageBox.TYPE_INFO, timeout=4)
         for x in self["config"].list:
             x[1].save()
@@ -2835,9 +2785,9 @@ class tvConfig(Screen, ConfigListScreen):
     def Ok_edit(self):
         ConfigListScreen.keyOK(self)
         sel = self['config'].getCurrent()[1]
-        if sel and sel == config.plugins.tvaddon.mmkpicon:
+        if sel and sel == cfg.mmkpicon:
             self.setting = 'mmkpicon'
-            mmkpth = config.plugins.tvaddon.mmkpicon.value
+            mmkpth = cfg.mmkpicon.value
             self.openDirectoryBrowser(mmkpth)
         else:
             pass
@@ -2861,9 +2811,9 @@ class tvConfig(Screen, ConfigListScreen):
     def openDirectoryBrowserCB(self, path):
         if path is not None:
             if self.setting == 'mmkpicon':
-                config.plugins.tvaddon.mmkpicon.setValue(path)
+                cfg.mmkpicon.setValue(path)
             if self.setting == 'ipkpth':
-                config.plugins.tvaddon.ipkpth.setValue(path)
+                cfg.ipkpth.setValue(path)
         return
 
     def KeyText(self):
@@ -2891,586 +2841,579 @@ class tvConfig(Screen, ConfigListScreen):
             self.close()
 
 
-class SelectPiconz(Screen):
-    def __init__(self, session):
-        self.session = session
-        skin = os.path.join(skin_path, 'tvall.xml')
-        with codecs.open(skin, "r", encoding="utf-8") as f:
-            self.skin = f.read()
-        self.setup_title = ('Select Picons')
-        Screen.__init__(self, session)
-        self.setTitle(self.setup_title)
-        self['list'] = tvList([])
-        self['pth'] = Label('')
-        self['pth'].setText(_('Folder picons ') + str(mmkpicon))
-        self['pform'] = Label('')
-        self['info'] = Label('')
-        self['info'].setText(_('Loading data... Please wait'))
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_('Remove'))
-        self["key_blue"] = Button('')
-        # self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self['key_green'].hide()
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['title'] = Label(title_plug)
-        self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions'], {'ok': self.okRun,
-                                                       'green': self.okRun,
-                                                       'red': self.close,
-                                                       'cancel': self.close}, -2)
-        self.onLayoutFinish.append(self.updateMenuList)
+# class SelectPiconz(Screen):
+    # def __init__(self, session):
+        # self.session = session
+        # skin = os.path.join(skin_path, 'tvall.xml')
+        # with codecs.open(skin, "r", encoding="utf-8") as f:
+            # self.skin = f.read()
+        # self.setup_title = ('Select Picons')
+        # Screen.__init__(self, session)
+        # self.setTitle(self.setup_title)
+        # self['list'] = tvList([])
+        # self['pth'] = Label('')
+        # self['pth'].setText(_('Folder picons ') + str(mmkpicon))
+        # self['pform'] = Label('')
+        # self['info'] = Label('')
+        # self['info'].setText(_('Loading data... Please wait'))
+        # self['key_green'] = Button(_('Select'))
+        # self['key_red'] = Button(_('Back'))
+        # self['key_yellow'] = Button(_('Remove'))
+        # self["key_blue"] = Button('')
+        # # self['key_yellow'].hide()
+        # self['key_blue'].hide()
+        # self['key_green'].hide()
+        # self['progress'] = ProgressBar()
+        # self["progress"].hide()
+        # self['progresstext'] = StaticText()
+        # self['title'] = Label(title_plug)
+        # self['actions'] = ActionMap(['OkCancelActions',
+                                     # 'ColorActions'], {'ok': self.okRun,
+                                                       # 'green': self.okRun,
+                                                       # 'red': self.close,
+                                                       # 'cancel': self.close}, -2)
+        # self.onLayoutFinish.append(self.updateMenuList)
 
-    def getfreespace(self):
-        try:
-            fspace = Utils.freespace()
-            self['pform'].setText(str(fspace))
-        except Exception as e:
-            print(e)
+    # def getfreespace(self):
+        # try:
+            # fspace = Utils.freespace()
+            # self['pform'].setText(str(fspace))
+        # except Exception as e:
+            # print(e)
 
-    def closerm(self):
-        self.close()
+    # def closerm(self):
+        # self.close()
 
-    def updateMenuList(self):
-        self.menu_list = []
-        for x in self.menu_list:
-            del self.menu_list[0]
-        list = []
-        idx = 0
-        for x in Panel_list3:
-            list.append(DailyListEntry(x, idx))
-            self.menu_list.append(x)
-            idx += 1
-        self['list'].setList(list)
-        self['key_green'].show()
-        self['info'].setText(_('Please select'))
-        self.getfreespace()
+    # def updateMenuList(self):
+        # self.menu_list = []
+        # for x in self.menu_list:
+            # del self.menu_list[0]
+        # list = []
+        # idx = 0
+        # for x in Panel_list3:
+            # list.append(DailyListEntry(x, idx))
+            # self.menu_list.append(x)
+            # idx += 1
+        # self['list'].setList(list)
+        # self['key_green'].show()
+        # self['info'].setText(_('Please select'))
+        # self.getfreespace()
 
-    def okRun(self):
-        self.keyNumberGlobalCB(self['list'].getSelectedIndex())
+    # def okRun(self):
+        # self.keyNumberGlobalCB(self['list'].getSelectedIndex())
 
-    def keyNumberGlobalCB(self, idx):
-        sel = self.menu_list[idx]
-        if sel == ('MMARK PICONS BLACK'):
-            self.session.open(MMarkFolderz, host_blk)
-        elif sel == 'MMARK PICONS TRANSPARENT':
-            self.session.open(MMarkFolderz, host_trs)
-        elif sel == ('MMARK PICONS MOVIE'):
-            self.session.open(MMarkPiconsf, 'MMark-Picons', host_mov, True)
-        elif sel == ('OPEN PICONS'):  # https://openpicons.com/picons/full-motor-srp/hardlink/ # https://openpicons.com/picons/?dir=full-motor-srp/ipk
+    # def keyNumberGlobalCB(self, idx):
+        # sel = self.menu_list[idx]
+        # if sel == ('MMARK PICONS BLACK'):
+            # self.session.open(MMarkFolderz, host_blk)
+        # elif sel == 'MMARK PICONS TRANSPARENT':
+            # self.session.open(MMarkFolderz, host_trs)
+        # elif sel == ('MMARK PICONS MOVIE'):
+            # self.session.open(MMarkPiconsf, 'MMark-Picons', host_mov, True)
+        # elif sel == ('OPEN PICONS'):  # https://openpicons.com/picons/full-motor-srp/hardlink/ # https://openpicons.com/picons/?dir=full-motor-srp/ipk
+            # # return
+            # host_open = 'https://openpicons.com/picons/?dir=full-motor-srp/hardlink'
+            # self.session.open(OpenPicons, 'OpenPicons', host_open)
+        # else:
             # return
-            host_open = 'https://openpicons.com/picons/?dir=full-motor-srp/hardlink'
-            self.session.open(OpenPicons, 'OpenPicons', host_open)
-        else:
-            return
 
-    def remove(self):
-        self.session.openWithCallback(self.remove1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+    # def remove(self):
+        # self.session.openWithCallback(self.remove1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def remove1(self, answer):
-        if answer:
-            self['info'].setText(_('Erase %s... please wait' % str(mmkpicon)))
-            piconsx = glob.glob(str(mmkpicon) + '/*.png')
-            for f in piconsx:
-                try:
-                    os.remove(f)
-                except OSError as e:
-                    print("Error: %s : %s" % (f, e.strerror))
-        self.session.open(MessageBox, _('%s it has been cleaned' % str(mmkpicon)), MessageBox.TYPE_INFO, timeout=4)
-        self['info'].setText(_('Please select ...'))
+    # def remove1(self, answer):
+        # if answer:
+            # self['info'].setText(_('Erase %s... please wait' % str(mmkpicon)))
+            # piconsx = glob.glob(str(mmkpicon) + '/*.png')
+            # for f in piconsx:
+                # try:
+                    # os.remove(f)
+                # except OSError as e:
+                    # print("Error: %s : %s" % (f, e.strerror))
+        # self.session.open(MessageBox, _('%s it has been cleaned' % str(mmkpicon)), MessageBox.TYPE_INFO, timeout=4)
+        # self['info'].setText(_('Please select ...'))
 
 
-class MMarkFolderz(Screen):
-    def __init__(self, session, url):
-        self.session = session
-        skin = os.path.join(skin_path, 'tvall.xml')
-        with codecs.open(skin, "r", encoding="utf-8") as f:
-            self.skin = f.read()
-        self.setup_title = ('MMark')
-        Screen.__init__(self, session)
-        self.setTitle(self.setup_title)
-        self.list = []
-        self['list'] = tvList([])
-        self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
-        self['pth'].setText(_('Folder picons ') + str(mmkpicon))
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Select'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self['key_green'].hide()
-        self.url = url
-        self.downloading = False
-        self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self.timer.start(500, 1)
-        self['title'] = Label(title_plug)
-        self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions'], {'ok': self.okRun,
-                                                       'green': self.okRun,
-                                                       'red': self.close,
-                                                       'cancel': self.close}, -2)
-        self.onLayoutFinish.append(self.getfreespace)
+# class MMarkFolderz(Screen):
+    # def __init__(self, session, url):
+        # self.session = session
+        # skin = os.path.join(skin_path, 'tvall.xml')
+        # with codecs.open(skin, "r", encoding="utf-8") as f:
+            # self.skin = f.read()
+        # self.setup_title = ('MMark')
+        # Screen.__init__(self, session)
+        # self.setTitle(self.setup_title)
+        # self.list = []
+        # self['list'] = tvList([])
+        # self['info'] = Label(_('Loading data... Please wait'))
+        # self['pth'] = Label('')
+        # self['pth'].setText(_('Folder picons ') + str(mmkpicon))
+        # self['pform'] = Label('')
+        # self['progress'] = ProgressBar()
+        # self["progress"].hide()
+        # self['progresstext'] = StaticText()
+        # self['key_green'] = Button(_('Select'))
+        # self['key_red'] = Button(_('Back'))
+        # self['key_yellow'] = Button('')
+        # self["key_blue"] = Button('')
+        # self['key_yellow'].hide()
+        # self['key_blue'].hide()
+        # self['key_green'].hide()
+        # self.url = url
+        # self.downloading = False
+        # self.timer = eTimer()
+        # if os.path.exists('/var/lib/dpkg/info'):
+            # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        # else:
+            # self.timer.callback.append(self.downxmlpage)
+        # self.timer.start(500, 1)
+        # self['title'] = Label(title_plug)
+        # self['actions'] = ActionMap(['OkCancelActions',
+                                     # 'ColorActions'], {'ok': self.okRun,
+                                                       # 'green': self.okRun,
+                                                       # 'red': self.close,
+                                                       # 'cancel': self.close}, -2)
+        # self.onLayoutFinish.append(self.getfreespace)
 
-    def getfreespace(self):
-        try:
-            fspace = Utils.freespace()
-            self['pform'].setText(str(fspace))
-        except Exception as e:
-            print(e)
+    # def getfreespace(self):
+        # try:
+            # fspace = Utils.freespace()
+            # self['pform'].setText(str(fspace))
+        # except Exception as e:
+            # print(e)
 
-    def downxmlpage(self):
-        url = six.ensure_binary(self.url)
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self):
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        r = data
-        if PY3:
-            r = six.ensure_str(data)
-        self.names = []
-        self.urls = []
-        try:
-            # if PY3:
-                # n1 = r.find('"folderkey"'.encode(), 0)
-                # n2 = r.find('more_chunks'.encode(), n1)
-            # else:
-                # n1 = r.find('"folderkey"', 0)
-                # n2 = r.find('more_chunks', n1)
-            n1 = r.find('"folderkey"', 0)
-            n2 = r.find('more_chunks', n1)
-            data2 = r[n1:n2]
-            regex = '{"folderkey":"(.*?)".*?"name":"(.*?)".*?"created":"(.*?)"'
-            match = re.compile(regex, re.DOTALL).findall(data2)
-            for url, name, data in match:
-                url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
-                url = url.replace('\\', '')
-                name = 'Picons-' + name
-                self.urls.append(url)
-                self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            self['key_green'].show()
-            showlist(self.names, self['list'])
-            self.downloading = True
-        except:
-            self.downloading = False
-
-    def okRun(self):
-        i = len(self.names)
-        if i < 0:
-            return
-        idx = self['list'].getSelectionIndex()
-        name = self.names[idx]
-        url = self.urls[idx]
-        self.session.open(MMarkPiconsf, name, url)
-
-    def cancel(self, result=None):
-        self.downloading = False
-        self.close(None)
-        return
-
-
-class MMarkPiconsf(Screen):
-    def __init__(self, session, name, url, movie=False):
-        self.session = session
-        skin = os.path.join(skin_path, 'tvall.xml')
-        with codecs.open(skin, "r", encoding="utf-8") as f:
-            self.skin = f.read()
-        self.setup_title = ('MMark')
-        Screen.__init__(self, session)
-        self.setTitle(self.setup_title)
-        self.list = []
-        self['list'] = tvList([])
-        self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
-        self['pth'].setText(_('Folder picons ') + str(mmkpicon))
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self['key_green'].hide()
-        self.getfreespace()
-        self.downloading = False
-        self.movie = movie
-        self.url = url
-        self.name = name
-        self.error_message = ""
-        self.last_recvbytes = 0
-        self.error_message = None
-        self.download = None
-        self.aborted = False
-        self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self.timer.start(500, 1)
-        self['title'] = Label(title_plug)
-        self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions'], {'ok': self.okRun,
-                                                       'green': self.okRun,
-                                                       'red': self.close,
-                                                       'cancel': self.close}, -2)
-        self.onLayoutFinish.append(self.getfreespace)
-
-    def getfreespace(self):
-        try:
-            fspace = Utils.freespace()
-            self['pform'].setText(str(fspace))
-        except Exception as e:
-            print(e)
-
-    def downxmlpage(self):
-        url = six.ensure_binary(self.url)
-        getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-
-    def errorLoad(self):
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
-
-    def _gotPageLoad(self, data):
-        r = data
-        if PY3:
-            r = six.ensure_str(data)
-        self.names = []
-        self.urls = []
-        try:
-            # if PY3:
-                # n1 = r.find('"quickkey":'.encode(), 0)
-                # n2 = r.find('more_chunks'.encode(), n1)
-            # else:
-                # n1 = r.find('"quickkey":', 0)
-                # n2 = r.find('more_chunks', n1)
-            n1 = r.find('"quickkey":', 0)
-            n2 = r.find('more_chunks', n1)
-            data2 = r[n1:n2]
-            regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"downloads":"(.*?)".*?"normal_download":"(.*?)"'
-            match = re.compile(regex, re.DOTALL).findall(data2)
-            for name, data, download, url in match:
-                if '.zip' in url:
-                    url = url.replace('\\', '')
-                    if self.movie:
-                        name = name.replace('_', ' ').replace('-', ' ').replace('mmk', '').replace('.zip', '')
-                        name = name + ' ' + data[0:10] + ' ' + 'Down: ' + download
-                    else:
-                        name = name.replace('_', ' ').replace('mmk', 'MMark').replace('.zip', '')
-                        name = name + ' ' + data[0:10] + ' ' + 'Down:' + download
-                    self.urls.append(url)
-                    self.names.append(name)
-            self['info'].setText(_('Please select ...'))
-            self['key_green'].show()
-            showlist(self.names, self['list'])
-            self.downloading = True
-        except:
-            self.downloading = False
-
-    def okRun(self):
-        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-
-    def okRun1(self, result):
-        self['info'].setText(_('... please wait'))
-        if result:
-            if self.downloading is True:
-                idx = self["list"].getSelectionIndex()
-                self.name = self.names[idx]
-                url = self.urls[idx]
-                dest = "/tmp/download.zip"
-                print('url333: ', url)
-                if os.path.exists(dest):
-                    os.remove(dest)
-                try:
-                    myfile = Utils.ReadUrl(url)
-                    print('response: ', myfile)
-                    regexcat = 'href="https://download(.*?)"'
-                    match = re.compile(regexcat, re.DOTALL).findall(myfile)
-                    print("match =", match[0])
-                    # myfile = checkMyFile(url)
-                    # print('myfile222:  ', myfile)
-                    url = 'https://download' + str(match[0])
-                    print("url final =", url)
-                    # myfile = checkMyFile(url)
-                    # print('myfile222:  ', myfile)
-                    # # url =  'https://download' + str(myfile)
-                    self.download = downloadWithProgress(url, dest)
-                    self.download.addProgress(self.downloadProgress)
-                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
-                except Exception as e:
-                    print('error: ', str(e))
-                    print("Error: can't find file or read data")
-            else:
-                self['info'].setText(_('Picons Not Installed ...'))
-
-    def downloadProgress(self, recvbytes, totalbytes):
-        self['info'].setText(_('Download in progress...'))
-        self["progress"].show()
-        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
-        self.last_recvbytes = recvbytes
-
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # self["progress"].show()
-        # self['info'].setText(_('Download...'))
-        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # print('progress = ok')
-
-    def showError(self):
-        print("download error ")
-        self.downloading = False
-        self.close()
-
-    def download_failed(self, failure_instance=None, error_message=""):
-        self.error_message = error_message
-        if error_message == "" and failure_instance is not None:
-            self.error_message = failure_instance.getErrorMessage()
-        self.downloading = False
-        info = 'Download Failed!!! ' + self.error_message
-        self['info'].setText(info)
-        self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
-
-    def abort(self):
-        print("aborting", self.url)
-        if self.download:
-            self.download.stop()
-        self.downloading = False
-        self.aborted = True
-
-    def download_finished(self, string=""):
-        if self.aborted:
-            self.finish(aborted=True)
-
-    def install(self, string=''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            self.progclear = 0
-            self['info'].setText(_('File Downloaded ...'))
-            if os.path.exists('/tmp/download.zip'):
-                self['info'].setText(_('Install ...'))
-                self.downloading = False
-                self['progresstext'].text = ''
-                self['progress'].setValue(self.progclear)
-                self["progress"].hide()
-                self['info'].setText(_('Please select ...'))
-                myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
-                subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
-                info = 'Successfully Picons Installed'
-                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
-
-
-class OpenPicons(Screen):
-    def __init__(self, session, name, url):
-        self.session = session
-        skin = os.path.join(skin_path, 'tvall.xml')
-        with codecs.open(skin, "r", encoding="utf-8") as f:
-            self.skin = f.read()
-        self.setup_title = ('OpenPicons')
-        Screen.__init__(self, session)
-        self.setTitle(self.setup_title)
-        self.list = []
-        self['list'] = tvList([])
-        self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
-        self['pth'].setText(_('Folder picons ') + str(mmkpicon))
-        self['pform'] = Label('')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self['key_green'].hide()
-        self.getfreespace()
-        self.downloading = False
-        self.url = url
-        self.name = name
-        self.error_message = ""
-        self.last_recvbytes = 0
-        self.error_message = None
-        self.download = None
-        self.aborted = False
-        self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self.timer.start(500, 1)
-        self['title'] = Label(title_plug)
-        self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions'], {'ok': self.okRun,
-                                                       'green': self.okRun,
-                                                       'red': self.close,
-                                                       'cancel': self.close}, -2)
-        self.onLayoutFinish.append(self.getfreespace)
-
-    def getfreespace(self):
-        try:
-            # from Components.PluginComponent import plugins
-            # plugins.clearPluginList()
-            # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
-            fspace = Utils.freespace()
-            self['pform'].setText(str(fspace))
-        except Exception as e:
-            print(e)
-
-    def downxmlpage(self):
-        try:
-            data = make_request(self.url)
-            if PY3:
-                data = six.ensure_str(data)
-            self._gotPageLoad(data)
-        except Exception as e:
-            print('no link valid: ', e)
+    # def downxmlpage(self):
+        # url = six.ensure_binary(self.url)
         # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
-        # https://openpicons.com/picons/?dir=full-motor-srp
 
-    def errorLoad(self):
-        self['info'].setText(_('Try again later ...'))
-        self.downloading = False
+    # def errorLoad(self):
+        # self['info'].setText(_('Try again later ...'))
+        # self.downloading = False
 
-    def _gotPageLoad(self, data):
-        r = data
-        if PY3:
-            r = six.ensure_str(data)
-        print('rrrrrrrrrrrrrrr=:', r)
-        self.names = []
-        self.urls = []
-        try:
-            regex = 'full-motor-srp/hardlink/(.*?).tar.xz"'
-            match = re.compile(regex, re.DOTALL).findall(r)
-            for url in match:
-                # full-motor-srp/hardlink/srp-full.100x60-86x46.dark.on.blue_2023-12-12--23-58-23.hardlink.tar.xz"
-                name = url.replace('.hardlink', '').replace('.', '-').replace('_', '-')
-                url = 'https://openpicons.com/picons/full-motor-srp/hardlink/' + url + '.tar.xz'
-                print('name=', name)
-                print('url:', url)
-                self.urls.append(url)
-                self.names.append(Utils.str_encode(name))
-            self['info'].setText(_('Please select ...'))
-            self['key_green'].show()
-            showlist(self.names, self['list'])
-            self.downloading = True
-        except:
-            self.downloading = False
+    # def _gotPageLoad(self, data):
+        # r = data
+        # if PY3:
+            # r = six.ensure_str(data)
+        # self.names = []
+        # self.urls = []
+        # try:
+            # n1 = r.find('"folderkey"', 0)
+            # n2 = r.find('more_chunks', n1)
+            # data2 = r[n1:n2]
+            # regex = '{"folderkey":"(.*?)".*?"name":"(.*?)".*?"created":"(.*?)"'
+            # match = re.compile(regex, re.DOTALL).findall(data2)
+            # for url, name, data in match:
+                # url = 'https://www.mediafire.com/api/1.5/folder/get_content.php?folder_key=' + url + '&content_type=files&chunk_size=1000&response_format=json'
+                # url = url.replace('\\', '')
+                # name = 'Picons-' + name
+                # self.urls.append(url)
+                # self.names.append(name)
+            # self['info'].setText(_('Please select ...'))
+            # self['key_green'].show()
+            # showlist(self.names, self['list'])
+            # self.downloading = True
+        # except:
+            # self.downloading = False
 
-    def okRun(self):
-        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?\nATTENTION: MAKE SURE YOU HAVE ENOUGH SPACE\nTHERE ARE A LOT OF PICONS AND IT TAKES TIME!!!"), MessageBox.TYPE_YESNO)
+    # def okRun(self):
+        # i = len(self.names)
+        # if i < 0:
+            # return
+        # idx = self['list'].getSelectionIndex()
+        # name = self.names[idx]
+        # url = self.urls[idx]
+        # self.session.open(MMarkPiconsf, name, url)
 
-    def okRun1(self, answer):
-        if answer:
-            if self.downloading is True:
-                idx = self["list"].getSelectionIndex()
-                self.name = self.names[idx]
-                url = self.urls[idx]
-                print('1 url type=', type(url))
-                # url = six.ensure_binary(url)
-                # print('2 url type=', type(url))
-                # if PY3:
-                    # url = url.encode()
-                self.dest = "/tmp/download.tar.xz"
-                if os.path.exists(self.dest):
-                    os.remove(self.dest)
-                self.download = downloadWithProgress(url, self.dest)
-                self.download.addProgress(self.downloadProgress)
-                self.download.start().addCallback(self.install).addErrback(self.download_failed)
-            else:
-                self['info'].setText(_('Picons Not Installed ...'))
+    # def cancel(self, result=None):
+        # self.downloading = False
+        # self.close(None)
+        # return
 
-    def downloadProgress(self, recvbytes, totalbytes):
-        self['info'].setText(_('Download in progress...'))
-        self["progress"].show()
-        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
-        self.last_recvbytes = recvbytes
+
+# class MMarkPiconsf(Screen):
+    # def __init__(self, session, name, url, movie=False):
+        # self.session = session
+        # skin = os.path.join(skin_path, 'tvall.xml')
+        # with codecs.open(skin, "r", encoding="utf-8") as f:
+            # self.skin = f.read()
+        # self.setup_title = ('MMark')
+        # Screen.__init__(self, session)
+        # self.setTitle(self.setup_title)
+        # self.list = []
+        # self['list'] = tvList([])
+        # self['info'] = Label(_('Loading data... Please wait'))
+        # self['pth'] = Label('')
+        # self['pth'].setText(_('Folder picons ') + str(mmkpicon))
+        # self['pform'] = Label('')
+        # self['progress'] = ProgressBar()
+        # self["progress"].hide()
+        # self['progresstext'] = StaticText()
+        # self['key_green'] = Button(_('Install'))
+        # self['key_red'] = Button(_('Back'))
+        # self['key_yellow'] = Button('')
+        # self["key_blue"] = Button('')
+        # self['key_yellow'].hide()
+        # self['key_blue'].hide()
+        # self['key_green'].hide()
+        # self.getfreespace()
+        # self.downloading = False
+        # self.movie = movie
+        # self.url = url
+        # self.name = name
+        # self.error_message = ""
+        # self.last_recvbytes = 0
+        # self.error_message = None
+        # self.download = None
+        # self.aborted = False
+        # self.timer = eTimer()
+        # if os.path.exists('/var/lib/dpkg/info'):
+            # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        # else:
+            # self.timer.callback.append(self.downxmlpage)
+        # self.timer.start(500, 1)
+        # self['title'] = Label(title_plug)
+        # self['actions'] = ActionMap(['OkCancelActions',
+                                     # 'ColorActions'], {'ok': self.okRun,
+                                                       # 'green': self.okRun,
+                                                       # 'red': self.close,
+                                                       # 'cancel': self.close}, -2)
+        # self.onLayoutFinish.append(self.getfreespace)
+
+    # def getfreespace(self):
+        # try:
+            # fspace = Utils.freespace()
+            # self['pform'].setText(str(fspace))
+        # except Exception as e:
+            # print(e)
+
+    # def downxmlpage(self):
+        # url = six.ensure_binary(self.url)
+        # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+
+    # def errorLoad(self):
+        # self['info'].setText(_('Try again later ...'))
+        # self.downloading = False
+
+    # def _gotPageLoad(self, data):
+        # r = data
+        # if PY3:
+            # r = six.ensure_str(data)
+        # self.names = []
+        # self.urls = []
+        # try:
+            # n1 = r.find('"quickkey":', 0)
+            # n2 = r.find('more_chunks', n1)
+            # data2 = r[n1:n2]
+            # regex = 'filename":"(.*?)".*?"created":"(.*?)".*?"downloads":"(.*?)".*?"normal_download":"(.*?)"'
+            # match = re.compile(regex, re.DOTALL).findall(data2)
+            # for name, data, download, url in match:
+                # if '.jpg' or '.png' in str(url):
+                    # continue
+                # if '.sh' or '.txt' in str(url):
+                    # continue
+                # if '.zip' or '.ipk' or '.deb' in str(url):
+                    # url = url.replace('\\', '')
+                    # if self.movie:
+                        # name = name.replace('_', ' ').replace('-', ' ').replace('mmk', '').replace('.zip', '')
+                        # name = name + ' ' + data[0:10] + ' ' + 'Down: ' + download
+                    # else:
+                        # name = name.replace('_', ' ').replace('mmk', 'MMark').replace('.zip', '')
+                        # name = name + ' ' + data[0:10] + ' ' + 'Down:' + download
+                    # self.urls.append(url)
+                    # self.names.append(name)
+            # self['info'].setText(_('Please select ...'))
+            # self['key_green'].show()
+            # showlist(self.names, self['list'])
+            # self.downloading = True
+        # except:
+            # self.downloading = False
+
+    # def okRun(self):
+        # self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    # def okRun1(self, result):
+        # self['info'].setText(_('... please wait'))
+        # if result:
+            # if self.downloading is True:
+                # idx = self["list"].getSelectionIndex()
+                # self.name = self.names[idx]
+                # url = self.urls[idx]
+                # dest = "/tmp/download.zip"
+                # print('url333: ', url)
+                # if os.path.exists(dest):
+                    # os.remove(dest)
+                # try:
+                    # myfile = Utils.ReadUrl(url)
+                    # print('response: ', myfile)
+                    # regexcat = 'href="https://download(.*?)"'
+                    # match = re.compile(regexcat, re.DOTALL).findall(myfile)
+                    # print("match =", match[0])
+                    # # myfile = checkMyFile(url)
+                    # # print('myfile222:  ', myfile)
+                    # url = 'https://download' + str(match[0])
+                    # print("url final =", url)
+                    # # myfile = checkMyFile(url)
+                    # # print('myfile222:  ', myfile)
+                    # # # url =  'https://download' + str(myfile)
+                    # self.download = downloadWithProgress(url, dest)
+                    # self.download.addProgress(self.downloadProgress)
+                    # self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                # except Exception as e:
+                    # print('error: ', str(e))
+                    # print("Error: can't find file or read data")
+            # else:
+                # self['info'].setText(_('Picons Not Installed ...'))
 
     # def downloadProgress(self, recvbytes, totalbytes):
+        # self['info'].setText(_('Download in progress...'))
         # self["progress"].show()
-        # self['info'].setText(_('Download...'))
-        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # print('progress = ok')
+        # self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        # self.last_recvbytes = recvbytes
 
-    def showError(self):
-        print("download error ")
-        self.downloading = False
-        self.close()
+    # # def downloadProgress(self, recvbytes, totalbytes):
+        # # self["progress"].show()
+        # # self['info'].setText(_('Download...'))
+        # # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # # self.last_recvbytes = recvbytes
+        # # print('progress = ok')
 
-    def download_failed(self, failure_instance=None, error_message=""):
-        self.error_message = error_message
-        if error_message == "" and failure_instance is not None:
-            self.error_message = failure_instance.getErrorMessage()
-        self.downloading = False
-        info = 'Download Failed!!! ' + self.error_message
-        self['info'].setText(info)
-        self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+    # # def downloadProgress(self, recvbytes, totalbytes):
+        # # self["progress"].show()
+        # # self['info'].setText(_('Download...'))
+        # # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # # print('progress = ok')
 
-    def abort(self):
-        print("aborting", self.url)
-        if self.download:
-            self.download.stop()
-        self.downloading = False
-        self.aborted = True
+    # def showError(self):
+        # print("download error ")
+        # self.downloading = False
+        # self.close()
 
-    def download_finished(self, string=""):
-        if self.aborted:
-            self.finish(aborted=True)
+    # def download_failed(self, failure_instance=None, error_message=""):
+        # self.error_message = error_message
+        # if error_message == "" and failure_instance is not None:
+            # self.error_message = failure_instance.getErrorMessage()
+        # self.downloading = False
+        # info = 'Download Failed!!! ' + self.error_message
+        # self['info'].setText(info)
+        # self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
-    def install(self, string=''):
-        if self.aborted:
-            self.finish(aborted=True)
-        else:
-            self.progclear = 0
-            self['info'].setText(_('File Downloaded ...'))
-            if os.path.exists(self.dest):
-                self.namel = ''
-                self['info'].setText(_('Install ...'))
-                self.downloading = False
-                self['progresstext'].text = ''
-                self['progress'].setValue(self.progclear)
-                self["progress"].hide()
-                self['info'].setText(_('Please select ...'))
-                if os.path.exists("/tmp/unzipped"):
-                    os.system('rm -rf /tmp/unzipped')
-                os.makedirs('/tmp/unzipped')
-                os.system('tar -xvf ' + self.dest + ' -C /tmp/unzipped')
-                path = '/tmp/unzipped'
-                for root, dirs, files in os.walk(path):
-                    for name in dirs:
-                        if not os.path.isdir(os.path.join(path, name)):
-                            continue
-                        self.namel = name
-                # folder is long name.. truk for this
-                path2 = '/tmp/unzipped/' + str(self.namel)
-                for root, dirs, files in os.walk(path2):
-                    for name in files:
-                        Cmd = "cp -rf  '" + path2 + "/" + name + "' " + str(mmkpicon)
-                        os.system(Cmd)
-                info = 'Successfully Picons Installed'
-                self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+    # def abort(self):
+        # print("aborting", self.url)
+        # if self.download:
+            # self.download.stop()
+        # self.downloading = False
+        # self.aborted = True
+
+    # def download_finished(self, string=""):
+        # if self.aborted:
+            # self.finish(aborted=True)
+
+    # def install(self, string=''):
+        # if self.aborted:
+            # self.finish(aborted=True)
+        # else:
+            # self.progclear = 0
+            # self['info'].setText(_('File Downloaded ...'))
+            # if os.path.exists('/tmp/download.zip'):
+                # self['info'].setText(_('Install ...'))
+                # self.downloading = False
+                # self['progresstext'].text = ''
+                # self['progress'].setValue(self.progclear)
+                # self["progress"].hide()
+                # self['info'].setText(_('Please select ...'))
+                # myCmd = "unzip -o -q '/tmp/download.zip' -d %s/" % str(mmkpicon)
+                # subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
+                # info = 'Successfully Picons Installed'
+                # self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+
+
+# class OpenPicons(Screen):
+    # def __init__(self, session, name, url):
+        # self.session = session
+        # skin = os.path.join(skin_path, 'tvall.xml')
+        # with codecs.open(skin, "r", encoding="utf-8") as f:
+            # self.skin = f.read()
+        # self.setup_title = ('OpenPicons')
+        # Screen.__init__(self, session)
+        # self.setTitle(self.setup_title)
+        # self.list = []
+        # self['list'] = tvList([])
+        # self['info'] = Label(_('Loading data... Please wait'))
+        # self['pth'] = Label('')
+        # self['pth'].setText(_('Folder picons ') + str(mmkpicon))
+        # self['pform'] = Label('')
+        # self['progress'] = ProgressBar()
+        # self["progress"].hide()
+        # self['progresstext'] = StaticText()
+        # self['key_green'] = Button(_('Install'))
+        # self['key_red'] = Button(_('Back'))
+        # self['key_yellow'] = Button('')
+        # self["key_blue"] = Button('')
+        # self['key_yellow'].hide()
+        # self['key_blue'].hide()
+        # self['key_green'].hide()
+        # self.getfreespace()
+        # self.downloading = False
+        # self.url = url
+        # self.name = name
+        # self.error_message = ""
+        # self.last_recvbytes = 0
+        # self.error_message = None
+        # self.download = None
+        # self.aborted = False
+        # self.timer = eTimer()
+        # if os.path.exists('/var/lib/dpkg/info'):
+            # self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        # else:
+            # self.timer.callback.append(self.downxmlpage)
+        # self.timer.start(500, 1)
+        # self['title'] = Label(title_plug)
+        # self['actions'] = ActionMap(['OkCancelActions',
+                                     # 'ColorActions'], {'ok': self.okRun,
+                                                       # 'green': self.okRun,
+                                                       # 'red': self.close,
+                                                       # 'cancel': self.close}, -2)
+        # self.onLayoutFinish.append(self.getfreespace)
+
+    # def getfreespace(self):
+        # try:
+            # # from Components.PluginComponent import plugins
+            # # plugins.clearPluginList()
+            # # plugins.readPluginList(resolveFilename(SCOPE_PLUGINS))
+            # fspace = Utils.freespace()
+            # self['pform'].setText(str(fspace))
+        # except Exception as e:
+            # print(e)
+
+    # def downxmlpage(self):
+        # try:
+            # data = make_request(self.url)
+            # if PY3:
+                # data = six.ensure_str(data)
+            # self._gotPageLoad(data)
+        # except Exception as e:
+            # print('no link valid: ', e)
+        # # getPage(url).addCallback(self._gotPageLoad).addErrback(self.errorLoad)
+        # # https://openpicons.com/picons/?dir=full-motor-srp
+
+    # def errorLoad(self):
+        # self['info'].setText(_('Try again later ...'))
+        # self.downloading = False
+
+    # def _gotPageLoad(self, data):
+        # r = data
+        # if PY3:
+            # r = six.ensure_str(data)
+        # print('rrrrrrrrrrrrrrr=:', r)
+        # self.names = []
+        # self.urls = []
+        # try:
+            # regex = 'full-motor-srp/hardlink/(.*?).tar.xz"'
+            # match = re.compile(regex, re.DOTALL).findall(r)
+            # for url in match:
+                # # full-motor-srp/hardlink/srp-full.100x60-86x46.dark.on.blue_2023-12-12--23-58-23.hardlink.tar.xz"
+                # name = url.replace('.hardlink', '').replace('.', '-').replace('_', '-')
+                # url = 'https://openpicons.com/picons/full-motor-srp/hardlink/' + url + '.tar.xz'
+                # print('name=', name)
+                # print('url:', url)
+                # self.urls.append(url)
+                # self.names.append(Utils.str_encode(name))
+            # self['info'].setText(_('Please select ...'))
+            # self['key_green'].show()
+            # showlist(self.names, self['list'])
+            # self.downloading = True
+        # except:
+            # self.downloading = False
+
+    # def okRun(self):
+        # self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?\nATTENTION: MAKE SURE YOU HAVE ENOUGH SPACE\nTHERE ARE A LOT OF PICONS AND IT TAKES TIME!!!"), MessageBox.TYPE_YESNO)
+
+    # def okRun1(self, answer):
+        # if answer:
+            # if self.downloading is True:
+                # idx = self["list"].getSelectionIndex()
+                # self.name = self.names[idx]
+                # url = self.urls[idx]
+                # print('1 url type=', type(url))
+                # # url = six.ensure_binary(url)
+                # # print('2 url type=', type(url))
+                # # if PY3:
+                    # # url = url.encode()
+                # self.dest = "/tmp/download.tar.xz"
+                # if os.path.exists(self.dest):
+                    # os.remove(self.dest)
+                # self.download = downloadWithProgress(url, self.dest)
+                # self.download.addProgress(self.downloadProgress)
+                # self.download.start().addCallback(self.install).addErrback(self.download_failed)
+            # else:
+                # self['info'].setText(_('Picons Not Installed ...'))
+
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self['info'].setText(_('Download in progress...'))
+        # self["progress"].show()
+        # self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        # self.last_recvbytes = recvbytes
+
+    # def showError(self):
+        # print("download error ")
+        # self.downloading = False
+        # self.close()
+
+    # def download_failed(self, failure_instance=None, error_message=""):
+        # self.error_message = error_message
+        # if error_message == "" and failure_instance is not None:
+            # self.error_message = failure_instance.getErrorMessage()
+        # self.downloading = False
+        # info = 'Download Failed!!! ' + self.error_message
+        # self['info'].setText(info)
+        # self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
+
+    # def abort(self):
+        # print("aborting", self.url)
+        # if self.download:
+            # self.download.stop()
+        # self.downloading = False
+        # self.aborted = True
+
+    # def download_finished(self, string=""):
+        # if self.aborted:
+            # self.finish(aborted=True)
+
+    # def install(self, string=''):
+        # if self.aborted:
+            # self.finish(aborted=True)
+        # else:
+            # self.progclear = 0
+            # self['info'].setText(_('File Downloaded ...'))
+            # if os.path.exists(self.dest):
+                # self.namel = ''
+                # self['info'].setText(_('Install ...'))
+                # self.downloading = False
+                # self['progresstext'].text = ''
+                # self['progress'].setValue(self.progclear)
+                # self["progress"].hide()
+                # self['info'].setText(_('Please select ...'))
+                # if os.path.exists("/tmp/unzipped"):
+                    # os.system('rm -rf /tmp/unzipped')
+                # os.makedirs('/tmp/unzipped')
+                # os.system('tar -xvf ' + self.dest + ' -C /tmp/unzipped')
+                # path = '/tmp/unzipped'
+                # for root, dirs, files in os.walk(path):
+                    # for name in dirs:
+                        # if not os.path.isdir(os.path.join(path, name)):
+                            # continue
+                        # self.namel = name
+                # # folder is long name.. truk for this
+                # path2 = '/tmp/unzipped/' + str(self.namel)
+                # for root, dirs, files in os.walk(path2):
+                    # for name in files:
+                        # Cmd = "cp -rf  '" + path2 + "/" + name + "' " + str(mmkpicon)
+                        # os.system(Cmd)
+                # info = 'Successfully Picons Installed'
+                # self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 
 Panel_list4 = [
@@ -4309,6 +4252,35 @@ def mainmenu(session, **kwargs):
     main(session, **kwargs)
 
 
+def mainm(session, **kwargs):
+    try:
+        from .mmpicon import SelectPicons
+        session.open(SelectPicons)
+    except Exception as e:
+        print('error open plugin', e)
+
+def getversioninfo():
+    currmmversion = '1.3'
+    version_file = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/versionmm'
+    if os.path.exists(version_file):
+        try:
+            fp = open(version_file, 'r').readlines()
+            for line in fp:
+                if 'version' in line:
+                    currmmversion = line.split('=')[1].strip()
+        except:
+            pass
+    return (currmmversion)
+
+
+currmmversion = getversioninfo()
+titlem_plug = 'mMark Picons & Skins'
+descm_plugin = 'V.%s - e2skin.blogspot.com' % str(currmmversion)
+icom_path = 'logom.png'
+if not Utils.DreamOS():
+    icom_path = plugin_path + '/res/pics/logom.png'
+
+
 def Plugins(**kwargs):
     ico_path = 'logo.png'
     if not os.path.exists('/var/lib/dpkg/status'):
@@ -4316,10 +4288,11 @@ def Plugins(**kwargs):
     extDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=ico_path, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_MENU, icon=ico_path, fnc=cfgmain)
     result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
-              PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main)]
-    if config.plugins.tvaddon.strtext.value:
+              PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main),
+              PluginDescriptor(name=titlem_plug, description=descm_plugin, where=PluginDescriptor.WHERE_PLUGINMENU, icon=icom_path, fnc=mainm)]
+    if cfg.strtext.value:
         result.append(extDescriptor)
-    if config.plugins.tvaddon.strtmain.value:
+    if cfg.strtmain.value:
         result.append(mainDescriptor)
     return result
 
