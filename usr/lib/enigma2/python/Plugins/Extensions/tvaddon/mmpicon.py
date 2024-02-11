@@ -444,6 +444,11 @@ class MMarkPiconScreen(Screen):
         self.downloading = False
         self.url = url
         self.name = name
+        self.error_message = ""
+        self.last_recvbytes = 0
+        self.error_message = None
+        self.download = None
+        self.aborted = False
         self.timer = eTimer()
         self.pixmaps = pixmaps
         self.movie = movie
@@ -500,6 +505,7 @@ class MMarkPiconScreen(Screen):
     def errorLoad(self):
         self['info'].setText(_('Try again later ...'))
         logdata("errorLoad ")
+        self.downloading = False
 
     def _gotPageLoad(self, data):
         r = data
@@ -564,7 +570,10 @@ class MMarkPiconScreen(Screen):
                     # print('myfile222:  ', myfile)
                     # # url =  'https://download' + str(myfile)
                     self.download = downloadWithProgress(url, dest)
-                    self.download.addProgress(self.downloadProgress)
+                    if os.path.exists('var/lib/dpkg/info'):
+                        self.download.addProgress(self.downloadProgress)
+                    else:
+                        self.download.addProgress(self.downloadProgress2)
                     self.download.start().addCallback(self.install).addErrback(self.showError)
                 except Exception as e:
                     print('error: ', str(e))
@@ -592,6 +601,14 @@ class MMarkPiconScreen(Screen):
         self['progress'].value = int(100 * recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
         print('progress = ok')
+
+    def downloadProgress2(self, recvbytes, totalbytes):
+        self['info'].setText(_('Download in progress...'))
+        self["progress"].show()
+                                              
+        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        self.last_recvbytes = recvbytes
 
     def showError(self):
         print("download error ")
@@ -781,6 +798,26 @@ class MMarkFolderScreen(Screen):
             if ptr is not None:
                 self['poster'].instance.setPixmap(ptr)
                 self['poster'].show()
+
+    def abort(self):
+        print("aborting", self.url)
+        if self.download:
+            self.download.stop()
+        self.downloading = False
+        self.aborted = True
+
+    def download_finished(self, string=""):
+        if self.aborted:
+            self.finish(aborted=True)
+
+    def download_failed(self, failure_instance=None, error_message=""):
+        self.error_message = error_message
+        if error_message == "" and failure_instance is not None:
+            self.error_message = failure_instance.getErrorMessage()
+        self.downloading = False
+        info = 'Download Failed!!! ' + self.error_message
+        self['info'].setText(info)
+        self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 
 class MMarkFolderSkinZeta(Screen):
