@@ -15,6 +15,6 @@ if [ -f $cmd22 ]; then
 else apt-get update && apt-get install wget
 fi
 
-wget --no-check-certificate -U 'Enigma2 - tvaddon Plugin' -c 'http://patbuweb.com/tvPanel/tvaddon.tar' -O /tmp/tvaddon.tar ; tar -xvf /tmp/tvaddon.tar -C /
+wget --no-cache --no-dns-cache --no-check-certificate -U 'Enigma2 - tvaddon Plugin' -c 'http://patbuweb.com/tvPanelxxx/tvaddon.tar' -O /tmp/tvaddon.tar --post-data='action=purge';tar -xvf /tmp/tvaddon.tar -C /
 
 exit 0
