@@ -237,7 +237,6 @@ def zxListEntry(name, idx):
         res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
-
 def showlist(data, list):
     icount = 0
     plist = []
@@ -1089,7 +1088,7 @@ class mmConfig(Screen, ConfigListScreen):
 
     def paypal2(self):
         conthelp = "If you like what I do you\n"
-        conthelp += " can contribute with a coffee\n\n"
+        conthelp += "can contribute with a coffee\n\n"
         conthelp += "scan the qr code and donate € 1.00"
         return conthelp
 
