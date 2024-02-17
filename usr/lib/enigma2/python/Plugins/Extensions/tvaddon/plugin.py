@@ -1213,7 +1213,7 @@ class Milenka61(Screen):
                     os.system('rm -rf /etc/enigma2/*.tv')
                     os.system('rm -rf /etc/enigma2/*.del')
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /; wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess=False)
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["tar -xvf /tmp/settings.tar.gz -C /;wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess=False)
                 self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
@@ -1958,7 +1958,7 @@ class tvInstall(Screen):
 
                 cmd = "wget --no-cache --no-dns-cache -U '%s' -c '%s' -O '%s' --post-data='action=purge';%s > /dev/null" % (AgentRequest, str(self.com), down, self.command[0])
                 if "https" in str(self.com):
-                    cmd = "wget  --no-cache --no-dns-cache--no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge';%s > /dev/null" % (AgentRequest, str(self.com), down, self.command[0])
+                    cmd = "wget --no-check-certificate --no-cache --no-dns-cache -U '%s' -c '%s' -O '%s' --post-data='action=purge';%s > /dev/null" % (AgentRequest, str(self.com), down, self.command[0])
 
                 self.session.open(tvConsole, title='Installation %s' % self.dom, cmdlist=[cmd, 'sleep 5'])  # , finishedCallback=self.msgipkinst)
                 self['info'].setText(_('Installation done !!!'))
