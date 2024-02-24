@@ -111,7 +111,7 @@ def status_site():
     try:
         Host = 'http://patbuweb.com/uppy/'
         # response = requests.get(Host, headers={'User-Agent': RequestAgent()}, verify=False)
-        response = requests.get(Host, verify=False)
+        response = requests.get(Host, verify=False, timeout=5)
         if response.status_code == 200:
             status = True
             print('Web site exists')
@@ -127,9 +127,9 @@ def status_site():
 def make_request(url):
     try:
         import requests
-        response = requests.get(url, verify=False)
+        response = requests.get(url, verify=False, timeout=5)
         if response.status_code == 200:
-            link = requests.get(url, headers={'User-Agent': RequestAgent()}, timeout=15, verify=False, stream=True).text
+            link = requests.get(url, headers={'User-Agent': RequestAgent()}, timeout=10, verify=False, stream=True).text
         return link
     except ImportError:
         req = Request(url)
@@ -2698,7 +2698,7 @@ class tvConfig(Screen, ConfigListScreen):
         self.list = []
         ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
         self.createSetup()
-        self.onLayoutFinish.append(self.layoutFinished)
+        # self.onLayoutFinish.append(self.layoutFinished)
         if self.setInfo not in self['config'].onSelectionChanged:
             self['config'].onSelectionChanged.append(self.setInfo)
 
