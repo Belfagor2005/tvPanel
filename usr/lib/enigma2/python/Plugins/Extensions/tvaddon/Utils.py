@@ -381,7 +381,6 @@ def downloadFilest(url, target):
         print('URL Error: ', e.reason)
 
 
-
 def defaultMoviePath():
     result = config.usage.default_path.value
     if not isdir(result):
@@ -389,21 +388,16 @@ def defaultMoviePath():
         return Directories.defaultRecordingLocation(config.usage.default_path.value)
     return result
 
-
 if not isdir(config.movielist.last_videodir.value):
     try:
         config.movielist.last_videodir.value = defaultMoviePath()
         config.movielist.last_videodir.save()
     except:
         pass
-
-
 downloadm3u = config.movielist.last_videodir.value
 
 
 # this def returns the current playing service name and stream_url from give sref
-
-
 def getserviceinfo(sref):
     try:
         from ServiceReference import ServiceReference
@@ -601,10 +595,10 @@ def b64decoder(s):
     s = str(s).strip()
     try:
         outp = base64.b64decode(s)
-        print('outp1 ', outp)
+        # print('outp1 ', outp)
         if PY3:
             outp = outp.decode('utf-8')
-            print('outp2 ', outp)
+            # print('outp2 ', outp)
         return outp
 
     except TypeError:
@@ -617,10 +611,10 @@ def b64decoder(s):
         elif padding == 3:
             s += b'='
         outp = base64.b64decode(s)
-        print('outp1 ', outp)
+        # print('outp1 ', outp)
         if PY3:
             outp = outp.decode('utf-8')
-            print('outp2 ', outp)
+            # print('outp2 ', outp)
         return outp
 
 
