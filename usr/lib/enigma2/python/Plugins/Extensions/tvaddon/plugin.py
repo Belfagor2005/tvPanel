@@ -55,6 +55,10 @@ import glob
 import six
 import subprocess
 global skin_path, mmkpicon, set, category
+                                 
+                   
+
+    
 
 
 PY3 = sys.version_info.major >= 3
@@ -121,6 +125,7 @@ def status_site():
     except Exception as e:
         print(e)
         status = False
+                                  
     return status
 
 
@@ -135,9 +140,16 @@ def make_request(url):
         req = Request(url)
         req.add_header('User-Agent', 'E2 Plugin Lululla')
         response = urlopen(req, None, 10)
+                                                
+                                                    
+                         
+               
         link = response.read().decode('utf-8')
+                                                
         response.close()
         return link
+                            
+                                              
     return
 
 
@@ -318,7 +330,7 @@ class tvList(MenuList):
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
         else:
-            self.l.setItemHeight(50)
+            self.l.setItemHeight(30)
             textfont = int(24)
             self.l.setFont(0, gFont('Regular', textfont))
 
@@ -330,6 +342,7 @@ if status_site():
 
 def DailyListEntry(name, idx):
     res = [name]
+                    
     if screenwidth.width() == 2560:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(80, 0), size=(1950, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -366,6 +379,13 @@ def showlist(data, list):
         list.setList(plist)
 
 
+                                      
+                                
+                                
+                                 
+                                  
+
+
 class Hometv(Screen):
     def __init__(self, session):
         self.session = session
@@ -375,6 +395,17 @@ class Hometv(Screen):
         self.setup_title = (title_plug)
         Screen.__init__(self, session)
         self['list'] = tvList([])
+                            
+                       
+                          
+                      
+                                          
+                               
+                                                           
+                                 
+                                    
+                                                              
+                                               
         self['key_red'] = Button(_('Exit'))
         self['key_green'] = Button(_('Extensions Installer'))
         self['key_yellow'] = Button(_('Uninstall'))
@@ -827,6 +858,19 @@ class tvDailySetting(Screen):
     def terrestrial_restore2(self, answer):
         if answer:
             terrestrial_rest()
+                                               
+                                                         
+                                        
+                             
+                    
+                                                  
+                                          
+                                
+                                    
+                                                             
+                                                 
+                                                                                                                          
+                                                    
 
     def terrestrialsave(self):
         self.session.openWithCallback(self.terrestrialsave2, MessageBox, _("This operation save your Favorite channel Dtt\nto =>>/tmp/*_enigma2settingsbackup.tar.gz\nDo you really want to continue?"), MessageBox.TYPE_YESNO)
@@ -837,6 +881,7 @@ class tvDailySetting(Screen):
 
     def okSATELLITE(self):
         self.session.openWithCallback(self.okSATELLITE2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+                          
 
     def okSATELLITE2(self, answer):
         if answer:
@@ -858,6 +903,7 @@ class tvDailySetting(Screen):
 
     def okTERRESTRIAL(self):
         self.session.openWithCallback(self.okTERRESTRIAL2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+                          
 
     def okTERRESTRIAL2(self, answer):
         if answer:
@@ -874,6 +920,9 @@ class tvDailySetting(Screen):
                     self['info'].setText(_('Installation done !!!'))
                 except Exception as e:
                     print('error: ', str(e))
+                                                 
+                                                                                                    
+                                                    
             else:
                 self.session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
@@ -911,10 +960,21 @@ class SettingVhan(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
+                                                    
+                                                          
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
                                                        'cancel': self.close}, -2)
+                                                                         
+                                                                             
+                                                                             
+                                                                               
+                                                                                     
+                                                     
+
+                   
+                                                      
 
     def downxmlpage(self):
         self.names = []
@@ -940,6 +1000,7 @@ class SettingVhan(Screen):
 
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+                                                                              
 
     def okRun1(self, answer):
         if answer:
@@ -1034,11 +1095,17 @@ class SettingVhan2(Screen):
         self.urls = []
         try:
             regex = '<a href="Vhannibal(.*?).zip"'
+                                          
+                            
+                                                                                                             
             match = re.compile(regex).findall(data)
             for url in match:
                 if '.php' in url.lower():
                     continue
                 name = "Vhannibal" + url
+                                                                                                              
+                                                                                  
+                         
                 name = name.replace('&#127381;', '').replace("%20", " ")
                 url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
                 self.urls.append(Utils.str_encode(url.strip()))
@@ -1050,8 +1117,13 @@ class SettingVhan2(Screen):
         except Exception as e:
             print('downxmlpage get failed: ', str(e))
             self['info'].setText(_('Download page get failed ...'))
+                          
 
     def okRun(self):
+                           
+                            
+                 
+                  
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
     def okRun1(self, answer):
@@ -1059,6 +1131,13 @@ class SettingVhan2(Screen):
             global set
             set = 0
             if self.downloading is True:
+                                                      
+                                           
+                                    
+                                          
+                                      
+                                        
+                                   
                 try:
                     idx = self["list"].getSelectionIndex()
                     self.name = self.names[idx]
@@ -1080,6 +1159,7 @@ class SettingVhan2(Screen):
                         downloadPage(url, dest).addCallback(self.download, dest).addErrback(self.downloadError)
                 except Exception as e:
                     print('error: ', str(e))
+                                                                
 
     def download(self, data, dest):
         try:
@@ -1108,7 +1188,17 @@ class SettingVhan2(Screen):
                 self['info'].setText(_('Settings Not Installed ...'))
         except Exception as e:
             print('error: ', str(e))
+                          
+                                               
+                                                  
+                                                                            
+                                       
+                                                                       
+                                                                                                                          
             self['info'].setText(_('Not Installed ...'))
+                                      
+                                                 
+                               
 
     def downloadError(self, png):
         try:
@@ -1119,7 +1209,12 @@ class SettingVhan2(Screen):
 
     def yes(self):
         ReloadBouquets()
+                                
+                    
 
+                                  
+                        
+              
 
 class Milenka61(Screen):
     def __init__(self, session):
@@ -1190,6 +1285,7 @@ class Milenka61(Screen):
 
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+                          
 
     def okRun1(self, answer):
         if answer:
@@ -1216,6 +1312,10 @@ class Milenka61(Screen):
                 self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
+                                        
+                               
+                                                      
+                                     
 
     def yes(self):
         ReloadBouquets()
@@ -1228,14 +1328,23 @@ class SettingManutek(Screen):
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Manutek')
+                                          
         Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
+                          
+                       
+                                
+                             
+                      
+                              
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
         self['pth'] = Label('')
         self['pform'] = Label('PLEASE VISIT SAT.TECHNOLOGY SITE')
+                                 
         self['progress'] = ProgressBar()
+                                           
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
@@ -1254,10 +1363,21 @@ class SettingManutek(Screen):
         self.timer.start(500, 1)
         self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
+                                                    
+                                                          
                                      'ColorActions'], {'ok': self.okRun,
                                                        'green': self.okRun,
                                                        'red': self.close,
+                                                                               
+                                                                         
+                                                                             
+                                                                             
+                                                                               
                                                        'cancel': self.close}, -2)
+                                                     
+
+                   
+                                                      
 
     def downxmlpage(self):
         url = 'http://www.manutek.it/isetting/index.php'
@@ -1286,6 +1406,7 @@ class SettingManutek(Screen):
 
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+                                                                              
 
     def okRun1(self, answer):
         if answer:
@@ -2670,9 +2791,9 @@ class tvConfig(Screen, ConfigListScreen):
         self.onChangedEntry = []
         self.session = session
         self.setTitle(self.setup_title)
-        self['description'] = Label('')
+        self['description'] = Label('Config mmPicons Panel')
         self["paypal"] = Label('')
-        self['info'] = Label(_('Config Panel Addon'))
+        self['info'] = Label(_('SELECT YOUR CHOICE'))
         # self['info'] = ScrollLabel('')
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Save'))
@@ -2727,10 +2848,10 @@ class tvConfig(Screen, ConfigListScreen):
             if libs:
                 libsssl = libs
             info = 'Current IP Wan: %s\nImage Mounted: %s Cpu: %s\nArchitecture information: %s\nLibssl(oscam):\n%s\n' % (ifg, img, arc, arkFull, libsssl)
-            self['info'].setText(info)
+            self['description'].setText(info)
         except Exception as e:
             print("Error ", e)
-            self['info'].setText(_(':) by Lululla '))
+            self['description'].setText(_(':) by Lululla '))
 
     def tvUpdate(self):
         self.session.open(tvUpdate)
@@ -2751,9 +2872,9 @@ class tvConfig(Screen, ConfigListScreen):
         try:
             sel = self['config'].getCurrent()[2]
             if sel:
-                self['description'].setText(str(sel))
+                self['info'].setText(str(sel))
             else:
-                self['description'].setText(_('SELECT YOUR CHOICE'))
+                self['info'].setText(_('SELECT YOUR CHOICE'))
             return
         except Exception as e:
             print("Error ", e)
