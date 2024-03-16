@@ -2,21 +2,22 @@
 <screen name="tvall" position="0,0" size="1280,720" title="..::TiVuStream Addon Manager::.." backgroundColor="#ff000000" flags="wfNoBorder">
 	<widget name="title" position="146,50" size="686,30" font="Regular;20" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	<widget name="info" position="146,103" size="686,33" font="Regular;20" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
-	<widget name="pth" position="146,498" size="686,42" font="Regular;20" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
-	<widget name="pform" position="146,544" size="686,55" font="Regular;20" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="pth" position="146,488" size="686,62" font="Regular;20" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<widget name="pform" position="146,549" size="686,55" font="Regular;20" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<widget name="progress" position="390,643" size="200,33" foregroundColor="#2a70a4" backgroundColor="#10000000" transparent="1" zPosition="5" />
 	<widget source="progresstext" render="Label" font="Regular;13" position="390,643" size="200,33" backgroundColor="#202020" transparent="1" halign="center" zPosition="6" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/main2.png" position="0,0" size="1280,720" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/tvs.png" position="146,11" size="186,33" alphatest="blend" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" position="146,86" size="686,5" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" position="146,606" size="686,5" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main22.png" scale="stretch" position="-27,0" size="1280,720" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" scale="stretch" position="146,11" size="186,33" alphatest="blend" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="146,86" size="686,5" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="146,606" size="686,5" zPosition="5" />
 	<!-- Menu List -->
 	<widget name="list" position="146,146" size="686,340" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sliderb.png" />
 	<!-- Colors 1220 -->
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_red.png" position="146,630" size="20,20" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_green.png" position="146,670" size="20,20" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_yellow.png" position="813,630" size="20,20" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/key_blue.png" position="813,670" size="20,20" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="skin_default/buttons/key_menu.png" position="770,53" size="53,23" zPosition="10" />	
+	<ePixmap pixmap="skin_default/buttons/key_red.png" position="146,630" size="20,20" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="skin_default/buttons/key_green.png" position="146,670" size="20,20" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="skin_default/buttons/key_yellow.png" position="813,630" size="20,20" alphatest="on" zPosition="5" />
+	<ePixmap pixmap="skin_default/buttons/key_blue.png" position="813,670" size="20,20" alphatest="on" zPosition="5" />
 	<widget name="key_red" position="180,626" size="200,26" font="Regular;20" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_green" position="180,666" size="200,26" font="Regular;20" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_yellow" position="603,626" size="200,26" font="Regular;20" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />

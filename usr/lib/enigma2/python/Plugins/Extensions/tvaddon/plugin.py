@@ -319,7 +319,7 @@ class tvList(MenuList):
             textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
         else:
-            self.l.setItemHeight(30)
+            self.l.setItemHeight(45)
             textfont = int(24)
             self.l.setFont(0, gFont('Regular', textfont))
 
@@ -339,7 +339,7 @@ def DailyListEntry(name, idx):
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngs)))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 2), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
@@ -353,7 +353,7 @@ def oneListEntry(name):
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
-        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngs)))
+        res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 2), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
@@ -840,7 +840,6 @@ class tvDailySetting(Screen):
     def okSATELLITE(self):
         self.session.openWithCallback(self.okSATELLITE2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-
     def okSATELLITE2(self, answer):
         if answer:
             if Utils.checkInternet():
@@ -862,7 +861,6 @@ class tvDailySetting(Screen):
     def okTERRESTRIAL(self):
         self.session.openWithCallback(self.okTERRESTRIAL2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-
     def okTERRESTRIAL2(self, answer):
         if answer:
             if Utils.checkInternet():
@@ -878,9 +876,6 @@ class tvDailySetting(Screen):
                     self['info'].setText(_('Installation done !!!'))
                 except Exception as e:
                     print('error: ', str(e))
-
-
-
             else:
                 self.session.open(MessageBox, "No Internet", MessageBox.TYPE_INFO)
 
@@ -947,7 +942,6 @@ class SettingVhan(Screen):
 
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-
 
     def okRun1(self, answer):
         if answer:
@@ -1042,17 +1036,11 @@ class SettingVhan2(Screen):
         self.urls = []
         try:
             regex = '<a href="Vhannibal(.*?).zip"'
-
-
-
             match = re.compile(regex).findall(data)
             for url in match:
                 if '.php' in url.lower():
                     continue
                 name = "Vhannibal" + url
-
-
-
                 name = name.replace('&#127381;', '').replace("%20", " ")
                 url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
                 self.urls.append(Utils.str_encode(url.strip()))
@@ -1301,7 +1289,6 @@ class SettingManutek(Screen):
 
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-
 
     def okRun1(self, answer):
         if answer:
@@ -3685,6 +3672,7 @@ def mainm(session, **kwargs):
         session.open(SelectPicons)
     except Exception as e:
         print('error open plugin', e)
+
 
 def getversioninfo():
     currmmversion = '1.3'
