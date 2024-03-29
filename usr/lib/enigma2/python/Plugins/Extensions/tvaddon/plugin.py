@@ -26,6 +26,7 @@ from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 # from Components.ScrollLabel import ScrollLabel
 from Components.Sources.Progress import Progress
+from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Plugins.Plugin import PluginDescriptor
 from Screens.Console import Console as tvConsole
@@ -2216,7 +2217,7 @@ class tvInstall(Screen):
 class tvIPK(Screen):
     def __init__(self, session, title=None, cmdlist=None, finishedCallback=None, closeOnSuccess=False):
         self.session = session
-        skin = os.path.join(skin_path, 'tvall.xml')
+        skin = os.path.join(skin_path, 'tvIPK.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('IPK')
@@ -2225,7 +2226,6 @@ class tvIPK(Screen):
         self.ipkpth = str(cfg.ipkpth.value)
         self.list = []
         self.names = []
-        self['list'] = tvList([])
         self['key_red'] = Button(_('Back'))
         self['key_green'] = Button(_('Install'))
         self['key_green'].hide()
@@ -2233,12 +2233,9 @@ class tvIPK(Screen):
         self["key_blue"] = Button('Remove')
         self['key_blue'].hide()
         self['title'] = Label(title_plug)
-        self['pform'] = Label('')
-        self['info'] = Label('...')
-        self['pth'] = Label(_('Path %s (Set path folder from config)\nPut .ipk .tar.gz .deb .zip and install') % self.ipkpth)
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
+        self['info'] = Label('...')  
+        self['list'] = tvList([])  
+        self['info1'] = Label(_('Path %s (Set path folder from config)\nPut .ipk .tar.gz .deb .zip and install') % self.ipkpth)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'WizardActions',
                                      'ColorActions',
@@ -2253,6 +2250,7 @@ class tvIPK(Screen):
 
     def refreshlist(self):
         self.list = []
+        self.names = []
         del self.names[:]
         del self.list[:]
         for x in self.list:
@@ -2263,8 +2261,10 @@ class tvIPK(Screen):
                 files.sort()
                 for name in files:
                     if name.endswith('.ipk') or name.endswith('.deb') or name.endswith('.zip') or name.endswith('.tar.gz') or name.endswith('.tar'):
+                        print('name ipk:', str(name))
                         self.names.append(name)
-        self["list"].l.setList(self.list)
+                        
+                self.names.sort(key=lambda x: x, reverse=False)
         if len(self.names) >= 0:
             self['info'].setText(_('Please install ...'))
             self['key_green'].show()
