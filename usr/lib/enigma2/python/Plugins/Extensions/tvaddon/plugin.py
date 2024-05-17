@@ -16,8 +16,9 @@ from .Downloader import downloadWithProgress
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, ConfigSubsection, ConfigYesNo
-from Components.config import ConfigDirectory, ConfigSelection, getConfigListEntry
+from Components.config import config, getConfigListEntry
+from Components.config import ConfigYesNo, ConfigSubsection
+from Components.config import ConfigDirectory, ConfigSelection
 from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText
@@ -233,6 +234,14 @@ no_cover = os.path.join(plugin_path, 'no_coverArt.png')
 res_plugin_path = os.path.join(plugin_path, 'res/')
 _firstStarttvspro = True
 ee2ldb = '/etc/enigma2/lamedb'
+plugin_temp = os.path.join(plugin_path, 'temp')
+if not os.path.exists(plugin_temp):
+    try:
+        os.makedirs(plugin_temp)
+    except OSError as e:
+        print(('Error creating directory %s:\n%s') % (plugin_temp, str(e)))
+ServiceListNewLamedb = plugin_path + '/temp/ServiceListNewLamedb'
+TrasponderListNewLamedb = plugin_path + '/temp/TrasponderListNewLamedb'
 ServOldLamedb = plugin_path + '/temp/ServiceListOldLamedb'
 TransOldLamedb = plugin_path + '/temp/TrasponderListOldLamedb'
 TerChArch = plugin_path + '/temp/TerrestrialChannelListArchive'
@@ -2233,8 +2242,8 @@ class tvIPK(Screen):
         self["key_blue"] = Button('Remove')
         self['key_blue'].hide()
         self['title'] = Label(title_plug)
-        self['info'] = Label('...')  
-        self['list'] = tvList([])  
+        self['info'] = Label('...')
+        self['list'] = tvList([])
         self['info1'] = Label(_('Path %s (Set path folder from config)\nPut .ipk .tar.gz .deb .zip and install') % self.ipkpth)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'WizardActions',
@@ -2263,7 +2272,6 @@ class tvIPK(Screen):
                     if name.endswith('.ipk') or name.endswith('.deb') or name.endswith('.zip') or name.endswith('.tar.gz') or name.endswith('.tar'):
                         print('name ipk:', str(name))
                         self.names.append(name)
-                        
                 self.names.sort(key=lambda x: x, reverse=False)
         if len(self.names) >= 0:
             self['info'].setText(_('Please install ...'))
