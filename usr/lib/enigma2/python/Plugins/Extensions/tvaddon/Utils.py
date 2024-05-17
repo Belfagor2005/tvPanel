@@ -63,18 +63,18 @@ if sys.version_info >= (2, 7, 9):
 
 
 def getEncodedString(value):
-	returnValue = ""
-	try:
-		returnValue = value.encode("utf-8", 'ignore')
-	except UnicodeDecodeError:
-		try:
-			returnValue = value.encode("iso8859-1", 'ignore')
-		except UnicodeDecodeError:
-			try:
-				returnValue = value.decode("cp1252").encode("utf-8")
-			except UnicodeDecodeError:
-				returnValue = "n/a"
-	return returnValue
+    returnValue = ""
+    try:
+        returnValue = value.encode("utf-8", 'ignore')
+    except UnicodeDecodeError:
+        try:
+            returnValue = value.encode("iso8859-1", 'ignore')
+        except UnicodeDecodeError:
+            try:
+                returnValue = value.decode("cp1252").encode("utf-8")
+            except UnicodeDecodeError:
+                returnValue = "n/a"
+    return returnValue
 
 
 def ensure_str(text, encoding='utf-8', errors='strict'):
@@ -381,20 +381,20 @@ def downloadFilest(url, target):
         print('URL Error: ', e.reason)
 
 
-# def defaultMoviePath():
-    # result = config.usage.default_path.value
-    # if not isdir(result):
-        # from Tools import Directories
-        # return Directories.defaultRecordingLocation(config.usage.default_path.value)
-    # return result
+def defaultMoviePath():
+    result = config.usage.default_path.value
+    if not isdir(result):
+        from Tools import Directories
+        return Directories.defaultRecordingLocation(config.usage.default_path.value)
+    return result
 
-# if not isdir(config.movielist.last_videodir.value):
-    # try:
-        # config.movielist.last_videodir.value = defaultMoviePath()
-        # config.movielist.last_videodir.save()
-    # except:
-        # pass
-# downloadm3u = config.movielist.last_videodir.value
+if not isdir(config.movielist.last_videodir.value):
+    try:
+        config.movielist.last_videodir.value = defaultMoviePath()
+        config.movielist.last_videodir.save()
+    except:
+        pass
+downloadm3u = config.movielist.last_videodir.value
 
 
 # this def returns the current playing service name and stream_url from give sref
@@ -505,13 +505,13 @@ def checkStr(text, encoding='utf8'):
     return text
 
 def str_encode(text, encoding="utf8"):
-	if not PY3:
-		if isinstance(text, unicode):
-			return text.encode(encoding)
-		else:
-			return text
-	else:
-		return text
+    if not PY3:
+        if isinstance(text, unicode):
+            return text.encode(encoding)
+        else:
+            return text
+    else:
+        return text
 
 def checkRedirect(url):
     # print("*** check redirect ***")
@@ -955,7 +955,7 @@ def make_request(url):
         import requests
         response = requests.get(url, verify=False)
         if response.status_code == 200:
-            link = requests.get(url, headers={'User-Agent': RequestAgent()}, timeout=15, verify=False, stream=True).text
+            link = requests.get(url, headers={'User-Agent': RequestAgent()}, timeout=15, verify=False, stream=True ).text
         return link
     except ImportError:
         req = Request(url)

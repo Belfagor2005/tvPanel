@@ -123,7 +123,6 @@ def status_site():
     except Exception as e:
         print(e)
         status = False
-
     return status
 
 
@@ -2689,6 +2688,7 @@ class tvConfig(Screen, ConfigListScreen):
         self['key_red'] = Button(_('Back'))
         self["key_blue"] = Button('')
         self['key_blue'].hide()
+
         self['title'] = Label(title_plug)
         self["setupActions"] = ActionMap(['OkCancelActions',
                                           'DirectionActions',
@@ -2788,6 +2788,7 @@ class tvConfig(Screen, ConfigListScreen):
         for x in self["config"].list:
             x[1].save()
         self.session.open(MessageBox, _('Successfully saved configuration'), MessageBox.TYPE_INFO, timeout=4)
+
         self.close(True)
 
     def Ok_edit(self):

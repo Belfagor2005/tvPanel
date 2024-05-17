@@ -109,7 +109,7 @@ def getversioninfo():
 
 try:
     from OpenSSL import SSL
-    from twisted.internet import ssl
+    # from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
 except:
@@ -236,6 +236,7 @@ def zxListEntry(name, idx):
         res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 10), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(50, 0), size=(500, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
+
 
 def showlist(data, list):
     icount = 0
@@ -604,10 +605,11 @@ class MMarkPiconScreen(Screen):
     def downloadProgress2(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
         self["progress"].show()
-                                              
         self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
+        # if self.last_recvbytes == recvbytes:
+            # self.getfreespace()
 
     def showError(self):
         print("download error ")

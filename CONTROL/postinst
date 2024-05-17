@@ -1,11 +1,11 @@
 #!/bin/sh
 echo "****************************************"
-echo "* CorvoBoys tvAddon Panel installed    *"
-echo "*   Please .. Restarting Enigma2       *"
-echo "*    by Lululla                        *"
-echo "*     all right reserved               *"
-echo "*  support on                          *"
-echo "*  forum corvoboys or linuxsat-support *"
+echo "*Please .. Restart Enigma2 *"
+echo "****************************************"
+echo "* Enjoy our plugin *"
+echo "****************************************"
+echo "* All Rights Reserved *"
+echo "* © 2024 - Lululla *"
 echo "****************************************"
 
 cmd22='/usr/bin/wget'
