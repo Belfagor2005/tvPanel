@@ -186,7 +186,7 @@ def ReloadBouquets():
         print("wGET: bouquets reloaded...")
 
 
-def mountipkpth():
+def mountipkpths():
     ipkpth = []
     if os.path.isfile('/proc/mounts'):
         for line in open('/proc/mounts'):
@@ -197,7 +197,7 @@ def mountipkpth():
     ipkpth.append('/tmp')
     return ipkpth
 
-
+piconpathss = Utils.mountipkpth()
 AgentRequest = RequestAgent()
 # ================config
 global set
@@ -205,9 +205,9 @@ config.plugins.tvaddon = ConfigSubsection()
 cfg = config.plugins.tvaddon
 
 cfg.strtext = ConfigYesNo(default=True)
-cfg.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
+cfg.mmkpicon = ConfigSelection(default='/media/hdd/picon/', choices=piconpathss)
 cfg.strtmain = ConfigYesNo(default=True)
-cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpth())
+cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpths())
 cfg.autoupd = ConfigYesNo(default=False)
 mmkpicon = cfg.mmkpicon.value.strip()
 currversion = '2.1.4'

@@ -27,7 +27,7 @@ from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 from Components.Sources.Progress import Progress
 from Components.Sources.StaticText import StaticText
-from Components.config import config, getConfigListEntry
+from Components.config import config, getConfigListEntry, ConfigSelection
 from Components.config import ConfigSubsection, ConfigDirectory
 from Plugins.Plugin import PluginDescriptor
 from Screens.LocationBox import LocationBox
@@ -109,7 +109,7 @@ def getversioninfo():
 
 try:
     from OpenSSL import SSL
-    # from twisted.internet import ssl
+    from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
 except:
@@ -157,10 +157,10 @@ if sslverify:
             # print('Reason: ', e.reason)
         # return myfile
 
-
+piconpathss = Utils.mountipkpth()
 config.plugins.mmPicons = ConfigSubsection()
 cfg = config.plugins.mmPicons
-cfg.mmkpicon = ConfigDirectory(default='/media/hdd/picon/')
+cfg.mmkpicon = ConfigSelection(default='/media/hdd/picon/', choices=piconpathss)
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
 currmmversion = getversioninfo()
 titlem_plug = 'mMark Picons & Skins'
