@@ -197,6 +197,7 @@ def mountipkpths():
     ipkpth.append('/tmp')
     return ipkpth
 
+
 piconpathss = Utils.mountipkpth()
 AgentRequest = RequestAgent()
 # ================config
@@ -3629,13 +3630,13 @@ class AutoStartTimertvadd:
 
     def __init__(self, session):
         self.session = session
-        global _firstStarttvsadd
         print("*** running AutoStartTimertvadd ***")
         if _firstStarttvsadd:
             self.runUpdate()
 
     def runUpdate(self):
         print("*** running update ***")
+        global _firstStarttvsadd
         try:
             from . import Update
             Update.upd_done()

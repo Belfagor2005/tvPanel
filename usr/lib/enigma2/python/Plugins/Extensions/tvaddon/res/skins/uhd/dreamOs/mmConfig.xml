@@ -1,11 +1,12 @@
 <!-- Skin mmConfig 09/07/2022 -->
-<screen name="mmConfig" position="center,center" size="1310,300" title="mMark Picons Manager" backgroundColor="#20000000">
+<screen name="mmConfig" position="center,center" size="1310,300" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#20000000">
 		<widget name="config" position="10,160" size="1295,50" scrollbarMode="showOnDemand" itemHeight="50" transparent="1" zPosition="2" />
-		<eLabel  position="10,225" size="1295,3" backgroundColor="#303030" zPosition="3" />
-		<ePixmap position="20,245" pixmap="skin_default/buttons/key_red.png" size="80,40" alphatest="blend" zPosition="2" />
-		<widget name="key_red" font="Regular;30" position="110,245" size="150,40" halign="left" valign="center" backgroundColor="black" zPosition="3" transparent="1" />
-		<ePixmap position="280,245" pixmap="skin_default/buttons/key_green.png" size="80,40" alphatest="blend" zPosition="2" />
-		<widget name="key_green" font="Regular;30" position="370,245" size="150,40" halign="left" valign="center" backgroundColor="black" zPosition="3" transparent="1" />
-		<ePixmap position="540,245" pixmap="skin_default/buttons/key_yellow.png" size="80,40" alphatest="blend" zPosition="2" />
-		<widget name="key_yellow" font="Regular;30" position="630,245" size="150,40" halign="left" valign="center" backgroundColor="black" zPosition="1" transparent="1" />
+		<eLabel position="10,225" size="1295,3" backgroundColor="#303030" zPosition="3" />
+	<eLabel backgroundColor="red" cornerRadius="3" position="16,285" size="400,6" zPosition="11" />
+	<eLabel backgroundColor="green" cornerRadius="3" position="361,1384" size="400,6" zPosition="11" />
+	<eLabel backgroundColor="yellow" cornerRadius="3" position="898,286" size="400,6" zPosition="11" />
+	<eLabel backgroundColor="blue" cornerRadius="3" position="1205,1386" size="400,6" zPosition="11" />
+	<widget name="key_red" position="13,234" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_green" position="360,1332" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_yellow" position="897,232" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 </screen>

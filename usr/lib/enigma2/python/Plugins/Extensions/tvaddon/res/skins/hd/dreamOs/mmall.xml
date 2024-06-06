@@ -1,7 +1,6 @@
 <!-- Skin tvAll 09/01/2022 -->
 <screen name="mmall" position="0,0" size="1280,720" title="..::TiVuStream Addon Manager::.." backgroundColor="#ff000000" flags="wfNoBorder">
 	<widget name="title" position="146,50" size="686,30" font="Regular;20" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
-	<widget name="info" position="146,103" size="686,33" font="Regular;20" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
 	<widget name="pform" position="146,503" size="361,60" font="Regular;18" halign="left" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="1" zPosition="5" />
   	<widget name="progress" position="513,526" size="280,33" foregroundColor="#2a70a4" backgroundColor="#202020" transparent="0" zPosition="5" />
   	<widget source="progresstext" render="Label" position="512,526" size="281,33" font="Regular;17" backgroundColor="#202020" transparent="1" halign="center" valign="center" zPosition="6" />
@@ -13,15 +12,17 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="146,86" size="686,5" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="146,606" size="686,5" zPosition="5" />
 	<!-- Menu List -->
-	<widget name="text" position="146,146" size="686,340" itemHeight="45" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sliderb.png" />
+	<widget name="text" position="146,146" size="686,340" font="Regular;20" scrollbarMode="showOnDemand" transparent="1" zPosition="5" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#20000000" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sliderb.png" />
   	<!-- Colors 1220 -->
-	<ePixmap pixmap="skin_default/buttons/key_menu.png" position="770,53" size="53,23" zPosition="10" />	
-	<ePixmap pixmap="skin_default/buttons/key_red.png" position="146,630" size="20,20" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="skin_default/buttons/key_green.png" position="146,670" size="20,20" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="skin_default/buttons/key_yellow.png" position="813,630" size="20,20" alphatest="on" zPosition="5" />
-	<ePixmap pixmap="skin_default/buttons/key_blue.png" position="813,670" size="20,20" alphatest="on" zPosition="5" />
-	<widget name="key_red" position="180,626" size="200,26" font="Regular;20" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_green" position="180,666" size="200,26" font="Regular;20" halign="left" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_yellow" position="603,626" size="200,26" font="Regular;20" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_blue" position="603,666" size="200,26" font="Regular;20" halign="right" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="info" position="146,103" size="686,33" font="Regular;20" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
+	<eLabel backgroundColor="red" cornerRadius="3" position="179,652" size="200,6" zPosition="11" />
+	<eLabel backgroundColor="green" cornerRadius="3" position="179,692" size="200,6" zPosition="11" />
+	<eLabel backgroundColor="yellow" cornerRadius="3" position="603,652" size="200,6" zPosition="11" />
+	<eLabel backgroundColor="blue" cornerRadius="3" position="603,693" size="200,6" zPosition="11" />
+	<widget name="key_red" position="180,626" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_green" position="180,666" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_yellow" position="603,626" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_blue" position="603,666" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<eLabel text="MENU" position="440,625" size="100,30" font="Regular; 26" foregroundColor="#fffffe" backgroundColor="#707070" halign="center" valign="center" cornerRadius="26" zPosition="5" />
+	<eLabel text="INFO" position="440,655" size="100,35" font="Regular; 26" foregroundColor="#fffffe" backgroundColor="#707070" halign="center" valign="center" cornerRadius="26" zPosition="5" />
 </screen>
