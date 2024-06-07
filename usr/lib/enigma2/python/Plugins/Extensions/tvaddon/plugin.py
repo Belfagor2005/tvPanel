@@ -2687,8 +2687,8 @@ class tvConfig(Screen, ConfigListScreen):
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Save'))
         self['key_red'] = Button(_('Back'))
-        self["key_blue"] = Button('')
-        self['key_blue'].hide()
+        # self["key_blue"] = Button()
+        # self['key_blue'].hide()
 
         self['title'] = Label(title_plug)
         self["setupActions"] = ActionMap(['OkCancelActions',
@@ -2793,7 +2793,7 @@ class tvConfig(Screen, ConfigListScreen):
         self.close(True)
 
     def Ok_edit(self):
-        ConfigListScreen.keyOK(self)
+        # ConfigListScreen.keyOK(self)
         sel = self['config'].getCurrent()[1]
         if sel and sel == cfg.mmkpicon:
             self.setting = 'mmkpicon'

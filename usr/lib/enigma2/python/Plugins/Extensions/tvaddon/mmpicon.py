@@ -14,6 +14,7 @@
 from __future__ import print_function
 from . import _
 from . import Utils
+from .plugin import mmkpicon
 import codecs
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap, NumberActionMap
@@ -157,6 +158,7 @@ if sslverify:
             # print('Reason: ', e.reason)
         # return myfile
 
+
 piconpathss = Utils.mountipkpth()
 config.plugins.mmPicons = ConfigSubsection()
 cfg = config.plugins.mmPicons
@@ -184,6 +186,9 @@ ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5
 ecskins = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1jOHN3MGFoc3Mzc2kwJmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
 openskins = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT0wd3o0M3l2OG5zeDc5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
 _firstStartmmp = True
+
+# cfg.mmkpicon = mmkpicon
+
 
 if mmkpicon.endswith('/'):
     mmkpicon = mmkpicon[:-1]
@@ -1065,6 +1070,7 @@ class mmConfig(Screen, ConfigListScreen):
         self['description'] = Label('')
         self['info'] = Label(_('Config Panel Addon'))
         self["paypal"] = Label()
+        # self["config"] = []
         self['key_yellow'] = Button(_('Choice'))
         self['key_green'] = Button(_('Save'))
         self['key_red'] = Button(_('Back'))
@@ -1156,7 +1162,7 @@ class mmConfig(Screen, ConfigListScreen):
             self.close(True)
 
     def Ok_edit(self):
-        ConfigListScreen.keyOK(self)
+        # ConfigListScreen.keyOK(self)
         sel = self['config'].getCurrent()[1]
         if sel and sel == cfg.mmkpicon:
             self.setting = 'mmkpicon'
@@ -1256,36 +1262,6 @@ class PiconsPreview(Screen):
     def DecodePicture(self, PicInfo=''):
         ptr = self.picload.getData()
         self['pixmap'].instance.setPixmap(ptr)
-
-
-# class AutoStartTimermmp:
-
-    # def __init__(self, session):
-        # self.session = session
-        # global _firstStartmmp
-        # print("*** running AutoStartTimermmp ***")
-        # if _firstStartmmp:
-            # self.runUpdate()
-
-    # def runUpdate(self):
-        # print("*** running update ***")
-        # try:
-            # from . import Update
-            # Update.upd_done()
-            # _firstStartmmp = False
-        # except Exception as e:
-            # print('error Fxy', str(e))
-
-
-# def autostart(reason, session=None, **kwargs):
-    # print("*** running autostart ***")
-    # global autoStartTimermmp
-    # global _firstStartmmp
-    # if reason == 0:
-        # if session is not None:
-            # _firstStartmmp = True
-            # autoStartTimermmp = AutoStartTimermmp(session)
-    # return
 
 
 def main(session, **kwargs):

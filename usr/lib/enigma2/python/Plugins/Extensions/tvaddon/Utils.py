@@ -235,8 +235,8 @@ def mountipkpth():
     mdevices.append('/picon')
     mdevices.append('/usr/share/enigma2/picon')
     return mdevices
-# piconpathss = mountipkpth()
-# print('MDEVICES AS:\n', piconpathss)
+piconpathss = mountipkpth()
+print('MDEVICES AS:\n', piconpathss)
 
 
 def getEnigmaVersionString():

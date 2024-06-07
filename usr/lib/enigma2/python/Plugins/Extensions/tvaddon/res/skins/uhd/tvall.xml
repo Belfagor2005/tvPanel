@@ -10,7 +10,7 @@
     <widget source="progresstext" render="Label" position="1155,1130" size="444,70" font="Regular;32" backgroundColor="#202020" transparent="1" halign="center" valign="center" zPosition="6" />
     <widget name="pform" position="307,1080" size="1289,76" font="Regular; 34" halign="left" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="1" zPosition="5" />
     <widget name="pth" position="307,1156" size="1291,72" font="Regular; 40" halign="left" foregroundColor="#808080" backgroundColor="#000000" transparent="1" zPosition="5" />
-    <ePixmap position="292,1232" size="1372,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" zPosition="5" />
+    <ePixmap position="292,1232" size="1372,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" zPosition="5" />
 <!-- Colors 1220 -->
 	<eLabel backgroundColor="red" cornerRadius="3" position="359,1299" size="400,6" zPosition="11" />
 	<eLabel backgroundColor="green" cornerRadius="3" position="361,1384" size="400,6" zPosition="11" />

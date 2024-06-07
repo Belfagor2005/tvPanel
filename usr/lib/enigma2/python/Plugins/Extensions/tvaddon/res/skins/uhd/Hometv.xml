@@ -8,7 +8,7 @@
 	<!-- Menu List -->
 	<widget name="list" position="292,292" size="1372,895" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="10" foregroundColor="#00a0a0a0" foregroundColorSelected="#ffffff" backgroundColor="#000b2049" backgroundColorSelected="#0b2049" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sliderb.png" />
 	<!-- Colors -->
-	<ePixmap position="292,1232" size="1372,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/hd/sep.png" zPosition="5" />
+	<ePixmap position="292,1232" size="1372,10" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" zPosition="5" />
 	<eLabel backgroundColor="red" cornerRadius="3" position="359,1299" size="400,6" zPosition="11" />
 	<eLabel backgroundColor="green" cornerRadius="3" position="361,1384" size="400,6" zPosition="11" />
 	<eLabel backgroundColor="yellow" cornerRadius="3" position="1205,1303" size="400,6" zPosition="11" />

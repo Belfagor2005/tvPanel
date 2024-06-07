@@ -1,12 +1,18 @@
 <!-- Skin mmConfig 09/07/2022 -->
-<screen name="mmConfig" position="center,center" size="1310,300" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#20000000">
-		<widget name="config" position="10,160" size="1295,50" scrollbarMode="showOnDemand" itemHeight="50" transparent="1" zPosition="2" />
-		<eLabel position="10,225" size="1295,3" backgroundColor="#303030" zPosition="3" />
-	<eLabel backgroundColor="red" cornerRadius="3" position="16,285" size="400,6" zPosition="11" />
-	<eLabel backgroundColor="green" cornerRadius="3" position="361,1384" size="400,6" zPosition="11" />
-	<eLabel backgroundColor="yellow" cornerRadius="3" position="898,286" size="400,6" zPosition="11" />
-	<eLabel backgroundColor="blue" cornerRadius="3" position="1205,1386" size="400,6" zPosition="11" />
-	<widget name="key_red" position="13,234" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_green" position="360,1332" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_yellow" position="897,232" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+<screen name="mmConfig" position="center,center" size="1714,649" title="..::TiVuStream Panel Addon Manager::.." backgroundColor="#20000000">
+	<widget name="config" position="40,244" size="1207,91" scrollbarMode="showOnDemand" itemHeight="50" transparent="1" zPosition="2" />
+	<eLabel position="10,225" size="1295,3" backgroundColor="#303030" zPosition="3" />
+	<eLabel backgroundColor="red" cornerRadius="3" position="25,504" size="400,6" zPosition="11" />
+	<eLabel backgroundColor="green" cornerRadius="3" position="443,504" size="400,6" zPosition="11" />
+	<eLabel backgroundColor="yellow" cornerRadius="3" position="869,504" size="400,6" zPosition="11" />
+	<widget name="key_red" position="20,517" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_green" position="444,517" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_yellow" position="869,517" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="info" position="21,60" size="850,50" font="Regular;30" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
+	<widget name="description" position="40,356" size="1006,113" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/logom.png" scale="strech" alphatest="blend" position="1104,56" size="191,67" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/PayPal.png" scale="strech" position="1091,387" size="156,75" zPosition="5" alphatest="on" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/qr-code.png" scale="strech" position="1329,13" size="318,318" zPosition="2" alphatest="on" />
+	<eLabel backgroundGradient="blue,red,vertical" cornerRadius="10" position="1289,-53" size="400,637" />
+	<widget name="paypal" position="1298,330" size="401,301" font="Regular; 34" foregroundColor="#ffb75b" backgroundColor="#101010" halign="left" transparent="1" zPosition="5" />
 </screen>

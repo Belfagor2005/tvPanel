@@ -18,11 +18,9 @@
 	<eLabel backgroundColor="red" cornerRadius="3" position="179,652" size="200,6" zPosition="11" />
 	<eLabel backgroundColor="green" cornerRadius="3" position="179,692" size="200,6" zPosition="11" />
 	<eLabel backgroundColor="yellow" cornerRadius="3" position="603,652" size="200,6" zPosition="11" />
-	<eLabel backgroundColor="blue" cornerRadius="3" position="603,693" size="200,6" zPosition="11" />
 	<widget name="key_red" position="180,626" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_green" position="180,666" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_yellow" position="603,626" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_blue" position="603,666" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<eLabel text="MENU" position="440,625" size="100,30" font="Regular; 26" foregroundColor="#fffffe" backgroundColor="#707070" halign="center" valign="center" cornerRadius="26" zPosition="5" />
 	<eLabel text="INFO" position="440,655" size="100,35" font="Regular; 26" foregroundColor="#fffffe" backgroundColor="#707070" halign="center" valign="center" cornerRadius="26" zPosition="5" />
 </screen>

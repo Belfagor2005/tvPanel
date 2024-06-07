@@ -1,9 +1,9 @@
 <!-- Skin mmConfig 09/01/2022 -->
-<screen name="mmConfig" position="0,0" size="1280,720" title="..::TiVuStream Addon Manager::.." backgroundColor="#ff000000" flags="wfNoBorder">
+<screen name="mmConfig" position="center,center" size="1280,720" title="..::TiVuStream Addon Manager::.." backgroundColor="#ff000000" flags="wfNoBorder">
 	<widget name="title" position="146,50" size="686,30" font="Regular;20" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
 	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main22.png" scale="stretch" position="-27,0" size="1280,720" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/tvs.png" scale="stretch" position="146,11" size="186,33" alphatest="blend" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/logom.png" scale="stretch" position="146,11" size="186,33" alphatest="blend" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="146,86" size="686,5" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sep.png" position="146,606" size="686,5" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/PayPal.png" scale="stretch" position="419,399" size="155,74" zPosition="1" alphatest="blend" />
@@ -16,11 +16,9 @@
 	<eLabel backgroundColor="red" cornerRadius="3" position="179,652" size="200,6" zPosition="11" />
 	<eLabel backgroundColor="green" cornerRadius="3" position="179,692" size="200,6" zPosition="11" />
 	<eLabel backgroundColor="yellow" cornerRadius="3" position="603,652" size="200,6" zPosition="11" />
-	<eLabel backgroundColor="blue" cornerRadius="3" position="603,693" size="200,6" zPosition="11" />
 	<widget name="key_red" position="180,626" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_green" position="180,666" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_yellow" position="603,626" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_blue" position="603,666" size="200,26" font="Regular;20" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<eLabel text="MENU" position="440,625" size="100,30" font="Regular; 26" foregroundColor="#fffffe" backgroundColor="#707070" halign="center" valign="center" cornerRadius="26" zPosition="5" />
 	<eLabel text="INFO" position="440,655" size="100,35" font="Regular; 26" foregroundColor="#fffffe" backgroundColor="#707070" halign="center" valign="center" cornerRadius="26" zPosition="5" />
 </screen>
