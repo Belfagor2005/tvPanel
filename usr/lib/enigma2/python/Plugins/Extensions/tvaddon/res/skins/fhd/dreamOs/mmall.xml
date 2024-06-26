@@ -18,10 +18,10 @@
 	<eLabel backgroundColor="green" cornerRadius="3" position="224,1059" size="300,6" zPosition="11" />
 	<eLabel backgroundColor="yellow" cornerRadius="3" position="1187,978" size="300,6" zPosition="11" />
 	<eLabel backgroundColor="blue" cornerRadius="3" position="1189,1061" size="300,6" zPosition="11" />
-	<widget name="key_red" position="223,924" size="300,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_green" position="225,1005" size="300,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_yellow" position="1187,925" size="300,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_blue" position="1189,1008" size="300,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_red" position="223,924" size="300,52" font="Regular;34" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_green" position="225,1005" size="300,52" font="Regular;34" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_yellow" position="1187,925" size="300,52" font="Regular;34" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_blue" position="1189,1008" size="300,52" font="Regular;34" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<eLabel text="MENU" position="628,1010" size="150,35" font="Regular;32" foregroundColor="#fffffe" backgroundColor="#707070" halign="center" valign="center" cornerRadius="26" zPosition="5" />
 	<eLabel text="INFO" position="625,942" size="150,35" font="Regular;32" foregroundColor="#fffffe" backgroundColor="#707070" halign="center" valign="center" cornerRadius="26" zPosition="5" />
 </screen>

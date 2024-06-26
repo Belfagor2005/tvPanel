@@ -110,7 +110,6 @@ def getversioninfo():
 
 try:
     from OpenSSL import SSL
-    from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
 except:
@@ -1174,16 +1173,16 @@ class mmConfig(Screen, ConfigListScreen):
     def openDirectoryBrowser(self, path):
         try:
             self.session.openWithCallback(
-             self.openDirectoryBrowserCB,
-             LocationBox,
-             windowTitle=_('Choose Directory:'),
-             text=_('Choose directory'),
-             currDir=str(path),
-             bookmarks=config.movielist.videodirs,
-             autoAdd=False,
-             editDir=True,
-             inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
-             minFree=15)
+                self.openDirectoryBrowserCB,
+                LocationBox,
+                windowTitle=_('Choose Directory:'),
+                text=_('Choose directory'),
+                currDir=str(path),
+                bookmarks=config.movielist.videodirs,
+                autoAdd=False,
+                editDir=True,
+                inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
+                minFree=15)
         except Exception as e:
             print('openDirectoryBrowser get failed: ', str(e))
 

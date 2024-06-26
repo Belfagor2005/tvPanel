@@ -16,9 +16,9 @@ from .Downloader import downloadWithProgress
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, getConfigListEntry
-from Components.config import ConfigYesNo, ConfigSubsection
-from Components.config import ConfigDirectory, ConfigSelection
+from Components.config import (config, getConfigListEntry)
+from Components.config import (ConfigYesNo, ConfigSubsection)
+from Components.config import ConfigSelection
 from Components.Label import Label
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText
@@ -30,23 +30,24 @@ from Components.Sources.Progress import Progress
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Plugins.Plugin import PluginDescriptor
-from Screens.Console import Console as tvConsole
+# from Screens.Console import Console as tvConsole
+from .Console import Console as tvConsole
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
-from Tools.Directories import fileExists, resolveFilename
+from Tools.Directories import (fileExists, resolveFilename)
 # from Tools.Downloader import downloadWithProgress
 # from Screens.Processing import Processing
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from enigma import loadPNG, gFont
 from enigma import eTimer
 from enigma import getDesktop
-from enigma import eListboxPythonMultiContent, eConsoleAppContainer
+from enigma import (eListboxPythonMultiContent, eConsoleAppContainer)
 from os import chmod
-from twisted.web.client import downloadPage, getPage
+from twisted.web.client import downloadPage
 import codecs
 import os
 import re
@@ -55,21 +56,20 @@ import shutil
 import ssl
 import glob
 import six
-import subprocess
+# import subprocess
 global skin_path, mmkpicon, set, category
 
 
 PY3 = sys.version_info.major >= 3
 if PY3:
-    from urllib.error import URLError
-    from urllib.request import urlopen, Request
+    from urllib.request import (urlopen, Request)
     from urllib.parse import urlparse
     unicode = str
     unichr = chr
     long = int
     PY3 = True
 else:
-    from urllib2 import urlopen, Request, URLError
+    from urllib2 import (urlopen, Request)
     from urlparse import urlparse
 
 
@@ -341,10 +341,9 @@ if status_site():
 
 def DailyListEntry(name, idx):
     res = [name]
-
     if screenwidth.width() == 2560:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(80, 0), size=(1950, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1200, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     elif screenwidth.width() == 1920:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
         res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
@@ -605,7 +604,28 @@ class Hometv(Screen):
     def msgupdate1(self):
         self.session.openWithCallback(self.msgupdate2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def msgupdate2(self, answer):
+    # def msgupdate2(self, answer=False):
+        # if self.Update is False:
+            # return
+        # if cfg.autoupd.value is False:
+            # return
+        # if answer:
+            # if os.path.exists('/var/lib/dpkg/info'):
+                # com = self.dmlink
+                # dom = 'New version ' + self.version
+                # tvtemp = '/tmp/tvaddon.tar'
+                # import requests
+                # r = requests.get(com)
+                # with open(tvtemp, 'wb') as f:
+                    # f.write(r.content)
+                # os.system('sleep 3')
+                # self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], closeOnSuccess=False)
+            # else:
+                # com = self.tlink
+                # dom = 'New Version ' + self.version
+                # self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], closeOnSuccess=False)
+
+    def msgupdate2(self, answer=False):
         if self.Update is False:
             return
         if cfg.autoupd.value is False:
@@ -620,24 +640,16 @@ class Hometv(Screen):
                 with open(tvtemp, 'wb') as f:
                     f.write(r.content)
                 os.system('sleep 3')
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], closeOnSuccess=False)
+                self.session.open(tvConsole, title=_('Install Update: %s') % dom, cmdlist='tar -xvf /tmp/tvaddon.tar -C /', finishedCallback=self.myCallback, closeOnSuccess=False)
             else:
                 com = self.tlink
                 dom = 'New Version ' + self.version
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], closeOnSuccess=False)
+                self.session.open(tvConsole, title=_('Install Update: %s') % dom, cmdlist='opkg install %s' % com, finishedCallback=self.myCallback, closeOnSuccess=False)
+        else:
+            self.session.open(MessageBox, _("Install Aborted!"),  MessageBox.TYPE_INFO, timeout=3)
 
-    def msgipkrst1(self):
-        self.session.openWithCallback(self.msgipkrst2, MessageBox, _("New update available!!\nDo you want update plugin ?\nPlease Reboot GUI after install!"), MessageBox.TYPE_YESNO)
-
-    def msgipkrst2(self, answer):
-        if answer:
-            epgpath = '/media/hdd/epg.dat'
-            epgbakpath = '/media/hdd/epg.dat.bak'
-            if os.path.exists(epgbakpath):
-                os.remove(epgbakpath)
-            if os.path.exists(epgpath):
-                shutil.copyfile(epgpath, epgbakpath)
-            self.session.open(TryQuitMainloop, 3)
+    def myCallback(self, result):
+        return
 
 
 class Categories(Screen):
@@ -1926,8 +1938,8 @@ class tvInstall(Screen):
         self['key_blue'].hide()
         self['key_green'].hide()
         self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions'], {'ok': self.message,
-                                                       'green': self.message,
+                                     'ColorActions'], {'ok': self.message1,
+                                                       'green': self.message1,
                                                        'red': self.close,
                                                        'yellow': self.okDown,
                                                        'cancel': self.close}, -2)
@@ -1937,10 +1949,11 @@ class tvInstall(Screen):
         showlist(self.names, self['list'])
         self['key_green'].show()
 
-    def message(self, answer=None):
-        if answer is None:
-            self.session.openWithCallback(self.message, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-        elif answer:
+    def message1(self):
+        self.session.openWithCallback(self.message, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+
+    def message(self, answer=False):
+        if answer:
             idx = self["list"].getSelectionIndex()
             dom = self.names[idx]
             com = self.urls[idx]
@@ -2096,7 +2109,7 @@ class tvInstall(Screen):
     def okDown(self):
         self.session.openWithCallback(self.okDownll, MessageBox, _("Do you want to Download?\nIt could take a few minutes, wait .."), MessageBox.TYPE_YESNO)
 
-    def okDownll(self, answer):
+    def okDownll(self, answer=False):
         if answer:
             self['info'].setText(_('... please wait'))
             idx = self["list"].getSelectionIndex()
@@ -2280,11 +2293,11 @@ class tvIPK(Screen):
         showlist(self.names, self['list'])
         self.getfreespace()
 
-    def msgipkrmv(self, answer=None):
+    def msgipkrmv(self, answer=False):
         if len(self.names) >= 0:
             idx = self['list'].getSelectionIndex()
             self.sel = self.names[idx]
-            if answer is None:
+            if answer is False:
                 self.session.openWithCallback(self.msgipkrmv, MessageBox, (_('Do you really want to remove selected?\n') + self.sel), MessageBox.TYPE_YESNO)
             else:
                 self['info'].setText(_('... please wait'))
@@ -2308,11 +2321,11 @@ class tvIPK(Screen):
     def goConfig(self):
         self.session.open(tvConfig)
 
-    def ipkinst(self, answer=None):
+    def ipkinst(self, answer=False):
         if len(self.names) >= 0:
             idx = self['list'].getSelectionIndex()
             self.sel = self.names[idx]
-            if answer is None:
+            if answer is False:
                 self.session.openWithCallback(self.ipkinst, MessageBox, (_('Do you really want to install the selected Addon?\n') + self.sel), MessageBox.TYPE_YESNO)
             else:
                 self['info'].setText(_('... please wait'))
@@ -2387,12 +2400,8 @@ class tvIPK(Screen):
             os.system('rm -rf ' + self.dest)
         self.refreshlist()
 
-    def finished(self, result):
-        self['info'].setText(_('Please select ...'))
-        return
-
-    def msgipkinst(self, answer=None):
-        if answer is None:
+    def msgipkinst(self, answer=False):
+        if answer is False:
             self.session.openWithCallback(self.msgipkinst, MessageBox, _('Restart Enigma to load the installed plugin?'), MessageBox.TYPE_YESNO)
         else:
             self.session.open(TryQuitMainloop, 3)
@@ -2481,24 +2490,24 @@ class tvUpdate(Screen):
                                                            'green': self.msgipkrst1,
                                                            'red': self.close,
                                                            'back': self.close,
-                                                           'yellow': self.msgupdate}, -1)
+                                                           'yellow': self.msgupdate1}, -1)
 
-    def msgupdate1(self, answer=None):
+    def msgupdate1(self, answer=False):
         if self.Update is False:
             return
         if cfg.autoupd.value is False:
             return
-        if answer is None:
+        if answer is False:
             self.session.openWithCallback(self.msgupdate1, MessageBox, (_('New update available!!')), MessageBox.TYPE_YESNO)
         else:
             self.msgupdate(True)
 
-    def msgupdate(self, answer=None):
+    def msgupdate(self, answer=False):
         if self.Update is False:
             return
-        if answer is None:
+        if answer is False:
             self.session.openWithCallback(self.msgupdate, MessageBox, _('Do you want update plugin ?\nPlease Reboot GUI after install!'), MessageBox.TYPE_YESNO)
-        else:
+        elif answer:
             if os.path.exists('/var/lib/dpkg/info'):
                 com = self.dmlink
                 dom = 'New version ' + self.version
@@ -2514,8 +2523,8 @@ class tvUpdate(Screen):
                 dom = 'New Version ' + self.version
                 self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install --force-reinstall %s' % com], finishedCallback=self.msgipkrst1, closeOnSuccess=False)
 
-    def msgipkrst1(self, answer=None):
-        if answer is None:
+    def msgipkrst1(self, answer=False):
+        if answer is False:
             self.session.openWithCallback(self.msgipkrst1, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
         else:
             epgpath = '/media/hdd/epg.dat'
@@ -2656,8 +2665,8 @@ class tvRemove(Screen):
         except Exception as e:
             print(e)
 
-    def msgipkrst(self, answer=None):
-        if answer is None:
+    def msgipkrst(self, answer=False):
+        if answer is False:
             self.session.openWithCallback(self.msgipkrst, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
         else:
             epgpath = '/media/hdd/epg.dat'
@@ -3040,13 +3049,6 @@ class pluginx(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # self["progress"].show()
-        # self['info'].setText(_('Download...'))
-        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # print('progress = ok')
-
     def showError(self):
         print("download error ")
         self.downloading = False
@@ -3054,10 +3056,6 @@ class pluginx(Screen):
 
     def cancel(self, result=None):
         self.close(None)
-        return
-
-    def finished(self, result):
-        self['info'].setText(_('Please select ...'))
         return
 
     def download_failed(self, failure_instance=None, error_message=""):
@@ -3209,10 +3207,8 @@ class plugins_adult(Screen):
                 print('2 self.com type=', type(self.com))
                 # if PY3:
                     # self.com = self.com.encode()
-
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
                 print('self.com:', self.com)
@@ -3230,13 +3226,6 @@ class plugins_adult(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # self["progress"].show()
-        # self['info'].setText(_('Download...'))
-        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # print('progress = ok')
-
     def showError(self):
         print("download error ")
         self.downloading = False
@@ -3244,10 +3233,6 @@ class plugins_adult(Screen):
 
     def cancel(self, result=None):
         self.close(None)
-        return
-
-    def finished(self, result):
-        self['info'].setText(_('Please select ...'))
         return
 
     def download_failed(self, failure_instance=None, error_message=""):
@@ -3382,10 +3367,8 @@ class script(Screen):
                 print('2 self.com type=', type(self.com))
                 # if PY3:
                     # self.com = self.com.encode()
-
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
                 print('self.com:', self.com)
@@ -3410,10 +3393,6 @@ class script(Screen):
 
     def cancel(self, result=None):
         self.close(None)
-        return
-
-    def finished(self, result):
-        self['info'].setText(_('Please select ...'))
         return
 
     def download_failed(self, failure_instance=None, error_message=""):
@@ -3547,10 +3526,8 @@ class repository(Screen):
                 print('2 self.com type=', type(self.com))
                 # if PY3:
                     # self.com = self.com.encode()
-
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-
                 # from . import Downloader
                 # self.download = Downloader.downloadWithProgress(self.com, self.dest)
                 print('self.com:', self.com)
@@ -3575,10 +3552,6 @@ class repository(Screen):
 
     def cancel(self, result=None):
         self.close(None)
-        return
-
-    def finished(self, result):
-        self['info'].setText(_('Please select ...'))
         return
 
     def download_failed(self, failure_instance=None, error_message=""):

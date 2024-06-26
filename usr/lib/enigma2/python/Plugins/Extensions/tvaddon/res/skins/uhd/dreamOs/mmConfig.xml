@@ -5,9 +5,9 @@
 	<eLabel backgroundColor="red" cornerRadius="3" position="25,504" size="400,6" zPosition="11" />
 	<eLabel backgroundColor="green" cornerRadius="3" position="443,504" size="400,6" zPosition="11" />
 	<eLabel backgroundColor="yellow" cornerRadius="3" position="869,504" size="400,6" zPosition="11" />
-	<widget name="key_red" position="20,517" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_green" position="444,517" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="key_yellow" position="869,517" size="400,52" font="Regular;40" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_red" position="20,517" size="400,52" font="Regular;36" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_green" position="444,517" size="400,52" font="Regular;36" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
+	<widget name="key_yellow" position="869,517" size="400,52" font="Regular;36" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="info" position="21,60" size="850,50" font="Regular;30" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
 	<widget name="description" position="40,356" size="1006,113" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/logom.png" scale="strech" alphatest="blend" position="1104,56" size="191,67" zPosition="5" />
