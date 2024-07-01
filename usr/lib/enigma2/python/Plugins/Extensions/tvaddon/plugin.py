@@ -12,6 +12,7 @@ from . import _, paypal, wgetsts
 from . import Utils
 from .Console import Console as tvConsole
 from .Downloader import downloadWithProgress
+# from Tools.Downloader import downloadWithProgress
 from .Lcn import LCN
 from .Utils import RequestAgent
 from Components.ActionMap import ActionMap
@@ -38,7 +39,6 @@ from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import (fileExists, resolveFilename)
-# from Tools.Downloader import downloadWithProgress
 # from Screens.Processing import Processing
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from enigma import loadPNG, gFont
@@ -316,10 +316,10 @@ Panel_list2 = [
     ('SETTINGS VHANNIBAL 2')]
 
 Panel_list3 = [
- _('MMARK PICONS BLACK'),
- _('MMARK PICONS TRANSPARENT'),
- _('MMARK PICONS MOVIE'),
- _('OPEN PICONS')]
+    _('MMARK PICONS BLACK'),
+    _('MMARK PICONS TRANSPARENT'),
+    _('MMARK PICONS MOVIE'),
+    _('OPEN PICONS')]
 
 
 class tvList(MenuList):
@@ -1890,8 +1890,8 @@ class tvInstall(Screen):
         self["progress"].hide()
         self['progresstext'] = StaticText()
 
-        self['progress'].setRange((0, 100))
-        self['progress'].setValue(0)
+        # self['progress'].setRange((0, 100))
+        # self['progress'].setValue(0)
 
         list = []
         list.sort()
@@ -2138,17 +2138,42 @@ class tvInstall(Screen):
                     return
                 else:
                     self.download = downloadWithProgress(self.com, self.dest)
-                    self.download.addProgress(self.downloadProgress)
+                    if os.path.exists('var/lib/dpkg/info'):
+                        return
+                        # self.download.addProgress(self.downloadProgress)
+                    else:
+                        self.download.addProgress(self.downloadProgress2)
                     self.download.start().addCallback(self.install).addErrback(self.download_failed)
+
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
 
+    # mmax
     def downloadProgress(self, recvbytes, totalbytes):
-        self['info'].setText(_('Download in progress...'))
-        self["progress"].show()
-        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
-        self.last_recvbytes = recvbytes
+        try:
+            self['info'].setText(_('Download...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
+
+    # ok oe2
+    def downloadProgress2(self, recvbytes, totalbytes):
+        try:
+            self['info'].setText(_('Download in progress...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+            self.last_recvbytes = recvbytes
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
 
     def showError(self):
         print("download error ")
@@ -3015,17 +3040,41 @@ class pluginx(Screen):
                 print('self.com:', self.com)
                 print('self.dest:', self.dest)
                 self.download = downloadWithProgress(self.com, self.dest)
-                self.download.addProgress(self.downloadProgress)
+                if os.path.exists('var/lib/dpkg/info'):
+                    return
+                    # self.download.addProgress(self.downloadProgress)
+                else:
+                    self.download.addProgress(self.downloadProgress2)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
+    # mmax
     def downloadProgress(self, recvbytes, totalbytes):
-        self['info'].setText(_('Download in progress...'))
-        self["progress"].show()
-        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
-        self.last_recvbytes = recvbytes
+        try:
+            self['info'].setText(_('Download...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
+
+    # ok oe2
+    def downloadProgress2(self, recvbytes, totalbytes):
+        try:
+            self['info'].setText(_('Download in progress...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+            self.last_recvbytes = recvbytes
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
 
     def showError(self):
         print("download error ")
@@ -3192,17 +3241,41 @@ class plugins_adult(Screen):
                 print('self.com:', self.com)
                 print('self.dest:', self.dest)
                 self.download = downloadWithProgress(self.com, self.dest)
-                self.download.addProgress(self.downloadProgress)
+                if os.path.exists('var/lib/dpkg/info'):
+                    return
+                    # self.download.addProgress(self.downloadProgress)
+                else:
+                    self.download.addProgress(self.downloadProgress2)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
+    # mmax
     def downloadProgress(self, recvbytes, totalbytes):
-        self['info'].setText(_('Download in progress...'))
-        self["progress"].show()
-        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
-        self.last_recvbytes = recvbytes
+        try:
+            self['info'].setText(_('Download...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
+
+    # ok oe2
+    def downloadProgress2(self, recvbytes, totalbytes):
+        try:
+            self['info'].setText(_('Download in progress...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+            self.last_recvbytes = recvbytes
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
 
     def showError(self):
         print("download error ")
@@ -3352,17 +3425,41 @@ class script(Screen):
                 print('self.com:', self.com)
                 print('self.dest:', self.dest)
                 self.download = downloadWithProgress(self.com, self.dest)
-                self.download.addProgress(self.downloadProgress)
+                if os.path.exists('var/lib/dpkg/info'):
+                    return
+                    # self.download.addProgress(self.downloadProgress)
+                else:
+                    self.download.addProgress(self.downloadProgress2)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
+    # mmax
     def downloadProgress(self, recvbytes, totalbytes):
-        self['info'].setText(_('Download in progress...'))
-        self["progress"].show()
-        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
-        self.last_recvbytes = recvbytes
+        try:
+            self['info'].setText(_('Download...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
+
+    # ok oe2
+    def downloadProgress2(self, recvbytes, totalbytes):
+        try:
+            self['info'].setText(_('Download in progress...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+            self.last_recvbytes = recvbytes
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
 
     def showError(self):
         print("download error ")
@@ -3511,17 +3608,41 @@ class repository(Screen):
                 print('self.com:', self.com)
                 print('self.dest:', self.dest)
                 self.download = downloadWithProgress(self.com, self.dest)
-                self.download.addProgress(self.downloadProgress)
+                if os.path.exists('var/lib/dpkg/info'):
+                    return
+                    # self.download.addProgress(self.downloadProgress)
+                else:
+                    self.download.addProgress(self.downloadProgress2)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
+    # mmax
     def downloadProgress(self, recvbytes, totalbytes):
-        self['info'].setText(_('Download in progress...'))
-        self["progress"].show()
-        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
-        self.last_recvbytes = recvbytes
+        try:
+            self['info'].setText(_('Download...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
+
+    # ok oe2
+    def downloadProgress2(self, recvbytes, totalbytes):
+        try:
+            self['info'].setText(_('Download in progress...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+            self.last_recvbytes = recvbytes
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
 
     def showError(self):
         print("download error ")

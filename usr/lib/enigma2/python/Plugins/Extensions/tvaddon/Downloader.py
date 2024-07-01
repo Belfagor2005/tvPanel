@@ -1,21 +1,52 @@
-from os import unlink
-import requests
-from twisted.internet import reactor
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# --------------------#
+#   edit by Lululla   #
+#    skin by MMark    #
+#      22/09/2023     #
+# --------------------#
+
 from .Utils import RequestAgent
 from enigma import eTimer
+from os import unlink
+from twisted.internet import reactor
+import os
+import requests
 
 try:
     from urllib.request import urlopen, Request
 except ImportError:
     from urllib2 import urlopen, Request
 
+sslverify = False
+try:
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+
+if sslverify:
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
+
 
 class DownloadWithProgress:
     def __init__(self, url, outputFile):
+        print('url:', url)
         self.url = url
         self.outputFile = outputFile
-        self.userAgent = "HbbTV/1.1.1 (+PVR+RTSP+DL; Sonic; TV44; 1.32.455; 2.002) Bee/3.5"
-        # self.agent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5"
+        self.userAgent = RequestAgent()  # "HbbTV/1.1.1 (+PVR+RTSP+DL; Sonic; TV44; 1.32.455; 2.002) Bee/3.5"
+        self.blockSize = 0
         self.totalSize = 0
         self.progress = 0
         self.progressCallback = None
@@ -23,20 +54,46 @@ class DownloadWithProgress:
         self.errorCallback = None
         self.stopFlag = False
         self.timer = eTimer()
-        self.timer.callback.append(self.reportProgress)
+        if os.path.exists('/var/lib/dpkg/info'):
+            self.timer_conn = self.timer.timeout.connect(self.reportProgress)
+        else:
+            self.timer.callback.append(self.reportProgress)
+        self.timer.start(500, 1)
+
+    # def start(self):
+        # try:
+            # request = Request(self.url, None, {"User-agent": RequestAgent()})
+            # feedFile = urlopen(request)
+            # metaData = feedFile.headers
+            # self.totalSize = int(metaData.get("Content-Length", 0))
+            # # Set the transfer block size to a minimum of 1K and a maximum of 1% of the file size (or 128KB if the size is unknown) else use 64K.
+            # self.blockSize = max(min(self.totalSize // 100, 1024), 131071) if self.totalSize else 65536
+        # except OSError as err:
+            # if self.errorCallback:
+                # self.errorCallback(err)
+            # return self
+        # reactor.callInThread(self.run)
+        # return self
 
     def start(self):
         try:
-            request = Request(self.url, None, {"User-agent": RequestAgent()})
+            request = Request(self.url, None, {"User-agent": RequestAgent()}, stream=True)
             feedFile = urlopen(request)
             metaData = feedFile.headers
             self.totalSize = int(metaData.get("Content-Length", 0))
             # Set the transfer block size to a minimum of 1K and a maximum of 1% of the file size (or 128KB if the size is unknown) else use 64K.
             self.blockSize = max(min(self.totalSize // 100, 1024), 131071) if self.totalSize else 65536
+        # except requests.exceptions.RequestException:
+            # print("Exception occurred on 'API requests post' procedure.")
+            # counter += 1
+            # continue
         except OSError as err:
             if self.errorCallback:
                 self.errorCallback(err)
             return self
+        except Exception as e:
+            print("Exception {0} occurred".format(e))
+            # continue
         reactor.callInThread(self.run)
         return self
 
@@ -61,6 +118,10 @@ class DownloadWithProgress:
         except OSError as err:
             if self.errorCallback:
                 self.errorCallback(err)
+            return False
+        except Exception as e:
+            print("Exception {0} occurred".format(e))
+            # continue
         return False
 
     def stop(self):

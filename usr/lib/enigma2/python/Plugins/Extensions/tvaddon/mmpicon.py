@@ -36,7 +36,8 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Tools.Downloader import downloadWithProgress
+from .Downloader import downloadWithProgress
+# from Tools.Downloader import downloadWithProgress
 from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
 from enigma import eTimer
 from enigma import eListboxPythonMultiContent
@@ -546,7 +547,8 @@ class MMarkPiconScreen(Screen):
                     # # url =  'https://download' + str(myfile)
                     self.download = downloadWithProgress(url, dest)
                     if os.path.exists('var/lib/dpkg/info'):
-                        self.download.addProgress(self.downloadProgress)
+                        return
+                        # self.download.addProgress(self.downloadProgress)
                     else:
                         self.download.addProgress(self.downloadProgress2)
                     self.download.start().addCallback(self.install).addErrback(self.showError)
@@ -570,21 +572,39 @@ class MMarkPiconScreen(Screen):
         self['progress'].setValue(self.progclear)
         self["progress"].hide()
 
-    def downloadProgress(self, recvbytes, totalbytes):
-        self["progress"].show()
-        self['info'].setText(_('Download...'))
-        self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        print('progress = ok')
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # self["progress"].show()
+        # self['info'].setText(_('Download...'))
+        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # print('progress = ok')
 
     def downloadProgress2(self, recvbytes, totalbytes):
-        self['info'].setText(_('Download in progress...'))
-        self["progress"].show()
-        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
-        self.last_recvbytes = recvbytes
-        # if self.last_recvbytes == recvbytes:
-            # self.getfreespace()
+        try:
+            self['info'].setText(_('Download in progress...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+            self.last_recvbytes = recvbytes
+            # if self.last_recvbytes == recvbytes:
+                # self.getfreespace()
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
+
+    def downloadProgress(self, recvbytes, totalbytes):
+        try:
+            self['info'].setText(_('Download...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
 
     def showError(self):
         print("download error ")
@@ -936,7 +956,11 @@ class MMarkFolderSkinZeta(Screen):
                     url = 'https://download' + str(match[0])
                     print("url final =", url)
                     self.download = downloadWithProgress(url, dest)
-                    self.download.addProgress(self.downloadProgress)
+                    if os.path.exists('var/lib/dpkg/info'):
+                        return
+                        # self.download.addProgress(self.downloadProgress)
+                    else:
+                        self.download.addProgress(self.downloadProgress2)
                     self.download.start().addCallback(self.install).addErrback(self.showError)
                 except Exception as e:
                     print('error: ', str(e))
@@ -944,10 +968,32 @@ class MMarkFolderSkinZeta(Screen):
             else:
                 self['info'].setText(_('Picons Not Installed ...'))
 
+    def downloadProgress2(self, recvbytes, totalbytes):
+        try:
+            self['info'].setText(_('Download in progress...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+            self.last_recvbytes = recvbytes
+            # if self.last_recvbytes == recvbytes:
+                # self.getfreespace()
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
+
     def downloadProgress(self, recvbytes, totalbytes):
-        self["progress"].show()
-        self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        try:
+            self['info'].setText(_('Download...'))
+            self["progress"].show()
+            self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        except ZeroDivisionError:
+            self['info'].setText(_('Download Failed!'))
+            self["progress"].hide()
+            self['progress'].setRange((0, 100))
+            self['progress'].setValue(0)
 
     def install(self, fplug):
         self.progclear = 0
