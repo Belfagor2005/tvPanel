@@ -108,12 +108,14 @@ def getversioninfo():
     return (currmmversion)
 
 
+sslverify = False
 try:
-    from OpenSSL import SSL
+    from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
 except:
     sslverify = False
+
 
 if sslverify:
     class SNIFactory(ssl.ClientContextFactory):
@@ -125,37 +127,6 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
-
-
-# def checkMyFile(url):
-    # return []
-    # myfile = None
-    # try:
-        # req = Request(url)
-        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14')
-        # req.add_header('Referer', 'https://www.mediafire.com')
-        # req.add_header('X-Requested-With', 'XMLHttpRequest')
-        # page = urlopen(req)
-        # r = page.read()
-        # n1 = r.find('"download_link', 0)
-        # n2 = r.find('downloadButton', n1)
-        # r2 = r[n1:n2]
-        # print("r2 =", r2)
-        # regexcat = 'href="https://download(.*?)"'
-        # match = re.compile(regexcat, re.DOTALL).findall(r2)
-        # print("match =", match[0])
-        # myfile = match[0]
-        # logdata("Myfile ", myfile)
-        # return myfile
-    # except:
-        # e = URLError
-        # print('We failed to open "%s".' % url)
-        # if hasattr(e, 'code'):
-            # print('We failed with error code - %s.' % e.code)
-        # if hasattr(e, 'reason'):
-            # print('We failed to reach a server.')
-            # print('Reason: ', e.reason)
-        # return myfile
 
 
 piconpathss = Utils.mountipkpth()
@@ -219,10 +190,10 @@ class mmList(MenuList):
             self.l.setFont(0, gFont('Regular', textfont))
         elif screenwidth.width() == 1920:
             self.l.setItemHeight(50)
-            textfont = int(30)
+            textfont = int(32)
             self.l.setFont(0, gFont('Regular', textfont))
         else:
-            self.l.setItemHeight(30)
+            self.l.setItemHeight(45)
             textfont = int(24)
             self.l.setFont(0, gFont('Regular', textfont))
 

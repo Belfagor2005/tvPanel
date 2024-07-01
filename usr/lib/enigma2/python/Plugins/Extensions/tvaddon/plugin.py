@@ -8,11 +8,12 @@
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
-from . import _, paypal
+from . import _, paypal, wgetsts
 from . import Utils
-from .Utils import RequestAgent
-from .Lcn import LCN
+from .Console import Console as tvConsole
 from .Downloader import downloadWithProgress
+from .Lcn import LCN
+from .Utils import RequestAgent
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
@@ -30,8 +31,6 @@ from Components.Sources.Progress import Progress
 from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Plugins.Plugin import PluginDescriptor
-# from Screens.Console import Console as tvConsole
-from .Console import Console as tvConsole
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -57,7 +56,7 @@ import ssl
 import glob
 import six
 # import subprocess
-global skin_path, mmkpicon, set, category
+global skin_path, mmkpicon, setx, category
 
 
 PY3 = sys.version_info.major >= 3
@@ -78,6 +77,12 @@ if sys.version_info >= (2, 7, 9):
         sslContext = ssl._create_unverified_context()
     except:
         sslContext = None
+
+
+try:
+    wgetsts()
+except:
+    pass
 
 
 def ssl_urlopen(url):
@@ -150,7 +155,7 @@ def checkGZIP(url):
     response = None
     request = Request(url, headers=hdr)
     try:
-        response = urlopen(request, timeout=15)
+        response = urlopen(request, timeout=10)
         if response.info().get('Content-Encoding') == 'gzip':
             buffer = StringIO(response.read())
             deflatedContent = gzip.GzipFile(fileobj=buffer)
@@ -171,19 +176,19 @@ def checkGZIP(url):
 def ReloadBouquets():
     from enigma import eDVBDB
     print("\n----Reloading bouquets----")
-    global set
-    if set == 1:
-        set = 0
+    global setx
+    if setx == 1:
+        setx = 0
         print("\n----Reloading Terrestrial----")
         terrestrial_rest()
     if eDVBDB:
         eDVBDB.getInstance().reloadServicelist()
         eDVBDB.getInstance().reloadBouquets()
-        print("eDVBDB: bouquets reloaded...")
+        # print("eDVBDB: bouquets reloaded...")
     else:
         os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &")
         os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=4 > /dev/null 2>&1 &")
-        print("wGET: bouquets reloaded...")
+        # print("wGET: bouquets reloaded...")
 
 
 def mountipkpths():
@@ -201,7 +206,7 @@ def mountipkpths():
 piconpathss = Utils.mountipkpth()
 AgentRequest = RequestAgent()
 # ================config
-global set
+global setx
 config.plugins.tvaddon = ConfigSubsection()
 cfg = config.plugins.tvaddon
 
@@ -215,7 +220,7 @@ currversion = '2.1.4'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
-set = 0
+setx = 0
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24= '
@@ -604,27 +609,6 @@ class Hometv(Screen):
     def msgupdate1(self):
         self.session.openWithCallback(self.msgupdate2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    # def msgupdate2(self, answer=False):
-        # if self.Update is False:
-            # return
-        # if cfg.autoupd.value is False:
-            # return
-        # if answer:
-            # if os.path.exists('/var/lib/dpkg/info'):
-                # com = self.dmlink
-                # dom = 'New version ' + self.version
-                # tvtemp = '/tmp/tvaddon.tar'
-                # import requests
-                # r = requests.get(com)
-                # with open(tvtemp, 'wb') as f:
-                    # f.write(r.content)
-                # os.system('sleep 3')
-                # self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], closeOnSuccess=False)
-            # else:
-                # com = self.tlink
-                # dom = 'New Version ' + self.version
-                # self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install %s' % com], closeOnSuccess=False)
-
     def msgupdate2(self, answer=False):
         if self.Update is False:
             return
@@ -967,8 +951,8 @@ class SettingVhan(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 self.name = self.names[idx]
@@ -980,7 +964,7 @@ class SettingVhan(Screen):
                 with open(dest, 'wb') as f:
                     f.write(r.content)
                 if 'dtt' not in self.name.lower():
-                    set = 1
+                    setx = 1
                     terrestrial()
                 if os.path.exists(dest):
                     fdest1 = "/tmp/unzipped"
@@ -1080,8 +1064,8 @@ class SettingVhan2(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 try:
                     idx = self["list"].getSelectionIndex()
@@ -1090,7 +1074,7 @@ class SettingVhan2(Screen):
                     dest = "/tmp/settings.zip"
 
                     if 'dtt' not in url.lower():
-                        set = 1
+                        setx = 1
                         terrestrial()
 
                     # if PY3:
@@ -1217,14 +1201,14 @@ class Milenka61(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-                    set = 1
+                    setx = 1
                     terrestrial()
                 import requests
                 r = requests.get(url)
@@ -1314,15 +1298,15 @@ class SettingManutek(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
-                    set = 1
+                    setx = 1
                     terrestrial()
                 import requests
                 r = requests.get(url)
@@ -1425,15 +1409,15 @@ class SettingMorpheus(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
-                    set = 1
+                    setx = 1
                     terrestrial()
                 import requests
                 r = requests.get(url)
@@ -1537,15 +1521,15 @@ class SettingCiefp(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
-                    set = 1
+                    setx = 1
                     terrestrial()
                 import requests
                 r = requests.get(url)
@@ -1647,14 +1631,14 @@ class SettingBi58(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-                    set = 1
+                    setx = 1
                     terrestrial()
                 import requests
                 r = requests.get(url)
@@ -1746,14 +1730,14 @@ class SettingPredrag(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.tar.gz"
                 if 'dtt' not in url.lower():
-                    set = 1
+                    setx = 1
                     terrestrial()
                 import requests
                 r = requests.get(url)
@@ -1849,15 +1833,15 @@ class SettingCyrus(Screen):
 
     def okRun1(self, answer):
         if answer:
-            global set
-            set = 0
+            global setx
+            setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
                 if 'dtt' not in url.lower():
-                    set = 1
+                    setx = 1
                     terrestrial()
                 import requests
                 r = requests.get(url)
@@ -1940,10 +1924,14 @@ class tvInstall(Screen):
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.message1,
                                                        'green': self.message1,
-                                                       'red': self.close,
+                                                       'red': self.exitY,
                                                        'yellow': self.okDown,
-                                                       'cancel': self.close}, -2)
+                                                       'cancel': self.exitY}, -2)
         self.onLayoutFinish.append(self.start)
+
+    def exitY(self):
+        self.addondel()
+        self.close()
 
     def start(self):
         showlist(self.names, self['list'])
@@ -1963,7 +1951,7 @@ class tvInstall(Screen):
 
     def prombt(self, com, dom):
         self.timer = eTimer()
-        global set
+        global setx
         self.com = com
         self.dom = dom
         self.downplug = self.com.split("/")[-1]
@@ -1993,34 +1981,32 @@ class tvInstall(Screen):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
-                    cmd22 = 'find /usr/bin -name "wget"'
-                    res = os.popen(cmd22).read()
-                    if 'wget' not in res.lower():
-                        cmd23 = 'apt-get update && apt-get install wget'
-                        os.popen(cmd23)
-                    # cmd = 'dpkg -i %s' % down
-                    cmd = 'apt-get -f -y --force-yes install %s' % down
-                    # cmd = 'dpkg --install --force-overwrite %s' % self.dest
-                    # cmd = "wget -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % (RequestAgent(), str(self.com), self.dest, self.dest)
-                    # if "https" in str(self.com):
-                        # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';apt-get install -f -y %s" % (RequestAgent(), str(self.com), self.dest, self.dest)
+                    # cmd = 'apt-get -f -y --force-yes install %s' % down
+
+                    cmd = "wget -U '%s' -c '%s' -O '%s';dpkg -i %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
+                    if "https" in str(self.com):
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';dpkg -i %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
+
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
+
             elif extension == "ipk":
                 if os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
-                    cmd = "opkg install --force-reinstall %s > /dev/null" % down
-                    # cmd = "wget -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest)
-                    # if "https" in str(self.com):
-                        # cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg install --force-reinstall %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest)
+                    # cmd = "opkg install --force-reinstall %s > /dev/null" % down
+
+                    cmd = "wget -U '%s' -c '%s' -O '%s';opkg install --force-overwrite --force-downgrade %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
+                    if "https" in str(self.com):
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg install --force-overwrite --force-downgrade %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
+
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
             elif self.com.endswith('.zip'):
                 if 'setting' in self.dom.lower():
                     if not os.path.exists('/var/lib/dpkg/status'):
-                        set = 1
+                        setx = 1
                         terrestrial()
                     if os.path.exists("/tmp/unzipped"):
                         os.system('rm -rf /tmp/unzipped')
@@ -2078,7 +2064,7 @@ class tvInstall(Screen):
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
             self.timer.start(3000, 1)
-            self.addondel()
+            # self.addondel()
 
     def dowfil(self):
         self.dest = '/tmp/' + self.downplug
@@ -2096,7 +2082,7 @@ class tvInstall(Screen):
         urllib2.install_opener(opener)
         try:
             req = Request(self.com, data=None, headers=headers)
-            handler = urlopen(req, timeout=15)
+            handler = urlopen(req, timeout=10)
             data = handler.read()
             with open(self.dest, 'wb') as f:
                 f.write(data)
@@ -2115,20 +2101,17 @@ class tvInstall(Screen):
             idx = self["list"].getSelectionIndex()
             self.dom = self.names[idx]
             self.com = self.urls[idx]
-            print('1 self.com type=', type(self.com))
-            # self.com = six.ensure_binary(self.com)
-            # print('2 self.com type=', type(self.com))
-            # if PY3:
-                # self.com = self.com.encode()
             self.downplug = self.com.split("/")[-1]
             self.dest = '/tmp/' + str(self.downplug)
+
             if os.path.exists(self.dest):
                 os.remove(self.dest)
+
             if self.com is not None:
                 # print('self.com not none', self.com)
                 extensionlist = self.com.split('.')
                 extension = extensionlist[-1].lower()
-                # print('extension', extension)
+
                 if len(extensionlist) > 1:
                     tar = extensionlist[-2].lower()
                 if extension in ["gz", "bz2"] and tar == "tar":
@@ -2143,25 +2126,20 @@ class tvInstall(Screen):
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                     return
+
                 if extension == "deb" and not os.path.exists('/var/lib/dpkg/status'):
-                    # if not os.path.exists('/var/lib/dpkg/status'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Download canceled!'))
                     return
-                # elif self.com.endswith(".ipk"):
+
                 elif extension == ".ipk" and os.path.exists('/var/lib/dpkg/info'):
-                    # if os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Download canceled!'))
                     return
-                # if os.path.exists('/var/lib/dpkg/info'):
-                    # self.session.open(MessageBox, _('There is currently a problem with this image.\nBetter not to download.\nTry installing directly with the OK button!'), MessageBox.TYPE_INFO, timeout=5)
-                    # self['info'].setText(_('Download canceled!'))
-                    # return
-                # else:
-                self.download = downloadWithProgress(self.com, self.dest)
-                self.download.addProgress(self.downloadProgress)
-                self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                else:
+                    self.download = downloadWithProgress(self.com, self.dest)
+                    self.download.addProgress(self.downloadProgress)
+                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
 
@@ -2352,8 +2330,8 @@ class tvIPK(Screen):
                             self.session.open(tvConsole, _('Installing: %s') % self.dest, cmdlist=[cmd], closeOnSuccess=False)
                         elif 'setting' in self.sel.lower():
                             if not os.path.exists('/var/lib/dpkg/status'):
-                                global set
-                                set = 1
+                                global setx
+                                setx = 1
                                 terrestrial()
                             if os.path.exists("/tmp/unzipped"):
                                 os.system('rm -rf /tmp/unzipped')
