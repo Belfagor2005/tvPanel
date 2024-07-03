@@ -14,6 +14,7 @@
 from __future__ import print_function
 from . import _
 from . import Utils
+from .Console import Console
 from .plugin import mmkpicon
 import codecs
 from Components.AVSwitch import AVSwitch
@@ -545,13 +546,15 @@ class MMarkPiconScreen(Screen):
                     # myfile = checkMyFile(url)
                     # print('myfile222:  ', myfile)
                     # # url =  'https://download' + str(myfile)
-                    self.download = downloadWithProgress(url, dest)
+
                     if os.path.exists('var/lib/dpkg/info'):
-                        return
-                        # self.download.addProgress(self.downloadProgress)
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(url), dest)
+                        self.session.open(Console, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                        self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     else:
+                        self.download = downloadWithProgress(url, dest)
                         self.download.addProgress(self.downloadProgress2)
-                    self.download.start().addCallback(self.install).addErrback(self.showError)
+                        self.download.start().addCallback(self.install).addErrback(self.showError)
                 except Exception as e:
                     print('error: ', str(e))
                     print("Error: can't find file or read data")
@@ -749,7 +752,7 @@ class MMarkFolderScreen(Screen):
     def okRun(self):
         i = len(self.names)
         print('iiiiii= ', i)
-        if i < 0:
+        if i < 1:
             return
         idx = self['text'].getSelectionIndex()
         name = self.names[idx]
@@ -944,24 +947,26 @@ class MMarkFolderSkinZeta(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                print('url222: ', url)
+                # print('url222: ', url)
                 if os.path.exists(dest):
                     os.remove(dest)
                 try:
                     myfile = Utils.ReadUrl(url)
-                    print('response: ', myfile)
+                    # print('response: ', myfile)
                     regexcat = 'href="https://download(.*?)"'
                     match = re.compile(regexcat, re.DOTALL).findall(myfile)
-                    print("match =", match[0])
                     url = 'https://download' + str(match[0])
+                    print("match =", match[0])
                     print("url final =", url)
-                    self.download = downloadWithProgress(url, dest)
-                    if os.path.exists('var/lib/dpkg/info'):
-                        return
-                        # self.download.addProgress(self.downloadProgress)
+
+                    if os.path.exists('/var/lib/dpkg/info'):
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(url), dest)
+                        self.session.open(Console, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                        self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     else:
+                        self.download = downloadWithProgress(url, dest)
                         self.download.addProgress(self.downloadProgress2)
-                    self.download.start().addCallback(self.install).addErrback(self.showError)
+                        self.download.start().addCallback(self.install).addErrback(self.showError)
                 except Exception as e:
                     print('error: ', str(e))
                     print("Error: can't find file or read data")

@@ -55,7 +55,7 @@ import shutil
 import ssl
 import glob
 import six
-# import subprocess
+import subprocess
 global skin_path, mmkpicon, setx, category
 
 
@@ -216,7 +216,7 @@ cfg.strtmain = ConfigYesNo(default=True)
 cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpths())
 cfg.autoupd = ConfigYesNo(default=False)
 mmkpicon = cfg.mmkpicon.value.strip()
-currversion = '2.1.4'
+currversion = '2.1.5'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
@@ -261,7 +261,7 @@ elif screenwidth.width() == 1920:
     skin_path = plugin_path + '/res/skins/fhd/'
 else:
     skin_path = plugin_path + '/res/skins/hd/'
-if os.path.exists('/var/lib/dpkg/info'):
+if os.path.exists('/var/lib/dpkg/status'):
     skin_path = skin_path + 'dreamOs/'
 
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -499,7 +499,7 @@ class Hometv(Screen):
             del self.menu_list[0]
         list = []
         idx = 0
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             for x in Panel_deb:
                 list.append(DailyListEntry(x, idx))
                 self.menu_list.append(x)
@@ -512,13 +512,13 @@ class Hometv(Screen):
         self['list'].setList(list)
         if self.Update is True:
             self.timer = eTimer()
-            if os.path.exists('/var/lib/dpkg/info'):
+            if os.path.exists('/var/lib/dpkg/status'):
                 self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
             else:
                 self.timer.callback.append(self.msgupdate1)
             self.timer.start(300, 1)
         self.timer2 = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer2_conn = self.timer2.timeout.connect(self.__layoutFinished)
         else:
             self.timer2.callback.append(self.__layoutFinished)
@@ -615,7 +615,7 @@ class Hometv(Screen):
         if cfg.autoupd.value is False:
             return
         if answer:
-            if os.path.exists('/var/lib/dpkg/info'):
+            if os.path.exists('/var/lib/dpkg/status'):
                 com = self.dmlink
                 dom = 'New version ' + self.version
                 tvtemp = '/tmp/tvaddon.tar'
@@ -668,7 +668,7 @@ class Categories(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -773,7 +773,7 @@ class tvDailySetting(Screen):
         if self.LcnOn:
             lcn = LCN()
             lcn.read()
-            if len(lcn.lcnlist) > 0:
+            if len(lcn.lcnlist) >= 1:
                 lcn.writeBouquet()
                 lcn.ReloadBouquets()
                 self.session.open(MessageBox, _('Sorting Terrestrial channels with Lcn rules Completed'), MessageBox.TYPE_INFO, timeout=5)
@@ -912,7 +912,7 @@ class SettingVhan(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1021,7 +1021,7 @@ class SettingVhan2(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1156,7 +1156,7 @@ class Milenka61(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1256,7 +1256,7 @@ class SettingManutek(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1365,7 +1365,7 @@ class SettingMorpheus(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1476,7 +1476,7 @@ class SettingCiefp(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1586,7 +1586,7 @@ class SettingBi58(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1685,7 +1685,7 @@ class SettingPredrag(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1784,8 +1784,7 @@ class SettingCyrus(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1960,7 +1959,7 @@ class tvInstall(Screen):
         if self.com is not None:
             extensionlist = self.com.split('.')
             extension = extensionlist[-1]  # .lower()
-            if len(extensionlist) > 1:
+            if len(extensionlist) >= 1:
                 tar = extensionlist[-2]
             if extension in ["gz", "bz2"] and tar == "tar":
                 self.command = ['']
@@ -1991,7 +1990,7 @@ class tvInstall(Screen):
                     self['info'].setText(_('Installation done !!!'))
 
             elif extension == "ipk":
-                if os.path.exists('/var/lib/dpkg/info'):
+                if os.path.exists('/var/lib/dpkg/status'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
@@ -2096,6 +2095,7 @@ class tvInstall(Screen):
         self.session.openWithCallback(self.okDownll, MessageBox, _("Do you want to Download?\nIt could take a few minutes, wait .."), MessageBox.TYPE_YESNO)
 
     def okDownll(self, answer=False):
+        print('okDownll')
         if answer:
             self['info'].setText(_('... please wait'))
             idx = self["list"].getSelectionIndex()
@@ -2108,11 +2108,11 @@ class tvInstall(Screen):
                 os.remove(self.dest)
 
             if self.com is not None:
-                # print('self.com not none', self.com)
+                print('self.com not none', self.com)
                 extensionlist = self.com.split('.')
                 extension = extensionlist[-1].lower()
 
-                if len(extensionlist) > 1:
+                if len(extensionlist) >= 1:
                     tar = extensionlist[-2].lower()
                 if extension in ["gz", "bz2"] and tar == "tar":
                     self.command = ['']
@@ -2122,7 +2122,8 @@ class tvInstall(Screen):
                         self.command = ["tar -xjvf " + self.dest + " -C /"]
                     self.timer = eTimer()
                     self.timer.start(1000, True)
-                    cmd = 'wget --no-cache --no-dns-cache -q -O %s %s --post-data="action=purge";' + self.command[0] % (self.dest, str(self.com))
+                    cmd = "wget --no-cache --no-dns-cache -q -O '%s' '%s' --post-data='action=purge';" + self.command[0] % (self.dest, str(self.com))
+                    print('command:', cmd)
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
                     return
@@ -2132,18 +2133,21 @@ class tvInstall(Screen):
                     self['info'].setText(_('Download canceled!'))
                     return
 
-                elif extension == ".ipk" and os.path.exists('/var/lib/dpkg/info'):
+                elif extension == ".ipk" and os.path.exists('/var/lib/dpkg/status'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Download canceled!'))
                     return
                 else:
-                    self.download = downloadWithProgress(self.com, self.dest)
-                    if os.path.exists('var/lib/dpkg/info'):
-                        return
-                        # self.download.addProgress(self.downloadProgress)
+                    if os.path.exists('/var/lib/dpkg/status'):
+                        cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)]
+                        print('command:', cmd)
+                        # self.session.open(tvConsole, _('Downloading: %s') % self.dom, cmd[0], closeOnSuccess=False)
+                        subprocess.Popen(cmd[0], shell=True, executable='/bin/bash')
+                        self.session.openWithCallback(self.tvIPK, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     else:
+                        self.download = downloadWithProgress(self.com, self.dest)
                         self.download.addProgress(self.downloadProgress2)
-                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                        self.download.start().addCallback(self.install).addErrback(self.download_failed)
 
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
@@ -2185,7 +2189,7 @@ class tvInstall(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + self.error_message
+        info = 'Download Failed!!!' + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         return
@@ -2221,8 +2225,9 @@ class tvInstall(Screen):
         if self.aborted:
             self.finish(aborted=True)
 
-    def tvIPK(self):
-        self.session.openWithCallback(self.close, tvIPK)
+    def tvIPK(self, string=''):
+        # self.session.openWithCallback(self.close, self.install)
+        self.install('None')
 
     def install(self, string=''):
         if self.aborted:
@@ -2236,7 +2241,9 @@ class tvInstall(Screen):
                 self['progress'].setValue(self.progclear)
                 self["progress"].hide()
                 self['info'].setText(_('File Downloaded ...'))
-                self.tvIPK()
+                print('tvIPK')
+                # self.tvIPK()
+                self.session.openWithCallback(self.close, tvIPK)
 
 
 class tvIPK(Screen):
@@ -2272,14 +2279,17 @@ class tvIPK(Screen):
                                                       'menu': self.goConfig,
                                                       'cancel': self.close}, -1)
         self.onLayoutFinish.append(self.refreshlist)
+        # self.onShown.append(self.refreshlist)
 
     def refreshlist(self):
         self.list = []
         self.names = []
-        del self.names[:]
-        del self.list[:]
         for x in self.list:
             del self.list[0]
+        for x in self.names:
+            del self.names[0]
+        del self.names[:]
+        del self.list[:]
         path = self.ipkpth
         for root, dirs, files in os.walk(path):
             if files is not None:
@@ -2289,30 +2299,44 @@ class tvIPK(Screen):
                         print('name ipk:', str(name))
                         self.names.append(name)
                 self.names.sort(key=lambda x: x, reverse=False)
-        if len(self.names) >= 0:
-            self['info'].setText(_('Please install ...'))
-            self['key_green'].show()
-            self['key_blue'].show()
+        # if len(self.names) >= 0:
+        self['info'].setText(_('Please install ...'))
+        self['key_green'].show()
+        self['key_blue'].show()
         showlist(self.names, self['list'])
         self.getfreespace()
 
     def msgipkrmv(self, answer=False):
-        if len(self.names) >= 0:
-            idx = self['list'].getSelectionIndex()
-            self.sel = self.names[idx]
-            if answer is False:
-                self.session.openWithCallback(self.msgipkrmv, MessageBox, (_('Do you really want to remove selected?\n') + self.sel), MessageBox.TYPE_YESNO)
+        # if len(self.names) >= 0:
+        idx = self['list'].getSelectionIndex()
+        self.sel = self.names[idx]
+        self.com = self.ipkpth + '/' + self.sel
+        if answer is False:
+            self.session.openWithCallback(self.msgipkrmv, MessageBox, (_('Do you really want to remove selected?\n') + self.sel), MessageBox.TYPE_YESNO)
+        else:
+            # self.delFile(self.com)
+
+            self['info'].setText(_('... please wait'))
+            self.com = self.ipkpth + '/' + self.sel
+            if fileExists(self.com):
+                os.remove(self.com)
+                # i = len(self.list)
+                # del self.list[0:i]
+                self.list = []
+                self.names = []
+                for x in self.list:
+                    del self.list[0]
+                for x in self.names:
+                    del self.names[0]
+                del self.names[:]
+                del self.list[:]
+                # self.session.openWithCallback(self.refreshlist, MessageBox, (_("%s has been successfully deleted\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
+                self.session.open(MessageBox, (_("%s has been successfully deleted\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
             else:
-                self['info'].setText(_('... please wait'))
-                self.com = self.ipkpth + '/' + self.sel
-                if fileExists(self.com):
-                    os.remove(self.com)
-                    self.session.open(MessageBox, (_("%s has been successfully deleted\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
-                    i = len(self.list)
-                    del self.list[0:i]
-                else:
-                    self.session.open(MessageBox, (_("%s not exist!\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
-            self.refreshlist()
+                self.session.open(MessageBox, (_("%s not exist!\nwait time to refresh the list...") % self.sel), MessageBox.TYPE_INFO, timeout=5)
+            # self.timer = eTimer()
+            # self.timer.start(2500, True)
+            self.close()
 
     def getfreespace(self):
         try:
@@ -2341,7 +2365,7 @@ class tvIPK(Screen):
                         cmd0 = 'tar -xvf ' + self.dest + ' -C /'
                         self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[cmd0, 'sleep 5'], closeOnSuccess=False)
                     elif self.sel.endswith('.deb'):
-                        if os.path.exists('/var/lib/dpkg/info'):
+                        if os.path.exists('/var/lib/dpkg/status'):
                             # apt-get install -f -y
                             cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get -f -y --force-yes install %s > /dev/null' % self.dest
                             self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0], closeOnSuccess=False)
@@ -2399,8 +2423,8 @@ class tvIPK(Screen):
                     self['info1'].text = _('File: %s\nInstallation failed!') % self.dest
 
     def delFile(self, dest):
-        if fileExists(self.dest):
-            os.system('rm -rf ' + self.dest)
+        if fileExists(dest):
+            os.system('rm -rf ' + dest)
         self.refreshlist()
 
     def msgipkinst(self, answer=False):
@@ -2480,7 +2504,7 @@ class tvUpdate(Screen):
             self['pth'].setText('No updates available!')
 
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
         else:
             self.timer.callback.append(self.msgupdate1)
@@ -2511,7 +2535,7 @@ class tvUpdate(Screen):
         if answer is False:
             self.session.openWithCallback(self.msgupdate, MessageBox, _('Do you want update plugin ?\nPlease Reboot GUI after install!'), MessageBox.TYPE_YESNO)
         elif answer:
-            if os.path.exists('/var/lib/dpkg/info'):
+            if os.path.exists('/var/lib/dpkg/status'):
                 com = self.dmlink
                 dom = 'New version ' + self.version
                 tvtemp = '/tmp/tvaddon.tar'
@@ -2610,7 +2634,7 @@ class tvRemove(Screen):
 
         self["list"].l.setList(self.list)
         path = ('/var/lib/opkg/info')
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             path = ('/var/lib/dpkg/info')
         try:
             for root, dirs, files in os.walk(path):
@@ -2631,7 +2655,7 @@ class tvRemove(Screen):
                         if name.startswith('enigma2-plugin-'):
                             self.names.append(str(name))
                 self.names.sort(key=lambda x: x, reverse=False)
-            if len(self.names) > -1:
+            if len(self.names) >= 1:
                 self['info'].setText(_('Please Remove ...'))
                 self['key_green'].show()
             showlist(self.names, self['list'])
@@ -2726,7 +2750,7 @@ class tvConfig(Screen, ConfigListScreen):
     def arckget(self):
         zarcffll = ''
         try:
-            if os.path.exists('/var/lib/dpkg/info'):
+            if os.path.exists('/var/lib/dpkg/status'):
                 zarcffll = os.popen('dpkg --print-architecture | grep -iE "arm|aarch64|mips|cortex|sh4|sh_4"').read().strip('\n\r')
             else:
                 zarcffll = os.popen('opkg print-architecture | grep -iE "arm|aarch64|mips|cortex|h4|sh_4"').read().strip('\n\r')
@@ -2979,7 +3003,7 @@ class pluginx(Screen):
         self.download = None
         self.aborted = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3034,18 +3058,17 @@ class pluginx(Screen):
                     # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-
-                # from . import Downloader
-                # self.download = Downloader.downloadWithProgress(self.com, self.dest)
                 print('self.com:', self.com)
                 print('self.dest:', self.dest)
-                self.download = downloadWithProgress(self.com, self.dest)
-                if os.path.exists('var/lib/dpkg/info'):
-                    return
-                    # self.download.addProgress(self.downloadProgress)
+
+                if os.path.exists('/var/lib/dpkg/info'):
+                    cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
+                    self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                    self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                 else:
+                    self.download = downloadWithProgress(self.com, self.dest)
                     self.download.addProgress(self.downloadProgress2)
-                self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
@@ -3163,7 +3186,7 @@ class plugins_adult(Screen):
         self.download = None
         self.aborted = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3236,17 +3259,18 @@ class plugins_adult(Screen):
                     # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-                # from . import Downloader
-                # self.download = Downloader.downloadWithProgress(self.com, self.dest)
+
                 print('self.com:', self.com)
                 print('self.dest:', self.dest)
-                self.download = downloadWithProgress(self.com, self.dest)
-                if os.path.exists('var/lib/dpkg/info'):
-                    return
-                    # self.download.addProgress(self.downloadProgress)
+
+                if os.path.exists('/var/lib/dpkg/info'):
+                    cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
+                    self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                    self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                 else:
+                    self.download = downloadWithProgress(self.com, self.dest)
                     self.download.addProgress(self.downloadProgress2)
-                self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
@@ -3364,7 +3388,7 @@ class script(Screen):
         self.download = None
         self.aborted = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3420,17 +3444,18 @@ class script(Screen):
                     # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-                # from . import Downloader
-                # self.download = Downloader.downloadWithProgress(self.com, self.dest)
+
                 print('self.com:', self.com)
                 print('self.dest:', self.dest)
-                self.download = downloadWithProgress(self.com, self.dest)
-                if os.path.exists('var/lib/dpkg/info'):
-                    return
-                    # self.download.addProgress(self.downloadProgress)
+
+                if os.path.exists('/var/lib/dpkg/info'):
+                    cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
+                    self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                    self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                 else:
+                    self.download = downloadWithProgress(self.com, self.dest)
                     self.download.addProgress(self.downloadProgress2)
-                self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
@@ -3547,7 +3572,7 @@ class repository(Screen):
         self.download = None
         self.aborted = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
+        if os.path.exists('/var/lib/dpkg/status'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3603,17 +3628,17 @@ class repository(Screen):
                     # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-                # from . import Downloader
-                # self.download = Downloader.downloadWithProgress(self.com, self.dest)
+
                 print('self.com:', self.com)
                 print('self.dest:', self.dest)
-                self.download = downloadWithProgress(self.com, self.dest)
-                if os.path.exists('var/lib/dpkg/info'):
-                    return
-                    # self.download.addProgress(self.downloadProgress)
+                if os.path.exists('/var/lib/dpkg/info'):
+                    cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
+                    self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                    self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                 else:
+                    self.download = downloadWithProgress(self.com, self.dest)
                     self.download.addProgress(self.downloadProgress2)
-                self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
@@ -3837,7 +3862,7 @@ def lcnstart():
     if os.path.exists('/etc/enigma2/lcndb'):
         lcn = LCN()
         lcn.read()
-        if len(lcn.lcnlist) > 0:
+        if len(lcn.lcnlist) >= 1:
             lcn.writeBouquet()
             ReloadBouquets()
     return
