@@ -1,7 +1,6 @@
 <!-- Skin tvAll 09/01/2022 -->
 <screen name="mmall" position="0,0" size="1280,720" title="..::TiVuStream Addon Manager::.." backgroundColor="#ff000000" flags="wfNoBorder">
 	<widget name="title" position="146,50" size="686,30" font="Regular;20" halign="left" valign="center" foregroundColor="#002a79b8" backgroundColor="black" transparent="1" zPosition="5" />
-	
 	<widget name="pform" position="146,503" size="361,60" font="Regular;18" halign="left" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="1" zPosition="5" />
   	<widget name="progress" position="513,526" size="280,33" foregroundColor="#2a70a4" backgroundColor="#202020" transparent="0" zPosition="5" />
   	<widget source="progresstext" render="Label" position="512,526" size="281,33" font="Regular;17" backgroundColor="#202020" transparent="1" halign="center" valign="center" zPosition="6" />

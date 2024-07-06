@@ -55,7 +55,7 @@ import sys
 
 global skin_path, mmkpicon, XStreamity
 PY3 = sys.version_info.major >= 3
-print('Py3: ', PY3)
+# print('Py3: ', PY3)
 
 try:
     from urllib2 import URLError
@@ -238,6 +238,7 @@ class SelectPicons(Screen):
         skin = os.path.join(skin_path, 'mmall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
+        print('self.skin SelectPicons=', self.skin)
         self.setup_title = ('Select zPicons')
         Screen.__init__(self, session)
         self.setTitle(descm_plugin)
@@ -411,6 +412,7 @@ class MMarkPiconScreen(Screen):
         skin = os.path.join(skin_path, 'mmall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
+        print('self.skin MMarkPiconScreen=', self.skin)
         self.setup_title = ('zPicons & Skins')
         Screen.__init__(self, session)
         self.setTitle(descm_plugin)
@@ -657,6 +659,7 @@ class MMarkFolderScreen(Screen):
         skin = os.path.join(skin_path, 'mmall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
+        print('self.skin MMarkPiconScreen=', self.skin)
         self.setup_title = ('zPicons & Skins')
         self['title'] = Label(descm_plugin)
         Screen.__init__(self, session)
@@ -825,6 +828,7 @@ class MMarkFolderSkinZeta(Screen):
         skin = os.path.join(skin_path, 'mmall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
+        print('self.skin MMarkFolderSkinZeta=', self.skin)
         self.setup_title = ('zPicons & Skins')
         Screen.__init__(self, session)
         self.setTitle(descm_plugin)
@@ -1081,6 +1085,7 @@ class mmConfig(Screen, ConfigListScreen):
         skin = os.path.join(skin_path, 'mmConfig.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
+        print('self.skin mmConfig=', self.skin)
         Screen.__init__(self, session)
         self.setup_title = _("Config")
         # self['title'] = Label(descm_plugin)
