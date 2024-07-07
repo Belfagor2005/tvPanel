@@ -3,10 +3,11 @@
 
 ######### Only This 2 lines to edit with new version ######
 version='2.1.5'
-changelog='Fix screen'
+changelog='\nFix screen'
 ##############################################################
 
-TMPPATH=/tmp/tvaddon-main
+TMPPATH=/tmp/tvPanel-main
+FILEPATH=/tmp/main.tar.gz
 
 if [ ! -d /usr/lib64 ]; then
 	PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/tvaddon
@@ -59,6 +60,9 @@ echo ""
 
 ## Remove tmp directory
 [ -r $TMPPATH ] && rm -f $TMPPATH > /dev/null 2>&1
+
+## Remove tmp directory
+[ -r $FILEPATH ] && rm -f $FILEPATH > /dev/null 2>&1
 
 ## Remove old plugin directory
 [ -r $PLUGINPATH ] && rm -rf $PLUGINPATH
