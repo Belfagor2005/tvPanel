@@ -27,5 +27,4 @@ def upd_done():
     # except:
         # popen(cmd01)
     # system('rm -rf /tmp/tvaddon.tar')
-
     return

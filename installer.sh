@@ -2,8 +2,8 @@
 ##setup command=wget -q "--no-check-certificate" https://raw.githubusercontent.com/Belfagor2005/tvPanel/main/installer.sh -O - | /bin/sh
 
 ######### Only This 2 lines to edit with new version ######
-version='2.1.5'
-changelog='\nFix screen'
+version='2.1.6'
+changelog='\nFix Update'
 ##############################################################
 
 TMPPATH=/tmp/tvPanel-main

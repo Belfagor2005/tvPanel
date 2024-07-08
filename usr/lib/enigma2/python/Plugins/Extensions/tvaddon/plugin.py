@@ -56,6 +56,8 @@ import ssl
 import glob
 import six
 import subprocess
+import json
+from datetime import datetime
 global skin_path, mmkpicon, setx, category
 
 
@@ -209,18 +211,22 @@ AgentRequest = RequestAgent()
 global setx
 config.plugins.tvaddon = ConfigSubsection()
 cfg = config.plugins.tvaddon
-
 cfg.strtext = ConfigYesNo(default=True)
 cfg.mmkpicon = ConfigSelection(default='/media/hdd/picon/', choices=piconpathss)
 cfg.strtmain = ConfigYesNo(default=True)
 cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpths())
-cfg.autoupd = ConfigYesNo(default=False)
+# cfg.autoupd = ConfigYesNo(default=False)
 mmkpicon = cfg.mmkpicon.value.strip()
-currversion = '2.1.5'
+
+currversion = '2.1.6'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
 setx = 0
+
+installer_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0JlbGZhZ29yMjAwNS90dlBhbmVsL21haW4vaW5zdGFsbGVyLnNo'
+developer_url = 'aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9CZWxmYWdvcjIwMDUvdHZQYW5lbA=='
+
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24= '
@@ -402,45 +408,13 @@ class Hometv(Screen):
         self['statusred'] = Pixmap()
         self['statusred'].hide()
         self['status'] = Label('Please wait..')
-        self.Update = False
+        # self.Update = False
         if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
             self["key_blue"].show()
             self['key_blue'] = Label(_('tvManager'))
         elif os.path.exists('/usr/lib/enigma2/python/Plugins/PLi/tvManager'):
             self["key_blue"].show()
             self['key_blue'] = Label(_('tvManager'))
-        self.dmlink = ''
-        self.tlink = ''
-        try:
-            fp = ''
-            destr = plugin_path + '/updatePanel.txt'
-            req = Request(upd_path + 'updatePanel.txt')
-            req.add_header('User-Agent', RequestAgent())
-            fp = Utils.str_encode(urlopen(req))
-            fp = fp.read()
-            if os.path.exists(destr):
-                with open(destr, 'w') as f:
-                    f.write(fp)
-                    f.seek(0)
-                    f.close()
-                with open(destr, 'r') as fp:
-                    # count = 0
-                    self.labeltext = ''
-                    s1 = fp.readline()
-                    s2 = fp.readline()
-                    s3 = fp.readline()
-                    s4 = fp.readline()
-                    self.version = s1.strip()
-                    self.tlink = s2.strip()
-                    self.info = s3.strip()
-                    self.dmlink = s4.strip()
-                    fp.close()
-                    # if self.version <= currversion:
-                        # self.Update = False
-                    if self.version > currversion:
-                        self.Update = True
-        except Exception as e:
-            print('error: ', str(e))
         self['title'] = Label(_(title_plug))
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
@@ -510,13 +484,7 @@ class Hometv(Screen):
                 self.menu_list.append(x)
                 idx += 1
         self['list'].setList(list)
-        if self.Update is True:
-            self.timer = eTimer()
-            if os.path.exists('/var/lib/dpkg/status'):
-                self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
-            else:
-                self.timer.callback.append(self.msgupdate1)
-            self.timer.start(300, 1)
+
         self.timer2 = eTimer()
         if os.path.exists('/var/lib/dpkg/status'):
             self.timer2_conn = self.timer2.timeout.connect(self.__layoutFinished)
@@ -606,35 +574,6 @@ class Hometv(Screen):
                 self.session.open(Categories, category)
             return
 
-    def msgupdate1(self):
-        self.session.openWithCallback(self.msgupdate2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-
-    def msgupdate2(self, answer=False):
-        if self.Update is False:
-            return
-        if cfg.autoupd.value is False:
-            return
-        if answer:
-            if os.path.exists('/var/lib/dpkg/status'):
-                com = self.dmlink
-                dom = 'New version ' + self.version
-                tvtemp = '/tmp/tvaddon.tar'
-                import requests
-                r = requests.get(com)
-                with open(tvtemp, 'wb') as f:
-                    f.write(r.content)
-                os.system('sleep 3')
-                self.session.open(tvConsole, title=_('Install Update: %s') % dom, cmdlist='tar -xvf /tmp/tvaddon.tar -C /', finishedCallback=self.myCallback, closeOnSuccess=False)
-            else:
-                com = self.tlink
-                dom = 'New Version ' + self.version
-                self.session.open(tvConsole, title=_('Install Update: %s') % dom, cmdlist='opkg install %s' % com, finishedCallback=self.myCallback, closeOnSuccess=False)
-        else:
-            self.session.open(MessageBox, _("Install Aborted!"),  MessageBox.TYPE_INFO, timeout=3)
-
-    def myCallback(self, result):
-        return
-
 
 class Categories(Screen):
     def __init__(self, session, category):
@@ -658,7 +597,7 @@ class Categories(Screen):
         self['key_yellow'] = Button(_('Uninstall'))
         self["key_blue"] = Button(_("tvManager"))
         self['key_blue'].hide()
-        self.Update = False
+        # self.Update = False
         if os.path.exists('/usr/lib/enigma2/python/Plugins/Extensions/tvManager'):
             self["key_blue"].show()
             self['key_blue'] = Label(_('tvManager'))
@@ -2457,98 +2396,88 @@ class tvUpdate(Screen):
         self['progresstext'] = StaticText()
         self['list'] = tvList([])
         self.Update = False
-        self.dmlink = ''
-        self.tlink = ''
-        try:
-            fp = ''
-            destr = plugin_path + '/update.txt'
-            req = Request(upd_path + 'updatePanel.txt')
-            req.add_header('User-Agent', RequestAgent())
-            fp = Utils.str_encode(urlopen(req))
-            fp = fp.read()
-            with open(destr, 'w') as f:
-                f.write(fp)
-                f.seek(0)
-                f.close()
-            with open(destr, 'r') as fp:
-                self.labeltext = ''
-                s1 = fp.readline()
-                s2 = fp.readline()
-                s3 = fp.readline()
-                s4 = fp.readline()
-                s1 = s1.strip()
-                s2 = s2.strip()
-                s3 = s3.strip()
-                s4 = s4.strip()
-                self.version = s1
-                self.tlink = s2
-                self.info = s3
-                self.dmlink = s4
-                fp.close()
-                if self.version <= currversion:
-                    self['info'].setText(title_plug)
-                    self['pth'].setText('No updates available!\n') + self.info
-                    self.Update = False
-                else:
-                    updatestr = title_plug
-                    cvrs = 'New update ' + s1 + ' is available!! '
-                    cvrt = 'Updates: ' + self.info + '\nPress yellow button to start updating'
-                    self.Update = True
-                    self['info'].setText(updatestr)
-                    self['pth'].setText(cvrs)
-                    self['pform'].setText(cvrt)
-                    self['key_green'].show()
-        except:
-            self.Update = False
-            self['info'].setText(title_plug)
-            self['pth'].setText('No updates available!')
 
         self.timer = eTimer()
         if os.path.exists('/var/lib/dpkg/status'):
-            self.timer_conn = self.timer.timeout.connect(self.msgupdate1)
+            self.timer_conn = self.timer.timeout.connect(self.check_vers)
         else:
-            self.timer.callback.append(self.msgupdate1)
-        self.timer.start(1000, 1)
+            self.timer.callback.append(self.check_vers)
+        self.timer.start(500, 1)
+
         self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
-                                     'DirectionActions'], {'ok': self.close,
-                                                           'cancel': self.close,
-                                                           'green': self.msgipkrst1,
-                                                           'red': self.close,
-                                                           'back': self.close,
-                                                           'yellow': self.msgupdate1}, -1)
+                                     'DirectionActions',
+                                     'HotkeyActions',
+                                     'InfobarEPGActions',
+                                     'ChannelSelectBaseActions'], {'ok': self.close,
+                                                                   'cancel': self.close,
+                                                                   'green': self.msgipkrst1,
+                                                                   'red': self.close,
+                                                                   'back': self.close,
+                                                                   'yellow': self.update_me,
+                                                                   'yellow_long': self.update_dev,
+                                                                   'info_long': self.update_dev,
+                                                                   'infolong': self.update_dev,
+                                                                   'showEventInfoPlugin': self.update_dev,
+                                                                   }, -1)
 
-    def msgupdate1(self, answer=False):
-        if self.Update is False:
-            return
-        if cfg.autoupd.value is False:
-            return
-        if answer is False:
-            self.session.openWithCallback(self.msgupdate1, MessageBox, (_('New update available!!')), MessageBox.TYPE_YESNO)
+    def check_vers(self):
+        remote_version = '0.0'
+        remote_changelog = ''
+        req = Utils.Request(Utils.b64decoder(installer_url), headers={'User-Agent': 'Mozilla/5.0'})
+        page = Utils.urlopen(req).read()
+        if PY3:
+            data = page.decode("utf-8")
         else:
-            self.msgupdate(True)
+            data = page.encode("utf-8")
+        if data:
+            lines = data.split("\n")
+            for line in lines:
+                if line.startswith("version"):
+                    remote_version = line.split("=")
+                    remote_version = line.split("'")[1]
+                if line.startswith("changelog"):
+                    remote_changelog = line.split("=")
+                    remote_changelog = line.split("'")[1]
+                    break
+        # if float(currversion) < float(remote_version):
+        if currversion < remote_version:
+            self.new_version = remote_version
+            self.new_changelog = remote_changelog
+            updatestr = title_plug
+            cvrs = 'New version %s is available' % self.new_version
+            cvrt = 'Changelog: %s\n\nPress yellow button to start updating' % self.new_changelog
+            self.Update = True
+            self['info'].setText(updatestr)
+            self['pth'].setText(cvrs)
+            self['pform'].setText(cvrt)
+            self['key_green'].show()
 
-    def msgupdate(self, answer=False):
-        if self.Update is False:
-            return
-        if answer is False:
-            self.session.openWithCallback(self.msgupdate, MessageBox, _('Do you want update plugin ?\nPlease Reboot GUI after install!'), MessageBox.TYPE_YESNO)
-        elif answer:
-            if os.path.exists('/var/lib/dpkg/status'):
-                com = self.dmlink
-                dom = 'New version ' + self.version
-                tvtemp = '/tmp/tvaddon.tar'
-                import requests
-                r = requests.get(com)
-                with open(tvtemp, 'wb') as f:
-                    f.write(r.content)
-                os.system('sleep 3')
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['tar -xvf /tmp/tvaddon.tar -C /'], finishedCallback=self.msgipkrst1, closeOnSuccess=False)
-            else:
-                com = self.tlink
-                dom = 'New Version ' + self.version
-                self.session.open(tvConsole, _('Install Update: %s') % dom, ['opkg install --force-reinstall %s' % com], finishedCallback=self.msgipkrst1, closeOnSuccess=False)
+    def update_me(self):
+        if self.Update is True:
+            self.session.openWithCallback(self.install_update, MessageBox, _("New version %s is available.\n\nChangelog: %s \n\nDo you want to install it now?") % (self.new_version, self.new_changelog), MessageBox.TYPE_YESNO)
+        else:
+            self.session.open(MessageBox, _("Congrats! You already have the latest version..."),  MessageBox.TYPE_INFO, timeout=4)
+
+    def update_dev(self):
+        req = Utils.Request(Utils.b64decoder(developer_url), headers={'User-Agent': 'Mozilla/5.0'})
+        page = Utils.urlopen(req).read()
+        data = json.loads(page)
+        remote_date = data['pushed_at']
+        strp_remote_date = datetime.strptime(remote_date, '%Y-%m-%dT%H:%M:%SZ')
+        remote_date = strp_remote_date.strftime('%Y-%m-%d')
+        self.session.openWithCallback(self.install_update, MessageBox, _("Do you want to install update ( %s ) now?") % (remote_date), MessageBox.TYPE_YESNO)
+
+    def install_update(self, answer=False):
+        if answer:
+            self.session.open(tvConsole, 'Upgrading...', cmdlist=('wget -q "--no-check-certificate" ' + Utils.b64decoder(installer_url) + ' -O - | /bin/sh'), finishedCallback=self.myCallback, closeOnSuccess=False)
+        else:
+            self.session.open(MessageBox, _("Update Aborted!"),  MessageBox.TYPE_INFO, timeout=3)
+
+    def myCallback(self, result=None):
+        print('result:', result)
+        return
 
     def msgipkrst1(self, answer=False):
         if answer is False:
@@ -2785,7 +2714,7 @@ class tvConfig(Screen, ConfigListScreen):
     def createSetup(self):
         self.editListEntry = None
         self.list = []
-        self.list.append(getConfigListEntry(_('Auto Update Plugin'), cfg.autoupd, _("If Active: Automatic Update Plugin")))
+        # self.list.append(getConfigListEntry(_('Auto Update Plugin'), cfg.autoupd, _("If Active: Automatic Update Plugin")))
         self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), cfg.mmkpicon, _("Configure folder containing picons files")))
         self.list.append(getConfigListEntry(_('Path Manual IPK'), cfg.ipkpth, _("Path to the addon installation folder")))
         self.list.append(getConfigListEntry(_('Link in Extensions Menu'), cfg.strtext, _("Link in Extensions button")))
@@ -3723,34 +3652,34 @@ class repository(Screen):
                 self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 
-class AutoStartTimertvadd:
+# class AutoStartTimertvadd:
 
-    def __init__(self, session):
-        self.session = session
-        print("*** running AutoStartTimertvadd ***")
-        if _firstStarttvsadd:
-            self.runUpdate()
+    # def __init__(self, session):
+        # self.session = session
+        # print("*** running AutoStartTimertvadd ***")
+        # if _firstStarttvsadd:
+            # self.runUpdate()
 
-    def runUpdate(self):
-        print("*** running update ***")
-        global _firstStarttvsadd
-        try:
-            from . import Update
-            Update.upd_done()
-            _firstStarttvsadd = False
-        except Exception as e:
-            print('error tvaddon', str(e))
+    # def runUpdate(self):
+        # print("*** running update ***")
+        # global _firstStarttvsadd
+        # try:
+            # from . import Update
+            # Update.upd_done()
+            # _firstStarttvsadd = False
+        # except Exception as e:
+            # print('error tvaddon', str(e))
 
 
-def autostart(reason, session=None, **kwargs):
-    print("*** running autostart ***")
-    global autoStartTimertvsadd
-    global _firstStarttvsadd
-    if reason == 0:
-        if session is not None:
-            _firstStarttvsadd = True
-            autoStartTimertvsadd = AutoStartTimertvadd(session)
-    return
+# def autostart(reason, session=None, **kwargs):
+    # print("*** running autostart ***")
+    # global autoStartTimertvsadd
+    # global _firstStarttvsadd
+    # if reason == 0:
+        # if session is not None:
+            # _firstStarttvsadd = True
+            # autoStartTimertvsadd = AutoStartTimertvadd(session)
+    # return
 
 
 def main(session, **kwargs):
@@ -3782,7 +3711,7 @@ def mainm(session, **kwargs):
 
 
 def getversioninfo():
-    currmmversion = '1.3'
+    currmmversion = '1.0'
     version_file = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/versionmm'
     if os.path.exists(version_file):
         try:
@@ -3809,8 +3738,8 @@ def Plugins(**kwargs):
         ico_path = plugin_path + '/res/pics/logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=ico_path, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_MENU, icon=ico_path, fnc=cfgmain)
-    result = [PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
-              PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main),
+    result = [PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main),
+              # PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
               PluginDescriptor(name=titlem_plug, description=descm_plugin, where=PluginDescriptor.WHERE_PLUGINMENU, icon=icom_path, fnc=mainm)]
     if cfg.strtext.value:
         result.append(extDescriptor)
