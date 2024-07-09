@@ -60,40 +60,17 @@ class DownloadWithProgress:
             self.timer.callback.append(self.reportProgress)
         self.timer.start(500, 1)
 
-    # def start(self):
-        # try:
-            # request = Request(self.url, None, {"User-agent": RequestAgent()})
-            # feedFile = urlopen(request)
-            # metaData = feedFile.headers
-            # self.totalSize = int(metaData.get("Content-Length", 0))
-            # # Set the transfer block size to a minimum of 1K and a maximum of 1% of the file size (or 128KB if the size is unknown) else use 64K.
-            # self.blockSize = max(min(self.totalSize // 100, 1024), 131071) if self.totalSize else 65536
-        # except OSError as err:
-            # if self.errorCallback:
-                # self.errorCallback(err)
-            # return self
-        # reactor.callInThread(self.run)
-        # return self
-
     def start(self):
         try:
-            request = Request(self.url, None, {"User-agent": RequestAgent()}, stream=True)
+            request = Request(self.url, None, {"User-agent": RequestAgent()})
             feedFile = urlopen(request)
             metaData = feedFile.headers
             self.totalSize = int(metaData.get("Content-Length", 0))
-            # Set the transfer block size to a minimum of 1K and a maximum of 1% of the file size (or 128KB if the size is unknown) else use 64K.
             self.blockSize = max(min(self.totalSize // 100, 1024), 131071) if self.totalSize else 65536
-        # except requests.exceptions.RequestException:
-            # print("Exception occurred on 'API requests post' procedure.")
-            # counter += 1
-            # continue
         except OSError as err:
             if self.errorCallback:
                 self.errorCallback(err)
             return self
-        except Exception as e:
-            print("Exception {0} occurred".format(e))
-            # continue
         reactor.callInThread(self.run)
         return self
 
@@ -118,10 +95,6 @@ class DownloadWithProgress:
         except OSError as err:
             if self.errorCallback:
                 self.errorCallback(err)
-            return False
-        except Exception as e:
-            print("Exception {0} occurred".format(e))
-            # continue
         return False
 
     def stop(self):

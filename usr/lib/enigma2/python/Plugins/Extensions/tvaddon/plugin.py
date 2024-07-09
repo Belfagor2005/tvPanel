@@ -40,8 +40,8 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import (fileExists, resolveFilename)
 # from Screens.Processing import Processing
-from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
-from enigma import loadPNG, gFont
+from enigma import (RT_HALIGN_LEFT, RT_VALIGN_CENTER)
+from enigma import (loadPNG, gFont)
 from enigma import eTimer
 from enigma import getDesktop
 from enigma import (eListboxPythonMultiContent, eConsoleAppContainer)
@@ -267,7 +267,7 @@ elif screenwidth.width() == 1920:
     skin_path = plugin_path + '/res/skins/fhd/'
 else:
     skin_path = plugin_path + '/res/skins/hd/'
-if os.path.exists('/var/lib/dpkg/status'):
+if os.path.exists('/var/lib/dpkg/info'):
     skin_path = skin_path + 'dreamOs/'
 
 os.system('rm -fr ' + plugin_path + '/temp/*')
@@ -473,7 +473,7 @@ class Hometv(Screen):
             del self.menu_list[0]
         list = []
         idx = 0
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             for x in Panel_deb:
                 list.append(DailyListEntry(x, idx))
                 self.menu_list.append(x)
@@ -486,7 +486,7 @@ class Hometv(Screen):
         self['list'].setList(list)
 
         self.timer2 = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer2_conn = self.timer2.timeout.connect(self.__layoutFinished)
         else:
             self.timer2.callback.append(self.__layoutFinished)
@@ -587,8 +587,8 @@ class Categories(Screen):
         self['list'] = tvList([])
         self.category = category
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
-        self['pform'] = Label('')
+        self['pth'] = Label()
+        self['pform'] = Label()
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
@@ -607,7 +607,7 @@ class Categories(Screen):
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self._gotPageLoad)
         else:
             self.timer.callback.append(self._gotPageLoad)
@@ -684,12 +684,12 @@ class tvDailySetting(Screen):
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-        self['pth'] = Label('')
-        self['pform'] = Label('')
+        self['pth'] = Label()
+        self['pform'] = Label()
         self['info'] = Label(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
+        self['key_yellow'] = Button()
         self['key_yellow'].hide()
         self['key_green'].hide()
         self.LcnOn = False
@@ -697,7 +697,7 @@ class tvDailySetting(Screen):
             self['key_yellow'].show()
             self['key_yellow'] = Button('Lcn')
             self.LcnOn = True
-        self["key_blue"] = Button('')
+        self["key_blue"] = Button()
         self['key_blue'].hide()
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions'], {'ok': self.okRun,
@@ -837,21 +837,21 @@ class SettingVhan(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT VHANNIBAL.NET SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -946,21 +946,21 @@ class SettingVhan2(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT VHANNIBAL.NET SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1081,21 +1081,21 @@ class Milenka61(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT LINUXSAT-SUPPORT SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1181,21 +1181,21 @@ class SettingManutek(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT SAT.TECHNOLOGY SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1290,21 +1290,21 @@ class SettingMorpheus(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT MORPHEUS883.ALTERVISTA.ORG SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1401,21 +1401,21 @@ class SettingCiefp(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT GITHUB.COM/CIEFP SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1511,21 +1511,21 @@ class SettingBi58(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT LINUXSAT-SUPPORT SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1610,21 +1610,21 @@ class SettingPredrag(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT LINUXSAT-SUPPORT SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1709,21 +1709,21 @@ class SettingCyrus(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pform'] = Label('PLEASE VISIT CYRUSSETTINGS.COM SITE')
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
         self.downloading = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -1820,16 +1820,16 @@ class tvInstall(Screen):
         Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.selection = selection
-        self['info'] = Label('')
-        self['pth'] = Label('')
-        self['pform'] = Label('')
+        self['info'] = Label()
+        self['pth'] = Label()
+        self['pform'] = Label()
 
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
 
-        # self['progress'].setRange((0, 100))
-        # self['progress'].setValue(0)
+        self['progress'].setRange((0, 100))
+        self['progress'].setValue(0)
 
         list = []
         list.sort()
@@ -1856,7 +1856,7 @@ class tvInstall(Screen):
         self['key_red'] = Button(_('Back'))
         self['key_green'] = Button(_('Install'))
         self['key_yellow'] = Button(_('Download'))
-        self["key_blue"] = Button('')
+        self["key_blue"] = Button()
         self['key_blue'].hide()
         self['key_green'].hide()
         self['actions'] = ActionMap(['OkCancelActions',
@@ -1898,7 +1898,7 @@ class tvInstall(Screen):
         if self.com is not None:
             extensionlist = self.com.split('.')
             extension = extensionlist[-1]  # .lower()
-            if len(extensionlist) >= 1:
+            if len(extensionlist) > 1:
                 tar = extensionlist[-2]
             if extension in ["gz", "bz2"] and tar == "tar":
                 self.command = ['']
@@ -1915,7 +1915,7 @@ class tvInstall(Screen):
                 self['info'].setText(_('Installation done !!!'))
 
             elif extension == "deb":
-                if not os.path.exists('/var/lib/dpkg/status'):
+                if not os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
@@ -1929,7 +1929,7 @@ class tvInstall(Screen):
                     self['info'].setText(_('Installation done !!!'))
 
             elif extension == "ipk":
-                if os.path.exists('/var/lib/dpkg/status'):
+                if os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
@@ -1943,7 +1943,7 @@ class tvInstall(Screen):
                     self['info'].setText(_('Installation done !!!'))
             elif self.com.endswith('.zip'):
                 if 'setting' in self.dom.lower():
-                    if not os.path.exists('/var/lib/dpkg/status'):
+                    if not os.path.exists('/var/lib/dpkg/info'):
                         setx = 1
                         terrestrial()
                     if os.path.exists("/tmp/unzipped"):
@@ -2051,7 +2051,7 @@ class tvInstall(Screen):
                 extensionlist = self.com.split('.')
                 extension = extensionlist[-1].lower()
 
-                if len(extensionlist) >= 1:
+                if len(extensionlist) > 1:
                     tar = extensionlist[-2].lower()
                 if extension in ["gz", "bz2"] and tar == "tar":
                     self.command = ['']
@@ -2067,42 +2067,50 @@ class tvInstall(Screen):
                     self['info'].setText(_('Installation done !!!'))
                     return
 
-                if extension == "deb" and not os.path.exists('/var/lib/dpkg/status'):
+                if extension == "deb" and not os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Download canceled!'))
                     return
 
-                elif extension == ".ipk" and os.path.exists('/var/lib/dpkg/status'):
+                elif extension == ".ipk" and os.path.exists('/var/lib/dpkg/info'):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Download canceled!'))
                     return
                 else:
-                    if os.path.exists('/var/lib/dpkg/status'):
+                    if os.path.exists('/var/lib/dpkg/info'):
                         cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)]
                         print('command:', cmd)
                         # self.session.open(tvConsole, _('Downloading: %s') % self.dom, cmd[0], closeOnSuccess=False)
                         subprocess.Popen(cmd[0], shell=True, executable='/bin/bash')
                         self.session.openWithCallback(self.tvIPK, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                    else:
-                        self.download = downloadWithProgress(self.com, self.dest)
-                        self.download.addProgress(self.downloadProgress2)
-                        self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                        return
+                    # else:
+                    self.download = downloadWithProgress(self.com, self.dest)
+                    self.download.addProgress(self.downloadProgress)
+                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
 
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
 
     # mmax
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # try:
+            # self['info'].setText(_('Download...'))
+            # self["progress"].show()
+            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # except ZeroDivisionError:
+            # self['info'].setText(_('Download Failed!'))
+            # self["progress"].hide()
+            # self['progress'].setRange((0, 100))
+            # self['progress'].setValue(0)
+
     def downloadProgress(self, recvbytes, totalbytes):
-        try:
-            self['info'].setText(_('Download...'))
-            self["progress"].show()
-            self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        except ZeroDivisionError:
-            self['info'].setText(_('Download Failed!'))
-            self["progress"].hide()
-            self['progress'].setRange((0, 100))
-            self['progress'].setValue(0)
+        self['info'].setText(_('Download in progress...'))
+        self["progress"].show()
+        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        self.last_recvbytes = recvbytes
 
     # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
@@ -2253,8 +2261,6 @@ class tvIPK(Screen):
         if answer is False:
             self.session.openWithCallback(self.msgipkrmv, MessageBox, (_('Do you really want to remove selected?\n') + self.sel), MessageBox.TYPE_YESNO)
         else:
-            # self.delFile(self.com)
-
             self['info'].setText(_('... please wait'))
             self.com = self.ipkpth + '/' + self.sel
             if fileExists(self.com):
@@ -2304,7 +2310,7 @@ class tvIPK(Screen):
                         cmd0 = 'tar -xvf ' + self.dest + ' -C /'
                         self.session.open(tvConsole, title='TAR GZ Local Installation', cmdlist=[cmd0, 'sleep 5'], closeOnSuccess=False)
                     elif self.sel.endswith('.deb'):
-                        if os.path.exists('/var/lib/dpkg/status'):
+                        if os.path.exists('/var/lib/dpkg/info'):
                             # apt-get install -f -y
                             cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";apt-get -f -y --force-yes install %s > /dev/null' % self.dest
                             self.session.open(tvConsole, title='DEB Local Installation', cmdlist=[cmd0], closeOnSuccess=False)
@@ -2317,7 +2323,7 @@ class tvIPK(Screen):
                             cmd = ['unzip -o -q %s -d %s' % (self.dest, str(mmkpicon))]
                             self.session.open(tvConsole, _('Installing: %s') % self.dest, cmdlist=[cmd], closeOnSuccess=False)
                         elif 'setting' in self.sel.lower():
-                            if not os.path.exists('/var/lib/dpkg/status'):
+                            if not os.path.exists('/var/lib/dpkg/info'):
                                 global setx
                                 setx = 1
                                 terrestrial()
@@ -2385,10 +2391,10 @@ class tvUpdate(Screen):
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Restart'))
-        self["key_blue"] = Button('')
+        self["key_blue"] = Button()
         self['key_blue'].hide()
         self['key_green'].hide()
-        self['info'] = Label('')
+        self['info'] = Label()
         self['pth'] = Label('Congrats! You already have the latest version...')
         self['pform'] = Label('Press info long for force Update')
         self['progress'] = ProgressBar()
@@ -2398,7 +2404,7 @@ class tvUpdate(Screen):
         self.Update = False
 
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.check_vers)
         else:
             self.timer.callback.append(self.check_vers)
@@ -2441,10 +2447,12 @@ class tvUpdate(Screen):
                     remote_changelog = line.split("=")
                     remote_changelog = line.split("'")[1]
                     break
+        self.new_version = remote_version
+        self.new_changelog = remote_changelog
         # if float(currversion) < float(remote_version):
         if currversion < remote_version:
-            self.new_version = remote_version
-            self.new_changelog = remote_changelog
+            # self.new_version = remote_version
+            # self.new_changelog = remote_changelog
             updatestr = title_plug
             cvrs = 'New version %s is available' % self.new_version
             cvrt = 'Changelog: %s\n\nPress yellow button to start updating' % self.new_changelog
@@ -2512,11 +2520,11 @@ class tvRemove(Screen):
         self['key_green'] = Button(_('Uninstall'))
         self['key_yellow'] = Button(_('Restart'))
         self['key_red'] = Button(_('Back'))
-        self["key_blue"] = Button('')
+        self["key_blue"] = Button()
         self['key_blue'].hide()
         self['key_green'].hide()
         self['title'] = Label(title_plug)
-        self['pform'] = Label('')
+        self['pform'] = Label()
         self['info'] = Label('Select')
         self['pth'] = Label('Remove not necessary addon')
         self['progress'] = ProgressBar()
@@ -2563,7 +2571,7 @@ class tvRemove(Screen):
 
         self["list"].l.setList(self.list)
         path = ('/var/lib/opkg/info')
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             path = ('/var/lib/dpkg/info')
         try:
             for root, dirs, files in os.walk(path):
@@ -2646,9 +2654,9 @@ class tvConfig(Screen, ConfigListScreen):
         self.session = session
         self.setTitle(self.setup_title)
         self['description'] = Label('Config mmPicons Panel')
-        self["paypal"] = Label('')
+        self["paypal"] = Label()
         self['info'] = Label(_('SELECT YOUR CHOICE'))
-        # self['info'] = ScrollLabel('')
+        # self['info'] = ScrollLabel()
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Save'))
         self['key_red'] = Button(_('Back'))
@@ -2679,7 +2687,7 @@ class tvConfig(Screen, ConfigListScreen):
     def arckget(self):
         zarcffll = ''
         try:
-            if os.path.exists('/var/lib/dpkg/status'):
+            if os.path.exists('/var/lib/dpkg/info'):
                 zarcffll = os.popen('dpkg --print-architecture | grep -iE "arm|aarch64|mips|cortex|sh4|sh_4"').read().strip('\n\r')
             else:
                 zarcffll = os.popen('opkg print-architecture | grep -iE "arm|aarch64|mips|cortex|h4|sh_4"').read().strip('\n\r')
@@ -2771,29 +2779,58 @@ class tvConfig(Screen, ConfigListScreen):
         else:
             pass
 
-    def openDirectoryBrowser(self, path):
+    def openDirectoryBrowser(self, path, itemcfg):
         try:
-            self.session.openWithCallback(
-                self.openDirectoryBrowserCB,
-                LocationBox,
-                windowTitle=_("Choose Directory:"),
-                text=_("Choose directory"),
-                currDir=str(path),
-                bookmarks=config.movielist.videodirs,
-                autoAdd=False,
-                editDir=True,
-                inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/var"],
-                minFree=15)
-        except Exception as e:
-            print('error: ', str(e))
+            callback_map = {
+                "pthmovie": self.openDirectoryBrowserCB(cfg.pthmovie),
+                "pthxmlfile": self.openDirectoryBrowserCB(cfg.pthxmlfile),
+                "pthpicon": self.openDirectoryBrowserCB(cfg.pthpicon)
+            }
 
-    def openDirectoryBrowserCB(self, path):
-        if path is not None:
-            if self.setting == 'mmkpicon':
-                cfg.mmkpicon.setValue(path)
-            if self.setting == 'ipkpth':
-                cfg.ipkpth.setValue(path)
-        return
+            if itemcfg in callback_map:
+                self.session.openWithCallback(
+                    callback_map[itemcfg],
+                    LocationBox,
+                    windowTitle=_("Choose Directory:"),
+                    text=_("Choose directory"),
+                    currDir=str(path),
+                    bookmarks=config.movielist.videodirs,
+                    autoAdd=True,
+                    editDir=True,
+                    inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/usr", "/var"]
+                )
+        except Exception as e:
+            print(e)
+
+    def openDirectoryBrowserCB(self, config_entry):
+        def callback(path):
+            if path is not None:
+                config_entry.setValue(path)
+        return callback
+
+    # def openDirectoryBrowser(self, path):
+        # try:
+            # self.session.openWithCallback(
+                # self.openDirectoryBrowserCB,
+                # LocationBox,
+                # windowTitle=_("Choose Directory:"),
+                # text=_("Choose directory"),
+                # currDir=str(path),
+                # bookmarks=config.movielist.videodirs,
+                # autoAdd=False,
+                # editDir=True,
+                # inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/var"],
+                # minFree=15)
+        # except Exception as e:
+            # print('error: ', str(e))
+
+    # def openDirectoryBrowserCB(self, path):
+        # if path is not None:
+            # if self.setting == 'mmkpicon':
+                # cfg.mmkpicon.setValue(path)
+            # if self.setting == 'ipkpth':
+                # cfg.ipkpth.setValue(path)
+        # return
 
     def KeyText(self):
         sel = self['config'].getCurrent()
@@ -2843,16 +2880,16 @@ class mainkodilite(Screen):
         Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self['list'] = tvList([])
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pth'].setText(_('Support on'))
-        self['pform'] = Label('')
+        self['pform'] = Label()
         self['pform'].setText(_('linuxsat-support.com '))
-        self['info'] = Label('')
+        self['info'] = Label()
         self['info'].setText(_('Loading data... Please wait'))
         self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
@@ -2896,7 +2933,11 @@ class mainkodilite(Screen):
         elif sel == _('SCRIPT') or sel == 2:
             self.session.open(script)
         elif sel == _('REPOSITORY') or sel == 3:
+                                
+                                    
+                                                             
             self.session.open(repository)
+                                                    
 
 
 class pluginx(Screen):
@@ -2911,20 +2952,21 @@ class pluginx(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pth'].setText(_('Support on'))
-        self['pform'] = Label('')
+        self['pform'] = Label()
         self['pform'].setText(_('linuxsat-support.com '))
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
+                      
         self.downloading = False
         self.error_message = ""
         self.last_recvbytes = 0
@@ -2932,7 +2974,7 @@ class pluginx(Screen):
         self.download = None
         self.aborted = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -2973,6 +3015,12 @@ class pluginx(Screen):
 
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
+                 
+                  
+                                              
+                              
+                            
+                                                  
 
     def okRun1(self, answer):
         if answer:
@@ -2994,25 +3042,32 @@ class pluginx(Screen):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                else:
-                    self.download = downloadWithProgress(self.com, self.dest)
-                    self.download.addProgress(self.downloadProgress2)
-                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                    return
+                # else:
+                self.download = downloadWithProgress(self.com, self.dest)
+                self.download.addProgress(self.downloadProgress)
+                self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
-
     # mmax
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # try:
+            # self['info'].setText(_('Download...'))
+            # self["progress"].show()
+            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # except ZeroDivisionError:
+            # self['info'].setText(_('Download Failed!'))
+            # self["progress"].hide()
+            # self['progress'].setRange((0, 100))
+            # self['progress'].setValue(0)
+
     def downloadProgress(self, recvbytes, totalbytes):
-        try:
-            self['info'].setText(_('Download...'))
-            self["progress"].show()
-            self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        except ZeroDivisionError:
-            self['info'].setText(_('Download Failed!'))
-            self["progress"].hide()
-            self['progress'].setRange((0, 100))
-            self['progress'].setValue(0)
+        self['info'].setText(_('Download in progress...'))
+        self["progress"].show()
+        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        self.last_recvbytes = recvbytes
 
     # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
@@ -3042,7 +3097,7 @@ class pluginx(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + self.error_message
+        info = 'Download Failed!!! ' + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
@@ -3094,17 +3149,17 @@ class plugins_adult(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pth'].setText(_('Support on'))
-        self['pform'] = Label('')
+        self['pform'] = Label()
         self['pform'].setText(_('linuxsat-support.com '))
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
@@ -3115,7 +3170,7 @@ class plugins_adult(Screen):
         self.download = None
         self.aborted = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3196,25 +3251,32 @@ class plugins_adult(Screen):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                else:
-                    self.download = downloadWithProgress(self.com, self.dest)
-                    self.download.addProgress(self.downloadProgress2)
-                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                    return
+                # else:
+                self.download = downloadWithProgress(self.com, self.dest)
+                self.download.addProgress(self.downloadProgress)
+                self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
-
     # mmax
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # try:
+            # self['info'].setText(_('Download...'))
+            # self["progress"].show()
+            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # except ZeroDivisionError:
+            # self['info'].setText(_('Download Failed!'))
+            # self["progress"].hide()
+            # self['progress'].setRange((0, 100))
+            # self['progress'].setValue(0)
+
     def downloadProgress(self, recvbytes, totalbytes):
-        try:
-            self['info'].setText(_('Download...'))
-            self["progress"].show()
-            self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        except ZeroDivisionError:
-            self['info'].setText(_('Download Failed!'))
-            self["progress"].hide()
-            self['progress'].setRange((0, 100))
-            self['progress'].setValue(0)
+        self['info'].setText(_('Download in progress...'))
+        self["progress"].show()
+        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        self.last_recvbytes = recvbytes
 
     # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
@@ -3244,7 +3306,7 @@ class plugins_adult(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + self.error_message
+        info = 'Download Failed!!! ' + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
@@ -3296,17 +3358,17 @@ class script(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pth'].setText(_('Support on'))
-        self['pform'] = Label('')
+        self['pform'] = Label()
         self['pform'].setText(_('linuxsat-support.com '))
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
@@ -3317,7 +3379,7 @@ class script(Screen):
         self.download = None
         self.aborted = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3381,25 +3443,33 @@ class script(Screen):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                else:
-                    self.download = downloadWithProgress(self.com, self.dest)
-                    self.download.addProgress(self.downloadProgress2)
-                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                    return
+                # else:
+                self.download = downloadWithProgress(self.com, self.dest)
+                self.download.addProgress(self.downloadProgress)
+                self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
     # mmax
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # try:
+            # self['info'].setText(_('Download...'))
+            # self["progress"].show()
+            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # except ZeroDivisionError:
+            # self['info'].setText(_('Download Failed!'))
+            # self["progress"].hide()
+            # self['progress'].setRange((0, 100))
+            # self['progress'].setValue(0)
+
     def downloadProgress(self, recvbytes, totalbytes):
-        try:
-            self['info'].setText(_('Download...'))
-            self["progress"].show()
-            self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        except ZeroDivisionError:
-            self['info'].setText(_('Download Failed!'))
-            self["progress"].hide()
-            self['progress'].setRange((0, 100))
-            self['progress'].setValue(0)
+        self['info'].setText(_('Download in progress...'))
+        self["progress"].show()
+        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        self.last_recvbytes = recvbytes
 
     # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
@@ -3429,7 +3499,7 @@ class script(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + self.error_message
+        info = 'Download Failed!!! ' + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
@@ -3480,17 +3550,17 @@ class repository(Screen):
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label('')
+        self['pth'] = Label()
         self['pth'].setText(_('Support on'))
-        self['pform'] = Label('')
+        self['pform'] = Label()
         self['pform'].setText(_('linuxsat-support.com '))
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button('')
-        self["key_blue"] = Button('')
+        self['key_yellow'] = Button()
+        self["key_blue"] = Button()
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
@@ -3501,7 +3571,7 @@ class repository(Screen):
         self.download = None
         self.aborted = False
         self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/status'):
+        if os.path.exists('/var/lib/dpkg/info'):
             self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
         else:
             self.timer.callback.append(self.downxmlpage)
@@ -3564,25 +3634,33 @@ class repository(Screen):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                else:
-                    self.download = downloadWithProgress(self.com, self.dest)
-                    self.download.addProgress(self.downloadProgress2)
-                    self.download.start().addCallback(self.install).addErrback(self.download_failed)
+                    return
+                #else:
+                self.download = downloadWithProgress(self.com, self.dest)
+                self.download.addProgress(self.downloadProgress)
+                self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
 
     # mmax
+    # def downloadProgress(self, recvbytes, totalbytes):
+        # try:
+            # self['info'].setText(_('Download...'))
+            # self["progress"].show()
+            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
+            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
+        # except ZeroDivisionError:
+            # self['info'].setText(_('Download Failed!'))
+            # self["progress"].hide()
+            # self['progress'].setRange((0, 100))
+            # self['progress'].setValue(0)
+
     def downloadProgress(self, recvbytes, totalbytes):
-        try:
-            self['info'].setText(_('Download...'))
-            self["progress"].show()
-            self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        except ZeroDivisionError:
-            self['info'].setText(_('Download Failed!'))
-            self["progress"].hide()
-            self['progress'].setRange((0, 100))
-            self['progress'].setValue(0)
+        self['info'].setText(_('Download in progress...'))
+        self["progress"].show()
+        self['progress'].value = int(100 * self.last_recvbytes / float(totalbytes))
+        self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
+        self.last_recvbytes = recvbytes
 
     # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
@@ -3612,7 +3690,7 @@ class repository(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + self.error_message
+        info = 'Download Failed!!! ' + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
@@ -3734,7 +3812,7 @@ if not Utils.DreamOS():
 
 def Plugins(**kwargs):
     ico_path = 'logo.png'
-    if not os.path.exists('/var/lib/dpkg/status'):
+    if not os.path.exists('/var/lib/dpkg/info'):
         ico_path = plugin_path + '/res/pics/logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=ico_path, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_MENU, icon=ico_path, fnc=cfgmain)
