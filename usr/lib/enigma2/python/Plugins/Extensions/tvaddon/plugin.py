@@ -2771,20 +2771,19 @@ class tvConfig(Screen, ConfigListScreen):
         if sel and sel == cfg.mmkpicon:
             self.setting = 'mmkpicon'
             mmkpth = cfg.mmkpicon.value
-            self.openDirectoryBrowser(mmkpth)
+            self.openDirectoryBrowser(mmkpth, 'pthpicon')
         if sel and sel == cfg.ipkpth:
             self.setting = 'ipkpth'
             ipkpth = cfg.ipkpth.value
-            self.openDirectoryBrowser(ipkpth)
+            self.openDirectoryBrowser(ipkpth, 'ipkpth')
         else:
             pass
 
     def openDirectoryBrowser(self, path, itemcfg):
         try:
             callback_map = {
-                "pthmovie": self.openDirectoryBrowserCB(cfg.pthmovie),
-                "pthxmlfile": self.openDirectoryBrowserCB(cfg.pthxmlfile),
-                "pthpicon": self.openDirectoryBrowserCB(cfg.pthpicon)
+                "ipkpth": self.openDirectoryBrowserCB(cfg.ipkpth),
+                "pthpicon": self.openDirectoryBrowserCB(cfg.mmkpicon)
             }
 
             if itemcfg in callback_map:
