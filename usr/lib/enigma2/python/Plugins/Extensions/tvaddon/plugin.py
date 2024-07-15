@@ -218,7 +218,7 @@ cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpths())
 # cfg.autoupd = ConfigYesNo(default=False)
 mmkpicon = cfg.mmkpicon.value.strip()
 
-currversion = '2.1.6'
+currversion = '2.1.7'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
