@@ -1933,11 +1933,9 @@ class tvInstall(Screen):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
-                    # cmd = "opkg install --force-reinstall %s > /dev/null" % down
-
-                    cmd = "wget -U '%s' -c '%s' -O '%s';opkg install --force-overwrite --force-downgrade %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
+                    cmd = "wget -U '%s' -c '%s' -O '%s';opkg --force-reinstall --force-overwrite install %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
                     if "https" in str(self.com):
-                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg install --force-overwrite --force-downgrade %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg --force-reinstall --force-overwrite install %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
 
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
@@ -2304,7 +2302,7 @@ class tvIPK(Screen):
                 self.dest = self.ipkpth + '/' + self.sel
                 try:
                     if self.sel.endswith('.ipk'):
-                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";opkg install --force-reinstall ' + self.dest + ' > /dev/null'
+                        cmd0 = 'echo "Sistem Update .... PLEASE WAIT ::.....";echo ":Install ' + self.dest + '";opkg --force-reinstall --force-overwrite install ' + self.dest + ' > /dev/null'
                         self.session.open(tvConsole, title='IPK Local Installation', cmdlist=[cmd0, 'sleep 5'], closeOnSuccess=False)
                     elif self.sel.endswith('.tar.gz'):
                         cmd0 = 'tar -xvf ' + self.dest + ' -C /'
