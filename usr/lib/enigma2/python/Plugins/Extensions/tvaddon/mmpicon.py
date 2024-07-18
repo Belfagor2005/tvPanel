@@ -14,37 +14,51 @@
 from __future__ import print_function
 from . import _
 from . import Utils
-from .Console import Console
 from .plugin import mmkpicon
-import codecs
+from .Downloader import downloadWithProgress
+from .Console import Console as xConsole
+
 from Components.AVSwitch import AVSwitch
-from Components.ActionMap import ActionMap, NumberActionMap
+from Components.ActionMap import (ActionMap, NumberActionMap)
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText
-from Components.MultiContent import MultiContentEntryPixmapAlphaTest
+from Components.MultiContent import (MultiContentEntryPixmapAlphaTest, MultiContentEntryText)
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 from Components.Sources.Progress import Progress
 from Components.Sources.StaticText import StaticText
-from Components.config import config, getConfigListEntry, ConfigSelection
-from Components.config import ConfigSubsection, ConfigDirectory
+from Components.config import (
+    config,
+    getConfigListEntry,
+    ConfigSubsection,
+    ConfigDirectory,
+    ConfigSelection,
+)
 from Plugins.Plugin import PluginDescriptor
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from .Downloader import downloadWithProgress
+
 # from Tools.Downloader import downloadWithProgress
-from enigma import RT_HALIGN_LEFT, RT_VALIGN_CENTER
-from enigma import eTimer
-from enigma import eListboxPythonMultiContent
-from enigma import ePicLoad, loadPic, loadPNG, gFont
-from enigma import getDesktop
+from enigma import (
+    RT_VALIGN_CENTER,
+    RT_HALIGN_LEFT,
+    eTimer,
+    eListboxPythonMultiContent,
+    eServiceReference,
+    iPlayableService,
+    gFont,
+    ePicLoad,
+    loadPic,
+    loadPNG,
+    getDesktop,
+)
 from twisted.web.client import getPage
+import codecs
 import glob
 import os
 import re
@@ -157,7 +171,6 @@ ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5w
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
 ecskins = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1jOHN3MGFoc3Mzc2kwJmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
 openskins = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT0wd3o0M3l2OG5zeDc5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
-_firstStartmmp = True
 
 # cfg.mmkpicon = mmkpicon
 
@@ -238,7 +251,6 @@ class SelectPicons(Screen):
         skin = os.path.join(skin_path, 'mmall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
-        print('self.skin SelectPicons=', self.skin)
         self.setup_title = ('Select zPicons')
         Screen.__init__(self, session)
         self.setTitle(descm_plugin)
@@ -252,8 +264,8 @@ class SelectPicons(Screen):
         self['poster'] = Pixmap()
         self['pform'] = Label('n/a')
         self['info'] = Label(_('Loading data... Please wait'))
-        self['key_green'] = Button(_('Remove'))
         self['key_red'] = Button(_('Exit'))
+        self['key_green'] = Button(_('Remove'))
         self['key_yellow'] = Button(_('Preview'))
         self["key_blue"] = Button(_('Restart'))
         self['progress'] = ProgressBar()
@@ -412,7 +424,6 @@ class MMarkPiconScreen(Screen):
         skin = os.path.join(skin_path, 'mmall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
-        print('self.skin MMarkPiconScreen=', self.skin)
         self.setup_title = ('zPicons & Skins')
         Screen.__init__(self, session)
         self.setTitle(descm_plugin)
@@ -440,19 +451,14 @@ class MMarkPiconScreen(Screen):
         self['progresstext'] = StaticText()
         self["progress"].hide()
         self['progresstext'].text = ''
-        self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
+        self['key_green'] = Button(_('Install'))
         self['key_yellow'] = Button(_('Preview'))
         self["key_blue"] = Button()
         self['key_blue'].hide()
         self['key_green'].hide()
         self['pform'] = Label('')
         self.currentList = 'text'
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self.timer.start(500, 1)
         self['actions'] = ActionMap(['OkCancelActions',
                                      'ColorActions',
                                      'ButtonSetupActions',
@@ -465,6 +471,11 @@ class MMarkPiconScreen(Screen):
                                                            'left': self.left,
                                                            'right': self.right,
                                                            'cancel': self.close}, -2)
+        if os.path.exists('/var/lib/dpkg/info'):
+            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
+        else:
+            self.timer.callback.append(self.downxmlpage)
+        self.timer.start(500, 1)
         self.onLayoutFinish.append(self.getfreespace)
 
     def zoom(self):
@@ -550,8 +561,8 @@ class MMarkPiconScreen(Screen):
                     # # url =  'https://download' + str(myfile)
 
                     if os.path.exists('var/lib/dpkg/info'):
-                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(url), dest)
-                        self.session.open(Console, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (Utils.RequestAgent(), str(url), dest)
+                        self.session.open(xConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                         self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     else:
                         self.download = downloadWithProgress(url, dest)
@@ -659,7 +670,6 @@ class MMarkFolderScreen(Screen):
         skin = os.path.join(skin_path, 'mmall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
-        print('self.skin MMarkPiconScreen=', self.skin)
         self.setup_title = ('zPicons & Skins')
         self['title'] = Label(descm_plugin)
         Screen.__init__(self, session)
@@ -680,8 +690,8 @@ class MMarkFolderScreen(Screen):
         self['progresstext'] = StaticText()
         self["progress"].hide()
         self['progresstext'].text = ''
-        self['key_green'] = Button(_('Select'))
         self['key_red'] = Button(_('Back'))
+        self['key_green'] = Button(_('Select'))
         self['key_yellow'] = Button(_('Preview'))
         self["key_blue"] = Button()
         self['key_blue'].hide()
@@ -828,7 +838,6 @@ class MMarkFolderSkinZeta(Screen):
         skin = os.path.join(skin_path, 'mmall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
-        print('self.skin MMarkFolderSkinZeta=', self.skin)
         self.setup_title = ('zPicons & Skins')
         Screen.__init__(self, session)
         self.setTitle(descm_plugin)
@@ -848,8 +857,8 @@ class MMarkFolderSkinZeta(Screen):
         self['progresstext'] = StaticText()
         self["progress"].hide()
         self['progresstext'].text = ''
-        self['key_green'] = Button(_('Install'))
         self['key_red'] = Button(_('Back'))
+        self['key_green'] = Button(_('Install'))
         self['key_yellow'] = Button(_('Preview'))
         self["key_blue"] = Button()
         self['key_blue'].hide()
@@ -951,21 +960,18 @@ class MMarkFolderSkinZeta(Screen):
                 self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/download.zip"
-                # print('url222: ', url)
                 if os.path.exists(dest):
                     os.remove(dest)
                 try:
                     myfile = Utils.ReadUrl(url)
-                    # print('response: ', myfile)
                     regexcat = 'href="https://download(.*?)"'
                     match = re.compile(regexcat, re.DOTALL).findall(myfile)
                     url = 'https://download' + str(match[0])
                     print("match =", match[0])
                     print("url final =", url)
-
                     if os.path.exists('/var/lib/dpkg/info'):
-                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(url), dest)
-                        self.session.open(Console, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (Utils.RequestAgent(), str(url), dest)
+                        self.session.open(xConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                         self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     else:
                         self.download = downloadWithProgress(url, dest)
@@ -1085,7 +1091,6 @@ class mmConfig(Screen, ConfigListScreen):
         skin = os.path.join(skin_path, 'mmConfig.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
-        print('self.skin mmConfig=', self.skin)
         Screen.__init__(self, session)
         self.setup_title = _("Config")
         # self['title'] = Label(descm_plugin)
@@ -1096,10 +1101,9 @@ class mmConfig(Screen, ConfigListScreen):
         self['description'] = Label('')
         self['info'] = Label(_('Config Panel Addon'))
         self["paypal"] = Label()
-        # self["config"] = []
+        self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Choice'))
         self['key_green'] = Button(_('Save'))
-        self['key_red'] = Button(_('Back'))
         self["key_blue"] = Button()
         self['key_blue'].hide()
         self["setupActions"] = ActionMap(['OkCancelActions',
