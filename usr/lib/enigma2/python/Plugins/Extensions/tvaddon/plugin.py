@@ -9,22 +9,25 @@
 # Info http://t.me/tivustream
 from __future__ import print_function
 from . import _, paypal, wgetsts
-from . import Utils
-from .Console import Console as tvConsole
-from .Downloader import downloadWithProgress
-# from Tools.Downloader import downloadWithProgress
-from .Lcn import LCN
-from .Utils import RequestAgent
+from .lib import Utils
+from .lib.Console import Console as tvConsole
+from .lib.Downloader import downloadWithProgress
+from .lib.Lcn import LCN
+from .lib.Utils import RequestAgent
+
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
-from Components.config import (config, getConfigListEntry)
-from Components.config import (ConfigYesNo, ConfigSubsection)
-from Components.config import ConfigSelection
+from Components.config import (
+    config,
+    getConfigListEntry,
+    ConfigYesNo,
+    ConfigSubsection,
+    ConfigSelection,
+)
 from Components.Label import Label
 from Components.MenuList import MenuList
-from Components.MultiContent import MultiContentEntryText
-from Components.MultiContent import MultiContentEntryPixmapAlphaTest
+from Components.MultiContent import (MultiContentEntryText, MultiContentEntryPixmapAlphaTest)
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 # from Components.ScrollLabel import ScrollLabel
@@ -39,12 +42,18 @@ from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import SCOPE_PLUGINS
 from Tools.Directories import (fileExists, resolveFilename)
+# from Tools.Downloader import downloadWithProgress
 # from Screens.Processing import Processing
-from enigma import (RT_HALIGN_LEFT, RT_VALIGN_CENTER)
-from enigma import (loadPNG, gFont)
-from enigma import eTimer
-from enigma import getDesktop
-from enigma import (eListboxPythonMultiContent, eConsoleAppContainer)
+from enigma import (
+    RT_HALIGN_LEFT,
+    RT_VALIGN_CENTER,
+    loadPNG,
+    gFont,
+    eTimer,
+    getDesktop,
+    eListboxPythonMultiContent,
+    eConsoleAppContainer,
+)
 from os import chmod
 from twisted.web.client import downloadPage
 import codecs
@@ -209,6 +218,11 @@ piconpathss = Utils.mountipkpth()
 AgentRequest = RequestAgent()
 # ================config
 global setx
+currversion = '2.1.7'
+title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
+name_plug = 'TiVuStream Addon Panel'
+category = 'lululla.xml'
+setx = 0
 config.plugins.tvaddon = ConfigSubsection()
 cfg = config.plugins.tvaddon
 cfg.strtext = ConfigYesNo(default=True)
@@ -217,16 +231,8 @@ cfg.strtmain = ConfigYesNo(default=True)
 cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpths())
 # cfg.autoupd = ConfigYesNo(default=False)
 mmkpicon = cfg.mmkpicon.value.strip()
-
-currversion = '2.1.7'
-title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
-name_plug = 'TiVuStream Addon Panel'
-category = 'lululla.xml'
-setx = 0
-
 installer_url = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0JlbGZhZ29yMjAwNS90dlBhbmVsL21haW4vaW5zdGFsbGVyLnNo'
 developer_url = 'aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9CZWxmYWdvcjIwMDUvdHZQYW5lbA=='
-
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg== '
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24= '
@@ -513,9 +519,14 @@ class Hometv(Screen):
         global category
         sel = self.menu_list[idx]
         if sel == _('DAILY PICONS'):
-            from .mmpicon import SelectPicons
+            mmPic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('mmPicons'))
+            if not os.path.exists(mmPic):
+                from .lib.mmpicon import SelectPicons
+            else:
+                from Plugins.Extensions.mmPicons.plugin import SelectPicons
+                # # self.session.openWithCallback(self.close, SelectPicons)
             self.session.open(SelectPicons)
-            # self.session.open(SelectPiconz)
+
         elif sel == _('DAILY SETTINGS'):
             self.session.open(tvDailySetting)
         elif sel == _('KODILITE BY PCD'):
@@ -1827,7 +1838,6 @@ class tvInstall(Screen):
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
-
         self['progress'].setRange((0, 100))
         self['progress'].setValue(0)
 
@@ -1919,12 +1929,9 @@ class tvInstall(Screen):
                     self.session.open(MessageBox, _('Unknow Image!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Installation canceled!'))
                 else:
-                    # cmd = 'apt-get -f -y --force-yes install %s' % down
-
                     cmd = "wget -U '%s' -c '%s' -O '%s';dpkg -i %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
                     if "https" in str(self.com):
                         cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';dpkg -i %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
-
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
 
@@ -1936,7 +1943,6 @@ class tvInstall(Screen):
                     cmd = "wget -U '%s' -c '%s' -O '%s';opkg --force-reinstall --force-overwrite install %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
                     if "https" in str(self.com):
                         cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s';opkg --force-reinstall --force-overwrite install %s > /dev/null" % (AgentRequest, str(self.com), self.dest, self.dest)
-
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
             elif self.com.endswith('.zip'):
@@ -1975,28 +1981,17 @@ class tvInstall(Screen):
                     terrestrial_rest()
                     self.session.open(tvConsole, _('SETTING - install: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
-                    # return
                 elif 'picon' in self.dom.lower():
                     cmd = ["unzip -o -q %s -d %s > /dev/null" % (down, str(mmkpicon))]
-                    # cmd = ["wget -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest, str(mmkpicon))]
-                    # if "https" in str(self.com):
-                        # cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s';unzip -o -q %s -d %s > /dev/null" % (RequestAgent(), str(self.com), self.dest, self.dest, str(mmkpicon))]
                     self.session.open(tvConsole, _('Downloading-installing: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self['info'].setText(_('Installation done !!!'))
-                    # return
                 else:
                     self['info'].setText(_('Downloading the selected file in /tmp') + self.dom + _('... please wait'))
                     cmd = ["wget --no-cache --no-dns-cache -U '%s' -c '%s' -O '%s --post-data='action=purge' > /dev/null' " % (RequestAgent(), str(self.com), down)]
-                    # cmd = ["wget -U '%s' -c '%s' -O '%s > /dev/null' " % (RequestAgent(), str(self.com), self.dest)]
-                    # if "https" in str(self.com):
-                        # cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s'" % (RequestAgent(), str(self.com), self.dest)]
-                    # self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, cmd, closeOnSuccess=False)
                     self['info'].setText(_('Download done !!!'))
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                    # self.timer.start(1000, True)
                     self['info'].setText(_('Download file in /tmp successful!!'))
-                    # return
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
             self.timer.start(3000, 1)
@@ -2089,19 +2084,6 @@ class tvInstall(Screen):
 
             else:
                 self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
-
-    # mmax
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # try:
-            # self['info'].setText(_('Download...'))
-            # self["progress"].show()
-            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # except ZeroDivisionError:
-            # self['info'].setText(_('Download Failed!'))
-            # self["progress"].hide()
-            # self['progress'].setRange((0, 100))
-            # self['progress'].setValue(0)
 
     def downloadProgress(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
@@ -2805,30 +2787,6 @@ class tvConfig(Screen, ConfigListScreen):
                 config_entry.setValue(path)
         return callback
 
-    # def openDirectoryBrowser(self, path):
-        # try:
-            # self.session.openWithCallback(
-                # self.openDirectoryBrowserCB,
-                # LocationBox,
-                # windowTitle=_("Choose Directory:"),
-                # text=_("Choose directory"),
-                # currDir=str(path),
-                # bookmarks=config.movielist.videodirs,
-                # autoAdd=False,
-                # editDir=True,
-                # inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/var"],
-                # minFree=15)
-        # except Exception as e:
-            # print('error: ', str(e))
-
-    # def openDirectoryBrowserCB(self, path):
-        # if path is not None:
-            # if self.setting == 'mmkpicon':
-                # cfg.mmkpicon.setValue(path)
-            # if self.setting == 'ipkpth':
-                # cfg.ipkpth.setValue(path)
-        # return
-
     def KeyText(self):
         sel = self['config'].getCurrent()
         if sel:
@@ -2930,11 +2888,7 @@ class mainkodilite(Screen):
         elif sel == _('SCRIPT') or sel == 2:
             self.session.open(script)
         elif sel == _('REPOSITORY') or sel == 3:
-                                
-                                    
-                                                             
             self.session.open(repository)
-                                                    
 
 
 class pluginx(Screen):
@@ -2963,7 +2917,7 @@ class pluginx(Screen):
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
-                      
+
         self.downloading = False
         self.error_message = ""
         self.last_recvbytes = 0
@@ -3012,12 +2966,6 @@ class pluginx(Screen):
 
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-                 
-                  
-                                              
-                              
-                            
-                                                  
 
     def okRun1(self, answer):
         if answer:
@@ -3447,7 +3395,7 @@ class script(Screen):
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
-
+    '''
     # mmax
     # def downloadProgress(self, recvbytes, totalbytes):
         # try:
@@ -3460,6 +3408,7 @@ class script(Screen):
             # self["progress"].hide()
             # self['progress'].setRange((0, 100))
             # self['progress'].setValue(0)
+    '''
 
     def downloadProgress(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
@@ -3632,13 +3581,13 @@ class repository(Screen):
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     return
-                #else:
+                # else:
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
-
+    '''
     # mmax
     # def downloadProgress(self, recvbytes, totalbytes):
         # try:
@@ -3651,6 +3600,7 @@ class repository(Screen):
             # self["progress"].hide()
             # self['progress'].setRange((0, 100))
             # self['progress'].setValue(0)
+    '''
 
     def downloadProgress(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
@@ -3727,36 +3677,6 @@ class repository(Screen):
                 self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
 
-# class AutoStartTimertvadd:
-
-    # def __init__(self, session):
-        # self.session = session
-        # print("*** running AutoStartTimertvadd ***")
-        # if _firstStarttvsadd:
-            # self.runUpdate()
-
-    # def runUpdate(self):
-        # print("*** running update ***")
-        # global _firstStarttvsadd
-        # try:
-            # from . import Update
-            # Update.upd_done()
-            # _firstStarttvsadd = False
-        # except Exception as e:
-            # print('error tvaddon', str(e))
-
-
-# def autostart(reason, session=None, **kwargs):
-    # print("*** running autostart ***")
-    # global autoStartTimertvsadd
-    # global _firstStarttvsadd
-    # if reason == 0:
-        # if session is not None:
-            # _firstStarttvsadd = True
-            # autoStartTimertvsadd = AutoStartTimertvadd(session)
-    # return
-
-
 def main(session, **kwargs):
     try:
         session.open(Hometv)
@@ -3779,8 +3699,10 @@ def mainmenu(session, **kwargs):
 
 def mainm(session, **kwargs):
     try:
-        from .mmpicon import SelectPicons
-        session.open(SelectPicons)
+        mmPic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('mmPicons'))
+        if not os.path.exists(mmPic):
+            from .lib.mmpicon import SelectPicons
+            session.open(SelectPicons)
     except Exception as e:
         print('error open plugin', e)
 
@@ -3881,10 +3803,12 @@ def StartSavingTerrestrialChannels():
             if x.find('eeee') != -1:
                 return file
                 break
+            '''
             # if x.find('eeee0000') != -1:
                 # if x.find('82000') == -1 or x.find('c0000') == -1:
                     # return file
                     # break
+            '''
         return
 
     def ResearchBouquetTerrestrial(search):
