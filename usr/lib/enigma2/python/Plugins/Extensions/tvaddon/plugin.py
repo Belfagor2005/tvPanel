@@ -9,11 +9,11 @@
 # Info http://t.me/tivustream
 from __future__ import print_function
 from . import _, paypal, wgetsts
-from .lib import Utils
-from .lib.Console import Console as tvConsole
-from .lib.Downloader import downloadWithProgress
-from .lib.Lcn import LCN
-from .lib.Utils import RequestAgent
+from . import Utils
+from .Console import Console as tvConsole
+from .Downloader import downloadWithProgress
+from .Lcn import LCN
+from .Utils import RequestAgent
 
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -40,8 +40,7 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Tools.Directories import SCOPE_PLUGINS
-from Tools.Directories import (fileExists, resolveFilename)
+from Tools.Directories import (SCOPE_PLUGINS, fileExists, resolveFilename)
 # from Tools.Downloader import downloadWithProgress
 # from Screens.Processing import Processing
 from enigma import (
@@ -521,10 +520,9 @@ class Hometv(Screen):
         if sel == _('DAILY PICONS'):
             mmPic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('mmPicons'))
             if not os.path.exists(mmPic):
-                from .lib.mmpicon import SelectPicons
+                from .mmpicon import SelectPicons
             else:
                 from Plugins.Extensions.mmPicons.plugin import SelectPicons
-                # # self.session.openWithCallback(self.close, SelectPicons)
             self.session.open(SelectPicons)
 
         elif sel == _('DAILY SETTINGS'):
@@ -1186,7 +1184,6 @@ class SettingManutek(Screen):
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Manutek')
-
         Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
@@ -1834,13 +1831,11 @@ class tvInstall(Screen):
         self['info'] = Label()
         self['pth'] = Label()
         self['pform'] = Label()
-
         self['progress'] = ProgressBar()
         self["progress"].hide()
         self['progresstext'] = StaticText()
         self['progress'].setRange((0, 100))
         self['progress'].setValue(0)
-
         list = []
         list.sort()
         self['info'].setText(_('... please wait'))
@@ -2153,7 +2148,6 @@ class tvInstall(Screen):
             self.finish(aborted=True)
 
     def tvIPK(self, string=''):
-        # self.session.openWithCallback(self.close, self.install)
         self.install('None')
 
     def install(self, string=''):
@@ -2168,8 +2162,6 @@ class tvInstall(Screen):
                 self['progress'].setValue(self.progclear)
                 self["progress"].hide()
                 self['info'].setText(_('File Downloaded ...'))
-                print('tvIPK')
-                # self.tvIPK()
                 self.session.openWithCallback(self.close, tvIPK)
 
 
@@ -2973,39 +2965,21 @@ class pluginx(Screen):
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
-                print('1 self.com type=', type(self.com))
                 self.com = six.ensure_binary(self.com)
-                print('2 self.com type=', type(self.com))
                 # if PY3:
                     # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-                print('self.com:', self.com)
-                print('self.dest:', self.dest)
-
                 if os.path.exists('/var/lib/dpkg/info'):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     return
-                # else:
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
-    # mmax
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # try:
-            # self['info'].setText(_('Download...'))
-            # self["progress"].show()
-            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # except ZeroDivisionError:
-            # self['info'].setText(_('Download Failed!'))
-            # self["progress"].hide()
-            # self['progress'].setRange((0, 100))
-            # self['progress'].setValue(0)
 
     def downloadProgress(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
@@ -3014,7 +2988,6 @@ class pluginx(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
         try:
             self['info'].setText(_('Download in progress...'))
@@ -3180,41 +3153,21 @@ class plugins_adult(Screen):
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
-
-                print('1 self.com type=', type(self.com))
                 self.com = six.ensure_binary(self.com)
-                print('2 self.com type=', type(self.com))
                 # if PY3:
                     # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-
-                print('self.com:', self.com)
-                print('self.dest:', self.dest)
-
                 if os.path.exists('/var/lib/dpkg/info'):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     return
-                # else:
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
-    # mmax
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # try:
-            # self['info'].setText(_('Download...'))
-            # self["progress"].show()
-            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # except ZeroDivisionError:
-            # self['info'].setText(_('Download Failed!'))
-            # self["progress"].hide()
-            # self['progress'].setRange((0, 100))
-            # self['progress'].setValue(0)
 
     def downloadProgress(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
@@ -3223,7 +3176,6 @@ class plugins_adult(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
         try:
             self['info'].setText(_('Download in progress...'))
@@ -3254,10 +3206,8 @@ class plugins_adult(Screen):
         info = 'Download Failed!!! ' + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
-        # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
 
     def abort(self):
-        print("aborting", self.url)
         if self.download:
             self.download.stop()
         self.downloading = False
@@ -3372,43 +3322,21 @@ class script(Screen):
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
-
-                print('1 self.com type=', type(self.com))
                 self.com = six.ensure_binary(self.com)
-                print('2 self.com type=', type(self.com))
                 # if PY3:
                     # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-
-                print('self.com:', self.com)
-                print('self.dest:', self.dest)
-
                 if os.path.exists('/var/lib/dpkg/info'):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     return
-                # else:
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
-    '''
-    # mmax
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # try:
-            # self['info'].setText(_('Download...'))
-            # self["progress"].show()
-            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # except ZeroDivisionError:
-            # self['info'].setText(_('Download Failed!'))
-            # self["progress"].hide()
-            # self['progress'].setRange((0, 100))
-            # self['progress'].setValue(0)
-    '''
 
     def downloadProgress(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
@@ -3417,7 +3345,6 @@ class script(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
         try:
             self['info'].setText(_('Download in progress...'))
@@ -3565,42 +3492,21 @@ class repository(Screen):
                 idx = self["list"].getSelectionIndex()
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
-
-                print('1 self.com type=', type(self.com))
                 self.com = six.ensure_binary(self.com)
-                print('2 self.com type=', type(self.com))
                 # if PY3:
                     # self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
-
-                print('self.com:', self.com)
-                print('self.dest:', self.dest)
                 if os.path.exists('/var/lib/dpkg/info'):
                     cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (RequestAgent(), str(self.com), self.dest)
                     self.session.open(tvConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
                     self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     return
-                # else:
                 self.download = downloadWithProgress(self.com, self.dest)
                 self.download.addProgress(self.downloadProgress)
                 self.download.start().addCallback(self.install).addErrback(self.download_failed)
             else:
                 self.close()
-    '''
-    # mmax
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # try:
-            # self['info'].setText(_('Download...'))
-            # self["progress"].show()
-            # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # except ZeroDivisionError:
-            # self['info'].setText(_('Download Failed!'))
-            # self["progress"].hide()
-            # self['progress'].setRange((0, 100))
-            # self['progress'].setValue(0)
-    '''
 
     def downloadProgress(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
@@ -3609,7 +3515,6 @@ class repository(Screen):
         self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (self.last_recvbytes / 1024, totalbytes / 1024, 100 * self.last_recvbytes / float(totalbytes))
         self.last_recvbytes = recvbytes
 
-    # ok oe2
     def downloadProgress2(self, recvbytes, totalbytes):
         try:
             self['info'].setText(_('Download in progress...'))
@@ -3686,9 +3591,20 @@ def main(session, **kwargs):
         pass
 
 
+# def cfgmain(menuid, **kwargs):
+    # if menuid == 'mainmenu':
+        # return [(_('TiVuStream Addons'), main, 'AddonPanel', 44)]
+    # else:
+        # return []
+
+
 def cfgmain(menuid, **kwargs):
     if menuid == 'mainmenu':
-        return [(_('TiVuStream Addons'), main, 'AddonPanel', 44)]
+        from Tools.BoundFunction import boundFunction
+        return [(_('TiVuStream Addons'),
+                 boundFunction(main, showExtentionMenuOption=True),
+                 'AddonPanel',
+                 44)]
     else:
         return []
 
@@ -3701,7 +3617,7 @@ def mainm(session, **kwargs):
     try:
         mmPic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('mmPicons'))
         if not os.path.exists(mmPic):
-            from .lib.mmpicon import SelectPicons
+            from .mmpicon import SelectPicons
             session.open(SelectPicons)
     except Exception as e:
         print('error open plugin', e)
@@ -3803,12 +3719,6 @@ def StartSavingTerrestrialChannels():
             if x.find('eeee') != -1:
                 return file
                 break
-            '''
-            # if x.find('eeee0000') != -1:
-                # if x.find('82000') == -1 or x.find('c0000') == -1:
-                    # return file
-                    # break
-            '''
         return
 
     def ResearchBouquetTerrestrial(search):
