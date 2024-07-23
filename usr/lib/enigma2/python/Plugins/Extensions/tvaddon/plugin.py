@@ -218,7 +218,7 @@ piconpathss = Utils.mountipkpth()
 AgentRequest = RequestAgent()
 # ================config
 global setx
-currversion = '2.1.7'
+currversion = '2.1.8'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
