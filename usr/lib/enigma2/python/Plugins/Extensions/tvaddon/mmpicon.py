@@ -14,12 +14,12 @@
 from __future__ import print_function
 from . import _
 from . import Utils
-from .Downloader import downloadWithProgress
-from .Console import Console as xConsole
+from .lib.Downloader import downloadWithProgress
+# from .lib.Console import Console as xConsole
 from .plugin import mmkpicon
 
 from Components.AVSwitch import AVSwitch
-from Components.ActionMap import (ActionMap, NumberActionMap)
+from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
 from Components.Label import Label
@@ -34,7 +34,7 @@ from Components.config import (
     getConfigListEntry,
     ConfigSubsection,
     ConfigDirectory,
-    ConfigSelection,
+    # ConfigSelection,
 )
 from Plugins.Plugin import PluginDescriptor
 from Screens.LocationBox import LocationBox
@@ -42,15 +42,12 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-
 # from Tools.Downloader import downloadWithProgress
 from enigma import (
     RT_VALIGN_CENTER,
     RT_HALIGN_LEFT,
     eTimer,
     eListboxPythonMultiContent,
-    eServiceReference,
-    iPlayableService,
     gFont,
     ePicLoad,
     loadPic,
@@ -69,22 +66,22 @@ import sys
 
 global skin_path, mmkpicon, XStreamity
 PY3 = sys.version_info.major >= 3
-# print('Py3: ', PY3)
+'''
+# try:
+    # from urllib2 import URLError
+# except:
+    # from urllib.request import URLError
 
-try:
-    from urllib2 import URLError
-except:
-    from urllib.request import URLError
+# try:
+    # from urllib2 import urlopen
+# except:
+    # from urllib.request import urlopen
 
-try:
-    from urllib2 import urlopen
-except:
-    from urllib.request import urlopen
-
-try:
-    from urllib2 import Request
-except:
-    from urllib.request import Request
+# try:
+    # from urllib2 import Request
+# except:
+    # from urllib.request import Request
+'''
 
 
 def trace_error():
@@ -148,7 +145,7 @@ if sslverify:
 piconpathss = Utils.mountipkpth()
 config.plugins.mmPicons = ConfigSubsection()
 cfg = config.plugins.mmPicons
-cfg.mmkpicon = ConfigSelection(default='/media/hdd/picon/', choices=piconpathss)
+cfg.mmkpicon = ConfigDirectory(default='/media/hdd/picon/', choices=piconpathss)
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
 currmmversion = getversioninfo()
 titlem_plug = 'mMark Picons & Skins'
@@ -165,7 +162,7 @@ piconsblk = os.path.join(res_picon_plugin_path, 'picon_blk.png')
 piconszeta = os.path.join(res_picon_plugin_path, 'picon_z.png')
 piconsmovie = os.path.join(res_picon_plugin_path, 'picon_mv.png')
 pixmaps = os.path.join(res_picon_plugin_path, 'backg.png')
-mmkpicon = cfg.mmkpicon.value.strip()
+# mmkpicon = cfg.mmkpicon.value.strip()
 pblk = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1vdnowNG1ycHpvOXB3JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptrs = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT10dmJkczU5eTlocjE5JmNvbnRlbnRfdHlwZT1mb2xkZXJzJmNodW5rX3NpemU9MTAwMCZyZXNwb25zZV9mb3JtYXQ9anNvbg=='
 ptmov = 'aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9hcGkvMS41L2ZvbGRlci9nZXRfY29udGVudC5waHA/Zm9sZGVyX2tleT1uazh0NTIyYnY0OTA5JmNvbnRlbnRfdHlwZT1maWxlcyZjaHVua19zaXplPTEwMDAmcmVzcG9uc2VfZm9ybWF0PWpzb24='
@@ -192,6 +189,7 @@ elif screenwidth.width() == 1920:
     skin_path = plugin_path + '/res/skins/fhd/'
 else:
     skin_path = plugin_path + '/res/skins/hd/'
+
 if os.path.exists('/var/lib/dpkg/info'):
     skin_path = skin_path + 'dreamOs/'
 
@@ -274,22 +272,21 @@ class SelectPicons(Screen):
         self['progresstext'].text = ''
         self['text'] = mmList([])
         self.currentList = 'text'
-        self['actions'] = NumberActionMap(['SetupActions',
-                                           'DirectionActions',
-                                           'ColorActions',
-                                           'ButtonSetupActions',
-                                           "MenuActions"], {'ok': self.okRun,
-                                                            'green': self.remove,
-                                                            'back': self.closerm,
-                                                            'red': self.closerm,
-                                                            'yellow': self.zoom,
-                                                            'blue': self.msgtqm,
-                                                            'up': self.up,
-                                                            'down': self.down,
-                                                            'left': self.left,
-                                                            'right': self.right,
-                                                            'menu': self.goConfig,
-                                                            'cancel': self.closerm}, -1)
+        self['actions'] = ActionMap(['ColorActions',
+                                     'DirectionActions',
+                                     'ButtonSetupActions',
+                                     'MenuActions'], {'ok': self.okRun,
+                                                      'menu': self.goConfig,
+                                                      'blue': self.msgtqm,
+                                                      'up': self.up,
+                                                      'down': self.down,
+                                                      'left': self.left,
+                                                      'right': self.right,
+                                                      'yellow': self.zoom,
+                                                      'green': self.remove,
+                                                      'back': self.closerm,
+                                                      'red': self.closerm,
+                                                      'cancel': self.closerm}, -1)
         self.onLayoutFinish.append(self.updateMenuList)
 
     def zoom(self):
@@ -548,30 +545,22 @@ class MMarkPiconScreen(Screen):
                     os.remove(dest)
                 try:
                     myfile = Utils.ReadUrl(url)
-                    print('response: ', myfile)
                     regexcat = 'href="https://download(.*?)"'
                     match = re.compile(regexcat, re.DOTALL).findall(myfile)
-                    print("match =", match[0])
-                    # myfile = checkMyFile(url)
-                    # print('myfile222:  ', myfile)
                     url = 'https://download' + str(match[0])
                     print("url final =", url)
-                    # myfile = checkMyFile(url)
-                    # print('myfile222:  ', myfile)
-                    # # url =  'https://download' + str(myfile)
-
-                    if os.path.exists('var/lib/dpkg/info'):
-                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (Utils.RequestAgent(), str(url), dest)
-                        self.session.open(xConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                    if os.path.exists('/var/lib/dpkg/info'):
+                        cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (Utils.RequestAgent(), str(url), dest)]
+                        print('command:', cmd)
+                        subprocess.Popen(cmd[0], shell=True, executable='/bin/bash')
                         self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                    else:
-                        self.download = downloadWithProgress(url, dest)
-                        self.download.addProgress(self.downloadProgress2)
-                        self.download.start().addCallback(self.install).addErrback(self.showError)
+                        return
+                    self.download = downloadWithProgress(url, dest)
+                    self.download.addProgress(self.downloadProgress2)
+                    self.download.start().addCallback(self.install).addErrback(self.showError)
                 except Exception as e:
                     print('error: ', str(e))
                     print("Error: can't find file or read data")
-
             else:
                 self['info'].setText(_('Picons Not Installed ...'))
 
@@ -588,13 +577,6 @@ class MMarkPiconScreen(Screen):
         self['progress'].setValue(self.progclear)
         self["progress"].hide()
 
-    # def downloadProgress(self, recvbytes, totalbytes):
-        # self["progress"].show()
-        # self['info'].setText(_('Download...'))
-        # self['progress'].value = int(100 * recvbytes / float(totalbytes))
-        # self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
-        # print('progress = ok')
-
     def downloadProgress2(self, recvbytes, totalbytes):
         try:
             self['info'].setText(_('Download in progress...'))
@@ -604,18 +586,6 @@ class MMarkPiconScreen(Screen):
             self.last_recvbytes = recvbytes
             # if self.last_recvbytes == recvbytes:
                 # self.getfreespace()
-        except ZeroDivisionError:
-            self['info'].setText(_('Download Failed!'))
-            self["progress"].hide()
-            self['progress'].setRange((0, 100))
-            self['progress'].setValue(0)
-
-    def downloadProgress(self, recvbytes, totalbytes):
-        try:
-            self['info'].setText(_('Download...'))
-            self["progress"].show()
-            self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
         except ZeroDivisionError:
             self['info'].setText(_('Download Failed!'))
             self["progress"].hide()
@@ -967,16 +937,16 @@ class MMarkFolderSkinZeta(Screen):
                     regexcat = 'href="https://download(.*?)"'
                     match = re.compile(regexcat, re.DOTALL).findall(myfile)
                     url = 'https://download' + str(match[0])
-                    print("match =", match[0])
                     print("url final =", url)
                     if os.path.exists('/var/lib/dpkg/info'):
-                        cmd = "wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (Utils.RequestAgent(), str(url), dest)
-                        self.session.open(xConsole, _('Downloading: %s') % self.dom, [cmd], closeOnSuccess=False)
+                        cmd = ["wget --no-check-certificate -U '%s' -c '%s' -O '%s' --post-data='action=purge' > /dev/null" % (Utils.RequestAgent(), str(url), dest)]
+                        print('command:', cmd)
+                        subprocess.Popen(cmd[0], shell=True, executable='/bin/bash')
                         self.session.openWithCallback(self.install, MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
-                    else:
-                        self.download = downloadWithProgress(url, dest)
-                        self.download.addProgress(self.downloadProgress2)
-                        self.download.start().addCallback(self.install).addErrback(self.showError)
+                        return
+                    self.download = downloadWithProgress(url, dest)
+                    self.download.addProgress(self.downloadProgress2)
+                    self.download.start().addCallback(self.install).addErrback(self.showError)
                 except Exception as e:
                     print('error: ', str(e))
                     print("Error: can't find file or read data")
@@ -992,18 +962,6 @@ class MMarkFolderSkinZeta(Screen):
             self.last_recvbytes = recvbytes
             # if self.last_recvbytes == recvbytes:
                 # self.getfreespace()
-        except ZeroDivisionError:
-            self['info'].setText(_('Download Failed!'))
-            self["progress"].hide()
-            self['progress'].setRange((0, 100))
-            self['progress'].setValue(0)
-
-    def downloadProgress(self, recvbytes, totalbytes):
-        try:
-            self['info'].setText(_('Download...'))
-            self["progress"].show()
-            self['progress'].value = int(100 * recvbytes / float(totalbytes))
-            self['progresstext'].text = '%d of %d kBytes (%.2f%%)' % (recvbytes / 1024, totalbytes / 1024, 100 * recvbytes / float(totalbytes))
         except ZeroDivisionError:
             self['info'].setText(_('Download Failed!'))
             self["progress"].hide()
@@ -1030,6 +988,7 @@ class MMarkFolderSkinZeta(Screen):
                 logdata("install2 ", myCmd)
                 subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
                 self.mbox = self.session.open(MessageBox, _('Successfully Skin Installed'), MessageBox.TYPE_INFO, timeout=5)
+
         elif os.path.exists('/tmp/download.ipk'):
             if os.path.exists('/etc/enigma2/skin_user.xml'):
                 os.rename('/etc/enigma2/skin_user.xml', '/etc/enigma2/skin_user-bak.xml')
@@ -1038,6 +997,7 @@ class MMarkFolderSkinZeta(Screen):
             logdata("install3 ", myCmd)
             subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
             self.mbox = self.session.open(MessageBox, _('Successfully Skin Installed'), MessageBox.TYPE_INFO, timeout=5)
+
         self['info'].setText(_('Please select ...'))
         self['progresstext'].text = ''
         self['progress'].setValue(self.progclear)
@@ -1299,13 +1259,6 @@ def main(session, **kwargs):
         session.open(SelectPicons)
     except Exception as e:
         print('error open plugin', e)
-
-
-# def menu(menuid, **kwargs):
-    # if menuid == 'mainmenu':
-        # return [(titlem_plug, main, 'mmPicons', 44)]
-    # else:
-        # return []
 
 
 def menu(menuid, **kwargs):
