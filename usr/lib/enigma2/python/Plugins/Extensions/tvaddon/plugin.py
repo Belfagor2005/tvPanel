@@ -22,7 +22,9 @@ from Components.config import (
     config,
     getConfigListEntry,
     ConfigYesNo,
+    configfile,
     ConfigSubsection,
+    ConfigDirectory,
     ConfigSelection,
 )
 from Components.Label import Label
@@ -32,7 +34,7 @@ from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 # from Components.ScrollLabel import ScrollLabel
 from Components.Sources.Progress import Progress
-from Components.Sources.List import List
+# from Components.Sources.List import List
 from Components.Sources.StaticText import StaticText
 from Plugins.Plugin import PluginDescriptor
 from Screens.LocationBox import LocationBox
@@ -222,10 +224,12 @@ title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
 setx = 0
+
+dirpics = '/media/hdd/picon/'
 config.plugins.tvaddon = ConfigSubsection()
 cfg = config.plugins.tvaddon
 cfg.strtext = ConfigYesNo(default=True)
-cfg.mmkpicon = ConfigSelection(default='/media/hdd/picon/', choices=piconpathss)
+cfg.mmkpicon = ConfigDirectory(default=dirpics)
 cfg.strtmain = ConfigYesNo(default=True)
 cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpths())
 # cfg.autoupd = ConfigYesNo(default=False)
@@ -395,12 +399,12 @@ def showlist(data, list):
 
 class Hometv(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'Hometv.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = (title_plug)
-        Screen.__init__(self, session)
         self['list'] = tvList([])
         self['key_red'] = Button(_('Exit'))
         self['key_green'] = Button(_('Extensions Installer'))
@@ -519,10 +523,10 @@ class Hometv(Screen):
         sel = self.menu_list[idx]
         if sel == _('DAILY PICONS'):
             mmPic = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('mmPicons'))
-            if not os.path.exists(mmPic):
-                from .mmpicon import SelectPicons
-            else:
+            if os.path.exists(mmPic):
                 from Plugins.Extensions.mmPicons.plugin import SelectPicons
+            else:
+                from .mmpicon import SelectPicons
             self.session.open(SelectPicons)
 
         elif sel == _('DAILY SETTINGS'):
@@ -586,12 +590,12 @@ class Hometv(Screen):
 
 class Categories(Screen):
     def __init__(self, session, category):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = (category)
-        Screen.__init__(self, session)
         self.list = []
         self['list'] = tvList([])
         self.category = category
@@ -681,12 +685,12 @@ class Categories(Screen):
 
 class tvDailySetting(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Daily Setting')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self['list'] = tvList([])
         self['title'] = Label(_(title_plug))
@@ -836,12 +840,12 @@ class tvDailySetting(Screen):
 
 class SettingVhan(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
-        Screen.__init__(self, session)
         self.setTitle(_(self.setup_title))
         self.list = []
         self['list'] = tvList([])
@@ -945,12 +949,12 @@ class SettingVhan(Screen):
 
 class SettingVhan2(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Vhannibal')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -1079,14 +1083,13 @@ class SettingVhan2(Screen):
 
 class Milenka61(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Milenka61')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
-
         self.list = []
         self['list'] = tvList([])
         self['info'] = Label(_('Loading data... Please wait'))
@@ -1179,12 +1182,12 @@ class Milenka61(Screen):
 
 class SettingManutek(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Manutek')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -1288,12 +1291,12 @@ class SettingManutek(Screen):
 
 class SettingMorpheus(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Morpheus')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -1399,12 +1402,12 @@ class SettingMorpheus(Screen):
 
 class SettingCiefp(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Ciefp')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -1509,12 +1512,12 @@ class SettingCiefp(Screen):
 
 class SettingBi58(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Bi58')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -1608,12 +1611,12 @@ class SettingBi58(Screen):
 
 class SettingPredrag(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Predrag')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -1707,12 +1710,12 @@ class SettingPredrag(Screen):
 
 class SettingCyrus(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Setting Cyrus')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -1820,12 +1823,12 @@ class SettingCyrus(Screen):
 
 class tvInstall(Screen):
     def __init__(self, session, data, name, selection=None):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Install')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.selection = selection
         self['info'] = Label()
@@ -1988,7 +1991,7 @@ class tvInstall(Screen):
                     self.session.open(MessageBox, _('Download file in /tmp successful!'), MessageBox.TYPE_INFO, timeout=5)
                     self['info'].setText(_('Download file in /tmp successful!!'))
             else:
-                self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
+                self['info'].setText(_('Download Failed!') + self.dom + _('... Not supported'))
             self.timer.start(3000, 1)
             # self.addondel()
 
@@ -2078,7 +2081,7 @@ class tvInstall(Screen):
                     self.download.start().addCallback(self.install).addErrback(self.download_failed)
 
             else:
-                self['info'].setText(_('Download Failed!!!') + self.dom + _('... Not supported'))
+                self['info'].setText(_('Download Failed!') + self.dom + _('... Not supported'))
 
     def downloadProgress(self, recvbytes, totalbytes):
         self['info'].setText(_('Download in progress...'))
@@ -2111,7 +2114,7 @@ class tvInstall(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!!' + str(self.error_message)
+        info = _('Download Failed!') + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
         return
@@ -2167,12 +2170,12 @@ class tvInstall(Screen):
 
 class tvIPK(Screen):
     def __init__(self, session, title=None, cmdlist=None, finishedCallback=None, closeOnSuccess=False):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvIPK.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('IPK')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.ipkpth = str(cfg.ipkpth.value)
         self.list = []
@@ -2353,12 +2356,12 @@ class tvIPK(Screen):
 
 class tvUpdate(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Update')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self['key_red'] = Button(_('Back'))
         self['key_yellow'] = Button(_('Update'))
@@ -2474,12 +2477,12 @@ class tvUpdate(Screen):
 
 class tvRemove(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Remove Addon')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self.names = []
@@ -2614,28 +2617,29 @@ class tvRemove(Screen):
             self.session.open(TryQuitMainloop, 3)
 
 
-class tvConfig(Screen, ConfigListScreen):
+class tvConfig(ConfigListScreen, Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
+        self.session = session
         skin = os.path.join(skin_path, 'tvConfig.xml')
         f = open(skin, 'r')
         self.skin = f.read()
         f.close()
-        Screen.__init__(self, session)
-        self.setup_title = _("Config")
+        self.setTitle(_("Config"))
         self.onChangedEntry = []
-        self.session = session
-        self.setTitle(self.setup_title)
+        self.list = []
+        self['title'] = Label(title_plug)
         self['description'] = Label('Config mmPicons Panel')
         self["paypal"] = Label()
         self['info'] = Label(_('SELECT YOUR CHOICE'))
-        # self['info'] = ScrollLabel()
         self['key_yellow'] = Button(_('Update'))
         self['key_green'] = Button(_('Save'))
         self['key_red'] = Button(_('Back'))
         # self["key_blue"] = Button()
         # self['key_blue'].hide()
 
-        self['title'] = Label(title_plug)
+        ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
+        self.createSetup()
         self["setupActions"] = ActionMap(['OkCancelActions',
                                           'DirectionActions',
                                           'ColorActions',
@@ -2649,10 +2653,6 @@ class tvConfig(Screen, ConfigListScreen):
                                                                  "showVirtualKeyboard": self.KeyText,
                                                                  'ok': self.Ok_edit,
                                                                  'green': self.msgok}, -1)
-        self.list = []
-        ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
-        self.createSetup()
-        # self.onLayoutFinish.append(self.layoutFinished)
         if self.setInfo not in self['config'].onSelectionChanged:
             self['config'].onSelectionChanged.append(self.setInfo)
 
@@ -2696,11 +2696,11 @@ class tvConfig(Screen, ConfigListScreen):
         self.list = []
         # self.list.append(getConfigListEntry(_('Auto Update Plugin'), cfg.autoupd, _("If Active: Automatic Update Plugin")))
         self.list.append(getConfigListEntry(_("Set the path to the Picons folder"), cfg.mmkpicon, _("Configure folder containing picons files")))
-        self.list.append(getConfigListEntry(_('Path Manual IPK'), cfg.ipkpth, _("Path to the addon installation folder")))
+        self.list.append(getConfigListEntry(_('Path Folder IPK'), cfg.ipkpth, _("Path to the addon installation folder. Eg.: '/tmp'")))
         self.list.append(getConfigListEntry(_('Link in Extensions Menu'), cfg.strtext, _("Link in Extensions button")))
         self.list.append(getConfigListEntry(_('Link in Main Menu'), cfg.strtmain, _("Link in Main Menu")))
         self["config"].list = self.list
-        self["config"].setList(self.list)
+        self["config"].l.setList(self.list)
         self.setInfo()
 
     def setInfo(self):
@@ -2731,23 +2731,28 @@ class tvConfig(Screen, ConfigListScreen):
     def msgok(self):
         if os.path.exists(cfg.ipkpth.value) is False:
             self.session.open(MessageBox, _('Device not detected!'), MessageBox.TYPE_INFO, timeout=4)
-        for x in self["config"].list:
-            x[1].save()
-        self.session.open(MessageBox, _('Successfully saved configuration'), MessageBox.TYPE_INFO, timeout=4)
-
-        self.close(True)
+        if self['config'].isChanged():
+            for x in self["config"].list:
+                x[1].save()
+            cfg.save()
+            configfile.save()
+            # self.mbox = self.session.openWithCallback(self.restartenigma, MessageBox, _("Restart Enigma is Required. Do you want to continue?"), MessageBox.TYPE_YESNO)
+            self.session.open(MessageBox, _('Successfully saved configuration'), MessageBox.TYPE_INFO, timeout=4)
+            self.close(True)
+        else:
+            self.close()
 
     def Ok_edit(self):
-        # ConfigListScreen.keyOK(self)
         sel = self['config'].getCurrent()[1]
-        if sel and sel == cfg.mmkpicon:
-            self.setting = 'mmkpicon'
-            mmkpth = cfg.mmkpicon.value
-            self.openDirectoryBrowser(mmkpth, 'pthpicon')
-        if sel and sel == cfg.ipkpth:
-            self.setting = 'ipkpth'
-            ipkpth = cfg.ipkpth.value
-            self.openDirectoryBrowser(ipkpth, 'ipkpth')
+        if sel:
+            if sel == cfg.mmkpicon:
+                self.setting = 'mmkpicon'
+                mmkpth = cfg.mmkpicon.value
+                self.openDirectoryBrowser(mmkpth, 'pthpicon')
+            elif sel == cfg.ipkpth:
+                self.setting = 'ipkpth'
+                ipkpth = cfg.ipkpth.value
+                self.openDirectoryBrowser(ipkpth, 'ipkpth')
         else:
             pass
 
@@ -2779,16 +2784,16 @@ class tvConfig(Screen, ConfigListScreen):
                 config_entry.setValue(path)
         return callback
 
-    def KeyText(self):
-        sel = self['config'].getCurrent()
-        if sel:
-            self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self['config'].getCurrent()[0], text=self['config'].getCurrent()[1].value)
-
     def VirtualKeyBoardCallback(self, callback=None):
         if callback is not None and len(callback):
             self['config'].getCurrent()[1].value = callback
             self['config'].invalidate(self['config'].getCurrent())
         return
+
+    def KeyText(self):
+        sel = self['config'].getCurrent()
+        if sel:
+            self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self['config'].getCurrent()[0], text=self['config'].getCurrent()[1].value)
 
     def cancelConfirm(self, result):
         if not result:
@@ -2816,15 +2821,13 @@ KodilitePcd = "/usr/lib/enigma2/python/Plugins/Extensions/KodiLite"
 
 
 class mainkodilite(Screen):
-
     def __init__(self, session):
-
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self['list'] = tvList([])
         self['pth'] = Label()
@@ -2885,12 +2888,12 @@ class mainkodilite(Screen):
 
 class pluginx(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -3015,10 +3018,9 @@ class pluginx(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + str(self.error_message)
+        info = _('Download Failed!') + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
-        # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
 
     def abort(self):
         print("aborting", self.url)
@@ -3057,12 +3059,12 @@ class pluginx(Screen):
 
 class plugins_adult(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -3203,7 +3205,7 @@ class plugins_adult(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + str(self.error_message)
+        info = _('Download Failed! ') + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
@@ -3243,12 +3245,12 @@ class plugins_adult(Screen):
 
 class script(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -3372,7 +3374,7 @@ class script(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + str(self.error_message)
+        info = _('Download Failed! ') + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
@@ -3413,12 +3415,12 @@ class script(Screen):
 
 class repository(Screen):
     def __init__(self, session):
+        Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
         self.setup_title = ('Kodilite by pcd')
-        Screen.__init__(self, session)
         self.setTitle(self.setup_title)
         self.list = []
         self['list'] = tvList([])
@@ -3542,10 +3544,9 @@ class repository(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = 'Download Failed!!! ' + str(self.error_message)
+        info = _('Download Failed! ') + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
-        # self.session.openWithCallback(self.close, MessageBox, _(info), timeout=3, close_on_any_key=True)
 
     def abort(self):
         print("aborting", self.url)
@@ -3591,13 +3592,6 @@ def main(session, **kwargs):
         pass
 
 
-# def cfgmain(menuid, **kwargs):
-    # if menuid == 'mainmenu':
-        # return [(_('TiVuStream Addons'), main, 'AddonPanel', 44)]
-    # else:
-        # return []
-
-
 def cfgmain(menuid, **kwargs):
     if menuid == 'mainmenu':
         from Tools.BoundFunction import boundFunction
@@ -3638,11 +3632,11 @@ def getversioninfo():
 
 
 currmmversion = getversioninfo()
-titlem_plug = 'mMark Picons & Skins'
-descm_plugin = 'V.%s - e2skin.blogspot.com' % str(currmmversion)
-icom_path = 'logom.png'
-if not Utils.DreamOS():
-    icom_path = plugin_path + '/res/pics/logom.png'
+# titlem_plug = 'mMark Picons & Skins'
+# descm_plugin = 'V.%s - e2skin.blogspot.com' % str(currmmversion)
+# icom_path = 'logom.png'
+# if not Utils.DreamOS():
+    # icom_path = plugin_path + '/res/pics/logom.png'
 
 
 def Plugins(**kwargs):
@@ -3651,9 +3645,9 @@ def Plugins(**kwargs):
         ico_path = plugin_path + '/res/pics/logo.png'
     extDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_EXTENSIONSMENU, icon=ico_path, fnc=main)
     mainDescriptor = PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_MENU, icon=ico_path, fnc=cfgmain)
-    result = [PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main),
+    result = [PluginDescriptor(name=name_plug, description=title_plug, where=PluginDescriptor.WHERE_PLUGINMENU, icon=ico_path, fnc=main)]  #,
               # PluginDescriptor(name=name_plug, description=title_plug, where=[PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
-              PluginDescriptor(name=titlem_plug, description=descm_plugin, where=PluginDescriptor.WHERE_PLUGINMENU, icon=icom_path, fnc=mainm)]
+              # PluginDescriptor(name=titlem_plug, description=descm_plugin, where=PluginDescriptor.WHERE_PLUGINMENU, icon=icom_path, fnc=mainm)]
     if cfg.strtext.value:
         result.append(extDescriptor)
     if cfg.strtmain.value:

@@ -13,7 +13,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/logom.png" scale="strech" alphatest="blend" position="1093,43" size="191,67" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/PayPal.png" scale="strech" position="1058,579" size="156,75" zPosition="5" alphatest="on" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/qr-code.png" scale="strech" position="945,237" size="318,303" zPosition="2" alphatest="on" />
-	<eLabel backgroundGradient="blue,red,vertical" cornerRadius="10" position="515,234" size="754,323" />
+	<!-- <eLabel backgroundGradient="blue,red,vertical" cornerRadius="10" position="515,234" size="754,323" /> -->
 	<widget name="paypal" position="528,237" size="401,301" font="Regular; 34" foregroundColor="#ffb75b" backgroundColor="#101010" halign="left" transparent="1" zPosition="5" />
 
 </screen>
