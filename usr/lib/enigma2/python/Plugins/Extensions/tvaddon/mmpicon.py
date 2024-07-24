@@ -14,8 +14,7 @@
 from __future__ import print_function
 from . import _
 from . import Utils
-from .lib.Downloader import downloadWithProgress
-# from .lib.Console import Console as xConsole
+from .resolve.Downloader import downloadWithProgress
 from .plugin import mmkpicon
 
 from Components.AVSwitch import AVSwitch
@@ -34,7 +33,7 @@ from Components.config import (
     getConfigListEntry,
     ConfigSubsection,
     ConfigDirectory,
-    # ConfigSelection,
+    ConfigSelection,
 )
 from Plugins.Plugin import PluginDescriptor
 from Screens.LocationBox import LocationBox
@@ -145,7 +144,7 @@ if sslverify:
 piconpathss = Utils.mountipkpth()
 config.plugins.mmPicons = ConfigSubsection()
 cfg = config.plugins.mmPicons
-cfg.mmkpicon = ConfigDirectory(default='/media/hdd/picon/', choices=piconpathss)
+cfg.mmkpicon = ConfigSelection(default='/media/hdd/picon/', choices=piconpathss)
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
 currmmversion = getversioninfo()
 titlem_plug = 'mMark Picons & Skins'
@@ -275,6 +274,7 @@ class SelectPicons(Screen):
         self['actions'] = ActionMap(['ColorActions',
                                      'DirectionActions',
                                      'ButtonSetupActions',
+                                     'OkCancelActions',
                                      'MenuActions'], {'ok': self.okRun,
                                                       'menu': self.goConfig,
                                                       'blue': self.msgtqm,

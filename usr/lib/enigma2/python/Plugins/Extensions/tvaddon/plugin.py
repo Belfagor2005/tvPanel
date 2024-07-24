@@ -9,11 +9,11 @@
 # Info http://t.me/tivustream
 from __future__ import print_function
 from . import _, paypal, wgetsts
-from .lib import Utils
-from .lib.Console import Console as tvConsole
-from .lib.Downloader import downloadWithProgress
-from .lib.Lcn import LCN
-from .lib.Utils import RequestAgent
+from . import Utils
+from .resolve.Console import Console as tvConsole
+from .resolve.Downloader import downloadWithProgress
+from .resolve.Lcn import LCN
+from .resolve.Utils import RequestAgent
 
 from Components.ActionMap import ActionMap
 from Components.Button import Button

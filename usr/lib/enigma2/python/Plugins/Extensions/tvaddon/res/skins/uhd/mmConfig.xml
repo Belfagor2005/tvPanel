@@ -8,9 +8,9 @@
 	<widget name="key_red" position="20,517" size="400,52" font="Regular;36" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_green" position="444,517" size="400,52" font="Regular;36" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
 	<widget name="key_yellow" position="869,517" size="400,52" font="Regular;36" halign="center" valign="center" backgroundColor="#20000000" zPosition="5" transparent="1" />
-	<widget name="info" position="21,60" size="850,50" font="Regular;30" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
+	<widget name="info" position="21,60" size="943,116" font="Regular;30" halign="center" valign="center" foregroundColor="yellow" backgroundColor="#202020" transparent="0" zPosition="5" />
 	<widget name="description" position="40,356" size="1006,113" font="Regular;30" halign="left" foregroundColor="yellow" backgroundColor="#20000000" transparent="1" zPosition="5" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/logom.png" scale="strech" alphatest="blend" position="1104,56" size="191,67" zPosition="5" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/logom.png" scale="strech" alphatest="blend" position="1104,56" size="230,100" zPosition="5" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/PayPal.png" scale="strech" position="1091,387" size="156,75" zPosition="5" alphatest="on" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/qr-code.png" scale="strech" position="1329,13" size="318,318" zPosition="2" alphatest="on" />
 	<eLabel backgroundGradient="blue,red,vertical" cornerRadius="10" position="1289,-53" size="400,637" />
