@@ -11,6 +11,7 @@ import os
 PluginLanguageDomain = 'tvaddon'
 PluginLanguagePath = 'Extensions/tvaddon/res/locale'
 
+global isDreamOS
 isDreamOS = False
 if os.path.exists("/var/lib/dpkg/status"):
     isDreamOS = True
