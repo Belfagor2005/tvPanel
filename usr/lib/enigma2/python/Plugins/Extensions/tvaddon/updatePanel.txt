@@ -1,4 +1,4 @@
-2.1.5
+2.1.9
 http://patbuweb.com/tvPanelxxx/enigma2-plugin-extensions-tvaddon_2.1.5_all.ipk
-12.06.2024 Updated * www.tivustream.com
+29.07.2024 Updated * www.tivustream.com
 http://patbuweb.com/tvPanelxxx/tvaddon.tar

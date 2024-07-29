@@ -14,7 +14,6 @@ from .resolve.Console import Console as tvConsole
 from .resolve.Downloader import downloadWithProgress
 from .resolve.Lcn import LCN
 from .resolve.Utils import RequestAgent
-
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
@@ -43,7 +42,6 @@ from Screens.Screen import Screen
 from Screens.Standby import TryQuitMainloop
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.Directories import (SCOPE_PLUGINS, fileExists, resolveFilename)
-# from Tools.Downloader import downloadWithProgress
 # from Screens.Processing import Processing
 from enigma import (
     RT_HALIGN_LEFT,
@@ -219,7 +217,7 @@ piconpathss = Utils.mountipkpth()
 AgentRequest = RequestAgent()
 # ================config
 global setx
-currversion = '2.1.8'
+currversion = '2.1.9'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
@@ -292,7 +290,8 @@ if not os.path.exists(mmkpicon):
 Panel_deb = [
     _('DEBIAN DREAMOS'),
     _('DAILY PICONS'),
-    _('DAILY SETTINGS')]
+    _('DAILY SETTINGS')
+]
 
 Panel_list = [
     _('LULULLA CORNER'),
@@ -525,7 +524,6 @@ class Hometv(Screen):
             else:
                 from .mmpicon import SelectPicons
             self.session.open(SelectPicons)
-
         elif sel == _('DAILY SETTINGS'):
             self.session.open(tvDailySetting)
         elif sel == _('KODILITE BY PCD'):
@@ -1217,20 +1215,21 @@ class SettingMorpheus(Screen):
         try:
             # regex = 'name":"E2_Morph883_(.*?).zip".*?path":"(.*?)"'
             regex = 'title="E2_Morph883_(.*?).zip".*?href="(.*?)"'
-
-            n1 = r.find('title="README.txt', 0)
-            n2 = r.find('href="#readme">', n1)
-            r = r[n1:n2]
-
+            # n1 = r.find('title="README.txt', 0)
+            # n2 = r.find('href="#readme">', n1)
+            # r = r[n1:n2]
             match = re.compile(regex).findall(r)
+            print('match:', match)
             for name, url in match:
                 if url.find('.zip') != -1:
                     url = url.replace('blob', 'raw')
-                    url = 'https://github.com/morpheus883/enigma2-zipped/raw/master/' + url
+                    url = 'https://github.com' + url
                     name = 'Morph883 ' + name
-                    self.urls.append(Utils.str_encode(url.strip()))
-                    self.names.append(Utils.str_encode(name.strip()))
-                    self.downloading = True
+                    if name in self.names:
+                        continue
+                self.urls.append(Utils.str_encode(url.strip()))
+                self.names.append(Utils.str_encode(name.strip()))
+                self.downloading = True
             self['key_green'].show()
             self['info'].setText(_('Please select ...'))
             showlist(self.names, self['list'])
@@ -1253,11 +1252,14 @@ class SettingMorpheus(Screen):
                 if 'dtt' not in url.lower():
                     setx = 1
                     terrestrial()
-                import requests
-                r = requests.get(url)
-                with open(dest, 'wb') as f:
-                    f.write(r.content)
-                if os.path.exists(dest):
+                # import requests
+                # r = requests.get(url)
+                # with open(dest, 'wb') as f:
+                    # f.write(r.content)
+                from six.moves.urllib.request import urlretrieve
+                urlretrieve(url, dest)
+
+                if os.path.exists(dest) and '.zip' in dest:
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -2340,7 +2342,6 @@ class tvConfig(ConfigListScreen, Screen):
         self['key_red'] = Button(_('Back'))
         # self["key_blue"] = Button()
         # self['key_blue'].hide()
-
         ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
         self.createSetup()
         self["setupActions"] = ActionMap(['OkCancelActions',
@@ -2524,6 +2525,7 @@ KodilitePcd = "/usr/lib/enigma2/python/Plugins/Extensions/KodiLite"
 
 
 class mainkodilite(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -2615,7 +2617,6 @@ class pluginx(Screen):
         self['key_yellow'].hide()
         self['key_blue'].hide()
         self['key_green'].hide()
-
         self.downloading = False
         self.error_message = ""
         self.last_recvbytes = 0
@@ -2908,7 +2909,7 @@ class plugins_adult(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = _('Download Failed! ') + str(self.error_message)
+        info = _('Download Failed!') + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
@@ -3077,7 +3078,7 @@ class script(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = _('Download Failed! ') + str(self.error_message)
+        info = _('Download Failed!') + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
@@ -3247,7 +3248,7 @@ class repository(Screen):
         if error_message == "" and failure_instance is not None:
             self.error_message = failure_instance.getErrorMessage()
         self.downloading = False
-        info = _('Download Failed! ') + str(self.error_message)
+        info = _('Download Failed!') + str(self.error_message)
         self['info'].setText(info)
         self.session.open(MessageBox, _(info), MessageBox.TYPE_INFO, timeout=5)
 
