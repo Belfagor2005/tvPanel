@@ -453,7 +453,7 @@ class Hometv(Screen):
         dependencies = True
         try:
             import requests
-        except:
+        except ImportError:
             dependencies = False
         if dependencies is False:
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/dependencies.sh", 0o0755)
@@ -1157,7 +1157,7 @@ class SettingManutek(Screen):
                     os.system('rm -rf /etc/enigma2/*.del')
                     os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess=False)
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess=False)
                     self['info'].setText(_('Settings Installed ...'))
                 else:
                     self['info'].setText(_('Settings Not Installed (dest)...'))
@@ -1215,8 +1215,8 @@ class SettingMorpheus(Screen):
         self.names = []
         self.urls = []
         try:
-            regex = 'name":"E2_Morph883_(.*?).zip".*?path":"(.*?)"'
-            # regex = 'title="E2_Morph883_(.*?).zip".*?href="(.*?)"'
+            # regex = 'name":"E2_Morph883_(.*?).zip".*?path":"(.*?)"'
+            regex = 'title="E2_Morph883_(.*?).zip".*?href="(.*?)"'
 
             n1 = r.find('title="README.txt', 0)
             n2 = r.find('href="#readme">', n1)
@@ -1333,7 +1333,7 @@ class SettingVhan(Screen):
                 data = six.ensure_str(data)
             match = re.compile('<td><a href="(.+?)">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(data)
             for url, name, date in match:
-                name = name.replace('&#127381;', '') + ' ' + date
+                name = str(name) + ' ' + date
                 url = "https://www.vhannibal.net/" + url
                 self.urls.append(Utils.str_encode(url.strip()))
                 self.names.append(Utils.str_encode(name.strip()))
@@ -1382,7 +1382,7 @@ class SettingVhan(Screen):
                     os.system('rm -rf /etc/enigma2/*.del')
                     os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                     title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess=False)
+                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess=False)
                     self['info'].setText(_('Settings Installed ...'))
                 else:
                     self['info'].setText(_('Settings Not Installed (dest)...'))
@@ -1507,7 +1507,7 @@ class SettingVhan2(Screen):
                 os.system('rm -rf /etc/enigma2/*.del')
                 os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
                 title = _("Installation Settings")
-                self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &; sleep 3"], closeOnSuccess=False)
+                self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess=False)
                 self['info'].setText(_('Settings Installed ...'))
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
@@ -2672,8 +2672,8 @@ class pluginx(Screen):
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
                 self.com = six.ensure_binary(self.com)
-                # if PY3:
-                    # self.com = self.com.encode()
+                if PY3:
+                    self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
                 if os.path.exists('/var/lib/dpkg/info'):
@@ -2859,8 +2859,8 @@ class plugins_adult(Screen):
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
                 self.com = six.ensure_binary(self.com)
-                # if PY3:
-                    # self.com = self.com.encode()
+                if PY3:
+                    self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
                 if os.path.exists('/var/lib/dpkg/info'):
@@ -3028,8 +3028,8 @@ class script(Screen):
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
                 self.com = six.ensure_binary(self.com)
-                # if PY3:
-                    # self.com = self.com.encode()
+                if PY3:
+                    self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
                 if os.path.exists('/var/lib/dpkg/info'):
@@ -3198,8 +3198,8 @@ class repository(Screen):
                 self.dom = self.names[idx]
                 self.com = self.urls[idx]
                 self.com = six.ensure_binary(self.com)
-                # if PY3:
-                    # self.com = self.com.encode()
+                if PY3:
+                    self.com = self.com.encode()
                 self.source = self.com.replace(str(self.url), '')
                 self.dest = "/tmp" + self.source
                 if os.path.exists('/var/lib/dpkg/info'):
@@ -3335,11 +3335,13 @@ def getversioninfo():
 
 
 currmmversion = getversioninfo()
+'''
 # titlem_plug = 'mMark Picons & Skins'
 # descm_plugin = 'V.%s - e2skin.blogspot.com' % str(currmmversion)
 # icom_path = 'logom.png'
 # if not Utils.DreamOS():
     # icom_path = plugin_path + '/res/pics/logom.png'
+'''
 
 
 def Plugins(**kwargs):
