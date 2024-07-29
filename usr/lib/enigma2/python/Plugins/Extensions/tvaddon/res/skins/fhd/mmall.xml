@@ -3,7 +3,7 @@
 	<ePixmap position="220,32" size="160,81" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/sLogo.png" alphatest="blend" transparent="1" zPosition="1" />
 	<widget name="title" position="385,32" size="1090,85" font="Regular; 38" foregroundColor="#b0b0b0" backgroundColor="#000000" transparent="1" zPosition="5" />
 	<eLabel position="230,120" size="1250,3" backgroundColor="#303030" zPosition="4" />
-	<ePixmap position="0,0" size="1500,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main2.png" zPosition="-2" />
+	<ePixmap position="0,0" size="1500,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/main23.png" zPosition="-2" />
 	<ePixmap position="1500,0" size="125,1080" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/res/pics/pC.png" zPosition="-1" />
 	<eLabel position="230,960" size="1,3" backgroundColor="#303030" zPosition="4" />
 	<widget name="text" position="226,212" scrollbarMode="showOnDemand" size="1250,600" font="Regular;28" zPosition="4" backgroundColor="#000000" transparent="1" scrollbarWidth="10" backgroundColorSelected="#0b2049" />
