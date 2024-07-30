@@ -4,7 +4,7 @@
 # --------------------#
 #   coded by Lululla  #
 #    skin by MMark    #
-#      22/09/2023     #
+#     04/07/2023     #
 # --------------------#
 # Info http://t.me/tivustream
 from __future__ import print_function
@@ -12,7 +12,13 @@ from . import _, paypal, wgetsts
 from . import Utils
 from .resolve.Console import Console as tvConsole
 from .resolve.Downloader import downloadWithProgress
-from .resolve.Lcn import LCN
+from .resolve.Lcn import (
+    LCN,
+    terrestrial,
+    terrestrial_rest,
+    ReloadBouquets,
+    keepiptv,
+)
 from .resolve.Utils import RequestAgent
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -55,17 +61,18 @@ from enigma import (
 )
 from os import chmod
 from twisted.web.client import downloadPage
+from datetime import datetime
 import codecs
+import glob
+import json
 import os
 import re
-import sys
 import shutil
-import ssl
-import glob
 import six
+import ssl
 import subprocess
-import json
-from datetime import datetime
+import sys
+
 global skin_path, mmkpicon, setx, category
 
 
@@ -183,24 +190,6 @@ def checkGZIP(url):
         return None
 
 
-def ReloadBouquets():
-    from enigma import eDVBDB
-    print("\n----Reloading bouquets----")
-    global setx
-    if setx == 1:
-        setx = 0
-        print("\n----Reloading Terrestrial----")
-        terrestrial_rest()
-    if eDVBDB:
-        eDVBDB.getInstance().reloadServicelist()
-        eDVBDB.getInstance().reloadBouquets()
-        # print("eDVBDB: bouquets reloaded...")
-    else:
-        os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=2 > /dev/null 2>&1 &")
-        os.system("wget -qO - http://127.0.0.1/web/servicelistreload?mode=4 > /dev/null 2>&1 &")
-        # print("wGET: bouquets reloaded...")
-
-
 def mountipkpths():
     ipkpth = []
     if os.path.isfile('/proc/mounts'):
@@ -217,7 +206,7 @@ piconpathss = Utils.mountipkpth()
 AgentRequest = RequestAgent()
 # ================config
 global setx
-currversion = '2.1.9'
+currversion = '2.2.0'
 title_plug = '..:: TiVuStream Addons Panel V. %s ::..' % currversion
 name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
@@ -250,7 +239,6 @@ plugin_path = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvaddon'))
 ico_path = os.path.join(plugin_path, 'logo.png')
 no_cover = os.path.join(plugin_path, 'no_coverArt.png')
 res_plugin_path = os.path.join(plugin_path, 'res/')
-_firstStarttvspro = True
 ee2ldb = '/etc/enigma2/lamedb'
 plugin_temp = os.path.join(plugin_path, 'temp')
 if not os.path.exists(plugin_temp):
@@ -359,13 +347,13 @@ def DailyListEntry(name, idx):
     res = [name]
     if screenwidth.width() == 2560:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(80, 0), size=(1200, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1200, 50), font=0, text=name, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     elif screenwidth.width() == 1920:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 0), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 40), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 40), font=0, text=name, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -373,13 +361,13 @@ def oneListEntry(name):
     res = [name]
     if screenwidth.width() == 2560:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(10, 10), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(80, 0), size=(1950, 60), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(80, 0), size=(1950, 60), font=0, text=name, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     elif screenwidth.width() == 1920:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(5, 5), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(70, 0), size=(1000, 50), font=0, text=name, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     else:
         res.append(MultiContentEntryPixmapAlphaTest(pos=(3, 0), size=(40, 40), png=loadPNG(pngs)))
-        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 40), font=0, text=name, color=0xa6d1fe, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
+        res.append(MultiContentEntryText(pos=(50, 0), size=(500, 40), font=0, text=name, flags=RT_HALIGN_LEFT | RT_VALIGN_CENTER))
     return res
 
 
@@ -461,11 +449,11 @@ class Hometv(Screen):
         else:
             self.starts()
 
-    def starts(self):
+    def starts(self, call=None):
         Utils.OnclearMem()
 
     def closerm(self):
-        ReloadBouquets()
+        ReloadBouquets(0)
         Utils.deletetmp()
         self.close()
 
@@ -717,13 +705,16 @@ class tvDailySetting(Screen):
         self.onLayoutFinish.append(self.updateMenuList)
 
     def Lcn(self):
+        setx = 0
         if self.LcnOn:
             lcn = LCN()
             lcn.read()
             if len(lcn.lcnlist) >= 1:
                 lcn.writeBouquet()
-                lcn.ReloadBouquets()
-                self.session.open(MessageBox, _('Sorting Terrestrial channels with Lcn rules Completed'), MessageBox.TYPE_INFO, timeout=5)
+                lcn.ReloadBouquets(setx)
+                self.session.open(MessageBox, _('Sorting Terrestrial channels with Lcn rules Completed'),
+                                  MessageBox.TYPE_INFO,
+                                  timeout=5)
 
     def closerm(self):
         self.close()
@@ -773,21 +764,21 @@ class tvDailySetting(Screen):
     def terrestrial_restore(self):
         self.session.openWithCallback(self.terrestrial_restore2, MessageBox, _("This operation restore your Favorite channel Dtt\nfrom =>>THISPLUGIN/temp/TerrestrialChannelListArchive\nDo you really want to continue?"), MessageBox.TYPE_YESNO)
 
-    def terrestrial_restore2(self, answer):
+    def terrestrial_restore2(self, answer=False):
         if answer:
             terrestrial_rest()
 
     def terrestrialsave(self):
         self.session.openWithCallback(self.terrestrialsave2, MessageBox, _("This operation save your Favorite channel Dtt\nto =>>/tmp/*_enigma2settingsbackup.tar.gz\nDo you really want to continue?"), MessageBox.TYPE_YESNO)
 
-    def terrestrialsave2(self, answer):
+    def terrestrialsave2(self, answer=False):
         if answer:
             terrestrial()
 
     def okSATELLITE(self):
         self.session.openWithCallback(self.okSATELLITE2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okSATELLITE2(self, answer):
+    def okSATELLITE2(self, answer=False):
         if answer:
             if Utils.checkInternet():
                 try:
@@ -808,7 +799,7 @@ class tvDailySetting(Screen):
     def okTERRESTRIAL(self):
         self.session.openWithCallback(self.okTERRESTRIAL2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okTERRESTRIAL2(self, answer):
+    def okTERRESTRIAL2(self, answer=False):
         if answer:
             if Utils.checkInternet():
                 try:
@@ -880,6 +871,8 @@ class SettingCiefp(Screen):
             regex = 'title="ciefp-E2-(.*?).zip".*?href="(.*?)"'
             match = re.compile(regex).findall(r)
             for name, url in match:
+                if name in self.names:
+                    continue
                 if url.find('.zip') != -1:
                     url = url.replace('blob', 'raw')
                     url = 'https://github.com' + url
@@ -896,7 +889,7 @@ class SettingCiefp(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             global setx
             setx = 0
@@ -905,14 +898,22 @@ class SettingCiefp(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
+
                 if 'dtt' not in url.lower():
                     setx = 1
                     terrestrial()
-                import requests
-                r = requests.get(url)
-                with open(dest, 'wb') as f:
-                    f.write(r.content)
-                if os.path.exists(dest):
+                if keepiptv():
+                    print('-----save iptv channels-----')
+
+                # import requests
+                # r = requests.get(url)
+                # with open(dest, 'wb') as f:
+                    # f.write(r.content)
+
+                from six.moves.urllib.request import urlretrieve
+                urlretrieve(url, dest)
+
+                if os.path.exists(dest)  and '.zip' in dest:
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -936,8 +937,9 @@ class SettingCiefp(Screen):
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
-    def yes(self):
-        ReloadBouquets()
+    def yes(self, call=None):
+        copy_files_to_enigma2()
+        ReloadBouquets(setx)
 
 
 class SettingCyrus(Screen):
@@ -999,6 +1001,8 @@ class SettingCyrus(Screen):
                     if 'Sat' in name.lower():
                         continue
                     name = name + ' ' + date
+                    if name in self.names:
+                        continue
                     self.urls.append(Utils.str_encode(url.strip()))
                     self.names.append(Utils.str_encode(name.strip()))
                     self.downloading = True
@@ -1012,7 +1016,7 @@ class SettingCyrus(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             global setx
             setx = 0
@@ -1021,14 +1025,22 @@ class SettingCyrus(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
+
                 if 'dtt' not in url.lower():
                     setx = 1
                     terrestrial()
-                import requests
-                r = requests.get(url)
-                with open(dest, 'wb') as f:
-                    f.write(r.content)
-                if os.path.exists(dest):
+                if keepiptv():
+                    print('-----save iptv channels-----')
+
+                # import requests
+                # r = requests.get(url)
+                # with open(dest, 'wb') as f:
+                    # f.write(r.content)
+
+                from six.moves.urllib.request import urlretrieve
+                urlretrieve(url, dest)
+
+                if os.path.exists(dest)  and '.zip' in dest:
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1052,8 +1064,9 @@ class SettingCyrus(Screen):
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
-    def yes(self):
-        ReloadBouquets()
+    def yes(self, call=None):
+        copy_files_to_enigma2()
+        ReloadBouquets(setx)
 
 
 class SettingManutek(Screen):
@@ -1106,9 +1119,10 @@ class SettingManutek(Screen):
             regex = 'href="/isetting/.*?file=(.+?).zip">'
             match = re.compile(regex).findall(r)
             for url in match:
-                name = url
+                name = url.replace("NemoxyzRLS_Manutek_", "").replace("_", " ").replace("%20", " ")
+                if name in self.names:
+                    continue
                 url = 'http://www.manutek.it/isetting/enigma2/' + url + '.zip'
-                name = name.replace("NemoxyzRLS_Manutek_", "").replace("_", " ").replace("%20", " ")
                 self.urls.append(Utils.str_encode(url.strip()))
                 self.names.append(Utils.str_encode(name.strip()))
                 self.downloading = True
@@ -1122,7 +1136,7 @@ class SettingManutek(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             global setx
             setx = 0
@@ -1131,14 +1145,22 @@ class SettingManutek(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
+
                 if 'dtt' not in url.lower():
                     setx = 1
                     terrestrial()
-                import requests
-                r = requests.get(url)
-                with open(dest, 'wb') as f:
-                    f.write(r.content)
-                if os.path.exists(dest):
+                if keepiptv():
+                    print('-----save iptv channels-----')
+
+                # import requests
+                # r = requests.get(url)
+                # with open(dest, 'wb') as f:
+                    # f.write(r.content)
+
+                from six.moves.urllib.request import urlretrieve
+                urlretrieve(url, dest)
+
+                if os.path.exists(dest)  and '.zip' in dest:
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1162,8 +1184,9 @@ class SettingManutek(Screen):
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
-    def yes(self):
-        ReloadBouquets()
+    def yes(self, call=None):
+        copy_files_to_enigma2()
+        ReloadBouquets(setx)
 
 
 class SettingMorpheus(Screen):
@@ -1222,11 +1245,11 @@ class SettingMorpheus(Screen):
             print('match:', match)
             for name, url in match:
                 if url.find('.zip') != -1:
-                    url = url.replace('blob', 'raw')
-                    url = 'https://github.com' + url
                     name = 'Morph883 ' + name
                     if name in self.names:
-                        continue
+                        continue                    
+                    url = url.replace('blob', 'raw')
+                    url = 'https://github.com' + url
                 self.urls.append(Utils.str_encode(url.strip()))
                 self.names.append(Utils.str_encode(name.strip()))
                 self.downloading = True
@@ -1240,7 +1263,7 @@ class SettingMorpheus(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             global setx
             setx = 0
@@ -1249,13 +1272,18 @@ class SettingMorpheus(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
+
                 if 'dtt' not in url.lower():
                     setx = 1
                     terrestrial()
+                if keepiptv():
+                    print('-----save iptv channels-----')
+
                 # import requests
                 # r = requests.get(url)
                 # with open(dest, 'wb') as f:
                     # f.write(r.content)
+
                 from six.moves.urllib.request import urlretrieve
                 urlretrieve(url, dest)
 
@@ -1283,8 +1311,9 @@ class SettingMorpheus(Screen):
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
-    def yes(self):
-        ReloadBouquets()
+    def yes(self, call=None):
+        copy_files_to_enigma2()
+        ReloadBouquets(setx)
 
 
 class SettingVhan(Screen):
@@ -1336,6 +1365,8 @@ class SettingVhan(Screen):
             match = re.compile('<td><a href="(.+?)">(.+?)</a></td>.*?<td>(.+?)</td>', re.DOTALL).findall(data)
             for url, name, date in match:
                 name = str(name) + ' ' + date
+                if name in self.names:
+                    continue
                 url = "https://www.vhannibal.net/" + url
                 self.urls.append(Utils.str_encode(url.strip()))
                 self.names.append(Utils.str_encode(name.strip()))
@@ -1350,7 +1381,7 @@ class SettingVhan(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             global setx
             setx = 0
@@ -1360,14 +1391,21 @@ class SettingVhan(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
-                import requests
-                r = requests.get(url)
-                with open(dest, 'wb') as f:
-                    f.write(r.content)
-                if 'dtt' not in self.name.lower():
+                # import requests
+                # r = requests.get(url)
+                # with open(dest, 'wb') as f:
+                    # f.write(r.content)
+
+                if 'dtt' not in url.lower():
                     setx = 1
                     terrestrial()
-                if os.path.exists(dest):
+                if keepiptv():
+                    print('-----save iptv channels-----')
+
+                from six.moves.urllib.request import urlretrieve
+                urlretrieve(url, dest)
+
+                if os.path.exists(dest)  and '.zip' in dest:
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1391,8 +1429,9 @@ class SettingVhan(Screen):
             else:
                 self['info'].setText(_('Settings Not Installed ...'))
 
-    def yes(self):
-        ReloadBouquets()
+    def yes(self, call=None):
+        copy_files_to_enigma2()
+        ReloadBouquets(setx)
 
 
 class SettingVhan2(Screen):
@@ -1446,8 +1485,9 @@ class SettingVhan2(Screen):
             for url in match:
                 if '.php' in url.lower():
                     continue
-                name = "Vhannibal" + url
-                name = name.replace('&#127381;', '').replace("%20", " ")
+                name = "Vhannibal" + url.replace('&#127381;', '').replace("%20", " ")
+                if name in self.names:
+                    continue
                 url = "http://sat.alfa-tech.net/upload/settings/vhannibal/Vhannibal" + url + '.zip'
                 self.urls.append(Utils.str_encode(url.strip()))
                 self.names.append(Utils.str_encode(name.strip()))
@@ -1462,7 +1502,7 @@ class SettingVhan2(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             global setx
             setx = 0
@@ -1476,6 +1516,11 @@ class SettingVhan2(Screen):
                     if 'dtt' not in url.lower():
                         setx = 1
                         terrestrial()
+                    if keepiptv():
+                        print('-----save iptv channels-----')
+
+                    # from six.moves.urllib.request import urlretrieve
+                    # urlretrieve(url, dest)
 
                     # if PY3:
                         # url = six.ensure_binary(url)
@@ -1489,9 +1534,16 @@ class SettingVhan2(Screen):
                 except Exception as e:
                     print('error: ', str(e))
 
+    def downloadError(self, png):
+        try:
+            if not fileExists(png):
+                self.poster_resize(no_cover)
+        except Exception as e:
+            print('error: ', str(e))
+
     def download(self, data, dest):
         try:
-            if os.path.exists(dest):
+            if os.path.exists(dest)  and '.zip' in dest:
                 self.namel = ''
                 fdest1 = "/tmp/unzipped"
                 fdest2 = "/etc/enigma2"
@@ -1517,15 +1569,9 @@ class SettingVhan2(Screen):
             print('error: ', str(e))
             self['info'].setText(_('Not Installed ...'))
 
-    def downloadError(self, png):
-        try:
-            if not fileExists(png):
-                self.poster_resize(no_cover)
-        except Exception as e:
-            print('error: ', str(e))
-
-    def yes(self):
-        ReloadBouquets()
+    def yes(self, call=None):
+        copy_files_to_enigma2()
+        ReloadBouquets(setx)
 
 
 class tvInstall(Screen):
@@ -1847,7 +1893,7 @@ class tvInstall(Screen):
             self.close()
         return
 
-    def abort(self):
+    def abort(self, ret=None):
         print("aborting", self.url)
         if self.download:
             self.download.stop()
@@ -1857,7 +1903,7 @@ class tvInstall(Screen):
         if self.aborted:
             self.finish(aborted=True)
 
-    def tvIPK(self, string=''):
+    def tvIPK(self, string=None):
         self.install('None')
 
     def install(self, string=''):
@@ -2282,7 +2328,7 @@ class tvRemove(Screen):
     def message1(self):
         self.session.openWithCallback(self.message11, MessageBox, _('Do you want to remove?'), MessageBox.TYPE_YESNO)
 
-    def message11(self, answer):
+    def message11(self, answer=False):
         if answer:
             idx = self['list'].getSelectionIndex()
             dom = self.names[idx]
@@ -2499,7 +2545,7 @@ class tvConfig(ConfigListScreen, Screen):
         if sel:
             self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self['config'].getCurrent()[0], text=self['config'].getCurrent()[1].value)
 
-    def cancelConfirm(self, result):
+    def cancelConfirm(self, result=None):
         if not result:
             return
         for x in self['config'].list:
@@ -2666,7 +2712,7 @@ class pluginx(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -2843,7 +2889,7 @@ class plugins_adult(Screen):
         else:
             self.pinEntered(True)
 
-    def pinEntered(self, result):
+    def pinEntered(self, result=False):
         if result:
             self.okRun()
         else:
@@ -2853,7 +2899,7 @@ class plugins_adult(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun2(self, answer):
+    def okRun2(self, answer=False):
         if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -2926,7 +2972,7 @@ class plugins_adult(Screen):
     def rst1(self):
         pass
 
-    def install(self, string=''):
+    def install(self, string=None):
         if self.aborted:
             self.finish(aborted=True)
         else:
@@ -3022,7 +3068,7 @@ class script(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -3096,7 +3142,7 @@ class script(Screen):
     def rst1(self):
         pass
 
-    def install(self, string=''):
+    def install(self, string=None):
         if self.aborted:
             self.finish(aborted=True)
         else:
@@ -3192,7 +3238,7 @@ class repository(Screen):
     def okRun(self):
         self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
 
-    def okRun1(self, answer):
+    def okRun1(self, answer=False):
         if answer:
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
@@ -3359,228 +3405,24 @@ def Plugins(**kwargs):
     return result
 
 
-def terrestrial():
-    SavingProcessTerrestrialChannels = StartSavingTerrestrialChannels()
-    import time
-    now = time.time()
-    ttime = time.localtime(now)
-    tt = str('{0:02d}'.format(ttime[2])) + str('{0:02d}'.format(ttime[1])) + str(ttime[0])[2:] + '_' + str('{0:02d}'.format(ttime[3])) + str('{0:02d}'.format(ttime[4])) + str('{0:02d}'.format(ttime[5]))
-    os.system('tar -czvf /tmp/' + tt + '_enigma2settingsbackup.tar.gz' + ' -C / /etc/enigma2/*.tv /etc/enigma2/*.radio /etc/enigma2/lamedb')
-    if SavingProcessTerrestrialChannels:
-        print('SavingProcessTerrestrialChannels')
-    return
+def copy_files_to_enigma2():
+    import shutil
+    IptvChArch = plugin_path + '/temp'
+    enigma2_folder = "/etc/enigma2"
+    bouquet_file = os.path.join(enigma2_folder, "bouquets.tv")
 
+    # Copia i file dalla cartella temporanea a /etc/enigma2
+    for filename in os.listdir(IptvChArch):
+        if filename.endswith(".tv"):
+            src_path = os.path.join(IptvChArch, filename)
+            dst_path = os.path.join(enigma2_folder, filename)
+            shutil.copy(src_path, dst_path)
 
-def terrestrial_rest():
-    if LamedbRestore():
-        TransferBouquetTerrestrialFinal()
-        # terrr = os.path.join(plugin_path, 'temp/TerrestrialChannelListArchive')
-        terrr = plugin_path + '/temp/TerrestrialChannelListArchive'
-        if os.path.exists(terrr):
-            os.system("cp -rf " + plugin_path + "/temp/TerrestrialChannelListArchive /etc/enigma2/userbouquet.terrestrial.tv")
-        os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
-        with open('/etc/enigma2/bouquets.tv', 'r+') as f:
-            bouquetTvString = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "userbouquet.terrestrial.tv" ORDER BY bouquet\n'
-            if bouquetTvString not in f:
-                new_bouquet = open('/etc/enigma2/new_bouquets.tv', 'w')
-                new_bouquet.write('#NAME User - bouquets (TV)\n')
-                new_bouquet.write('#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "userbouquet.terrestrial.tv" ORDER BY bouquet\n')
-                file_read = open('/etc/enigma2/bouquets.tv').readlines()
-                for line in file_read:
-                    if line.startswith("#NAME"):
-                        continue
-                    new_bouquet.write(line)
-                new_bouquet.close()
-                os.system('cp -rf /etc/enigma2/bouquets.tv /etc/enigma2/backup_bouquets.tv')
-                os.system('mv -f /etc/enigma2/new_bouquets.tv /etc/enigma2/bouquets.tv')
-        if os.path.exists('/etc/enigma2/lcndb'):
-            lcnstart()
+            # Aggiungi il nome del file al file bouquet.tv
+            with open(bouquet_file, "r+") as f:
+                line = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "{}" ORDER BY bouquet\n'.format(filename)
+                if line not in f:
+                    f.write(line)
+    print("Operazione completata!")
 
-
-def lcnstart():
-    print(' lcnstart ')
-    if os.path.exists('/etc/enigma2/lcndb'):
-        lcn = LCN()
-        lcn.read()
-        if len(lcn.lcnlist) >= 1:
-            lcn.writeBouquet()
-            ReloadBouquets()
-    return
-
-
-def StartSavingTerrestrialChannels():
-
-    def ForceSearchBouquetTerrestrial():
-        for file in sorted(glob.glob("/etc/enigma2/*.tv")):
-            f = open(file, "r").read()
-            x = f.strip().lower()
-            if x.find('eeee') != -1:
-                return file
-                break
-        return
-
-    def ResearchBouquetTerrestrial(search):
-        for file in sorted(glob.glob("/etc/enigma2/*.tv")):
-            f = open(file, "r").read()
-            x = f.strip().lower()
-            x1 = f.strip()
-            if x1.find("#NAME") != -1:
-                if x.lower().find(search.lower()) != -1:
-                    if x.find('eeee') != -1:
-                        return file
-                        break
-        return
-
-    def SaveTrasponderService():
-        TrasponderListOldLamedb = open(TransOldLamedb, 'w')
-        ServiceListOldLamedb = open(ServOldLamedb, 'w')
-        Trasponder = False
-        inTransponder = False
-        inService = False
-        try:
-            LamedbFile = open(ee2ldb, 'r')
-            while 1:
-                line = LamedbFile.readline()
-                if not line:
-                    break
-                if not (inTransponder or inService):
-                    if line.find('transponders') == 0:
-                        inTransponder = True
-                    if line.find('services') == 0:
-                        inService = True
-                if line.find('end') == 0:
-                    inTransponder = False
-                    inService = False
-                line = line.lower()
-                if line.find('eeee') != -1:
-                    Trasponder = True
-                    if inTransponder:
-                        TrasponderListOldLamedb.write(line)
-                        line = LamedbFile.readline()
-                        TrasponderListOldLamedb.write(line)
-                        line = LamedbFile.readline()
-                        TrasponderListOldLamedb.write(line)
-                    if inService:
-                        tmp = line.split(':')
-                        ServiceListOldLamedb.write(tmp[0] + ":" + tmp[1] + ":" + tmp[2] + ":" + tmp[3] + ":" + tmp[4] + ":0\n")
-                        line = LamedbFile.readline()
-                        ServiceListOldLamedb.write(line)
-                        line = LamedbFile.readline()
-                        ServiceListOldLamedb.write(line)
-            TrasponderListOldLamedb.close()
-            ServiceListOldLamedb.close()
-            if not Trasponder:
-                os.system('rm -fr ' + TransOldLamedb)
-                os.system('rm -fr ' + ServOldLamedb)
-        except:
-            pass
-        return Trasponder
-
-    def CreateBouquetForce():
-        WritingBouquetTemporary = open(TerChArch, 'w')
-        WritingBouquetTemporary.write('#NAME terrestre\n')
-        ReadingTempServicelist = open(ServOldLamedb, 'r').readlines()
-        for jx in ReadingTempServicelist:
-            if jx.find('eeee') != -1:
-                String = jx.split(':')
-                WritingBouquetTemporary.write('#SERVICE 1:0:%s:%s:%s:%s:%s:0:0:0:\n' % (hex(int(String[4]))[2:], String[0], String[2], String[3], String[1]))
-        WritingBouquetTemporary.close()
-
-    def SaveBouquetTerrestrial():
-        NameDirectory = ResearchBouquetTerrestrial('terr')
-        if not NameDirectory:
-            NameDirectory = ForceSearchBouquetTerrestrial()
-        try:
-            shutil.copyfile(NameDirectory, TerChArch)
-            return True
-        except:
-            pass
-        return
-    Service = SaveTrasponderService()
-    if Service:
-        if not SaveBouquetTerrestrial():
-            CreateBouquetForce()
-        return True
-    return
-
-
-def LamedbRestore():
-    try:
-        TrasponderListNewLamedb = open(plugin_path + '/temp/TrasponderListNewLamedb', 'w')
-        ServiceListNewLamedb = open(plugin_path + '/temp/ServiceListNewLamedb', 'w')
-        inTransponder = False
-        inService = False
-        infile = open(ee2ldb, 'r')
-        while 1:
-            line = infile.readline()
-            if not line:
-                break
-            if not (inTransponder or inService):
-                if line.find('transponders') == 0:
-                    inTransponder = True
-                if line.find('services') == 0:
-                    inService = True
-            if line.find('end') == 0:
-                inTransponder = False
-                inService = False
-            if inTransponder:
-                TrasponderListNewLamedb.write(line)
-            if inService:
-                ServiceListNewLamedb.write(line)
-        TrasponderListNewLamedb.close()
-        ServiceListNewLamedb.close()
-        WritingLamedbFinal = open(ee2ldb, "w")
-        WritingLamedbFinal.write("eDVB services /4/\n")
-        TrasponderListNewLamedb = open(plugin_path + '/temp/TrasponderListNewLamedb', 'r').readlines()
-        for x in TrasponderListNewLamedb:
-            WritingLamedbFinal.write(x)
-        try:
-            TrasponderListOldLamedb = open(TransOldLamedb, 'r').readlines()
-            for x in TrasponderListOldLamedb:
-                WritingLamedbFinal.write(x)
-        except:
-            pass
-        WritingLamedbFinal.write("end\n")
-        ServiceListNewLamedb = open(plugin_path + '/temp/ServiceListNewLamedb', 'r').readlines()
-        for x in ServiceListNewLamedb:
-            WritingLamedbFinal.write(x)
-        try:
-            ServiceListOldLamedb = open(ServOldLamedb, 'r').readlines()
-            for x in ServiceListOldLamedb:
-                WritingLamedbFinal.write(x)
-        except:
-            pass
-        WritingLamedbFinal.write("end\n")
-        WritingLamedbFinal.close()
-        return True
-    except:
-        return False
-
-
-def TransferBouquetTerrestrialFinal():
-
-    def RestoreTerrestrial():
-        for file in os.listdir("/etc/enigma2/"):
-            if re.search('^userbouquet.*.tv', file):
-                f = open("/etc/enigma2/" + file, "r")
-                x = f.read()
-                if re.search('#NAME Digitale Terrestre', x, flags=re.IGNORECASE) or re.search('#NAME DTT', x, flags=re.IGNORECASE):  # for disa51
-                    return "/etc/enigma2/" + file
-        return
-
-    try:
-        TerrestrialChannelListArchive = open(TerChArch, 'r').readlines()
-        DirectoryUserBouquetTerrestrial = RestoreTerrestrial()
-        if DirectoryUserBouquetTerrestrial:
-            TrasfBouq = open(DirectoryUserBouquetTerrestrial, 'w')
-            for Line in TerrestrialChannelListArchive:
-                if Line.lower().find('#name') != -1:
-                    TrasfBouq.write('#NAME Digitale Terrestre\n')
-                else:
-                    TrasfBouq.write(Line)
-            TrasfBouq.close()
-            return True
-    except:
-        return False
-    return
 # ===== by lululla
