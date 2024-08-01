@@ -3210,7 +3210,7 @@ def main(session, **kwargs):
 
 
 def cfgmain(menuid, **kwargs):
-    return [(_('Tivustream Addon Panel'), mainmenu, descplug, 44)] if menuid == "mainmenu" else []
+    return [(_('Tivustream Addon Panel'), mainmenu, title_plug, 44)] if menuid == "mainmenu" else []
 
 
 def mainmenu(session, **kwargs):
