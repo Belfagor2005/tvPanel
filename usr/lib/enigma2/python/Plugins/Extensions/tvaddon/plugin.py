@@ -11,6 +11,7 @@ from __future__ import print_function
 from . import _, paypal, wgetsts
 from . import Utils
 from .resolve.Console import Console as tvConsole
+from .resolve.Utils import RequestAgent
 from .resolve.Downloader import downloadWithProgress
 from .resolve.Lcn import (
     LCN,
@@ -19,7 +20,6 @@ from .resolve.Lcn import (
     ReloadBouquets,
     keepiptv,
 )
-from .resolve.Utils import RequestAgent
 from Components.ActionMap import ActionMap
 from Components.Button import Button
 from Components.ConfigList import ConfigListScreen
@@ -63,7 +63,6 @@ from os import chmod
 from twisted.web.client import downloadPage
 from datetime import datetime
 import codecs
-import glob
 import json
 import os
 import re
@@ -308,7 +307,6 @@ Panel_list2 = [
     ('UPDATE SATELLITES.XML'),
     ('UPDATE TERRESTRIAL.XML'),
     ('SETTINGS CIEFP'),
-    ('SETTINGS CYRUS'),
     ('SETTINGS MANUTEK'),
     ('SETTINGS MORPHEUS'),
     ('SETTINGS VHANNIBAL'),
@@ -322,6 +320,7 @@ Panel_list3 = [
 
 
 class tvList(MenuList):
+
     def __init__(self, list):
         MenuList.__init__(self, list, True, eListboxPythonMultiContent)
         if screenwidth.width() == 2560:
@@ -382,6 +381,7 @@ def showlist(data, list):
 
 
 class Hometv(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -495,9 +495,12 @@ class Hometv(Screen):
         tvman = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvManager'))
         if os.path.exists(tvman):
             from Plugins.Extensions.tvManager.plugin import tvManager
-            self.session.openWithCallback(self.close, tvManager)
+            self.session.openWithCallback(self.passe, tvManager)
         else:
             self.session.open(MessageBox, ("tvManager Not Installed!!\nInstall First"), type=MessageBox.TYPE_INFO, timeout=3)
+
+    def passe(self, ret=None):
+        self.close()
 
     def tvIPK(self):
         self.session.open(tvIPK)
@@ -572,6 +575,7 @@ class Hometv(Screen):
 
 
 class Categories(Screen):
+
     def __init__(self, session, category):
         Screen.__init__(self, session)
         self.session = session
@@ -647,9 +651,12 @@ class Categories(Screen):
         tvman = resolveFilename(SCOPE_PLUGINS, "Extensions/{}".format('tvManager'))
         if os.path.exists(tvman):
             from Plugins.Extensions.tvManager.plugin import tvManager
-            self.session.openWithCallback(self.close, tvManager)
+            self.session.openWithCallback(self.passe, tvManager)
         else:
             self.session.open(MessageBox, ("tvManager Not Installed!!\nInstall First"), type=MessageBox.TYPE_INFO, timeout=3)
+
+    def passe(self, ret=None):
+        self.close()
 
     def goConfig(self):
         self.session.open(tvConfig)
@@ -668,6 +675,7 @@ class Categories(Screen):
 
 class tvDailySetting(Screen):
     def __init__(self, session):
+
         Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvall.xml')
@@ -744,8 +752,6 @@ class tvDailySetting(Screen):
             self.terrestrial_restore()
         elif sel == ('SETTINGS CIEFP'):
             self.session.open(SettingCiefp)
-        elif sel == ('SETTINGS CYRUS'):
-            self.session.open(SettingCyrus)
         elif sel == ('SETTINGS MANUTEK'):
             self.session.open(SettingManutek)
         elif sel == ('SETTINGS MORPHEUS'):
@@ -819,6 +825,7 @@ class tvDailySetting(Screen):
 
 
 class SettingCiefp(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -913,134 +920,7 @@ class SettingCiefp(Screen):
                 from six.moves.urllib.request import urlretrieve
                 urlretrieve(url, dest)
 
-                if os.path.exists(dest)  and '.zip' in dest:
-                    fdest1 = "/tmp/unzipped"
-                    fdest2 = "/etc/enigma2"
-                    if os.path.exists("/tmp/unzipped"):
-                        os.system('rm -rf /tmp/unzipped')
-                    os.makedirs('/tmp/unzipped')
-                    cmd2 = "unzip -o -q '/tmp/settings.zip' -d " + fdest1
-                    os.system(cmd2)
-                    for root, dirs, files in os.walk(fdest1):
-                        for name in dirs:
-                            self.namel = name
-                    os.system('rm -rf /etc/enigma2/lamedb')
-                    os.system('rm -rf /etc/enigma2/*.radio')
-                    os.system('rm -rf /etc/enigma2/*.tv')
-                    os.system('rm -rf /etc/enigma2/*.del')
-                    os.system("cp -rf  '/tmp/unzipped/" + str(self.namel) + "/'* " + fdest2)
-                    title = _("Installation Settings")
-                    self.session.openWithCallback(self.yes, tvConsole, title=_(title), cmdlist=["wget -qO - http://127.0.0.1/web/servicelistreload?mode=0 > /tmp/inst.txt 2>&1 &"], closeOnSuccess=False)
-                    self['info'].setText(_('Settings Installed ...'))
-                else:
-                    self['info'].setText(_('Settings Not Installed (dest)...'))
-            else:
-                self['info'].setText(_('Settings Not Installed ...'))
-
-    def yes(self, call=None):
-        copy_files_to_enigma2()
-        ReloadBouquets(setx)
-
-
-class SettingCyrus(Screen):
-    def __init__(self, session):
-        Screen.__init__(self, session)
-        self.session = session
-        skin = os.path.join(skin_path, 'tvall.xml')
-        with codecs.open(skin, "r", encoding="utf-8") as f:
-            self.skin = f.read()
-        self.setup_title = ('Setting Cyrus')
-        self.setTitle(self.setup_title)
-        self.list = []
-        self['list'] = tvList([])
-        self['info'] = Label(_('Loading data... Please wait'))
-        self['pth'] = Label()
-        self['pform'] = Label('PLEASE VISIT CYRUSSETTINGS.COM SITE')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['key_green'] = Button(_('Install'))
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button()
-        self["key_blue"] = Button()
-        self['key_yellow'].hide()
-        self['key_blue'].hide()
-        self['key_green'].hide()
-        self.downloading = False
-        self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.downxmlpage)
-        else:
-            self.timer.callback.append(self.downxmlpage)
-        self.timer.start(500, 1)
-        self['title'] = Label(title_plug)
-        self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions'], {'ok': self.okRun,
-                                                       'green': self.okRun,
-                                                       'red': self.close,
-                                                       'cancel': self.close}, -2)
-
-    def downxmlpage(self):
-        url = 'http://www.cyrussettings.com/Set_29_11_2011/Dreambox-IpBox/Config.xml'
-        data = make_request(url)
-        if PY3:
-            data = six.ensure_str(data)
-        r = data
-        self.names = []
-        self.urls = []
-        try:
-            n1 = r.find('name="Sat">', 0)
-            n2 = r.find("/ruleset>", n1)
-            r = r[n1:n2]
-            regex = 'Name="(.*?)".*?Link="(.*?)".*?Date="(.*?)"><'
-            match = re.compile(regex).findall(r)
-            for name, url, date in match:
-                if url.find('.zip') != -1:
-                    if 'ddt' in name.lower():
-                        continue
-                    if 'Sat' in name.lower():
-                        continue
-                    name = name + ' ' + date
-                    if name in self.names:
-                        continue
-                    self.urls.append(Utils.str_encode(url.strip()))
-                    self.names.append(Utils.str_encode(name.strip()))
-                    self.downloading = True
-            self['key_green'].show()
-            self['info'].setText(_('Please select ...'))
-            showlist(self.names, self['list'])
-        except Exception as e:
-            print('downxmlpage get failed: ', str(e))
-            self['info'].setText(_('Download page get failed ...'))
-
-    def okRun(self):
-        self.session.openWithCallback(self.okRun1, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
-
-    def okRun1(self, answer=False):
-        if answer:
-            global setx
-            setx = 0
-            if self.downloading is True:
-                idx = self["list"].getSelectionIndex()
-                url = self.urls[idx]
-                dest = "/tmp/settings.zip"
-                self.namel = ''
-
-                if 'dtt' not in url.lower():
-                    setx = 1
-                    terrestrial()
-                if keepiptv():
-                    print('-----save iptv channels-----')
-
-                # import requests
-                # r = requests.get(url)
-                # with open(dest, 'wb') as f:
-                    # f.write(r.content)
-
-                from six.moves.urllib.request import urlretrieve
-                urlretrieve(url, dest)
-
-                if os.path.exists(dest)  and '.zip' in dest:
+                if os.path.exists(dest) and '.zip' in dest:
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1070,6 +950,7 @@ class SettingCyrus(Screen):
 
 
 class SettingManutek(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -1142,6 +1023,7 @@ class SettingManutek(Screen):
             setx = 0
             if self.downloading is True:
                 idx = self["list"].getSelectionIndex()
+                self.name = self.names[idx]
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
@@ -1152,15 +1034,9 @@ class SettingManutek(Screen):
                 if keepiptv():
                     print('-----save iptv channels-----')
 
-                # import requests
-                # r = requests.get(url)
-                # with open(dest, 'wb') as f:
-                    # f.write(r.content)
-
                 from six.moves.urllib.request import urlretrieve
                 urlretrieve(url, dest)
-
-                if os.path.exists(dest)  and '.zip' in dest:
+                if os.path.exists(dest) and '.zip' in dest:
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1247,7 +1123,7 @@ class SettingMorpheus(Screen):
                 if url.find('.zip') != -1:
                     name = 'Morph883 ' + name
                     if name in self.names:
-                        continue                    
+                        continue
                     url = url.replace('blob', 'raw')
                     url = 'https://github.com' + url
                 self.urls.append(Utils.str_encode(url.strip()))
@@ -1317,6 +1193,7 @@ class SettingMorpheus(Screen):
 
 
 class SettingVhan(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -1391,10 +1268,6 @@ class SettingVhan(Screen):
                 url = self.urls[idx]
                 dest = "/tmp/settings.zip"
                 self.namel = ''
-                # import requests
-                # r = requests.get(url)
-                # with open(dest, 'wb') as f:
-                    # f.write(r.content)
 
                 if 'dtt' not in url.lower():
                     setx = 1
@@ -1405,7 +1278,7 @@ class SettingVhan(Screen):
                 from six.moves.urllib.request import urlretrieve
                 urlretrieve(url, dest)
 
-                if os.path.exists(dest)  and '.zip' in dest:
+                if os.path.exists(dest) and '.zip' in dest:
                     fdest1 = "/tmp/unzipped"
                     fdest2 = "/etc/enigma2"
                     if os.path.exists("/tmp/unzipped"):
@@ -1435,6 +1308,7 @@ class SettingVhan(Screen):
 
 
 class SettingVhan2(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -1534,16 +1408,9 @@ class SettingVhan2(Screen):
                 except Exception as e:
                     print('error: ', str(e))
 
-    def downloadError(self, png):
-        try:
-            if not fileExists(png):
-                self.poster_resize(no_cover)
-        except Exception as e:
-            print('error: ', str(e))
-
     def download(self, data, dest):
         try:
-            if os.path.exists(dest)  and '.zip' in dest:
+            if os.path.exists(dest) and '.zip' in dest:
                 self.namel = ''
                 fdest1 = "/tmp/unzipped"
                 fdest2 = "/etc/enigma2"
@@ -1568,6 +1435,13 @@ class SettingVhan2(Screen):
         except Exception as e:
             print('error: ', str(e))
             self['info'].setText(_('Not Installed ...'))
+
+    def downloadError(self, png):
+        try:
+            if not fileExists(png):
+                self.poster_resize(no_cover)
+        except Exception as e:
+            print('error: ', str(e))
 
     def yes(self, call=None):
         copy_files_to_enigma2()
@@ -1778,7 +1652,6 @@ class tvInstall(Screen):
         self.session.openWithCallback(self.okDownll, MessageBox, _("Do you want to Download?\nIt could take a few minutes, wait .."), MessageBox.TYPE_YESNO)
 
     def okDownll(self, answer=False):
-        print('okDownll')
         if answer:
             self['info'].setText(_('... please wait'))
             idx = self["list"].getSelectionIndex()
@@ -1791,10 +1664,8 @@ class tvInstall(Screen):
                 os.remove(self.dest)
 
             if self.com is not None:
-                print('self.com not none', self.com)
                 extensionlist = self.com.split('.')
                 extension = extensionlist[-1].lower()
-
                 if len(extensionlist) > 1:
                     tar = extensionlist[-2].lower()
                 if extension in ["gz", "bz2"] and tar == "tar":
@@ -1918,7 +1789,10 @@ class tvInstall(Screen):
                 self['progress'].setValue(self.progclear)
                 self["progress"].hide()
                 self['info'].setText(_('File Downloaded ...'))
-                self.session.openWithCallback(self.close, tvIPK)
+                self.session.openWithCallback(self.passe, tvIPK)
+
+    def passe(self, ret=None):
+        self.close()
 
 
 class tvIPK(Screen):
@@ -1954,7 +1828,6 @@ class tvIPK(Screen):
                                                       'menu': self.goConfig,
                                                       'cancel': self.close}, -1)
         self.onLayoutFinish.append(self.refreshlist)
-        # self.onShown.append(self.refreshlist)
 
     def refreshlist(self):
         self.list = []
@@ -2105,127 +1978,6 @@ class tvIPK(Screen):
             self.session.open(TryQuitMainloop, 3)
 
 
-class tvUpdate(Screen):
-    def __init__(self, session):
-        Screen.__init__(self, session)
-        self.session = session
-        skin = os.path.join(skin_path, 'tvall.xml')
-        with codecs.open(skin, "r", encoding="utf-8") as f:
-            self.skin = f.read()
-        self.setup_title = ('Update')
-        self.setTitle(self.setup_title)
-        self['key_red'] = Button(_('Back'))
-        self['key_yellow'] = Button(_('Update'))
-        self['key_green'] = Button(_('Restart'))
-        self["key_blue"] = Button()
-        self['key_blue'].hide()
-        self['key_green'].hide()
-        self['info'] = Label()
-        self['pth'] = Label('Congrats! You already have the latest version...')
-        self['pform'] = Label('Press info long for force Update')
-        self['progress'] = ProgressBar()
-        self["progress"].hide()
-        self['progresstext'] = StaticText()
-        self['list'] = tvList([])
-        self.Update = False
-
-        self.timer = eTimer()
-        if os.path.exists('/var/lib/dpkg/info'):
-            self.timer_conn = self.timer.timeout.connect(self.check_vers)
-        else:
-            self.timer.callback.append(self.check_vers)
-        self.timer.start(500, 1)
-
-        self['title'] = Label(title_plug)
-        self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions',
-                                     'DirectionActions',
-                                     'HotkeyActions',
-                                     'InfobarEPGActions',
-                                     'ChannelSelectBaseActions'], {'ok': self.close,
-                                                                   'cancel': self.close,
-                                                                   'green': self.msgipkrst1,
-                                                                   'red': self.close,
-                                                                   'back': self.close,
-                                                                   'yellow': self.update_me,
-                                                                   'yellow_long': self.update_dev,
-                                                                   'info_long': self.update_dev,
-                                                                   'infolong': self.update_dev,
-                                                                   'showEventInfoPlugin': self.update_dev,
-                                                                   }, -1)
-
-    def check_vers(self):
-        remote_version = '0.0'
-        remote_changelog = ''
-        req = Utils.Request(Utils.b64decoder(installer_url), headers={'User-Agent': 'Mozilla/5.0'})
-        page = Utils.urlopen(req).read()
-        if PY3:
-            data = page.decode("utf-8")
-        else:
-            data = page.encode("utf-8")
-        if data:
-            lines = data.split("\n")
-            for line in lines:
-                if line.startswith("version"):
-                    remote_version = line.split("=")
-                    remote_version = line.split("'")[1]
-                if line.startswith("changelog"):
-                    remote_changelog = line.split("=")
-                    remote_changelog = line.split("'")[1]
-                    break
-        self.new_version = remote_version
-        self.new_changelog = remote_changelog
-        # if float(currversion) < float(remote_version):
-        if currversion < remote_version:
-            # self.new_version = remote_version
-            # self.new_changelog = remote_changelog
-            updatestr = title_plug
-            cvrs = 'New version %s is available' % self.new_version
-            cvrt = 'Changelog: %s\n\nPress yellow button to start updating' % self.new_changelog
-            self.Update = True
-            self['info'].setText(updatestr)
-            self['pth'].setText(cvrs)
-            self['pform'].setText(cvrt)
-            self['key_green'].show()
-
-    def update_me(self):
-        if self.Update is True:
-            self.session.openWithCallback(self.install_update, MessageBox, _("New version %s is available.\n\nChangelog: %s \n\nDo you want to install it now?") % (self.new_version, self.new_changelog), MessageBox.TYPE_YESNO)
-        else:
-            self.session.open(MessageBox, _("Congrats! You already have the latest version..."),  MessageBox.TYPE_INFO, timeout=4)
-
-    def update_dev(self):
-        req = Utils.Request(Utils.b64decoder(developer_url), headers={'User-Agent': 'Mozilla/5.0'})
-        page = Utils.urlopen(req).read()
-        data = json.loads(page)
-        remote_date = data['pushed_at']
-        strp_remote_date = datetime.strptime(remote_date, '%Y-%m-%dT%H:%M:%SZ')
-        remote_date = strp_remote_date.strftime('%Y-%m-%d')
-        self.session.openWithCallback(self.install_update, MessageBox, _("Do you want to install update ( %s ) now?") % (remote_date), MessageBox.TYPE_YESNO)
-
-    def install_update(self, answer=False):
-        if answer:
-            self.session.open(tvConsole, 'Upgrading...', cmdlist=('wget -q "--no-check-certificate" ' + Utils.b64decoder(installer_url) + ' -O - | /bin/sh'), finishedCallback=self.myCallback, closeOnSuccess=False)
-        else:
-            self.session.open(MessageBox, _("Update Aborted!"),  MessageBox.TYPE_INFO, timeout=3)
-
-    def myCallback(self, result=None):
-        print('result:', result)
-        return
-
-    def msgipkrst1(self, answer=False):
-        if answer is False:
-            self.session.openWithCallback(self.msgipkrst1, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
-        else:
-            epgpath = '/media/hdd/epg.dat'
-            epgbakpath = '/media/hdd/epg.dat.bak'
-            if os.path.exists(epgbakpath):
-                os.remove(epgbakpath)
-            if os.path.exists(epgpath):
-                shutil.copyfile(epgpath, epgbakpath)
-            self.session.open(TryQuitMainloop, 3)
-
-
 class tvRemove(Screen):
     def __init__(self, session):
         Screen.__init__(self, session)
@@ -2373,10 +2125,9 @@ class tvConfig(ConfigListScreen, Screen):
         Screen.__init__(self, session)
         self.session = session
         skin = os.path.join(skin_path, 'tvConfig.xml')
-        f = open(skin, 'r')
-        self.skin = f.read()
-        f.close()
-        self.setTitle(_("Config"))
+        with codecs.open(skin, "r", encoding="utf-8") as f:
+            self.skin = f.read()
+        self.setTitle(_("tvAddon Config"))
         self.onChangedEntry = []
         self.list = []
         self['title'] = Label(title_plug)
@@ -2486,7 +2237,6 @@ class tvConfig(ConfigListScreen, Screen):
                 x[1].save()
             cfg.save()
             configfile.save()
-            # self.mbox = self.session.openWithCallback(self.restartenigma, MessageBox, _("Restart Enigma is Required. Do you want to continue?"), MessageBox.TYPE_YESNO)
             self.session.open(MessageBox, _('Successfully saved configuration'), MessageBox.TYPE_INFO, timeout=4)
             self.close(True)
         else:
@@ -2545,8 +2295,8 @@ class tvConfig(ConfigListScreen, Screen):
         if sel:
             self.session.openWithCallback(self.VirtualKeyBoardCallback, VirtualKeyBoard, title=self['config'].getCurrent()[0], text=self['config'].getCurrent()[1].value)
 
-    def cancelConfirm(self, result=None):
-        if not result:
+    def cancelConfirm(self, result=False):
+        if result is False:
             return
         for x in self['config'].list:
             x[1].cancel()
@@ -2557,6 +2307,128 @@ class tvConfig(ConfigListScreen, Screen):
             self.session.openWithCallback(self.cancelConfirm, MessageBox, _('Really close without saving the settings?'), MessageBox.TYPE_YESNO)
         else:
             self.close()
+
+
+class tvUpdate(Screen):
+
+    def __init__(self, session):
+        Screen.__init__(self, session)
+        self.session = session
+        skin = os.path.join(skin_path, 'tvall.xml')
+        with codecs.open(skin, "r", encoding="utf-8") as f:
+            self.skin = f.read()
+        self.setup_title = ('Update')
+        self.setTitle(self.setup_title)
+        self['key_red'] = Button(_('Back'))
+        self['key_yellow'] = Button(_('Update'))
+        self['key_green'] = Button(_('Restart'))
+        self["key_blue"] = Button()
+        self['key_blue'].hide()
+        self['key_green'].hide()
+        self['info'] = Label()
+        self['pth'] = Label('Congrats! You already have the latest version...')
+        self['pform'] = Label('Press info long for force Update')
+        self['progress'] = ProgressBar()
+        self["progress"].hide()
+        self['progresstext'] = StaticText()
+        self['list'] = tvList([])
+        self.Update = False
+
+        self.timer = eTimer()
+        if os.path.exists('/var/lib/dpkg/info'):
+            self.timer_conn = self.timer.timeout.connect(self.check_vers)
+        else:
+            self.timer.callback.append(self.check_vers)
+        self.timer.start(500, 1)
+
+        self['title'] = Label(title_plug)
+        self['actions'] = ActionMap(['OkCancelActions',
+                                     'ColorActions',
+                                     'DirectionActions',
+                                     'HotkeyActions',
+                                     'InfobarEPGActions',
+                                     'ChannelSelectBaseActions'], {'ok': self.close,
+                                                                   'cancel': self.close,
+                                                                   'green': self.msgipkrst1,
+                                                                   'red': self.close,
+                                                                   'back': self.close,
+                                                                   'yellow': self.update_me,
+                                                                   'yellow_long': self.update_dev,
+                                                                   'info_long': self.update_dev,
+                                                                   'infolong': self.update_dev,
+                                                                   'showEventInfoPlugin': self.update_dev,
+                                                                   }, -1)
+
+    def check_vers(self):
+        remote_version = '0.0'
+        remote_changelog = ''
+        req = Utils.Request(Utils.b64decoder(installer_url), headers={'User-Agent': 'Mozilla/5.0'})
+        page = Utils.urlopen(req).read()
+        if PY3:
+            data = page.decode("utf-8")
+        else:
+            data = page.encode("utf-8")
+        if data:
+            lines = data.split("\n")
+            for line in lines:
+                if line.startswith("version"):
+                    remote_version = line.split("=")
+                    remote_version = line.split("'")[1]
+                if line.startswith("changelog"):
+                    remote_changelog = line.split("=")
+                    remote_changelog = line.split("'")[1]
+                    break
+        self.new_version = remote_version
+        self.new_changelog = remote_changelog
+        # if float(currversion) < float(remote_version):
+        if currversion < remote_version:
+            # self.new_version = remote_version
+            # self.new_changelog = remote_changelog
+            updatestr = title_plug
+            cvrs = 'New version %s is available' % self.new_version
+            cvrt = 'Changelog: %s\n\nPress yellow button to start updating' % self.new_changelog
+            self.Update = True
+            self['info'].setText(updatestr)
+            self['pth'].setText(cvrs)
+            self['pform'].setText(cvrt)
+            self['key_green'].show()
+
+    def update_me(self):
+        if self.Update is True:
+            self.session.openWithCallback(self.install_update, MessageBox, _("New version %s is available.\n\nChangelog: %s \n\nDo you want to install it now?") % (self.new_version, self.new_changelog), MessageBox.TYPE_YESNO)
+        else:
+            self.session.open(MessageBox, _("Congrats! You already have the latest version..."),  MessageBox.TYPE_INFO, timeout=4)
+
+    def update_dev(self):
+        req = Utils.Request(Utils.b64decoder(developer_url), headers={'User-Agent': 'Mozilla/5.0'})
+        page = Utils.urlopen(req).read()
+        data = json.loads(page)
+        remote_date = data['pushed_at']
+        strp_remote_date = datetime.strptime(remote_date, '%Y-%m-%dT%H:%M:%SZ')
+        remote_date = strp_remote_date.strftime('%Y-%m-%d')
+        self.session.openWithCallback(self.install_update, MessageBox, _("Do you want to install update ( %s ) now?") % (remote_date), MessageBox.TYPE_YESNO)
+
+    def install_update(self, answer=False):
+        if answer:
+            self.session.open(tvConsole, 'Upgrading...', cmdlist=('wget -q "--no-check-certificate" ' + Utils.b64decoder(installer_url) + ' -O - | /bin/sh'), finishedCallback=self.myCallback, closeOnSuccess=False)
+        else:
+            self.session.open(MessageBox, _("Update Aborted!"),  MessageBox.TYPE_INFO, timeout=3)
+
+    def myCallback(self, result=None):
+        print('result:', result)
+        return
+
+    def msgipkrst1(self, answer=False):
+        if answer is False:
+            self.session.openWithCallback(self.msgipkrst1, MessageBox, _('Do you want restart enigma2 ?'), MessageBox.TYPE_YESNO)
+        else:
+            epgpath = '/media/hdd/epg.dat'
+            epgbakpath = '/media/hdd/epg.dat.bak'
+            if os.path.exists(epgbakpath):
+                os.remove(epgbakpath)
+            if os.path.exists(epgpath):
+                shutil.copyfile(epgpath, epgbakpath)
+            self.session.open(TryQuitMainloop, 3)
 
 
 Panel_list4 = [
@@ -2638,6 +2510,7 @@ class mainkodilite(Screen):
 
 
 class pluginx(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -2783,9 +2656,6 @@ class pluginx(Screen):
         if self.aborted:
             self.finish(aborted=True)
 
-    def rst1(self):
-        pass
-
     def install(self, string=''):
         if self.aborted:
             self.finish(aborted=True)
@@ -2808,6 +2678,7 @@ class pluginx(Screen):
 
 
 class plugins_adult(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -2893,8 +2764,11 @@ class plugins_adult(Screen):
         if result:
             self.okRun()
         else:
-            self.session.openWithCallback(self.close, MessageBox, _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR)
+            self.session.openWithCallback(self.passe, MessageBox, _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR)
             self.close()
+
+    def passe(self, ret=None):
+        self.close()
 
     def okRun(self):
         self.session.openWithCallback(self.okRun2, MessageBox, _("Do you want to install?"), MessageBox.TYPE_YESNO)
@@ -2969,9 +2843,6 @@ class plugins_adult(Screen):
         if self.aborted:
             self.finish(aborted=True)
 
-    def rst1(self):
-        pass
-
     def install(self, string=None):
         if self.aborted:
             self.finish(aborted=True)
@@ -2994,6 +2865,7 @@ class plugins_adult(Screen):
 
 
 class script(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -3139,9 +3011,6 @@ class script(Screen):
         if self.aborted:
             self.finish(aborted=True)
 
-    def rst1(self):
-        pass
-
     def install(self, string=None):
         if self.aborted:
             self.finish(aborted=True)
@@ -3164,6 +3033,7 @@ class script(Screen):
 
 
 class repository(Screen):
+
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -3308,9 +3178,6 @@ class repository(Screen):
     def download_finished(self, string=""):
         if self.aborted:
             self.finish(aborted=True)
-
-    def rst1(self):
-        pass
 
     def install(self, string=''):
         if self.aborted:

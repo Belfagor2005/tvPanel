@@ -92,7 +92,7 @@ class Console(Screen):
 
     def startRun(self):
         if self.showStartStopText:
-            self['text'].setText(('Execution progress') + '\n\n')
+            self['text'].setText('Execution progress' + '\n\n')
         print('[Console] executing in run', self.run, ' the command:', self.cmdlist[self.run])
         if self.container.execute(self.cmdlist[self.run]):
             self.runFinished(-1)
