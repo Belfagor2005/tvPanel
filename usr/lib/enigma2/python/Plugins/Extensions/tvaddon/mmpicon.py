@@ -1259,14 +1259,7 @@ class PiconsPreview(Screen):
 
 
 # def menu(menuid, **kwargs):
-    # if menuid == 'mainmenu':
-        # from Tools.BoundFunction import boundFunction
-        # return [(titlem_plug,
-                 # boundFunction(main, showExtentionMenuOption=True),
-                 # 'mmPicons',
-                 # -1)]
-    # else:
-        # return []
+    # return [(_('Linuxsat Panel'), main(), descplug, 44)] if menuid == "mainmenu" else []
 
 
 # def systemmenu(menuid, **kwargs):

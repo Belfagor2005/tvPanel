@@ -1308,15 +1308,15 @@ def main(session, **kwargs):
         # return []
 
 
-def menu(menuid, **kwargs):
-    if menuid == 'mainmenu':
-        from Tools.BoundFunction import boundFunction
-        return [(titlem_plug,
-                 boundFunction(main, showExtentionMenuOption=True),
-                 'mmPicons',
-                 -1)]
-    else:
-        return []
+# def menu(menuid, **kwargs):
+    # if menuid == 'mainmenu':
+        # from Tools.BoundFunction import boundFunction
+        # return [(titlem_plug,
+                 # boundFunction(main, showExtentionMenuOption=True),
+                 # 'mmPicons',
+                 # -1)]
+    # else:
+        # return []
 
 
 def systemmenu(menuid, **kwargs):

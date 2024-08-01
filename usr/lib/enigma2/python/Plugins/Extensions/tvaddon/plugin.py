@@ -3210,14 +3210,7 @@ def main(session, **kwargs):
 
 
 def cfgmain(menuid, **kwargs):
-    if menuid == 'mainmenu':
-        from Tools.BoundFunction import boundFunction
-        return [(_('TiVuStream Addons'),
-                 boundFunction(main, showExtentionMenuOption=True),
-                 'AddonPanel',
-                 44)]
-    else:
-        return []
+    return [(_('Tivustream Addon Panel'), mainmenu(), descplug, 44)] if menuid == "mainmenu" else []
 
 
 def mainmenu(session, **kwargs):
