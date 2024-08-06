@@ -14,9 +14,9 @@
 from __future__ import print_function
 from . import _
 from . import Utils
+from .Utils import mountipkpth
 from .resolve.Downloader import downloadWithProgress
-from .plugin import mmkpicon
-
+from .plugin import mmkpicon  # , piconpathss
 from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Button import Button
@@ -32,6 +32,7 @@ from Components.config import (
     config,
     getConfigListEntry,
     ConfigSubsection,
+    ConfigSelection,
     ConfigDirectory,
     configfile,
     # ConfigSelection,
@@ -125,12 +126,12 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-
 dirpics = '/media/hdd/picon/'
-piconpathss = Utils.mountipkpth()
+piconpathss = mountipkpth()
 config.plugins.mmPicons = ConfigSubsection()
 cfg = config.plugins.mmPicons
-cfg.mmkpicon = ConfigDirectory(default=dirpics)
+cfg.mmkpicon = ConfigSelection(default="/usr/share/enigma2/picon/", choices=mountipkpth())
+# cfg.mmkpicon = ConfigDirectory(default=piconpathss)
 plugin_path = '/usr/lib/enigma2/python/Plugins/Extensions/tvaddon'
 currmmversion = getversioninfo()
 titlem_plug = 'mMark Picons & Skins'

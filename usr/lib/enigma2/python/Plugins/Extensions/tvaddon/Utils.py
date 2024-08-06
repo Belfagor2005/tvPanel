@@ -3,7 +3,7 @@
 
 # 30.03.2023
 # a common tips used from Lululla
-
+import requests
 import sys
 import datetime
 import os
@@ -13,6 +13,7 @@ import base64
 # import chardet
 from random import choice
 from Components.config import config
+
 try:
     from os.path import isdir
 except ImportError:
@@ -54,7 +55,6 @@ if PY2:
     from urllib2 import HTTPError, URLError
 
 
-import requests
 requests.packages.urllib3.disable_warnings(
     requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
@@ -164,6 +164,7 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
+
 def ssl_urlopen(url):
     if sslContext:
         return urlopen(url, context=sslContext)
@@ -206,76 +207,80 @@ def DreamOS():
 
 
 def mountipkpth():
-    from Tools.Directories import fileExists
-    myusb = myusb1 = myhdd = myhdd2 = mysdcard = mysd = myuniverse = myba = mydata = ''
-    mdevices = []
-    myusb = None
-    myusb1 = None
-    myhdd = None
-    myhdd2 = None
-    mysdcard = None
-    mysd = None
-    myuniverse = None
-    myba = None
-    mydata = None
-    if fileExists('/proc/mounts'):
-        f = open('/proc/mounts', 'r')
-        for line in f.readlines():
-            if line.find('/media/usb') != -1:
-                myusb = '/media/usb/picon'
-                if not os.path.exists('/media/usb/picon'):
-                    os.system('mkdir -p /media/usb/picon')
-            elif line.find('/media/usb1') != -1:
-                myusb1 = '/media/usb1/picon'
-                if not os.path.exists('/media/usb1/picon'):
-                    os.system('mkdir -p /media/usb1/picon')
-            elif line.find('/media/hdd') != -1:
-                myhdd = '/media/hdd/picon'
-                if not os.path.exists('/media/hdd/picon'):
-                    os.system('mkdir -p /media/hdd/picon')
-            elif line.find('/media/hdd2') != -1:
-                myhdd2 = '/media/hdd2/picon'
-                if not os.path.exists('/media/hdd2/picon'):
-                    os.system('mkdir -p /media/hdd2/picon')
-            elif line.find('/media/sdcard') != -1:
-                mysdcard = '/media/sdcard/picon'
-                if not os.path.exists('/media/sdcard/picon'):
-                    os.system('mkdir -p /media/sdcard/picon')
-            elif line.find('/media/sd') != -1:
-                mysd = '/media/sd/picon'
-                if not os.path.exists('/media/sd/picon'):
-                    os.system('mkdir -p /media/sd/picon')
-            elif line.find('/universe') != -1:
-                myuniverse = '/universe/picon'
-                if not os.path.exists('/universe/picon'):
-                    os.system('mkdir -p /universe/picon')
-            elif line.find('/media/ba') != -1:
-                myba = '/media/ba/picon'
-                if not os.path.exists('/media/ba/picon'):
-                    os.system('mkdir -p /media/ba/picon')
-            elif line.find('/data') != -1:
-                mydata = '/data/picon'
-                if not os.path.exists('/data/picon'):
-                    os.system('mkdir -p /data/picon')
-        f.close()
-    if myusb:
-        mdevices.append(myusb)
-    if myusb1:
-        mdevices.append(myusb1)
-    if myhdd:
-        mdevices.append(myhdd)
-    if myhdd2:
-        mdevices.append(myhdd2)
-    if mysdcard:
-        mdevices.append(mysdcard)
-    if mysd:
-        mdevices.append(mysd)
-    if myuniverse:
-        mdevices.append(myuniverse)
-    if myba:
-        mdevices.append(myba)
-    if mydata:
-        mdevices.append(mydata)
+    try:
+        from Tools.Directories import fileExists
+        myusb = myusb1 = myhdd = myhdd2 = mysdcard = mysd = myuniverse = myba = mydata = ''
+        mdevices = []
+        myusb = None
+        myusb1 = None
+        myhdd = None
+        myhdd2 = None
+        mysdcard = None
+        mysd = None
+        myuniverse = None
+        myba = None
+        mydata = None
+        if fileExists('/proc/mounts'):
+            f = open('/proc/mounts', 'r')
+            for line in f.readlines():
+                if line.find('/media/usb') != -1:
+                    myusb = '/media/usb/picon'
+                    if not os.path.exists('/media/usb/picon'):
+                        os.system('mkdir -p /media/usb/picon')
+                elif line.find('/media/usb1') != -1:
+                    myusb1 = '/media/usb1/picon'
+                    if not os.path.exists('/media/usb1/picon'):
+                        os.system('mkdir -p /media/usb1/picon')
+                elif line.find('/media/hdd') != -1:
+                    myhdd = '/media/hdd/picon'
+                    if not os.path.exists('/media/hdd/picon'):
+                        os.system('mkdir -p /media/hdd/picon')
+                elif line.find('/media/hdd2') != -1:
+                    myhdd2 = '/media/hdd2/picon'
+                    if not os.path.exists('/media/hdd2/picon'):
+                        os.system('mkdir -p /media/hdd2/picon')
+                elif line.find('/media/sdcard') != -1:
+                    mysdcard = '/media/sdcard/picon'
+                    if not os.path.exists('/media/sdcard/picon'):
+                        os.system('mkdir -p /media/sdcard/picon')
+                elif line.find('/media/sd') != -1:
+                    mysd = '/media/sd/picon'
+                    if not os.path.exists('/media/sd/picon'):
+                        os.system('mkdir -p /media/sd/picon')
+                elif line.find('/universe') != -1:
+                    myuniverse = '/universe/picon'
+                    if not os.path.exists('/universe/picon'):
+                        os.system('mkdir -p /universe/picon')
+                elif line.find('/media/ba') != -1:
+                    myba = '/media/ba/picon'
+                    if not os.path.exists('/media/ba/picon'):
+                        os.system('mkdir -p /media/ba/picon')
+                elif line.find('/data') != -1:
+                    mydata = '/data/picon'
+                    if not os.path.exists('/data/picon'):
+                        os.system('mkdir -p /data/picon')
+            f.close()
+        if myusb:
+            mdevices.append(myusb)
+        if myusb1:
+            mdevices.append(myusb1)
+        if myhdd:
+            mdevices.append(myhdd)
+        if myhdd2:
+            mdevices.append(myhdd2)
+        if mysdcard:
+            mdevices.append(mysdcard)
+        if mysd:
+            mdevices.append(mysd)
+        if myuniverse:
+            mdevices.append(myuniverse)
+        if myba:
+            mdevices.append(myba)
+        if mydata:
+            mdevices.append(mydata)
+        # return mdevices
+    except Exception as e:
+        print(e)
     mdevices.append('/picon')
     mdevices.append('/usr/share/enigma2/picon')
     return mdevices
@@ -1303,7 +1308,8 @@ def normalize(title):
 def get_safe_filename(filename, fallback=''):
     '''Convert filename to safe filename'''
     import unicodedata
-    import six, re
+    import six
+    import re
     name = filename.replace(' ', '_').replace('/', '_')
     if isinstance(name, six.text_type):
         name = name.encode('utf-8')

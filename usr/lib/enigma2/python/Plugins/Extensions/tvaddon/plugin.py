@@ -10,6 +10,7 @@
 from __future__ import print_function
 from . import _, paypal, wgetsts
 from . import Utils
+from .Utils import mountipkpth
 from .resolve.Console import Console as tvConsole
 from .resolve.Utils import RequestAgent
 from .resolve.Downloader import downloadWithProgress
@@ -201,7 +202,7 @@ def mountipkpths():
     return ipkpth
 
 
-piconpathss = Utils.mountipkpth()
+piconpathss = mountipkpth()
 AgentRequest = RequestAgent()
 # ================config
 global setx
@@ -211,11 +212,11 @@ name_plug = 'TiVuStream Addon Panel'
 category = 'lululla.xml'
 setx = 0
 
-dirpics = '/media/hdd/picon/'
+# dirpics = '/media/hdd/picon/'
 config.plugins.tvaddon = ConfigSubsection()
 cfg = config.plugins.tvaddon
 cfg.strtext = ConfigYesNo(default=True)
-cfg.mmkpicon = ConfigDirectory(default=dirpics)
+cfg.mmkpicon = ConfigDirectory(default=piconpathss)
 cfg.strtmain = ConfigYesNo(default=True)
 cfg.ipkpth = ConfigSelection(default="/tmp", choices=mountipkpths())
 # cfg.autoupd = ConfigYesNo(default=False)
