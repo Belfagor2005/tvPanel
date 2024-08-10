@@ -978,7 +978,7 @@ class MMarkFolderSkinZeta(Screen):
             if os.path.exists('/etc/enigma2/skin_user.xml'):
                 os.rename('/etc/enigma2/skin_user.xml', '/etc/enigma2/skin_user-bak.xml')
             self['info'].setText(_('Install ...'))
-            myCmd = 'opkg install --force-reinstall /tmp/download.ipk > /dev/null'
+            myCmd = 'opkg install --force-reinstall --force-overwrite /tmp/download.ipk > /dev/null'
             logdata("install3 ", myCmd)
             subprocess.Popen(myCmd, shell=True, executable='/bin/bash')
             self.mbox = self.session.open(MessageBox, _('Successfully Skin Installed'), MessageBox.TYPE_INFO, timeout=5)
