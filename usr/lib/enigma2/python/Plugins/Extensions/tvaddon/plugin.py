@@ -424,6 +424,10 @@ class Hometv(Screen):
                                                            'cancel': self.closerm}, -1)
         self.onFirstExecBegin.append(self.check_dependencies)
         self.onLayoutFinish.append(self.updateMenuList)
+        self.onLayoutFinish.append(self.popupmess)
+
+    def popupmess(self):
+        self.session.open(MessageBox, ("From today this Panel Plugins addons will no longer be supported.\nIf you want to continue using the panel\nyou can install Linuxsat-suppor Panel Addons.\nYou can find it in the\nlinuxsat-support.com forum.\nThank you"), type=MessageBox.TYPE_INFO, timeout=10)
 
     def __layoutFinished(self):
         if status_site():
