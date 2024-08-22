@@ -2348,7 +2348,6 @@ class tvUpdate(Screen):
 
         self['title'] = Label(title_plug)
         self['actions'] = ActionMap(['OkCancelActions',
-                                     'ColorActions',
                                      'DirectionActions',
                                      'HotkeyActions',
                                      'InfobarEPGActions',

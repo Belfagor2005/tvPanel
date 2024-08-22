@@ -3,6 +3,9 @@ TiVuPanel Addon
 Enigma2 project
 
 
+
+THIS PROJECT ARE EOL
+
 <img src="https://github.com/Belfagor2005/tvPanel/blob/main/usr/lib/enigma2/python/Plugins/Extensions/tvaddon/logo.png">
 
 
